@@ -2,7 +2,17 @@
 
 # .dotfiles 다운로드 
 ```sh
-git clone https://github.com/yorez/dotfiles.git ~/.dotfiles
+$ git clone https://github.com/yorez/dotfiles.git ~/.dotfiles
+```
+
+## .bashrc 링크 - Non login bash startup file
+```sh
+$ ln -s $PWD/.bashrc ~/.bashrc
+```
+
+## .bash_profile - Login bash startup file
+```sh
+$ ln -s $PWD/.bash_profile ~/.bash_profile
 ```
 
 ## .vimrc 링크- vim 기본 설정 파일
