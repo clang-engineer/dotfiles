@@ -1,7 +1,5 @@
-augroup skeletons
-  au!
-  autocmd BufNewFile *.* silent! execute '0r ~/.vim/templates/skeleton.'.expand("<afile>:e")
-augroup END
+ let g:vimwiki_list = [{'path': '~/yorez.github.io/_wiki/', 'ext': '.md', 'diary_rel_path': '.'}]
+ let g:vimwiki_conceallevel = 0
 
 augroup vimwikiauto
     autocmd BufWritePre *wiki/*.md call LastModified()

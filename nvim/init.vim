@@ -1,4 +1,4 @@
-call plug#begin('~/.vim/plugged') " 플러그인 시작kjk
+call plug#begin('~/.vim/plugged') " 플러그인 시작
 
 " === Language === "
 Plug 'tpope/vim-surround'
@@ -42,5 +42,11 @@ Plug 'vimwiki/vimwiki' " vim wiki plug
 
 call plug#end()
 
-source ~/.vim/custom/index.vim
+for include_file in uniq(sort(globpath(&rtp, 'vim-*/*.vim', 0, 1)))
+    execute "source " . include_file
+endfor
 
+" Theme
+syntax enable " syntax highlighting. enable vs on
+colorscheme gruvbox
+filetype plugin indent on " enable 
