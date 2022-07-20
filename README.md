@@ -15,6 +15,21 @@ $ ln -s $PWD/.bashrc ~/.bashrc
 $ ln -s $PWD/.bash_profile ~/.bash_profile
 ```
 
+## .zshrc - zshell 설정
+ 
+```sh
+$ brew install zsh # zsh 설치
+$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" # oh-my-zsh 다운로드
+$ ln -s $PWD/.zshrc ~/.zshrc
+```
+
+## .ssh - ssh 인증 설정
+
+```sh
+# 인증서 네이밍룰은 id-rsa*로 해서 버전 관리 별도로 되지 않도록 >> .gitignore 
+$ ln -s $PWD/.ssh ~/.ssh
+```
+
 ## .vimrc 링크- vim 기본 설정 파일
 
 1. vundle 설치
@@ -32,7 +47,6 @@ $ ln -s $PWD/.vimrc ~/.vimrc
 $ ln -s $PWD/.vimrc ~/.vimrc
 ```
 
-
 ## neovim 링크 - neovim link
 
 1. vim-plug 설치
@@ -48,3 +62,18 @@ $ ln -s $PWD/nvim ~/.config/nvim
 $ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 ```
+
+## gitconfig 링크 - 계정 정보 개별화
+```sh
+$ ln -s $PWD/.gitconfig ~/.gitconfig
+```
+
+## hammerspoon 링크
+```sh
+$ ln -s $PWD/.hammerspoon ~/.hammerspoon
+```
+
+## tmux 설정 링크
+```sh
+$ ln -s $PWd/.tmux.conf ~/.tmux.conf
+$ tmux source-file ~/.tmux.conf
