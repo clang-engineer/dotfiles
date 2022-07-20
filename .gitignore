@@ -1,2 +1,7 @@
+# tags
 tags
 .DS_Store
+
+# private-key, public-key ignore
+id_rsa*
+known_hosts
