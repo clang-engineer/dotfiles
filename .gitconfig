@@ -1,0 +1,10 @@
+[user]
+	email = yorez@naver.com
+	name = yorez
+[includeIf "gitdir:~/Desktop/zero_/workspace/"]
+    path = ~/Desktop/zero_/workspace/company.inc`
+
+# company.inc >> 와 같이 해당 디렉터리 아래애서 gitconfig 를 overwrite 함
+# [user]
+# 	email = zero@planit.ai		
+# 	name = zero
