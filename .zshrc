@@ -111,3 +111,6 @@ source $ZSH/oh-my-zsh.sh
 
 # rbenv path 
 eval "$(rbenv init - zsh)"
+
+# nodeenv init
+eval "$(nodenv init -)"
