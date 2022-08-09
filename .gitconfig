@@ -8,3 +8,5 @@
 # [user]
 # 	email = zero@planit.ai		
 # 	name = zero
+[core]
+	autocrlf = input
