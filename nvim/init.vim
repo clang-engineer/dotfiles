@@ -8,6 +8,7 @@ Plug 'instant-markdown/vim-instant-markdown'
 Plug 'ervandew/supertab'
 Plug 'tpope/vim-endwise'
 Plug 'raimondi/delimitmate'
+Plug 'alvan/vim-closetag'
 
 " === Code display === "
 Plug 'vim-airline/vim-airline'
