@@ -1,1 +1,1 @@
-alias g++="g++ -std=c++14"
+alias g++="g++ -std=c++17"
