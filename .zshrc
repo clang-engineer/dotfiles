@@ -114,3 +114,5 @@ eval "$(rbenv init - zsh)"
 
 # nodeenv init
 eval "$(nodenv init -)"
+
+alias g++="g++ -std=c++17"
