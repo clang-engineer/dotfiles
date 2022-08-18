@@ -31,6 +31,7 @@ Plug 'terryma/vim-multiple-cursors' " multiple word selecting
 " === Other === "
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vimwiki/vimwiki' " vim wiki plug
+Plug 'scrooloose/nerdcommenter'
 
 " nvim-treesitter 구문 파싱 하이라이팅
 " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
