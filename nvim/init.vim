@@ -26,6 +26,8 @@ Plug 'mhinz/vim-startify'
 
 " === Commands === "
 Plug 'preservim/tagbar'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf'
 Plug 'terryma/vim-multiple-cursors' " multiple word selecting
 
 " === Other === "
