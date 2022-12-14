@@ -4,5 +4,5 @@ tags
 
 # private-key, public-key ignore
 id_rsa*
-known_hosts
+known_hosts*
 nvim/pack
