@@ -116,3 +116,5 @@ eval "$(rbenv init - zsh)"
 eval "$(nodenv init -)"
 
 alias g++="g++ -std=c++17"
+
+export PATH=/opt/homebrew/bin:$PATH
