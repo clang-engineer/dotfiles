@@ -118,3 +118,10 @@ eval "$(nodenv init -)"
 alias g++="g++ -std=c++17"
 
 export PATH=/opt/homebrew/bin:$PATH
+
+case $- in *i*)
+    [ -z "$TMUX" ] && exec tmux a
+esac
+
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
