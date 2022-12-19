@@ -75,5 +75,5 @@ $ ln -s $PWD/.hammerspoon ~/.hammerspoon
 
 ## tmux 설정 링크
 ```sh
-$ ln -s $PWd/.tmux.conf ~/.tmux.conf
+$ ln -s $PWD/.tmux.conf ~/.tmux.conf
 $ tmux source-file ~/.tmux.conf
