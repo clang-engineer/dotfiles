@@ -44,7 +44,7 @@ $ ln -s $PWD/.vimrc ~/.vimrc
 
 ## .ideavimrc 링크 - intellij vim 플러그인 설정
 ```sh
-$ ln -s $PWD/.vimrc ~/.vimrc
+$ ln -s $PWD/.ideavimrc ~/.ideavimrc
 ```
 
 ## neovim 링크 - neovim link
