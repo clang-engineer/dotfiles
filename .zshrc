@@ -110,10 +110,10 @@ source $ZSH/oh-my-zsh.sh
 # custom setting
 
 # rbenv path 
-eval "$(rbenv init - zsh)"
+# eval "$(rbenv init - zsh)"
 
 # nodeenv init
-eval "$(nodenv init -)"
+# eval "$(nodenv init -)"
 
 alias g++="g++ -std=c++17"
 
@@ -121,3 +121,6 @@ if [ -z "$TMUX" ]
 then
     tmux attach -t TMUX || tmux new -s TMUX
 fi
+
+source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
