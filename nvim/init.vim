@@ -2,6 +2,7 @@ call plug#begin('~/.vim/plugged') " 플러그인 시작
 
 " === Language === "
 Plug 'tpope/vim-surround'
+Plug 'dense-analysis/ale'
 Plug 'instant-markdown/vim-instant-markdown'
 
 " === Completion === "
@@ -27,7 +28,6 @@ Plug 'mhinz/vim-startify'
 " === Commands === "
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf'
 Plug 'terryma/vim-multiple-cursors' " multiple word selecting
 
 " === Other === "
