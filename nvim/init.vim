@@ -2,7 +2,6 @@ call plug#begin('~/.vim/plugged') " 플러그인 시작
 
 " === Language === "
 Plug 'tpope/vim-surround'
-Plug 'dense-analysis/ale'
 Plug 'instant-markdown/vim-instant-markdown'
 
 " === Completion === "
