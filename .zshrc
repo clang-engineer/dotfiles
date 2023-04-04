@@ -109,8 +109,8 @@ source $ZSH/oh-my-zsh.sh
 
 # custom setting
 
-# rbenv path 
-# eval "$(rbenv init - zsh)"
+# rbenv path - 루비버전 셋팅시 버전 인식 필요
+eval "$(rbenv init - zsh)"
 
 # nodeenv init
 # eval "$(nodenv init -)"
