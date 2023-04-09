@@ -1,9 +1,9 @@
- let g:vimwiki_list = [{'path': '~/yorez.github.io/_wiki/', 'ext': '.md', 'diary_rel_path': '.'}]
+ let g:vimwiki_list = [{'path': 'yorez.github.io/_wikis/', 'ext': '.md', 'diary_rel_path': '.'}]
  let g:vimwiki_conceallevel = 0
 
 augroup vimwikiauto
-    autocmd BufWritePre *wiki/*.md call LastModified()
-    autocmd BufRead,BufNewFile *wiki/*.md call NewTemplate()
+    autocmd BufWritePre *wikis/*.md call LastModified()
+    autocmd BufRead,BufNewFile *wikis/*.md call NewTemplate()
 augroup END
 
 function! NewTemplate()
