@@ -18,6 +18,8 @@ Plug 'morhetz/gruvbox'
 " === Integrations === "
 Plug 'scrooloose/nerdtree'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'rhysd/vim-clang-format'
+
 
 " === Interface === "
 Plug 'vim-airline/vim-airline-themes'
