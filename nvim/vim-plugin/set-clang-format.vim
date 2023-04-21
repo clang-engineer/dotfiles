@@ -1,5 +1,3 @@
-let g:clang_format#code_style = 'google'
-
 " set indent tab size to 2, use spaces instead of tabs
 let g:clang_format#style_options = {
 \ 'BasedOnStyle': 'Google',
