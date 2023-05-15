@@ -12,8 +12,6 @@ Plug 'alvan/vim-closetag'
 
 " === Code display === "
 Plug 'vim-airline/vim-airline'
-Plug 'nanotech/jellybeans.vim'
-Plug 'morhetz/gruvbox'
 
 " === Integrations === "
 Plug 'scrooloose/nerdtree'
@@ -35,6 +33,9 @@ Plug 'terryma/vim-multiple-cursors' " multiple word selecting
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vimwiki/vimwiki' " vim wiki plug
 Plug 'scrooloose/nerdcommenter'
+Plug 'rafi/awesome-vim-colorschemes' " 각종 색상 팔레트 
+Plug 'xolox/vim-misc' " 랜덤 컬러 선택기 의존 모듈
+Plug 'xolox/vim-colorscheme-switcher' " 랜덤 컬러 선택기
 
 " nvim-treesitter 구문 파싱 하이라이팅
 " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -53,5 +54,5 @@ endfor
 
 " Theme
 syntax enable " syntax highlighting. enable vs on
-colorscheme gruvbox
+colorscheme industry
 filetype plugin indent on " enable 
