@@ -54,5 +54,5 @@ endfor
 
 " Theme
 syntax enable " syntax highlighting. enable vs on
-colorscheme industry
+" colorscheme industry
 filetype plugin indent on " enable 
