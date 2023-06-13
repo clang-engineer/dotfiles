@@ -15,3 +15,5 @@ let g:clang_format#auto_format = 1
 
 
 autocmd FileType c,cpp nnoremap <buffer> <leader>cf :ClangFormat<CR>
+autocmd FileType c,cpp nnoremap <buffer> gg=G :ClangFormat<CR>
+
