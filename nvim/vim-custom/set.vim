@@ -11,6 +11,8 @@ set bs=indent,eol,start	" backspace 키 사용 가능
 set background=dark  " 검정배경을 사용할 때, (이 색상에 맞춰 문법 하이라이트 색상이 달라짐.)
 
 set wmnu	" tab 자동완성시 가능한 목록을 보여줌
+
+set expandtab " tab을 space로 사용
 set shiftwidth=2	" shift를 2칸으로 ( >, >>, <, << 등의 명령어)
 set tabstop=2		" tab을 2칸으로
 
