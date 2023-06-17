@@ -3,6 +3,9 @@ call plug#begin('~/.vim/plugged') " 플러그인 시작
 " === Language === "
 Plug 'tpope/vim-surround'
 Plug 'instant-markdown/vim-instant-markdown'
+Plug 'pangloss/vim-javascript' " JavaScript bundle for vim, this bundle provides syntax highlighting and improved indentation.
+Plug 'mxw/vim-jsx' " React jsx syntax highlighting and indenting for vim
+
 
 " === Completion === "
 Plug 'ervandew/supertab'
