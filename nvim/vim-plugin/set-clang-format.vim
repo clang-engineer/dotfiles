@@ -11,9 +11,10 @@ let g:clang_format#style_options = {
 let g:clang_format#detect_style_file = 1
 
 " auto format on save
-let g:clang_format#auto_format = 1
+" let g:clang_format#auto_format = 1
 
 
 autocmd FileType c,cpp nnoremap <buffer> <leader>cf :ClangFormat<CR>
 autocmd FileType c,cpp nnoremap <buffer> gg=G :ClangFormat<CR>
+autocmd BufWritePre *.c,*.cpp :ClangFormat
 
