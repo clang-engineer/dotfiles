@@ -38,6 +38,8 @@ Plug 'rafi/awesome-vim-colorschemes' " 각종 색상 팔레트
 Plug 'xolox/vim-misc' " 랜덤 컬러 선택기 의존 모듈
 Plug 'xolox/vim-colorscheme-switcher' " 랜덤 컬러 선택기
 
+Plug 'rking/ag.vim'
+
 " nvim-treesitter 구문 파싱 하이라이팅
 " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 " Tagbar 코드 뷰어 창
