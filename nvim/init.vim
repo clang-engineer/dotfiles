@@ -3,9 +3,7 @@ call plug#begin('~/.vim/plugged') " 플러그인 시작
 " === Language === "
 Plug 'tpope/vim-surround'  " surrouding parentheses, brackets, quotes, XML tags, and more. ys, ds, cs
 Plug 'instant-markdown/vim-instant-markdown' " preview markdown instantly
-Plug 'pangloss/vim-javascript' " JavaScript bundle for vim, this bundle provides syntax highlighting and improved indentation.
-Plug 'mxw/vim-jsx' " React jsx syntax highlighting and indenting for vim
-
+Plug 'sheerun/vim-polyglot'
 
 " === Completion === "
 Plug 'ervandew/supertab' " tab으로 삽입 마치는 기능
@@ -14,7 +12,7 @@ Plug 'raimondi/delimitmate' " quotes, parenthesis, brackets의 짝을 자동 삽
 Plug 'alvan/vim-closetag' " xml html 자동 종료 태그
 
 " === Code display === "
-Plug 'vim-airline/vim-airline' 하단에 문서 git + 문서 상태 표시
+Plug 'vim-airline/vim-airline' " 하단에 문서 git + 문서 상태 표시
 
 " === Integrations === "
 Plug 'scrooloose/nerdtree' " tree 탐색기
