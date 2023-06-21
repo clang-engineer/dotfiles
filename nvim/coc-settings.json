@@ -1,14 +1,5 @@
 {
-  /*
-   *"clangd.path": "~/.config/coc/extensions/coc-clangd-data/install/14.0.3/clangd_14.0.3/bin/clangd",
-   */
   // :CocInstall <plug-name>
   // coc-java, coc-tsserver, coc-eslint, coc-json, coc-css, coc-yaml
-
-  "languageserver": {
-    "clangd": {
-      "command": "clangd",
-      "filetypes": ["c", "cpp"]
-    }
-  }
+  "clangd.fallbackFlags": [ "-std=c++17" ]
 }
