@@ -1,5 +1,6 @@
 {
+  // :CocConfig 로 설정 파일 확인
   // :CocInstall <plug-name>
-  // coc-java, coc-tsserver, coc-eslint, coc-json, coc-css, coc-yaml
+  // coc-clangd, coc-java, coc-tsserver, coc-eslint, coc-json, coc-css, coc-yaml
   "clangd.fallbackFlags": [ "-std=c++17" ]
 }
