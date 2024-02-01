@@ -1,5 +1,5 @@
 # Github Personl account-yorez 
-Host github.com-yorez
+Host github.com-clang-engineer
 HostName github.com
 User git
     IdentityFile ~/.ssh/id_rsa_github_hhkbdev
