@@ -1,6 +1,6 @@
 [user]
-	email = yorez@naver.com
-	name = hhkbdev
+	email = clang.engineer@gmail.com
+	name = clang-engineer
 [includeIf "gitdir:~/Desktop/_zero/workspace/"]
     path = ~/Desktop/_zero/workspace/company.inc
 
@@ -10,3 +10,5 @@
 # 	name = zero
 [core]
 	autocrlf = input
+[commit]
+	template = .gitmessage

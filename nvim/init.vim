@@ -24,6 +24,8 @@ Plug 'rhysd/vim-clang-format' " vim을 위한 clang formatter
 Plug 'vim-airline/vim-airline-themes' " airline theme template
 Plug 'ctrlpvim/ctrlp.vim' " 파일 경로, 이름 기반의 탐색기
 Plug 'mhinz/vim-startify' " 시작 화면
+Plug 'xuyuanp/nerdtree-git-plugin' " nerdtree에 git 상태 표시
+
 
 " === Commands === "
 Plug 'preservim/tagbar' " tagbar 사용시
