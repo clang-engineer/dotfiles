@@ -3,13 +3,28 @@ Host github.com-clang-engineer
 HostName github.com
 User git
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
+
 # Github Business account-planit-zero
-Host github.com-planit-zero
+Host github.com-planit-zero 
 HostName github.com
 User git
     IdentityFile ~/.ssh/id_rsa_github_planit-zero
+
 # Gcp Personal account-yorez333
 Host gcp-ubuntu
 HostName 34.68.170.59
 User yorez333
     IdentityFile ~/.ssh/id_rsa_gcp_yorez333
+
+# Naver cloud Eras App server
+Host eras-app
+HostName 106.10.58.97
+Port 33322
+User planithc
+    IdentityFile ~/.ssh/id_rsa_github_clang-engineer
+
+# Naver cloud Eras Db server
+Host eras-db
+HostName 106.10.58.97
+Port 33323
+User planithc
