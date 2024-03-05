@@ -28,3 +28,17 @@ Host eras-db
 HostName 106.10.58.97
 Port 33323
 User planithc
+
+# Naver cloud Myhealthway Tibero DB server
+Host myhealthway-db
+HostName 101.79.10.170
+Port 33322
+User planithc
+    IdentityFile ~/.ssh/id_rsa_github_clang-engineer
+
+# Naver cloud Myhealthway App server
+Host myhealthway-app
+HostName 223.130.147.22
+Port 33322
+User planithc
+    IdentityFile ~/.ssh/id_rsa_github_clang-engineer
