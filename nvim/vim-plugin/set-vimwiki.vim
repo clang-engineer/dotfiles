@@ -26,8 +26,8 @@ function! NewTemplate()
     call add(l:template, '---')
     call add(l:template, '* TOC')
     call add(l:template, '{:toc}')
-    call add(l:template, '')
-    call add(l:template, '# ')
+"   call add(l:template, '')
+"   call add(l:template, '# ')
     call setline(1, l:template)
     execute 'normal! G'
     execute 'normal! $'
