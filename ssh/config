@@ -1,44 +1,91 @@
-# Github Personl account-yorez 
+# Personal
+## Github Personl account-yorez 
 Host github.com-clang-engineer
 HostName github.com
 User git
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
 
-# Github Business account-planit-zero
+## Github Business account-planit-zero
 Host github.com-planit-zero 
 HostName github.com
 User git
     IdentityFile ~/.ssh/id_rsa_github_planit-zero
 
-# Gcp Personal account-yorez333
+## Gcp Personal account-yorez333
 Host gcp-ubuntu
 HostName 34.68.170.59
 User yorez333
     IdentityFile ~/.ssh/id_rsa_gcp_yorez333
 
-# Naver cloud Eras App server
+# PlanitSquare
+## Naver cloud Eras App server
 Host eras-app
 HostName 106.10.58.97
 Port 33322
 User planithc
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
 
-# Naver cloud Eras Db server
+## Naver cloud Eras Db server
 Host eras-db
 HostName 106.10.58.97
 Port 33323
 User planithc
 
-# Naver cloud Myhealthway Tibero DB server
+## Naver cloud Myhealthway Tibero DB server
 Host myhealthway-db
 HostName 101.79.10.170
 Port 33322
 User planithc
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
 
-# Naver cloud Myhealthway App server
+## Naver cloud Myhealthway App server
 Host myhealthway-app
 HostName 223.130.147.22
 Port 33322
 User planithc
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
+
+
+
+# MZ
+## 1-1. MZ Cloud tibero1
+HOST mz-tibero1
+HostName 10.101.12.6
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+## 1-2. MZ Cloud tibero2
+HOST mz-tibero2
+HostName 10.101.12.7
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+## 2-1. MZ Cloud was1
+HOST mz-was1
+HostName 10.101.11.6
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+## 2-2. MZ Cloud was2
+HOST mz-was2
+HostName 10.101.11.7
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+## 3-1. MZ Cloud web1
+HOST mz-web1
+HostName 10.101.1.7
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+## 3-2. MZ Cloud web2
+HOST mz-web2
+HostName 10.101.1.8
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
