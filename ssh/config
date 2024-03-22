@@ -1,3 +1,8 @@
+# Global
+Host * 
+    ServerAliveInterval 120 
+# TCPKeepAlive no
+
 # Personal
 ## Github Personl account-yorez 
 Host github.com-clang-engineer
@@ -89,3 +94,5 @@ HostName 10.101.1.8
 Port 22
 User planithc
     IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+
