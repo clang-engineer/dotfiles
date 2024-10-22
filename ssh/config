@@ -1,7 +1,9 @@
 # Global
 Host * 
-    ServerAliveInterval 120 
-# TCPKeepAlive no
+    ServerAliveInterval 6000
+    TCPKeepAlive yes
+# ServerAliveInterval 600
+#    TCPKeepAlive yes
 
 # Personal
 ## Github Personl account-yorez 
@@ -23,18 +25,25 @@ User yorez333
     IdentityFile ~/.ssh/id_rsa_gcp_yorez333
 
 # PlanitSquare
-## Naver cloud Eras App server
-Host eras-app
+## Naver cloud Eras Dev App server
+Host eras-app-dev
 HostName 106.10.58.97
 Port 33322
 User planithc
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
 
-## Naver cloud Eras Db server
+## Naver cloud Eras Prod Db server
 Host eras-db
 HostName 106.10.58.97
 Port 33323
 User planithc
+
+## Naver cloud Eras Prod app server
+Host eras-app-prod
+HostName 106.10.58.97
+Port 33324
+User planithc
+    IdentityFile ~/.ssh/id_rsa_github_clang-engineer
 
 ## Naver cloud Myhealthway Tibero DB server
 Host myhealthway-db
@@ -96,3 +105,30 @@ User planithc
     IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
 
 
+## 3-3. MZ mon proxy
+HOST mz-monproxy
+HostName 10.101.1.9
+Port 22
+User planithc
+    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+
+
+
+## Kcure dev
+Host kcure-dev
+HostName 106.10.58.97
+Port 33325
+User planithc
+
+
+## Kcure prod app
+Host kcure-prod-app
+HostName 172.16.35.21
+Port 1230
+User planithc
+
+## Kcure prod dev
+Host kcure-prod-db
+HostName 172.16.38.21
+Port 1230
+User planithc
