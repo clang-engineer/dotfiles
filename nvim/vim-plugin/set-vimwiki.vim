@@ -1,9 +1,9 @@
- let g:vimwiki_list = [{'path': '~/yorez.github.io/_wikis/', 'ext': '.md', 'diary_rel_path': '.'}]
+ let g:vimwiki_list = [{'path': '~/clang-engineer.github.io/_posts/', 'ext': '.md', 'diary_rel_path': '.'}]
  let g:vimwiki_conceallevel = 0
 
 augroup vimwikiauto
-    autocmd BufWritePre *wikis/*.md call LastModified()
-    autocmd BufRead,BufNewFile *wikis/*.md call NewTemplate()
+    autocmd BufWritePre *posts/*.md call LastModified()
+    autocmd BufRead,BufNewFile *posts/*.md call NewTemplate()
 augroup END
 
 function! NewTemplate()
@@ -13,19 +13,15 @@ function! NewTemplate()
 
     let l:template = []
     call add(l:template, '---')
-    call add(l:template, 'layout  : wiki')
-    call add(l:template, 'title   : ')
-    call add(l:template, 'summary : ')
-    call add(l:template, 'date    : ' . strftime('%Y-%m-%d %H:%M:%S +0900'))
-    call add(l:template, 'updated : ' . strftime('%Y-%m-%d %H:%M:%S +0900'))
-    call add(l:template, 'tags    : ')
-    call add(l:template, 'toc     : true')
-    call add(l:template, 'public  : true')
-    call add(l:template, 'parent  : ')
-    call add(l:template, 'latex   : false')
+    call add(l:template, 'title       : ')
+    call add(l:template, 'description : ')
+    call add(l:template, 'date        : ' . strftime('%Y-%m-%d %H:%M:%S +0900'))
+    call add(l:template, 'updated     : ' . strftime('%Y-%m-%d %H:%M:%S +0900'))
+    call add(l:template, 'categories  : []')
+    call add(l:template, 'tags        : []') 
+    call add(l:template, 'pin         : false')
+    call add(l:template, 'hidden      : false')
     call add(l:template, '---')
-    call add(l:template, '* TOC')
-    call add(l:template, '{:toc}')
 "   call add(l:template, '')
 "   call add(l:template, '# ')
     call setline(1, l:template)
