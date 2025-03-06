@@ -50,6 +50,9 @@ Plug 'rking/ag.vim'
 " Plug 'ronakg/quickr-cscope.vim'
 " VIM GAS(GNU ASsembler) Highlighting
 " Plug 'Shirk/vim-gas'
+"
+Plug 'dhruvasagar/vim-table-mode'
+
 
 call plug#end()
 
