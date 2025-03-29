@@ -104,34 +104,27 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+ 
+# c++ alias
+alias g++="g++ -std=c++17"
+alias clang++="clang++ -std=c++17"
 
-# custom setting
+# init zsh plugin
+ZSH_PLUGIN_HOME=$HOMEBREW_PREFIX/share  # for linux: ~/.oh-my-zsh/custom/custom/plugins
+source $ZSH_PLUGIN_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh # source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
+# virtual config
 # rbenv path - 루비버전 셋팅시 버전 인식 필요
 eval "$(rbenv init - zsh)"
 
 # nodeenv init
 # eval "$(nodenv init -)"
 
-alias g++="g++ -std=c++17"
-alias clang++="clang++ -std=c++17"
-
-ZSH_PLUGIN_HOME=$HOMEBREW_PREFIX/share  # for linux: ~/.oh-my-zsh/custom/custom/plugins
-
-source $ZSH_PLUGIN_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-# source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
 # nvm config - with brew
 export NVM_DIR=~/.nvm
 source $(brew --prefix nvm)/nvm.sh
 
 # jenv config
-# echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
-# echo 'eval "$(jenv init -)"' >> ~/.zshrc
-export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
+export PATH="$HOME/.jenv/bin:$PATH" # echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
+eval "$(jenv init -)" # echo 'eval "$(jenv init -)"' >> ~/.zshrc
