@@ -80,7 +80,7 @@ plugins=(
     zsh-autosuggestions
 )
 
-source ~/.oh-my-zsh
+source ~/.oh-my-zsh/oh-my-zsh.sh
 
 # User configuration
 
@@ -115,7 +115,7 @@ alias clang++="clang++ -std=c++17"
 # init zsh plugin
 ZSH_PLUGIN_HOME=~/.oh-my-zsh/custom/plugins
 source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+source $ZSH_PLUGIN_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 # virtual config
 # rbenv path - 루비버전 셋팅시 버전 인식 필요
