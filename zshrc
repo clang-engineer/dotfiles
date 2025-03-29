@@ -72,12 +72,15 @@ echo $RANDOM_THEME
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    git
+    # pre install
+    git brew autojump 
+
+    # pre download
     zsh-syntax-highlighting
     zsh-autosuggestions
-    brew
-    autojump
 )
+
+source ~/.oh-my-zsh
 
 # User configuration
 
@@ -110,9 +113,9 @@ alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
 
 # init zsh plugin
-ZSH_PLUGIN_HOME=$HOMEBREW_PREFIX/share  # for linux: ~/.oh-my-zsh/custom/custom/plugins
-source $ZSH_PLUGIN_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh # source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+ZSH_PLUGIN_HOME=~/.oh-my-zsh/custom/plugins
+source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 # virtual config
 # rbenv path - 루비버전 셋팅시 버전 인식 필요
