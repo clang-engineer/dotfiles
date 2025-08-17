@@ -72,14 +72,15 @@ echo $RANDOM_THEME
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    git
+    # pre install
+    git brew autojump 
+
+    # pre download
     zsh-syntax-highlighting
     zsh-autosuggestions
-    brew
-    autojump
 )
 
-source $ZSH/oh-my-zsh.sh
+source ~/.oh-my-zsh/oh-my-zsh.sh
 
 # User configuration
 
@@ -106,25 +107,22 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+ 
+# c++ alias
+alias g++="g++ -std=c++17"
+alias clang++="clang++ -std=c++17"
 
-# custom setting
+# init zsh plugin
+ZSH_PLUGIN_HOME=~/.oh-my-zsh/custom/plugins
+source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+source $ZSH_PLUGIN_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
+# virtual config
 # rbenv path - 루비버전 셋팅시 버전 인식 필요
 eval "$(rbenv init - zsh)"
 
 # nodeenv init
 # eval "$(nodenv init -)"
-
-alias g++="g++ -std=c++17"
-alias clang++="clang++ -std=c++17"
-
-source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-# source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # nvm config - with brew
 export NVM_DIR=~/.nvm
