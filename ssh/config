@@ -67,42 +67,42 @@ HOST mz-tibero1
 HostName 10.101.12.6
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 ## 1-2. MZ Cloud tibero2
 HOST mz-tibero2
 HostName 10.101.12.7
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 ## 2-1. MZ Cloud was1
 HOST mz-was1
 HostName 10.101.11.6
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 ## 2-2. MZ Cloud was2
 HOST mz-was2
 HostName 10.101.11.7
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 ## 3-1. MZ Cloud web1
 HOST mz-web1
 HostName 10.101.1.7
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 ## 3-2. MZ Cloud web2
 HOST mz-web2
 HostName 10.101.1.8
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 
 ## 3-3. MZ mon proxy
@@ -110,7 +110,7 @@ HOST mz-monproxy
 HostName 10.101.1.9
 Port 22
 User planithc
-    IdentityFile /Users/zero/Desktop/_zero/workspace/fhir/fhir-key.pem
+    IdentityFile /Users/zero/Desktop/_zero/workspace/myhealthway/fhir-key.pem
 
 
 
@@ -132,3 +132,30 @@ Host kcure-prod-db
 HostName 172.16.38.21
 Port 1230
 User planithc
+
+
+## shine
+Host shine
+Hostname 106.10.43.152
+Port 30022
+User shine
+
+## shine
+Host snuh-sftp
+Hostname 223.130.150.2	
+Port 22
+User planit
+
+
+
+## keras-vpc
+Host keras-vpc
+Hostname 101.79.9.95
+Port 22
+User planitsquare
+
+## keras-vpc-dev
+Host keras-vpc-dev
+Hostname 49.50.132.171
+Port 22
+User planitsquare
