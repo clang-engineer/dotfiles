@@ -135,3 +135,8 @@ source $(brew --prefix nvm)/nvm.sh
 # echo 'eval "$(jenv init -)"' >> ~/.zshrc
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+
+# pyenv
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
