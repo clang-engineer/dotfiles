@@ -7,3 +7,5 @@ id_rsa*
 known_hosts*
 nvim/pack
 Brewfile.lock.json
+
+*.swp
