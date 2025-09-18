@@ -1,6 +1,9 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.ai.copilot"
+    "lazyvim.plugins.extras.ai.copilot",
+    "lazyvim.plugins.extras.ai.copilot-chat",
+    "lazyvim.plugins.extras.linting.eslint",
+    "lazyvim.plugins.extras.formatting.prettier"
   ],
   "install_version": 8,
   "news": {
@@ -8,3 +11,4 @@
   },
   "version": 8
 }
+
