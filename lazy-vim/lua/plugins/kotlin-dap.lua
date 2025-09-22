@@ -43,6 +43,7 @@ return {
           -- First, run
           -- ./gradlew --info cleanTest test --debug-jvm
           -- then attach the debugger to it
+          -- :lua require('dapui').toggle()
           type = "kotlin",
           request = "attach",
           name = "Attach to debugging session",
