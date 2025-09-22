@@ -34,7 +34,7 @@ return {
           jsonLogFile = "",
           enableJsonLogging = false,
         },
-        -- attach 모드 ./gradlew --debug-jvm 로 실행한 프로세스에 연결
+        -- attach 모드 ./gradlew --debug-jvm 로 실행한 프로세스에 연결, :lua require('dapui').open()
         {
           type = "kotlin",
           request = "attach",
