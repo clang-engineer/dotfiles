@@ -3,5 +3,5 @@
 -- Add any additional options here
 --
 
--- set norelativenumber
-vim.opt.relativenumber = false
+require("config.options.default")
+require("config.options.dbui")
