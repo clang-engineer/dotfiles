@@ -1,3 +1,4 @@
+-- conform.nvim: 포맷터 설정
 return {
   "stevearc/conform.nvim",
   opts = {
