@@ -43,6 +43,7 @@ return {
           -- Use this for unit tests
           -- First, run
           -- ./gradlew --info cleanTest test --debug-jvm
+          -- ./gradlew -x webapp bootRun --jvm-debug
           -- then attach the debugger to it
           -- :lua require('dapui').toggle()
           type = "kotlin",
