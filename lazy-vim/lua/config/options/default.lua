@@ -5,7 +5,7 @@ vim.opt.relativenumber = false
 vim.opt.conceallevel = 0
 
 -- set dianostic virtual text
-vim.diagnostic.enable(false)
+-- vim.diagnostic.enable(false)
 -- vim.diagnostic.config({
 --   severity_sort = true,
 --   virtual_text = {
