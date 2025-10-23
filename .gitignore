@@ -5,7 +5,7 @@ tags
 # private-key, public-key ignore
 id_rsa*
 known_hosts*
-nvim/pack
+configs/nvim-classic/pack
 Brewfile.lock.json
 
 *.swp
