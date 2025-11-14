@@ -138,3 +138,5 @@ eval "$(jenv init -)"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+
+eval $(thefuck --alias)
