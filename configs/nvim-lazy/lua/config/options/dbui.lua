@@ -1,6 +1,6 @@
 vim.g.dbs = {
   {
-    name = "snuheras-docker",
-    url = "postgres://snuheras@localhost:5432/snuheras",
+    name = "local postgres",
+    url = "postgres://snuheras@localhost:5432/eras",
   },
 }
