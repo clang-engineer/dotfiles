@@ -1,6 +1,6 @@
 vim.g.dbs = {
   {
-    name = "myuser-docker",
-    url = "postgres://myuser@localhost:5432/myuser",
+    name = "local postgres",
+    url = "postgres://myuser@localhost:5432/mydb",
   },
 }
