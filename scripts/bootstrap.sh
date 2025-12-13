@@ -54,7 +54,9 @@ esac
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HOME_SOURCE_DIR="$REPO_DIR/home"
 CONFIGS_DIR="$REPO_DIR/configs"
+MODULES_DIR="$REPO_DIR/scripts/modules"
 
+# Utility functions
 link_path() {
   local src="$1"
   local dest="$2"
@@ -93,36 +95,17 @@ ensure_dir() {
   fi
 }
 
-if [[ -d "$HOME_SOURCE_DIR" ]]; then
-  while IFS= read -r src; do
-    rel="${src#$HOME_SOURCE_DIR/}"
-    dest="$HOME/$rel"
-    dest_dir="$(dirname "$dest")"
-    [[ -d "$dest_dir" ]] || ensure_dir "$dest_dir"
-    link_path "$src" "$dest"
-  done < <(find "$HOME_SOURCE_DIR" -mindepth 1 -maxdepth 1 -print | sort)
-else
-  printf '⚠︎ home directory missing at %s; skipping base dotfiles\n' "$HOME_SOURCE_DIR"
-fi
+# Source modules
+source "$MODULES_DIR/install-oh-my-zsh.sh"
+source "$MODULES_DIR/install-zsh-plugins.sh"
+source "$MODULES_DIR/link-dotfiles.sh"
+source "$MODULES_DIR/link-nvim-config.sh"
 
-ensure_dir "$HOME/.config"
-
-case "$VIM_FLAVOR" in
-  lazy)
-    if [[ -d "$CONFIGS_DIR/nvim-lazy" ]]; then
-      link_path "$CONFIGS_DIR/nvim-lazy" "$HOME/.config/nvim"
-    else
-      printf '⚠︎ lazy Neovim config missing; skipping Neovim link\n'
-    fi
-    ;;
-  classic)
-    if [[ -d "$CONFIGS_DIR/nvim-classic" ]]; then
-      link_path "$CONFIGS_DIR/nvim-classic" "$HOME/.config/nvim"
-    else
-      printf '⚠︎ classic Neovim config missing; skipping Neovim link\n'
-    fi
-    ;;
-esac
+# Execute installation steps
+install_oh_my_zsh
+install_zsh_plugins
+link_dotfiles "$HOME_SOURCE_DIR"
+link_nvim_config "$CONFIGS_DIR" "$VIM_FLAVOR"
 
 if command -v tmux >/dev/null 2>&1; then
   tmux source-file "$HOME/.tmux.conf" || true
