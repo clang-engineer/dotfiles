@@ -23,3 +23,9 @@
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
+
+[includeIf "gitdir:/Users/zero/Desktop/_zero/private/"]
+    path = /Users/zero/Desktop/_zero/private/.gitconfig.inc
+
+[includeIf "gitdir:/Users/zero/Desktop/_zero/workspace/"]
+    path = /Users/zero/Desktop/_zero/workspace/.gitconfig.inc
