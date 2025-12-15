@@ -18,6 +18,58 @@
 
 필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file Brewfile`를 실행하세요.
 
+## GitHub 다중 계정 관리
+
+여러 GitHub 계정(개인/회사)을 한 PC에서 관리하기 위한 스크립트를 제공합니다.
+
+### 통합 설정 (추천)
+```sh
+./scripts/setup-github-account.sh
+```
+대화형 프롬프트로 다음을 한번에 설정합니다:
+1. SSH 키 생성
+2. SSH config 추가
+3. Workspace별 Git 사용자 설정
+
+### 개별 스크립트
+
+필요한 부분만 설정하고 싶다면:
+
+**1. SSH 키 생성**
+```sh
+./scripts/generate-ssh-key.sh
+./scripts/generate-ssh-key.sh myusername my@email.com
+```
+
+**2. SSH config 추가**
+```sh
+./scripts/add-ssh-config.sh
+./scripts/add-ssh-config.sh myusername
+```
+
+**3. Git includeIf 설정**
+```sh
+./scripts/setup-git-includeif.sh
+./scripts/setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
+```
+
+### 사용 예시
+
+설정 후 다음과 같이 사용합니다:
+
+```sh
+# 리포지토리 클론
+git clone git@github.com-myusername:username/repo.git
+
+# 기존 리포지토리 remote URL 변경
+git remote set-url origin git@github.com-myusername:username/repo.git
+
+# SSH 연결 테스트
+ssh -T git@github.com-myusername
+```
+
+workspace 경로에서 작업하면 해당 계정의 Git 사용자 정보가 자동으로 적용됩니다.
+
 ## 수동 링크 (선택 사항)
 각 항목을 개별적으로 링크하고 싶다면 다음 명령을 참고하세요.
 ```sh
