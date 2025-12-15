@@ -98,12 +98,14 @@ ensure_dir() {
 # Source modules
 source "$MODULES_DIR/install-oh-my-zsh.sh"
 source "$MODULES_DIR/install-zsh-plugins.sh"
+source "$MODULES_DIR/install-tpm.sh"
 source "$MODULES_DIR/link-dotfiles.sh"
 source "$MODULES_DIR/link-nvim-config.sh"
 
 # Execute installation steps
 install_oh_my_zsh
 install_zsh_plugins
+install_tpm
 link_dotfiles "$HOME_SOURCE_DIR"
 link_nvim_config "$CONFIGS_DIR" "$VIM_FLAVOR"
 
