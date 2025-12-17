@@ -113,4 +113,9 @@ if command -v tmux >/dev/null 2>&1; then
   tmux source-file "$HOME/.tmux.conf" || true
 fi
 
+if command -v jenv >/dev/null 2>&1; then
+  jenv enable-plugin export || true
+  printf '→ Enabled jenv export plugin\n'
+fi
+
 printf '\nAll done. Review warnings above and rerun with --force if needed.\n'
