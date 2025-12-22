@@ -1,3 +1,5 @@
+-- colorscheme: 테마 설정 (tokyonight, gruvbox, catppuccin)
+-- catppuccin은 다양한 플러그인과의 통합 설정 포함
 return {
   {
     "LazyVim/LazyVim",

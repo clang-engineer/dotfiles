@@ -1,3 +1,4 @@
+-- claude-code.nvim: Claude AI 코드 어시스턴트를 Neovim에서 사용하기 위한 플러그인
 return {
   "greggh/claude-code.nvim",
   dependencies = {

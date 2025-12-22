@@ -1,3 +1,5 @@
+-- codex.nvim: OpenAI Codex를 Neovim에서 사용하기 위한 플러그인
+-- 플로팅 윈도우로 AI 코딩 어시스턴트 제공 (<leader>cc로 토글)
 return {
   "johnseth97/codex.nvim",
   lazy = true,
