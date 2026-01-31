@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # Symlink Neovim config
+source "$(dirname "${BASH_SOURCE[0]}")/context.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 link_nvim_config() {
   local configs_dir="$1"
   local vim_flavor="$2"
