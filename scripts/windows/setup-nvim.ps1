@@ -1,7 +1,7 @@
 # Windows Neovim setup using Junction
 # Usage: Run in PowerShell
 
-$SourceConfig = "C:\Users\$env:USERNAME\dotfiles\configs\nvim-lazy"
+$SourceConfig = "C:\Users\$env:USERNAME\dotfiles\nvim\lazy"
 $NvimConfigPath = Join-Path $env:LOCALAPPDATA "nvim"
 
 Write-Host "Source: $SourceConfig" -ForegroundColor Cyan
