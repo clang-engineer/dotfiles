@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # Symlink dotfiles from home/ directory
+source "$(dirname "${BASH_SOURCE[0]}")/context.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 link_dotfiles() {
   local home_source_dir="$1"
 
