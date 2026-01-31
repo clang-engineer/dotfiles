@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Install zsh plugins if oh-my-zsh is installed
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 install_zsh_plugins() {
   if [[ -d "$HOME/.oh-my-zsh" ]]; then
     ZSH_PLUGIN_DIR="$HOME/.oh-my-zsh/custom/plugins"
