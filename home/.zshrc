@@ -139,5 +139,10 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
-# autojump (apt install)
-[[ -s /usr/share/autojump/autojump.sh ]] && source /usr/share/autojump/autojump.sh
+# autojump
+if command -v brew >/dev/null 2>&1; then
+  AUTOJUMP_SH="$(brew --prefix 2>/dev/null)/etc/profile.d/autojump.sh"
+  [[ -s "$AUTOJUMP_SH" ]] && source "$AUTOJUMP_SH"
+elif [[ -s /usr/share/autojump/autojump.sh ]]; then
+  source /usr/share/autojump/autojump.sh
+fi
