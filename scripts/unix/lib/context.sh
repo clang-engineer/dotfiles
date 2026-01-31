@@ -3,10 +3,10 @@
 set -euo pipefail
 
 if [[ -z "${REPO_DIR:-}" ]]; then
-  REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 fi
 
-SCRIPTS_DIR="$REPO_DIR/scripts"
+SCRIPTS_DIR="$REPO_DIR/scripts/unix"
 HOME_SOURCE_DIR="$REPO_DIR/home"
 CONFIGS_DIR="$REPO_DIR/configs"
 
