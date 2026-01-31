@@ -7,4 +7,4 @@ source "$SCRIPTS_DIR/lib/link-nvim-config.sh"
 
 VIM_FLAVOR="${VIM_FLAVOR:-lazy}"
 
-link_nvim_config "$CONFIGS_DIR" "$VIM_FLAVOR"
+link_nvim_config "$NVIM_DIR" "$VIM_FLAVOR"

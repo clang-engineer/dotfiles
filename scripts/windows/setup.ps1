@@ -109,7 +109,7 @@ if ($TerminalSettingsPath) {
 
 # Link Neovim config
 Write-Host "==> Linking Neovim config ($NvimFlavor)" -ForegroundColor Cyan
-$SourceConfig = "C:\Users\$env:USERNAME\dotfiles\configs\nvim-$NvimFlavor"
+$SourceConfig = "C:\Users\$env:USERNAME\dotfiles\nvim\$NvimFlavor"
 $NvimConfigPath = Join-Path $env:LOCALAPPDATA "nvim"
 
 if (-not (Test-Path $SourceConfig)) {
