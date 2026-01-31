@@ -73,7 +73,7 @@ echo $RANDOM_THEME
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     # pre install
-    git brew autojump 
+    git brew
 
     # pre download
     zsh-syntax-highlighting
@@ -140,3 +140,6 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 eval $(thefuck --alias)
+
+# autojump (apt install)
+[[ -s /usr/share/autojump/autojump.sh ]] && source /usr/share/autojump/autojump.sh
