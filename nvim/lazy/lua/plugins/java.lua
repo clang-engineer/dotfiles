@@ -2,32 +2,16 @@ return {
   {
     "mfussenegger/nvim-jdtls",
     opts = function(_, opts)
-      local function env(name)
-        local value = vim.env[name]
-        if value == nil or value == "" then
-          return nil
-        end
-        return value
-      end
+      -- Project-level .nvim.lua should set:
+      --   vim.env.JDTLS_JAVA_HOME and vim.env.GRADLE_JAVA_HOME
+      -- Example:
+      --   vim.env.JDTLS_JAVA_HOME = "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+      --   vim.env.GRADLE_JAVA_HOME = "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home"
+      local java_home = vim.env.JDTLS_JAVA_HOME
+      local gradle_java_home = vim.env.GRADLE_JAVA_HOME
 
-      local function mac_java_home(version)
-        if vim.fn.has("macunix") ~= 1 then
-          return nil
-        end
-        local cmd = string.format("/usr/libexec/java_home -v %s", version)
-        local value = vim.fn.trim(vim.fn.system(cmd))
-        if value == "" then
-          return nil
-        end
-        return value
-      end
-
-      -- Prefer explicit env vars, then OS-specific discovery.
-      local java_home = env("JDTLS_JAVA_HOME") or mac_java_home("21") or env("JAVA_HOME")
-      local gradle_java_home = env("GRADLE_JAVA_HOME") or mac_java_home("17")
-
-      -- If no JDKs are available, keep defaults and let LazyVim handle it.
-      if java_home == nil then
+      -- If no JDKs are provided, keep defaults and let LazyVim handle it.
+      if java_home == nil or java_home == "" then
         return opts
       end
 
@@ -41,7 +25,7 @@ return {
 
       opts.jdtls = vim.tbl_deep_extend("force", opts.jdtls or {}, {
         cmd = cmd,
-        cmd_env = gradle_java_home and {
+        cmd_env = (gradle_java_home ~= nil and gradle_java_home ~= "") and {
           JAVA_HOME = gradle_java_home,
           GRADLE_OPTS = "-Dorg.gradle.java.home=" .. gradle_java_home,
         } or nil,
@@ -53,7 +37,7 @@ return {
       opts.settings = vim.tbl_deep_extend("force", opts.settings or {}, {
         java = {
           import = {
-            gradle = gradle_java_home and {
+            gradle = (gradle_java_home ~= nil and gradle_java_home ~= "") and {
               java = {
                 home = gradle_java_home,
               },
