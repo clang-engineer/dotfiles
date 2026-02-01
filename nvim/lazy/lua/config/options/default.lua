@@ -4,6 +4,10 @@ vim.opt.relativenumber = false
 -- set conceallevel
 vim.opt.conceallevel = 0
 
+-- allow per-project .nvim.lua
+vim.opt.exrc = true
+vim.opt.secure = true
+
 -- set dianostic virtual text
 -- vim.diagnostic.enable(false)
 vim.diagnostic.config({
