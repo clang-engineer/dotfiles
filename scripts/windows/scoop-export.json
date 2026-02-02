@@ -1,0 +1,134 @@
+{
+    "buckets": [
+        {
+            "Name": "main",
+            "Source": "https://github.com/ScoopInstaller/Main.git",
+            "Updated": {
+                "value": "\/Date(1769979978000)\/",
+                "DisplayHint": 2,
+                "DateTime": "2026년 2월 2일 월요일 오전 6:06:18"
+            },
+            "Manifests": 1425
+        },
+        {
+            "Name": "extras",
+            "Source": "https://github.com/ScoopInstaller/Extras",
+            "Updated": {
+                "value": "\/Date(1769977817000)\/",
+                "DisplayHint": 2,
+                "DateTime": "2026년 2월 2일 월요일 오전 5:30:17"
+            },
+            "Manifests": 2257
+        },
+        {
+            "Name": "nerd-fonts",
+            "Source": "https://github.com/matthewjberger/scoop-nerd-fonts",
+            "Updated": {
+                "value": "\/Date(1769891549000)\/",
+                "DisplayHint": 2,
+                "DateTime": "2026년 2월 1일 일요일 오전 5:32:29"
+            },
+            "Manifests": 367
+        }
+    ],
+    "apps": [
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "7zip",
+            "Version": "25.01",
+            "Updated": "\/Date(1767744001173)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "fd",
+            "Version": "10.3.0",
+            "Updated": "\/Date(1767745612371)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "fzf",
+            "Version": "0.67.0",
+            "Updated": "\/Date(1767744400852)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "git-lfs",
+            "Version": "3.7.1",
+            "Updated": "\/Date(1768449292409)\/"
+        },
+        {
+            "Info": "",
+            "Source": "extras",
+            "Name": "jenv",
+            "Version": "2.2.1",
+            "Updated": "\/Date(1767932036162)\/"
+        },
+        {
+            "Info": "",
+            "Source": "nerd-fonts",
+            "Name": "JetBrainsMono-NF",
+            "Version": "3.4.0",
+            "Updated": "\/Date(1767758912065)\/"
+        },
+        {
+            "Info": "",
+            "Source": "extras",
+            "Name": "lazygit",
+            "Version": "0.58.0",
+            "Updated": "\/Date(1767744171514)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "mingw",
+            "Version": "15.2.0-rt_v13-rev0",
+            "Updated": "\/Date(1767744070077)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "neovim",
+            "Version": "0.11.5",
+            "Updated": "\/Date(1767743015001)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "nvm",
+            "Version": "1.2.2",
+            "Updated": "\/Date(1767931870667)\/"
+        },
+        {
+            "Info": "",
+            "Source": "C:\\Users\\planit\\scoop\\buckets\\main\\bucket\\opencode.json",
+            "Name": "opencode",
+            "Version": "1.1.48",
+            "Updated": "\/Date(1769993146627)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "ripgrep",
+            "Version": "15.1.0",
+            "Updated": "\/Date(1767744428800)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "starship",
+            "Version": "1.24.2",
+            "Updated": "\/Date(1767744346958)\/"
+        },
+        {
+            "Info": "",
+            "Source": "main",
+            "Name": "zoxide",
+            "Version": "0.9.8",
+            "Updated": "\/Date(1767744208698)\/"
+        }
+    ]
+}
