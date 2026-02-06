@@ -106,6 +106,66 @@ jdtls wrapper가 Python 필요:
 scoop install python
 ```
 
+### QueryDSL Q-클래스 인식 안 됨
+
+Q-클래스가 생성되지 않았거나 jdtls가 generated 소스 경로를 못 찾는 경우.
+
+**1. Q-클래스 생성:**
+
+```powershell
+# Windows
+cd C:\Users\planit\Desktop\workspace\{project}
+.\gradlew compileQuerydsl
+# 또는
+.\gradlew compileJava
+```
+
+```bash
+# macOS/Linux
+./gradlew compileQuerydsl
+```
+
+**2. nvim에서 LSP 재시작:**
+
+```vim
+:LspRestart
+```
+
+**3. 여전히 안 되면:**
+
+```powershell
+# 1. build 폴더 삭제 후 재빌드
+.\gradlew clean build
+
+# 2. jdtls 캐시 삭제
+rm -r -Force "$env:APPDATA\jdtls"
+
+# 3. .classpath, .project 삭제 (jdtls가 새로 생성)
+rm .classpath, .project -ErrorAction SilentlyContinue
+```
+
+```bash
+# macOS/Linux
+./gradlew clean build
+rm -rf ~/Library/Caches/jdtls  # macOS
+rm -rf ~/.cache/jdtls          # Linux
+rm -f .classpath .project
+```
+
+그 후 nvim 재시작.
+
+**4. generated 소스 경로 확인 (build.gradle):**
+
+```groovy
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated/querydsl']
+        }
+    }
+}
+```
+
 ## 관련 파일
 
 - `dotfiles/nvim/lazy/lua/config/java-env.lua` - 메인 모듈
