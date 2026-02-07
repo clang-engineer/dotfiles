@@ -4,10 +4,21 @@
 
 ```
 dotfiles/
-└── nvim/lazy/
-    ├── init.lua                      # 시작 시 java-env.setup() 호출
-    └── lua/config/java-env.lua       # Java 환경 설정 모듈
+├── nvim/lazy/
+│   ├── init.lua                      # 시작 시 java-env.setup() 호출
+│   └── lua/config/java-env.lua       # Java 환경 설정 모듈
+├── nvim-lua/
+│   ├── unix.lua                      # macOS/Linux용 .nvim.lua 템플릿
+│   ├── windows.lua                   # Windows용 .nvim.lua 템플릿
+│   ├── nvim-lua.sh                   # 현재 디렉터리에 템플릿 링크 생성
+│   └── nvim-lua.ps1                  # PowerShell 버전
+├── scripts/unix/nvim-java.sh         # config.java-env를 호출하는 .nvim.lua 생성
+└── scripts/windows/nvim-java.ps1     # PowerShell 버전
 ```
+
+- `nvim/lazy/lua/config/java-env.lua`: OS별 Java 경로를 탐색해 `vim.env.JDTLS_JAVA_HOME`과 `vim.env.GRADLE_JAVA_HOME`을 채웁니다.
+- `nvim-lua/*.lua`: 프로젝트별 `.nvim.lua`를 심볼릭 링크로 공유할 수 있는 단순 템플릿입니다. macOS/Linux는 `java_home` 결과를, Windows는 사전 지정한 환경 변수를 사용합니다.
+- `scripts/*/nvim-java.*`: 현재 디렉터리에 `require("config.java-env").setup()` 호출을 포함한 `.nvim.lua`를 생성합니다.
 
 ## 작동 방식
 
@@ -32,19 +43,26 @@ dotfiles/
 require("config.java-env").setup({ jdtls = "21", gradle = "17" })
 ```
 
-### 스크립트로 .nvim.lua 생성
-
-```powershell
-# Windows
-~/dotfiles/scripts/windows/nvim-java.ps1                    # 기본값
-~/dotfiles/scripts/windows/nvim-java.ps1 -Jdtls 21 -Gradle 17  # 커스텀
-```
+동일한 내용을 자동으로 작성하고 싶다면 프로젝트 루트에서 다음 스크립트를 실행하세요.
 
 ```bash
-# macOS/Linux
-~/dotfiles/scripts/unix/nvim-java.sh           # 기본값
-~/dotfiles/scripts/unix/nvim-java.sh 21 17     # 커스텀
+~/dotfiles/scripts/unix/nvim-java.sh 21 17
 ```
+
+```powershell
+~/dotfiles/scripts/windows/nvim-java.ps1 -Jdtls 21 -Gradle 17
+```
+
+## .nvim.lua 템플릿 & 스크립트
+
+| 목적 | macOS/Linux | Windows | 결과 |
+| --- | --- | --- | --- |
+| `config.java-env` 기반 `.nvim.lua` 생성 | `~/dotfiles/scripts/unix/nvim-java.sh [JDTLS] [GRADLE]` | `~/dotfiles/scripts/windows/nvim-java.ps1 [-Jdtls <ver>] [-Gradle <ver>]` | `.nvim.lua`에 `require("config.java-env").setup()` 호출이 작성되고, 전달한 버전 값이 옵션으로 들어갑니다. |
+| OS별 템플릿을 링크 | `~/dotfiles/nvim-lua/nvim-lua.sh` | `~/dotfiles/nvim-lua/nvim-lua.ps1` | 현재 디렉터리의 `.nvim.lua`가 `nvim-lua/unix.lua` 또는 `nvim-lua/windows.lua`와 연결되어 `vim.env.*` 값을 직접 설정합니다. |
+
+- 스크립트는 프로젝트 루트에서 실행하세요. 기존 `.nvim.lua`가 있다면 덮어씌워집니다.
+- 템플릿 링크 방식은 간단하지만 버전 전환 시 템플릿 파일을 직접 수정해야 합니다. 다양한 프로젝트에서 서로 다른 버전을 쓴다면 `config.java-env` 호출 방식을 권장합니다.
+- `nvim-lua/unix.lua`는 `/usr/libexec/java_home -v 21`·`-v 11` 결과를 읽고, `nvim-lua/windows.lua`는 `JAVA21_HOME`·`JAVA11_HOME` 환경 변수를 사용합니다. 시스템 단위 기본값을 관리할 때 유용합니다.
 
 ## Java 경로 탐색 순서
 
@@ -172,3 +190,4 @@ sourceSets {
 - `dotfiles/nvim/lazy/lua/plugins/java.lua` - nvim-jdtls 플러그인 설정
 - `dotfiles/scripts/windows/nvim-java.ps1` - Windows 스크립트
 - `dotfiles/scripts/unix/nvim-java.sh` - Unix 스크립트
+- `dotfiles/nvim-lua/` - OS별 `.nvim.lua` 템플릿과 링크 스크립트

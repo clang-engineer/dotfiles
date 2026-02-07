@@ -6,15 +6,22 @@
 - `scripts/`: `bootstrap.sh` 등 자동화 스크립트가 위치합니다.
 
 ## 빠른 시작
+### macOS/Linux
 ```sh
-./scripts/bootstrap.sh
+./scripts/unix/setup.sh
 ```
-스크립트를 실행하면 `home/` 이하의 파일들을 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
+스크립트는 `home/` 이하 파일들을 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
 
-### 옵션
+옵션:
 - `--force`: 대상 위치에 있는 기존 파일이나 링크를 덮어씁니다.
 - `--vim classic`: LazyVim 대신 `nvim/classic/`에 있는 Vimscript 구성을 사용합니다.
 - `--help`: 사용법을 출력합니다.
+
+### Windows
+```powershell
+./scripts/windows/setup.ps1
+```
+Windows PowerShell에서 실행하면 `home/` 매핑, PowerShell 프로필, Neovim 구성을 순서대로 설치합니다. 필요한 경우 `./scripts/windows/README.md`에서 세부 옵션을 확인하세요.
 
 필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file Brewfile`를 실행하세요.
 
