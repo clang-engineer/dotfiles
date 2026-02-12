@@ -5,3 +5,4 @@
 
 require("config.options.default")
 require("config.options.dbui")
+require("config.options.backup-undo")
