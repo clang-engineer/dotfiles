@@ -1,0 +1,6 @@
+# OpenCode aliases
+
+alias oc-stats='opencode stats'
+alias oc-today='opencode stats --days 1'
+alias oc-week='opencode stats --days 7'
+alias oc-models='opencode stats --models'
