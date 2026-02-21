@@ -112,6 +112,9 @@ fi
 alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
 
+# OpenCode aliases
+[ -f ~/.opencode_aliases ] && source ~/.opencode_aliases
+
 # init zsh plugin
 ZSH_PLUGIN_HOME=~/.oh-my-zsh/custom/plugins
 source $ZSH_PLUGIN_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${zsh_custom:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
