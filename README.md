@@ -77,6 +77,18 @@ ssh -T git@github.com-myusername
 
 workspace 경로에서 작업하면 해당 계정의 Git 사용자 정보가 자동으로 적용됩니다.
 
+## 환경 변수 비밀 관리
+
+API 토큰 등 민감한 환경 변수는 `~/.secrets`(Bash/Zsh) 또는 `~/.secrets.ps1`(PowerShell)에서 관리합니다.
+
+```bash
+# 템플릿 복사 후 값 채우기
+cp ~/.secrets.example ~/.secrets
+chmod 600 ~/.secrets          # Linux/Mac만 해당
+```
+
+자세한 내용은 [`docs/security.md`](docs/security.md)를 참고하세요.
+
 ## 수동 링크 (선택 사항)
 각 항목을 개별적으로 링크하고 싶다면 다음 명령을 참고하세요.
 ```sh
