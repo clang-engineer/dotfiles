@@ -26,6 +26,12 @@ scripts/
 | 필요 단계를 개별 실행 | `./scripts/unix/tasks/01-link-dotfiles.sh` 등 | 각 PowerShell 스크립트 (예: `./scripts/windows/setup-nvim.ps1`) | README에서 순서를 확인하고 필요한 단계만 골라 실행하세요. |
 | 선택형 도구 | `./scripts/unix/opt/add-ssh-config.sh` 등 | `./scripts/windows/nvim-java.ps1` 등 | SSH 키, Git includeIf, `.nvim.lua` 생성, Java 버전 고정과 같은 상황별 헬퍼입니다. |
 
+## Claude Code
+
+| 목적 | macOS/Linux | Windows | 비고 |
+| --- | --- | --- | --- |
+| 상태 표시줄 설정 | `statusline-command.sh` | `statusline-command.ps1` | `~/.claude/settings.json`에 경로를 등록하면 세션 하단에 cwd, branch, 토큰 사용량이 표시됩니다. |
+
 ## 추가 문서
 
 - Unix (macOS/Linux): `scripts/unix/README.md`
