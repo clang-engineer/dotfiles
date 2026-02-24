@@ -9,3 +9,7 @@ configs/nvim-classic/pack
 Brewfile.lock.json
 
 *.swp
+
+# secrets (tokens, credentials)
+.secrets
+.secrets.ps1
