@@ -112,6 +112,9 @@ fi
 alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
 
+# Load secrets (tokens, credentials) from a local-only file
+[ -f ~/.secrets ] && source ~/.secrets
+
 # OpenCode aliases
 [ -f ~/.opencode_aliases ] && source ~/.opencode_aliases
 
