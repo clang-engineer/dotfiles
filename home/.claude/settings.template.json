@@ -1,0 +1,9 @@
+{
+  "statusLine": {
+    "type": "command",
+    "_unix": "bash ~/.claude/statusline-command.sh",
+    "_windows": "pwsh -File C:\\Users\\<you>\\.claude\\statusline-command.ps1",
+    "command": "<위 중 OS에 맞는 값을 사용>"
+  },
+  "autoUpdatesChannel": "latest"
+}

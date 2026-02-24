@@ -23,6 +23,19 @@ Options:
 ./scripts/unix/tasks/05-nvim.sh
 ```
 
+## Claude Code
+
+```sh
+# ~/.claude/settings.json에 아래 설정 추가
+# "statusLine": {
+#   "type": "command",
+#   "command": "bash /path/to/statusline-command.sh"
+# }
+
+# 또는 직접 복사
+cp scripts/unix/statusline-command.sh ~/.claude/statusline-command.sh
+```
+
 ## Optional helpers
 
 Run only when needed:
