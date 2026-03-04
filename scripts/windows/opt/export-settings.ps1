@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+$WindowsDir = (Resolve-Path "$PSScriptRoot\..").Path
+
 Write-Host "==> Exporting Windows settings" -ForegroundColor Cyan
 
 # Windows Terminal settings
@@ -11,7 +13,7 @@ $terminalCandidates = @(
 $terminalSource = $terminalCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if ($terminalSource) {
-    $terminalDest = Join-Path $PSScriptRoot "windows-terminal-settings.json"
+    $terminalDest = Join-Path $WindowsDir "windows-terminal-settings.json"
     Copy-Item -Path $terminalSource -Destination $terminalDest -Force
     Write-Host "Saved Windows Terminal settings to: $terminalDest" -ForegroundColor Green
 } else {
@@ -21,7 +23,7 @@ if ($terminalSource) {
 # PowerShell profile (PowerShell 7+)
 $psProfile = Join-Path $HOME "Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
 if (Test-Path $psProfile) {
-    $psDest = Join-Path $PSScriptRoot "powershell-profile.ps1"
+    $psDest = Join-Path $WindowsDir "powershell-profile.ps1"
     Copy-Item -Path $psProfile -Destination $psDest -Force
     Write-Host "Saved PowerShell 7 profile to: $psDest" -ForegroundColor Green
 } else {
@@ -31,7 +33,7 @@ if (Test-Path $psProfile) {
 # Windows PowerShell profile (5.1)
 $winPsProfile = Join-Path $HOME "Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 if (Test-Path $winPsProfile) {
-    $winPsDest = Join-Path $PSScriptRoot "powershell-profile-winps.ps1"
+    $winPsDest = Join-Path $WindowsDir "powershell-profile-winps.ps1"
     Copy-Item -Path $winPsProfile -Destination $winPsDest -Force
     Write-Host "Saved Windows PowerShell profile to: $winPsDest" -ForegroundColor Green
 } else {
