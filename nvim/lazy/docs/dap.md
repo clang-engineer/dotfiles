@@ -46,6 +46,9 @@ LazyVim `lang.java` extra가 DAP을 자동 활성화함 (별도 설정 불필요
 
 jdtls가 직접 JVM을 debug 모드로 실행해줌. 별도 Gradle 실행 불필요.
 
+> Java DAP도 `console = "integratedTerminal"` 적용됨 (`java.lua`의 `dap.config_overrides`).
+> 프로그램 출력이 nvim 내장 터미널에 남아 세션 종료 후에도 확인 가능.
+
 ## Java/Kotlin 디버깅 (Gradle attach 방식)
 
 수동으로 JVM을 debug 모드로 띄운 뒤 attach 하는 전통적 방식.
