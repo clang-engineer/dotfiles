@@ -92,6 +92,8 @@ JVM 옵션에 아래를 추가하면 5005 포트로 debug attach 가능:
 
 - **launch**: 현재 파일의 `main()` 직접 실행 (단일 파일용)
 - **attach**: Gradle `--debug-jvm`으로 띄운 JVM에 연결 (Spring Boot 등)
+- **console**: `integratedTerminal` — 프로그램 출력이 nvim 내장 터미널 버퍼에 표시되어 세션 종료 후에도 확인 가능
+- **dapui 자동 닫힘 비활성화**: 디버깅 실패/종료 시 dapui가 자동으로 닫히지 않음. 수동으로 닫으려면 `<leader>du` 또는 `:lua require("dapui").toggle()`
 
 ## 추천 workflow
 
