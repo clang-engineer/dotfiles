@@ -4,31 +4,19 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Usage: setup.sh [--force] [--vim lazy|classic]
+Usage: setup.sh [--force]
 
 Options:
   --force           Replace existing files/symlinks at the destination.
-  --vim             Choose Neovim config: `lazy` (default) or `classic`.
 USAGE
 }
 
 FORCE=false
-VIM_FLAVOR="lazy"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --force)
       FORCE=true
-      shift
-      ;;
-    --vim)
-      shift
-      VIM_FLAVOR="${1:-}"
-      [[ -n "$VIM_FLAVOR" ]] || { usage; exit 1; }
-      shift
-      ;;
-    --vim=*)
-      VIM_FLAVOR="${1#--vim=}"
       shift
       ;;
     -h|--help)
@@ -43,15 +31,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-case "$VIM_FLAVOR" in
-  lazy|classic) ;;
-  *)
-    echo "Invalid vim flavor: $VIM_FLAVOR (expected lazy|classic)" >&2
-    exit 1
-    ;;
-esac
-
-export FORCE VIM_FLAVOR
+export FORCE
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
