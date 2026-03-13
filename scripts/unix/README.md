@@ -3,24 +3,32 @@
 ## One-shot setup (recommended)
 
 ```sh
-./scripts/unix/setup.sh
+./scripts/setup.sh
 ```
 
 Options:
 
 ```sh
-./scripts/unix/setup.sh --force
-./scripts/unix/setup.sh --vim classic
+./scripts/setup.sh --force
+./scripts/setup.sh --vim classic
 ```
 
-## Run a single step
+## Run individual modules
 
 ```sh
-./scripts/unix/tasks/01-link-dotfiles.sh
-./scripts/unix/tasks/02-oh-my-zsh.sh
-./scripts/unix/tasks/03-zsh-plugins.sh
-./scripts/unix/tasks/04-tpm.sh
-./scripts/unix/tasks/05-nvim.sh
+./home/setup.sh              # 플랫 dotfile 링킹
+./claude/setup.sh            # ~/.claude 링킹
+./ssh/setup.sh               # ~/.ssh 링킹
+./hammerspoon/setup.sh       # ~/.hammerspoon 링킹
+./nvim/setup.sh              # ~/.config/nvim + ~/.exrc.lua 링킹
+```
+
+## Install scripts
+
+```sh
+./scripts/unix/install-oh-my-zsh.sh
+./scripts/unix/install-zsh-plugins.sh
+./scripts/unix/install-tpm.sh
 ```
 
 ## Claude Code

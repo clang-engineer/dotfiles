@@ -1,11 +1,10 @@
 # Install packages from scoop-packages.txt
 
-. "$PSScriptRoot\..\lib\context.ps1"
-
-$Force = $script:Force -eq $true
+param([switch]$Force)
 
 Write-Host "==> Installing packages" -ForegroundColor Cyan
 
+$ScriptsDir = (Resolve-Path "$PSScriptRoot").Path
 $PackagesFile = Join-Path $ScriptsDir "scoop-packages.txt"
 $Packages = @()
 
