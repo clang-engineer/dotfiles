@@ -6,7 +6,7 @@ tags
 id_rsa*
 known_hosts*
 configs/nvim-classic/pack
-Brewfile.lock.json
+packages/Brewfile.lock.json
 
 *.swp
 

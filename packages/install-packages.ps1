@@ -4,8 +4,8 @@ param([switch]$Force)
 
 Write-Host "==> Installing packages" -ForegroundColor Cyan
 
-$ScriptsDir = (Resolve-Path "$PSScriptRoot").Path
-$PackagesFile = Join-Path $ScriptsDir "scoop-packages.txt"
+$RepoRoot = (Resolve-Path "$PSScriptRoot/..").Path
+$PackagesFile = Join-Path $RepoRoot "packages/scoop-packages.txt"
 $Packages = @()
 
 if (Test-Path $PackagesFile) {

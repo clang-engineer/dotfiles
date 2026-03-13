@@ -20,10 +20,7 @@ scripts/
 │   └── opt/*.sh                # SSH/Git/Java 보조 스크립트
 └── windows/
     ├── install-scoop.ps1       # Scoop 설치
-    ├── install-packages.ps1    # 패키지 설치
-    ├── install-font.ps1        # Nerd Font 설치
-    ├── update-terminal.ps1     # Windows Terminal 설정
-    └── opt/*.ps1               # 보조 스크립트
+    └── opt/*.ps1               # 보조 스크립트 (폰트, 터미널 등)
 ```
 
 ## 실행 요약
