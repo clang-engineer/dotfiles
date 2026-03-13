@@ -6,17 +6,11 @@ Write-Host "==> Installing packages" -ForegroundColor Cyan
 
 $RepoRoot = (Resolve-Path "$PSScriptRoot/..").Path
 $PackagesFile = Join-Path $RepoRoot "packages/scoop-packages.txt"
-$Packages = @()
-
-if (Test-Path $PackagesFile) {
-    $Packages = Get-Content $PackagesFile | Where-Object { $_ -and -not $_.StartsWith("#") }
-} else {
-    $Packages = @(
-        "git", "neovim", "ripgrep", "fd", "fzf",
-        "lazygit", "nodejs", "python", "llvm",
-        "make", "7zip", "curl"
-    )
+if (-not (Test-Path $PackagesFile)) {
+    Write-Host "ERROR: $PackagesFile not found" -ForegroundColor Red
+    exit 1
 }
+$Packages = Get-Content $PackagesFile | Where-Object { $_ -and -not $_.StartsWith("#") }
 
 foreach ($pkg in $Packages) {
     if ($Force) {
