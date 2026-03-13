@@ -1,7 +1,7 @@
 #!/bin/bash
 # Create .nvim.lua link in current directory (Unix version)
 
-SOURCE_FILE="$HOME/dotfiles/nvim-lua/unix.lua"
+SOURCE_FILE="$HOME/dotfiles/nvim/exrc/exrc-unix.lua"
 TARGET_FILE=".nvim.lua"
 
 if [[ ! -f "$SOURCE_FILE" ]]; then
