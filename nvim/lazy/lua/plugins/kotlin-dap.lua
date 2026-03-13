@@ -45,7 +45,7 @@ return {
           -- ./gradlew --info cleanTest test --debug-jvm
           -- ./gradlew -x webapp bootRun --debug-jvm
           -- then attach the debugger to it
-          -- :lua require('dapui').toggle()
+          -- :lua require('dapui').toggle()  or  <leader/> + du
           type = "kotlin",
           request = "attach",
           name = "Attach to debugging session",
