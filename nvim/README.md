@@ -11,7 +11,7 @@
 
 ### macOS / Linux
 
-- 전체 부트스트랩 시: `./scripts/unix/setup.sh` (기본 LazyVim) 또는 `./scripts/unix/setup.sh --vim classic`.
+- 전체 부트스트랩 시: `./scripts/setup.sh` (기본 LazyVim) 또는 `./scripts/setup.sh --vim classic`.
 - 특정 구성만 교체하려면:
 
   ```bash

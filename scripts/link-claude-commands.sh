@@ -15,10 +15,10 @@ set -euo pipefail
 export MSYS=winsymlinks:nativestrict
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=unix/lib/common.sh
-source "$SCRIPT_DIR/unix/lib/common.sh"
+# shellcheck source=lib/common.sh
+source "$SCRIPT_DIR/lib/common.sh"
 
-DOTFILES_COMMANDS="$(cd "$SCRIPT_DIR/../home/.claude/commands" && pwd)"
+DOTFILES_COMMANDS="$(cd "$SCRIPT_DIR/../claude/commands" && pwd)"
 
 usage() {
   cat <<EOF

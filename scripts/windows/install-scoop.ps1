@@ -1,7 +1,5 @@
 # Ensure Scoop is installed and buckets are configured
 
-. "$PSScriptRoot\..\lib\context.ps1"
-
 Write-Host "==> Ensuring Scoop" -ForegroundColor Cyan
 
 if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {

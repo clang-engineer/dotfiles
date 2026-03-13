@@ -1,8 +1,6 @@
 # Update Windows Terminal settings (best effort)
 
-. "$PSScriptRoot\..\lib\context.ps1"
-
-$FontName = if ($script:FontName) { $script:FontName } else { "CascadiaCode-NF" }
+param([string]$FontName = "CascadiaCode-NF")
 
 Write-Host "==> Updating Windows Terminal settings" -ForegroundColor Cyan
 

@@ -1,16 +1,19 @@
 # Dotfiles 설정 가이드
 
 ## 저장소 구조
-- `home/`: `$HOME` 아래에 바로 매핑되는 파일과 디렉터리 (예: `.bashrc`, `.zshrc`, `.tmux.conf`, `.gitconfig`, `.hammerspoon`, `.ssh`).
+- `home/`: `$HOME` 아래에 바로 매핑되는 플랫 파일 (예: `.bashrc`, `.zshrc`, `.tmux.conf`, `.gitconfig`).
+- `claude/`: Claude Code 설정 (`~/.claude`로 링크).
+- `hammerspoon/`: Hammerspoon 설정 (`~/.hammerspoon`으로 링크, macOS 전용).
+- `ssh/`: SSH 설정 (`~/.ssh`로 링크).
 - `nvim/`: Neovim 설정. LazyVim(`lazy/`)과 고전 Vimscript(`classic/`) 구성으로 나뉩니다.
-- `scripts/`: `bootstrap.sh` 등 자동화 스크립트가 위치합니다.
+- `scripts/`: 오케스트레이터와 설치 스크립트가 위치합니다.
 
 ## 빠른 시작
 ### macOS/Linux
 ```sh
-./scripts/unix/setup.sh
+./scripts/setup.sh
 ```
-스크립트는 `home/` 이하 파일들을 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
+스크립트는 각 모듈의 setup.sh를 실행하여 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
 
 옵션:
 - `--force`: 대상 위치에 있는 기존 파일이나 링크를 덮어씁니다.
@@ -19,9 +22,9 @@
 
 ### Windows
 ```powershell
-./scripts/windows/setup.ps1
+./scripts/setup.ps1
 ```
-Windows PowerShell에서 실행하면 `home/` 매핑, PowerShell 프로필, Neovim 구성을 순서대로 설치합니다. 필요한 경우 `./scripts/windows/README.md`에서 세부 옵션을 확인하세요.
+Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성, 패키지 설치를 순서대로 수행합니다.
 
 필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file Brewfile`를 실행하세요.
 
@@ -99,8 +102,8 @@ ln -s "$PWD/home/.gitconfig" ~/.gitconfig
 ln -s "$PWD/home/.tmux.conf" ~/.tmux.conf
 tmux source-file ~/.tmux.conf
 ln -s "$PWD/home/.ideavimrc" ~/.ideavimrc
-ln -s "$PWD/home/.hammerspoon" ~/.hammerspoon
-ln -s "$PWD/home/.ssh" ~/.ssh        # 실제 키는 커밋하지 말고, 템플릿을 추가하면 .gitignore도 갱신하세요
+ln -s "$PWD/hammerspoon" ~/.hammerspoon
+ln -s "$PWD/ssh" ~/.ssh        # 실제 키는 커밋하지 말고, 템플릿을 추가하면 .gitignore도 갱신하세요
 ln -s "$PWD/home/.clang-format" ~/.clang-format
 mkdir -p ~/.config
 ln -s "$PWD/nvim/lazy" ~/.config/nvim   # 클래식 구성을 쓰려면 "$PWD/nvim/classic" 사용
