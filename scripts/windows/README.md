@@ -5,14 +5,13 @@
 ```
 scripts/windows/
 ├── install-scoop.ps1            # Scoop 설치 + 버킷 추가
-├── install-packages.ps1         # 패키지 설치
-├── install-font.ps1             # Nerd Font 설치
-├── update-terminal.ps1          # Windows Terminal 설정
 ├── opt/
+│   ├── install-font.ps1         # Nerd Font 설치
+│   ├── update-terminal.ps1      # Windows Terminal 설정
 │   ├── nvim-java.ps1            # .nvim.lua 생성
 │   ├── export-settings.ps1      # 터미널/PS 프로필 내보내기
 │   └── powershell-profile-winps.ps1
-├── scoop-packages.txt
+├── (scoop-packages.txt → packages/)
 ├── statusline-command.ps1
 ├── terminal-settings.json
 └── scoop-export.json
@@ -28,7 +27,6 @@ Options:
 
 ```powershell
 .\scripts\setup.ps1 -Force
-.\scripts\setup.ps1 -FontName CascadiaCode-NF
 ```
 
 ## 개별 모듈 실행
@@ -48,5 +46,5 @@ Copy-Item scripts\windows\statusline-command.ps1 ~\.claude\statusline-command.ps
 
 - Assumes dotfiles are at `C:\Users\<you>\dotfiles`
 - Installs lazygit and Windows-native CLI tools via Scoop
-- Packages are read from `scoop-packages.txt` (one per line)
+- Packages are read from `packages/scoop-packages.txt` (one per line)
 - Updates Windows Terminal defaults (font face, acrylic, opacity)
