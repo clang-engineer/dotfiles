@@ -13,7 +13,7 @@ $terminalCandidates = @(
 $terminalSource = $terminalCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if ($terminalSource) {
-    $terminalDest = Join-Path $WindowsDir "windows-terminal-settings.json"
+    $terminalDest = Join-Path $WindowsDir "terminal-settings.json"
     Copy-Item -Path $terminalSource -Destination $terminalDest -Force
     Write-Host "Saved Windows Terminal settings to: $terminalDest" -ForegroundColor Green
 } else {

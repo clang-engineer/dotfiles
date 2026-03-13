@@ -54,4 +54,5 @@ Run only when needed:
 ./scripts/unix/opt/setup-git-includeif.sh
 ./scripts/unix/opt/setup-github-account.sh
 ./scripts/unix/opt/setup-java-versions.sh
+./scripts/unix/opt/nvim-java.sh
 ```

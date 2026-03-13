@@ -14,7 +14,7 @@ scripts/windows/
 │   └── powershell-profile-winps.ps1
 ├── scoop-packages.txt
 ├── statusline-command.ps1
-├── windows-terminal-settings.json
+├── terminal-settings.json
 └── scoop-export.json
 ```
 
