@@ -25,7 +25,7 @@
 ```
 Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성, 패키지 설치를 순서대로 수행합니다.
 
-필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file Brewfile`를 실행하세요.
+필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file packages/Brewfile`를 실행하세요.
 
 ## GitHub 다중 계정 관리
 

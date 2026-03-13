@@ -1,12 +1,12 @@
 # Repository Guidelines
 
 ## 프로젝트 구조 및 모듈 구성
-이 저장소는 셸, 에디터, 주변 도구 설정을 한곳에 모아 관리합니다. 사용자 홈과 1:1로 매핑되는 플랫 파일은 `home/` 아래에 배치되어 있으며 `.bashrc`, `.zshrc`, `.tmux.conf`, `.gitconfig`, `.clang-format`, `.vimrc` 등이 포함됩니다. `claude/`, `hammerspoon/`, `ssh/`는 각각 독립 모듈로 분리되어 자체 `setup.sh`를 갖습니다. Neovim 설정은 `nvim/`에 있으며 LazyVim 기반 Lua 구성을 담은 `lazy/`와 Vimscript 중심의 `classic/`로 나뉩니다. Brew 기반 개발 환경 정의는 `Brewfile`, `Brewfile.lock.json`에서 찾을 수 있고, 보조 스크립트는 `scripts/`에 정리되어 있습니다.
+이 저장소는 셸, 에디터, 주변 도구 설정을 한곳에 모아 관리합니다. 사용자 홈과 1:1로 매핑되는 플랫 파일은 `home/` 아래에 배치되어 있으며 `.bashrc`, `.zshrc`, `.tmux.conf`, `.gitconfig`, `.clang-format`, `.vimrc` 등이 포함됩니다. `claude/`, `hammerspoon/`, `ssh/`는 각각 독립 모듈로 분리되어 자체 `setup.sh`를 갖습니다. Neovim 설정은 `nvim/`에 있으며 LazyVim 기반 Lua 구성을 담은 `lazy/`와 Vimscript 중심의 `classic/`로 나뉩니다. Brew 기반 개발 환경 정의는 `packages/Brewfile`에서 찾을 수 있고, 보조 스크립트는 `scripts/`에 정리되어 있습니다.
 
 ## 빌드 · 테스트 · 동기화 명령
 모든 명령은 저장소 루트에서 실행하세요.
 - `./scripts/setup.sh [--force]` 명령으로 `home/` 전체를 `$HOME` 아래에 링크하고 Neovim 구성을 `~/.config/nvim`에 배치합니다.
-- `brew bundle install --file Brewfile`로 macOS 패키지와 CLI 도구를 설치하며, `brew bundle check --file Brewfile`로 누락 여부를 검증합니다.
+- `brew bundle install --file packages/Brewfile`로 macOS 패키지와 CLI 도구를 설치하며, `brew bundle check --file packages/Brewfile`로 누락 여부를 검증합니다.
 - `nvim --headless "+Lazy sync" +qa`를 통해 LazyVim 플러그인을 새로고침하고, `tmux source-file ~/.tmux.conf`로 tmux 설정을 즉시 반영합니다.
 
 ## 코딩 스타일 및 네이밍 규칙
