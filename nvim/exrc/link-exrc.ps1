@@ -1,6 +1,6 @@
 # Create .nvim.lua link in current directory (Windows version)
 
-$SourceFile = "$env:USERPROFILE\dotfiles\nvim-lua\windows.lua"
+$SourceFile = "$env:USERPROFILE\dotfiles\nvim\exrc\exrc-windows.lua"
 $TargetFile = Join-Path (Get-Location) ".nvim.lua"
 
 if (-not (Test-Path $SourceFile)) {
