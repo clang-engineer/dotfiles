@@ -7,7 +7,8 @@
 | 파일 | 설명 |
 |------|------|
 | `scoop-packages.txt` | Windows Scoop 패키지 목록 |
-| `Brewfile` | macOS Homebrew 패키지 목록 |
+| `Brewfile` | macOS Homebrew CLI 패키지 목록 |
+| `Brewfile.cask` | macOS Homebrew Cask (GUI 앱·폰트) 목록 |
 | `install-packages.ps1` | Windows용 Scoop 패키지 설치 스크립트 |
 
 ## 설치
@@ -28,6 +29,7 @@
 
 ```bash
 brew bundle --file=packages/Brewfile
+brew bundle --file=packages/Brewfile.cask
 ```
 
 ## 패키지 목록 최신화 (현재 PC → 파일)
