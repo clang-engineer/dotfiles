@@ -28,7 +28,6 @@ Options:
 
 ```powershell
 .\scripts\setup.ps1 -Force
-.\scripts\setup.ps1 -NvimFlavor classic
 .\scripts\setup.ps1 -FontName CascadiaCode-NF
 ```
 

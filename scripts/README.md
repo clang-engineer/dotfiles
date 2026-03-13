@@ -30,7 +30,7 @@ scripts/
 
 | 목적 | macOS/Linux | Windows | 비고 |
 | --- | --- | --- | --- |
-| 전체 환경 부트스트랩 | `./scripts/setup.sh [--force] [--vim classic]` | `.\scripts\setup.ps1 [-Force] [-NvimFlavor classic]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
+| 전체 환경 부트스트랩 | `./scripts/setup.sh [--force]` | `.\scripts\setup.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
 | 개별 모듈 링킹 | `./home/setup.sh`, `./claude/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
 | 선택형 도구 | `./scripts/unix/opt/add-ssh-config.sh` 등 | `.\scripts\windows\opt\nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
 
