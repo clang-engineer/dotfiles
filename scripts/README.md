@@ -19,7 +19,6 @@ scripts/
 │   ├── install-tpm.sh          # TPM 설치
 │   └── opt/*.sh                # SSH/Git/Java 보조 스크립트
 └── windows/
-    ├── install-scoop.ps1       # Scoop 설치
     └── opt/*.ps1               # 보조 스크립트 (폰트, 터미널 등)
 ```
 

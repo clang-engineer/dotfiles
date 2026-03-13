@@ -4,16 +4,13 @@
 
 ```
 scripts/windows/
-├── install-scoop.ps1            # Scoop 설치 + 버킷 추가
 ├── opt/
 │   ├── install-font.ps1         # Nerd Font 설치
 │   ├── update-terminal.ps1      # Windows Terminal 설정
 │   ├── nvim-java.ps1            # .nvim.lua 생성
 │   ├── export-settings.ps1      # 터미널/PS 프로필 내보내기
 │   └── powershell-profile-winps.ps1
-├── (scoop-packages.txt → packages/)
-├── terminal-settings.json
-└── scoop-export.json
+└── terminal-settings.json
 ```
 
 ## 전체 설정
