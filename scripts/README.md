@@ -33,9 +33,8 @@ scripts/
 
 ## Claude Code
 
-| 목적 | macOS/Linux | Windows | 비고 |
-| --- | --- | --- | --- |
-| 상태 표시줄 설정 | `statusline-command.sh` | `statusline-command.ps1` | `~/.claude/settings.json`에 경로를 등록하면 세션 하단에 cwd, branch, 토큰 사용량이 표시됩니다. |
+`statusline-command.sh` / `statusline-command.ps1`은 `claude/` 디렉토리에 위치합니다.
+`claude/setup.sh`가 `claude/` → `~/.claude/` 심볼릭 링크를 생성하므로 별도 복사 없이 바로 동작합니다.
 
 ## 추가 문서
 

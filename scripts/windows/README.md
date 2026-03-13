@@ -12,7 +12,6 @@ scripts/windows/
 │   ├── export-settings.ps1      # 터미널/PS 프로필 내보내기
 │   └── powershell-profile-winps.ps1
 ├── (scoop-packages.txt → packages/)
-├── statusline-command.ps1
 ├── terminal-settings.json
 └── scoop-export.json
 ```
@@ -34,12 +33,6 @@ Options:
 ```powershell
 .\home\setup.ps1       # PowerShell 프로필 링크
 .\nvim\setup.ps1       # Neovim Junction 링크 + exrc
-```
-
-## Claude Code
-
-```powershell
-Copy-Item scripts\windows\statusline-command.ps1 ~\.claude\statusline-command.ps1
 ```
 
 ## Notes
