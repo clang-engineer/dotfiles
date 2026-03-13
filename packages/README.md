@@ -30,15 +30,17 @@
 brew bundle --file=packages/Brewfile
 ```
 
-## 백업 (내보내기)
+## 패키지 목록 최신화 (현재 PC → 파일)
 
 ### Scoop
 
-`scoop-packages.txt`를 직접 편집한다. 현재 설치된 패키지 확인:
+현재 PC에 설치된 패키지로 `scoop-packages.txt`를 갱신한다.
 
 ```powershell
-scoop list
+scoop list | Select-Object -Skip 2 | ForEach-Object { ($_ -split '\s+')[0] } | Where-Object { $_ -and $_ -ne '----' -and $_ -ne 'Name' } | Sort-Object | Set-Content packages/scoop-packages.txt
 ```
+
+설치 실패 등 비정상 패키지가 있으면 `scoop list`에서 상태를 확인한 뒤 수동으로 제거한다.
 
 ### Homebrew
 
