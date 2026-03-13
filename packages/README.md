@@ -10,6 +10,8 @@
 | `Brewfile` | macOS Homebrew CLI 패키지 목록 |
 | `Brewfile.cask` | macOS Homebrew Cask (GUI 앱·폰트) 목록 |
 | `install-packages.ps1` | Windows용 Scoop 패키지 설치 스크립트 |
+| `TOOLS.md` | 각 도구의 용도 및 기본 사용법 레퍼런스 |
+| `CHANGELOG.md` | 패키지 목록 변경 이력 |
 
 ## 설치
 
