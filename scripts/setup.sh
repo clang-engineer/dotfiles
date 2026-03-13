@@ -6,13 +6,6 @@ usage() {
   cat <<'USAGE'
 Usage: setup.sh [--force] [--vim lazy|classic]
 
-Runs setup tasks in order:
-  01-link-dotfiles
-  02-oh-my-zsh
-  03-zsh-plugins
-  04-tpm
-  05-nvim
-
 Options:
   --force           Replace existing files/symlinks at the destination.
   --vim             Choose Neovim config: `lazy` (default) or `classic`.
@@ -56,32 +49,25 @@ case "$VIM_FLAVOR" in
     echo "Invalid vim flavor: $VIM_FLAVOR (expected lazy|classic)" >&2
     exit 1
     ;;
- esac
+esac
 
 export FORCE VIM_FLAVOR
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib/context.sh"
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
-TASKS_DIR="$SCRIPTS_DIR/tasks"
+# -- linking (module setup scripts) --
+"$REPO"/home/setup.sh
+"$REPO"/claude/setup.sh
+"$REPO"/ssh/setup.sh
+"$REPO"/hammerspoon/setup.sh
+"$REPO"/nvim/setup.sh
 
-run_task() {
-  local task="$1"
-  local task_path="$TASKS_DIR/$task"
+# -- install --
+"$REPO"/scripts/unix/install-oh-my-zsh.sh
+"$REPO"/scripts/unix/install-zsh-plugins.sh
+"$REPO"/scripts/unix/install-tpm.sh
 
-  if [[ -x "$task_path" ]]; then
-    printf '\n==> %s\n' "$task"
-    "$task_path"
-  else
-    printf '⚠︎ Missing task: %s\n' "$task_path"
-  fi
-}
-
-run_task "01-link-dotfiles.sh"
-run_task "02-oh-my-zsh.sh"
-run_task "03-zsh-plugins.sh"
-run_task "04-tpm.sh"
-run_task "05-nvim.sh"
-
+# -- post-install --
 if command -v tmux >/dev/null 2>&1; then
   tmux source-file "$HOME/.tmux.conf" || true
 fi
