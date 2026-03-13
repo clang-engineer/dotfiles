@@ -1,5 +1,5 @@
 # Create .nvim.lua for Java project in current directory
-# Usage: nvim-java.ps1 [jdtls_version] [gradle_version]
+# Usage: generate-nvim-java.ps1 [jdtls_version] [gradle_version]
 
 param(
     [string]$Jdtls = "21",

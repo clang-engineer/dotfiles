@@ -33,7 +33,7 @@ Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성
 
 ### 통합 설정 (추천)
 ```sh
-./scripts/setup-github-account.sh
+./scripts/unix/opt/setup-github-account.sh
 ```
 대화형 프롬프트로 다음을 한번에 설정합니다:
 1. SSH 키 생성
@@ -46,20 +46,20 @@ Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성
 
 **1. SSH 키 생성**
 ```sh
-./scripts/generate-ssh-key.sh
-./scripts/generate-ssh-key.sh myusername my@email.com
+./scripts/unix/opt/generate-ssh-key.sh
+./scripts/unix/opt/generate-ssh-key.sh myusername my@email.com
 ```
 
 **2. SSH config 추가**
 ```sh
-./scripts/add-ssh-config.sh
-./scripts/add-ssh-config.sh myusername
+./scripts/unix/opt/add-ssh-config.sh
+./scripts/unix/opt/add-ssh-config.sh myusername
 ```
 
 **3. Git includeIf 설정**
 ```sh
-./scripts/setup-git-includeif.sh
-./scripts/setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
+./scripts/unix/opt/setup-git-includeif.sh
+./scripts/unix/opt/setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
 ```
 
 ### 사용 예시

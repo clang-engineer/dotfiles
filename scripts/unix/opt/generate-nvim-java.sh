@@ -1,6 +1,6 @@
 #!/bin/bash
 # Create .nvim.lua for Java project in current directory
-# Usage: nvim-java.sh [jdtls_version] [gradle_version]
+# Usage: generate-nvim-java.sh [jdtls_version] [gradle_version]
 
 JDTLS="${1:-21}"
 GRADLE="${2:-11}"
