@@ -56,7 +56,7 @@ scripts/
 ./scripts/unix/opt/add-ssh-config.sh
 ./scripts/unix/opt/generate-ssh-key.sh
 ./scripts/unix/opt/setup-git-includeif.sh
-./scripts/unix/opt/setup-github-account.sh
+./scripts/unix/setup-github-account.sh
 ./scripts/unix/opt/setup-java-versions.sh
 ./scripts/unix/opt/generate-nvim-java.sh
 ```
