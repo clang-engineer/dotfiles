@@ -1,15 +1,12 @@
 # Windows setup orchestrator
-# Usage: setup.ps1 [-Force] [-NvimFlavor lazy|classic] [-FontName CascadiaCode-NF]
+# Usage: setup.ps1 [-Force] [-FontName CascadiaCode-NF]
 
 param(
     [switch]$Force,
-    [ValidateSet("lazy","classic")]
-    [string]$NvimFlavor = "lazy",
     [string]$FontName = "CascadiaCode-NF"
 )
 
 $ErrorActionPreference = "Stop"
-$env:VIM_FLAVOR = $NvimFlavor
 
 $RepoDir = (Resolve-Path "$PSScriptRoot\..").Path
 

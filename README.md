@@ -17,7 +17,6 @@
 
 옵션:
 - `--force`: 대상 위치에 있는 기존 파일이나 링크를 덮어씁니다.
-- `--vim classic`: LazyVim 대신 `nvim/classic/`에 있는 Vimscript 구성을 사용합니다.
 - `--help`: 사용법을 출력합니다.
 
 ### Windows

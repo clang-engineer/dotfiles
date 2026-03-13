@@ -5,7 +5,7 @@
 
 ## 빌드 · 테스트 · 동기화 명령
 모든 명령은 저장소 루트에서 실행하세요.
-- `./scripts/bootstrap.sh [--force] [--vim classic]` 명령으로 `home/` 전체를 `$HOME` 아래에 링크하고 선택한 Neovim 구성을 `~/.config/nvim`에 배치합니다.
+- `./scripts/setup.sh [--force]` 명령으로 `home/` 전체를 `$HOME` 아래에 링크하고 Neovim 구성을 `~/.config/nvim`에 배치합니다.
 - `brew bundle install --file Brewfile`로 macOS 패키지와 CLI 도구를 설치하며, `brew bundle check --file Brewfile`로 누락 여부를 검증합니다.
 - `nvim --headless "+Lazy sync" +qa`를 통해 LazyVim 플러그인을 새로고침하고, `tmux source-file ~/.tmux.conf`로 tmux 설정을 즉시 반영합니다.
 

@@ -10,7 +10,6 @@ Options:
 
 ```sh
 ./scripts/setup.sh --force
-./scripts/setup.sh --vim classic
 ```
 
 ## Run individual modules
