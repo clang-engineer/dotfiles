@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm \"C:/Users/planit/clang-engineer.github.io/.claude/commands/post.md\" && bash \"C:/Users/planit/dotfiles/scripts/link-claude-commands.sh\" --force \"C:/Users/planit/clang-engineer.github.io\")",
+      "Bash(ln -s /dev/null /tmp/test_symlink_$$ 2>&1 && readlink /tmp/test_symlink_$$ && rm /tmp/test_symlink_$$ || echo \"symlink failed\")"
+    ]
+  }
+}
