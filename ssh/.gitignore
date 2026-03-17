@@ -1,0 +1,11 @@
+# SSH keys (machine-specific, never commit)
+id_*
+
+# Known hosts (machine-specific)
+known_hosts
+known_hosts.old
+
+# Other sensitive files
+*.pem
+*.key
+authorized_keys
