@@ -84,6 +84,10 @@ source ~/.oh-my-zsh/oh-my-zsh.sh
 
 # User configuration
 
+# Project directories (WORKSPACE_DIR is set in ~/.secrets per machine)
+export TOOLBOX_DIR="$WORKSPACE_DIR/toolbox"
+export BLOG_DIR="$WORKSPACE_DIR/clang-engineer.github.io"
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
