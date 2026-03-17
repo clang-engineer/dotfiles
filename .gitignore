@@ -13,3 +13,22 @@ packages/Brewfile.lock.json
 # secrets (tokens, credentials)
 .secrets
 .secrets.ps1
+
+# claude code cache (auto-generated)
+claude/debug/
+claude/file-history/
+claude/history.jsonl
+claude/plans/
+claude/projects/
+claude/session-env/
+claude/shell-snapshots/
+claude/statsig/
+claude/todos/
+claude/backups/
+claude/cache/
+claude/paste-cache/
+claude/sessions/
+claude/telemetry/
+claude/mcp-needs-auth-cache.json
+claude/plugins/
+claude/settings.json
