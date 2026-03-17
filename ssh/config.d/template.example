@@ -1,0 +1,31 @@
+# SSH Config Template
+# Copy this file and rename (e.g., 60-myproject)
+# Remove .example extension after copying
+
+## GitHub Account
+# Host github.com-USERNAME
+#     HostName github.com
+#     User git
+#     IdentityFile ~/.ssh/id_ed25519_github_USERNAME
+
+## Generic Server
+# Host myserver
+#     HostName 192.168.1.100
+#     User username
+#     IdentityFile ~/.ssh/id_ed25519_myserver
+#     Port 22
+
+## Jump Host (Bastion)
+# Host internal-server
+#     HostName 10.0.0.5
+#     User admin
+#     ProxyJump bastion-host
+
+## With specific options
+# Host slow-server
+#     HostName example.com
+#     User deploy
+#     IdentityFile ~/.ssh/id_ed25519
+#     ServerAliveInterval 60
+#     ServerAliveCountMax 3
+#     ForwardAgent yes

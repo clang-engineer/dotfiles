@@ -36,16 +36,16 @@ export FORCE
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
 # -- linking (module setup scripts) --
-"$REPO"/home/setup.sh
-"$REPO"/claude/setup.sh
-"$REPO"/ssh/setup.sh
-"$REPO"/hammerspoon/setup.sh
-"$REPO"/nvim/setup.sh
+sh "$REPO"/home/setup.sh
+sh "$REPO"/claude/setup.sh
+sh "$REPO"/ssh/setup.sh
+sh "$REPO"/hammerspoon/setup.sh
+sh "$REPO"/nvim/setup.sh
 
 # -- install --
-"$REPO"/scripts/unix/install-oh-my-zsh.sh
-"$REPO"/scripts/unix/install-zsh-plugins.sh
-"$REPO"/scripts/unix/install-tpm.sh
+sh "$REPO"/scripts/unix/install-oh-my-zsh.sh
+sh "$REPO"/scripts/unix/install-zsh-plugins.sh
+sh "$REPO"/scripts/unix/install-tpm.sh
 
 # -- post-install --
 if command -v tmux >/dev/null 2>&1; then
