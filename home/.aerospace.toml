@@ -33,12 +33,16 @@ alt-tab = 'workspace-back-and-forth'                # custom
 # 3: Communication (Teams, Outlook)
 # 4: JetBrains (IntelliJ, DataGrip)
 
-# --- Workspace 1: Terminal ---
+# ╔══════════════════════════════════════════╗
+# ║  Workspace 1: Terminal                  ║
+# ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'          # Ghostty
 run = 'move-node-to-workspace 1'
 
-# --- Workspace 2: Browser & AI ---
+# ╔══════════════════════════════════════════╗
+# ║  Workspace 2: Browser & AI              ║
+# ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'              # Chrome
 run = 'move-node-to-workspace 2'
@@ -55,16 +59,20 @@ run = 'move-node-to-workspace 2'
 if.app-id = 'com.google.Chrome.app.dgbbiofhojegonmgagbboheelnddaopf' # ChatGPT (PWA)
 run = 'move-node-to-workspace 2'
 
-# --- Workspace 3: Communication ---
+# ╔══════════════════════════════════════════╗
+# ║  Workspace 3: Communication             ║
+# ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'           # Teams
-run = 'move-node-to-workspace 3'
+run = ['move-node-to-workspace 3', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'          # Outlook
-run = 'move-node-to-workspace 3'
+run = ['move-node-to-workspace 3', 'layout floating']
 
-# --- Workspace 4: JetBrains ---
+# ╔══════════════════════════════════════════╗
+# ║  Workspace 4: JetBrains                 ║
+# ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.intellij'         # IntelliJ IDEA
 run = 'move-node-to-workspace 4'
@@ -73,7 +81,9 @@ run = 'move-node-to-workspace 4'
 if.app-id = 'com.jetbrains.datagrip'         # DataGrip
 run = 'move-node-to-workspace 4'
 
-# --- Floating (no workspace) ---
+# ╔══════════════════════════════════════════╗
+# ║  Floating (no workspace)                ║
+# ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'    # System Settings
 run = 'layout floating'
