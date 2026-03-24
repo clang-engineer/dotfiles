@@ -47,45 +47,56 @@ alt-shift-equal = 'resize smart +50'
 
 # Auto-assign apps to workspaces
 # 1: Terminal (Ghostty)
-# 2: JetBrains (IntelliJ, DataGrip)
+# 2: Browser & AI (Chrome, Safari, ChatGPT, Claude)
 # 3: Communication (Teams, Outlook, Notes)
-# 4: Browser & AI (Chrome, Safari, ChatGPT, Claude)
+# 4: JetBrains (IntelliJ, DataGrip)
 
+# Ghostty
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
 run = 'move-node-to-workspace 1'
 
+# Chrome
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'
 run = 'move-node-to-workspace 2'
 
+# Safari
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
 run = 'move-node-to-workspace 2'
 
+# Claude
 [[on-window-detected]]
 if.app-id = 'com.anthropic.claudefordesktop'
 run = 'move-node-to-workspace 2'
 
+# ChatGPT (Chrome PWA)
 [[on-window-detected]]
-if.app-id = 'com.openai.chat'
+if.app-id = 'com.google.Chrome.app.dgbbiofhojegonmgagbboheelnddaopf'
 run = 'move-node-to-workspace 2'
 
+# Microsoft Teams
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
 run = 'move-node-to-workspace 3'
 
+# Microsoft Outlook
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace 3'
 
+# Apple Notes
 [[on-window-detected]]
 if.app-id = 'com.apple.Notes'
 run = 'move-node-to-workspace 3'
+
+# IntelliJ IDEA
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.intellij'
 run = 'move-node-to-workspace 4'
 
+# DataGrip
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.datagrip'
 run = 'move-node-to-workspace 4'
