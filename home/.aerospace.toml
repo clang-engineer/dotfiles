@@ -1,103 +1,88 @@
 # AeroSpace Config
 
-# Start AeroSpace at login
-start-at-login = true
-
-# Mouse follows focus
-on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
-
-# Gaps
-[gaps]
-inner.horizontal = 10
-inner.vertical = 10
-outer.left = 10
-outer.right = 10
-outer.top = 10
-outer.bottom = 10
-
 # Keybindings
+# NOTE: [mode.main.binding] overrides ALL defaults, so base keys must be listed
 [mode.main.binding]
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
 alt-f = 'fullscreen'
-alt-shift-f = 'layout floating tiling'
-
+alt-shift-f = 'layout floating tiling'              # custom
 alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
-
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
-
 alt-1 = 'workspace 1'
 alt-2 = 'workspace 2'
 alt-3 = 'workspace 3'
 alt-4 = 'workspace 4'
-
 alt-shift-1 = 'move-node-to-workspace 1'
 alt-shift-2 = 'move-node-to-workspace 2'
 alt-shift-3 = 'move-node-to-workspace 3'
 alt-shift-4 = 'move-node-to-workspace 4'
-
 alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
+alt-tab = 'workspace-back-and-forth'                # custom
 
 # Auto-assign apps to workspaces
 # 1: Terminal (Ghostty)
-# 2: Browser & AI (Chrome, Safari, ChatGPT, Claude)
-# 3: Communication (Teams, Outlook, Notes)
+# 2: Browser & AI (Chrome, Safari, Claude, ChatGPT)
+# 3: Communication (Teams, Outlook)
 # 4: JetBrains (IntelliJ, DataGrip)
 
-# Ghostty
+# --- Workspace 1: Terminal ---
 [[on-window-detected]]
-if.app-id = 'com.mitchellh.ghostty'
+if.app-id = 'com.mitchellh.ghostty'          # Ghostty
 run = 'move-node-to-workspace 1'
 
-# Chrome
+# --- Workspace 2: Browser & AI ---
 [[on-window-detected]]
-if.app-id = 'com.google.Chrome'
+if.app-id = 'com.google.Chrome'              # Chrome
 run = 'move-node-to-workspace 2'
 
-# Safari
 [[on-window-detected]]
-if.app-id = 'com.apple.Safari'
+if.app-id = 'com.apple.Safari'               # Safari
 run = 'move-node-to-workspace 2'
 
-# Claude
 [[on-window-detected]]
-if.app-id = 'com.anthropic.claudefordesktop'
+if.app-id = 'com.anthropic.claudefordesktop' # Claude
 run = 'move-node-to-workspace 2'
 
-# ChatGPT (Chrome PWA)
 [[on-window-detected]]
-if.app-id = 'com.google.Chrome.app.dgbbiofhojegonmgagbboheelnddaopf'
+if.app-id = 'com.google.Chrome.app.dgbbiofhojegonmgagbboheelnddaopf' # ChatGPT (PWA)
 run = 'move-node-to-workspace 2'
 
-# Microsoft Teams
+# --- Workspace 3: Communication ---
 [[on-window-detected]]
-if.app-id = 'com.microsoft.teams2'
+if.app-id = 'com.microsoft.teams2'           # Teams
 run = 'move-node-to-workspace 3'
 
-# Microsoft Outlook
 [[on-window-detected]]
-if.app-id = 'com.microsoft.Outlook'
+if.app-id = 'com.microsoft.Outlook'          # Outlook
 run = 'move-node-to-workspace 3'
 
-# Apple Notes
+# --- Workspace 4: JetBrains ---
 [[on-window-detected]]
-if.app-id = 'com.apple.Notes'
-run = 'move-node-to-workspace 3'
-
-# IntelliJ IDEA
-[[on-window-detected]]
-if.app-id = 'com.jetbrains.intellij'
+if.app-id = 'com.jetbrains.intellij'         # IntelliJ IDEA
 run = 'move-node-to-workspace 4'
 
-# DataGrip
 [[on-window-detected]]
-if.app-id = 'com.jetbrains.datagrip'
+if.app-id = 'com.jetbrains.datagrip'         # DataGrip
 run = 'move-node-to-workspace 4'
+
+# --- Floating (no workspace) ---
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'    # System Settings
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'              # Finder
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Notes'               # Notes
+run = 'layout floating'
 
