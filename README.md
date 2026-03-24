@@ -6,6 +6,7 @@
 - `hammerspoon/`: Hammerspoon 설정 (`~/.hammerspoon`으로 링크, macOS 전용).
 - `ssh/`: SSH 설정 (`~/.ssh`로 링크).
 - `nvim/`: Neovim 설정. LazyVim(`lazy/`)과 고전 Vimscript(`classic/`) 구성으로 나뉩니다.
+- `webloc/`: Spotlight 검색용 URL 북마크 앱. `bookmarks.conf`에 `이름|URL` 형식으로 등록하면 `setup.sh`가 `~/Applications/`에 `.app`을 생성합니다.
 - `scripts/`: 오케스트레이터와 설치 스크립트가 위치합니다.
 
 ## 빠른 시작
