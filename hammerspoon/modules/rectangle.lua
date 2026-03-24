@@ -1,6 +1,3 @@
--- show window hint
-hs.hotkey.bind({'shift'}, 'F1', hs.hints.windowHints)
-
 -- move window
 local function move_win(xx, yy, ww, hh)
     return function()
