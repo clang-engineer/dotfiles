@@ -5,6 +5,7 @@ CONF="$REPO/webloc/bookmarks.conf"
 APP_DIR="$HOME/Applications"
 
 mkdir -p "$APP_DIR"
+active_apps=()
 
 while IFS='|' read -r name url; do
   [[ -z "$name" || "$name" == \#* ]] && continue
@@ -40,4 +41,21 @@ EOF
 EOF
 
   printf '→ %s.app installed\n' "$name"
+  active_apps+=("$name.app")
 done < "$CONF"
+
+# Remove apps not in bookmarks.conf
+for app in "$APP_DIR"/*.app; do
+  [[ -d "$app" ]] || continue
+  app_name="$(basename "$app")"
+  bundle_id=$(defaults read "$app/Contents/Info" CFBundleIdentifier 2>/dev/null || true)
+  [[ "$bundle_id" == com.zero.bookmark.* ]] || continue
+  found=false
+  for active in "${active_apps[@]}"; do
+    [[ "$app_name" == "$active" ]] && found=true && break
+  done
+  if [[ "$found" == false ]]; then
+    rm -rf "$app"
+    printf '✕ %s removed\n' "$app_name"
+  fi
+done
