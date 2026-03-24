@@ -45,19 +45,19 @@ run = 'move-node-to-workspace 1'
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'              # Chrome
-run = 'move-node-to-workspace 2'
+run = ['move-node-to-workspace 2', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'               # Safari
-run = 'move-node-to-workspace 2'
+run = ['move-node-to-workspace 2', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.anthropic.claudefordesktop' # Claude
-run = 'move-node-to-workspace 2'
+run = ['move-node-to-workspace 2', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome.app.dgbbiofhojegonmgagbboheelnddaopf' # ChatGPT (PWA)
-run = 'move-node-to-workspace 2'
+run = ['move-node-to-workspace 2', 'layout floating']
 
 # ╔══════════════════════════════════════════╗
 # ║  Workspace 3: Communication             ║
@@ -82,17 +82,7 @@ if.app-id = 'com.jetbrains.datagrip'         # DataGrip
 run = 'move-node-to-workspace 4'
 
 # ╔══════════════════════════════════════════╗
-# ║  Floating (no workspace)                ║
+# ║  Default: Floating                      ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
-if.app-id = 'com.apple.systempreferences'    # System Settings
 run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.finder'              # Finder
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.Notes'               # Notes
-run = 'layout floating'
-
