@@ -31,4 +31,3 @@ claude/sessions/
 claude/telemetry/
 claude/mcp-needs-auth-cache.json
 claude/plugins/
-claude/settings.json
