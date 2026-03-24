@@ -1,2 +1,3 @@
 --require('modules.hjkl')
-require('modules.window')
+require('modules.rectangle')
+require('modules.window-hint')
