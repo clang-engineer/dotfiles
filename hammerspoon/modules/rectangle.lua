@@ -26,8 +26,23 @@ hs.hotkey.bind(mod, 'i', move_win(1/2, 0, 1/2, 1/2))        -- Top Right
 hs.hotkey.bind(mod, 'j', move_win(0, 1/2, 1/2, 1/2))        -- Bottom Left
 hs.hotkey.bind(mod, 'k', move_win(1/2, 1/2, 1/2, 1/2))      -- Bottom Right
 
--- 전체화면 / 중앙
-hs.hotkey.bind(mod, 'return', move_win(0, 0, 1, 1))          -- Maximize
+-- 전체화면 토글 / 중앙
+local prev_frames = {}
+hs.hotkey.bind(mod, 'return', function()
+  local win = hs.window.focusedWindow()
+  if not win then return end
+  local id = win:id()
+  local frame = win:frame()
+  local screen = win:screen():frame()
+  local max = hs.geometry.rect(screen.x, screen.y, screen.w, screen.h)
+  if frame:equals(max) and prev_frames[id] then
+    win:setFrame(prev_frames[id])
+    prev_frames[id] = nil
+  else
+    prev_frames[id] = frame:copy()
+    win:setFrame(max)
+  end
+end)
 hs.hotkey.bind(mod, 'c', move_win(1/8, 1/8, 3/4, 3/4))      -- Center (3/4 크기)
 
 -- 1/3 분할
