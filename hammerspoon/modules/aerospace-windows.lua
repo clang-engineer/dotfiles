@@ -11,16 +11,16 @@ local wsIcons = {
 
 local alertStyle = {
   textSize = 14,
-  textColor = {white = 1, alpha = 0.9},
+  textColor = {white = 1, alpha = 0.7},
   textFont = ".AppleSystemUIFont",
   strokeColor = {white = 0, alpha = 0},
-  fillColor = {white = 0.1, alpha = 0.6},
+  fillColor = {white = 0.1, alpha = 0.4},
   strokeWidth = 0,
   radius = 8,
   padding = 12,
   fadeInDuration = 0.1,
   fadeOutDuration = 0.5,
-  atScreenEdge = 1,
+  atScreenEdge = 0,
 }
 
 local function showAlert(text)
@@ -46,7 +46,12 @@ local function showWorkspaceApps()
         end
       end
 
-      local text = #apps > 0 and table.concat(apps, "  ·  ") or "(empty)"
+      local text = icon
+      if #apps > 0 then
+        text = icon .. "\n" .. table.concat(apps, "  ·  ")
+      else
+        text = icon .. "\n🫥"
+      end
 
       showAlert(text)
     end, {"list-windows", "--workspace", focused, "--format", "%{app-name}"}):start()
