@@ -46,10 +46,7 @@ local function showWorkspaceApps()
         end
       end
 
-      local text = icon
-      if #apps > 0 then
-        text = icon .. " | " .. table.concat(apps, ", ")
-      end
+      local text = #apps > 0 and table.concat(apps, ", ") or "(empty)"
 
       showAlert(text)
     end, {"list-windows", "--workspace", focused, "--format", "%{app-name}"}):start()
