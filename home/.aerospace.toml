@@ -75,12 +75,10 @@ run = ['move-node-to-workspace 3:Company', 'layout floating']
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.intellij'            # IntelliJ IDEA
-if.window-title-regex-substring = ' – '
 run = ['move-node-to-workspace 4:JetBrains', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.datagrip'            # DataGrip
-if.window-title-regex-substring = ' – '
 run = ['move-node-to-workspace 4:JetBrains', 'layout floating']
 
 # ╔══════════════════════════════════════════╗
