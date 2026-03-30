@@ -33,7 +33,19 @@ local function showWorkspaceApps()
       end
 
       hs.alert.closeAll()
-      hs.alert.show(text, {textSize = 16, fadeInDuration = 0, fadeOutDuration = 0.3, atScreenEdge = 1}, hs.screen.mainScreen(), 1.5)
+      hs.alert.show(text, {
+        textSize = 14,
+        textColor = {white = 1, alpha = 0.9},
+        textFont = ".AppleSystemUIFont",
+        strokeColor = {white = 0, alpha = 0},
+        fillColor = {white = 0.1, alpha = 0.6},
+        strokeWidth = 0,
+        radius = 8,
+        padding = 12,
+        fadeInDuration = 0.1,
+        fadeOutDuration = 0.5,
+        atScreenEdge = 1,
+      }, hs.screen.mainScreen(), 1.5)
     end, {"list-windows", "--workspace", focused, "--format", "%{app-name}"}):start()
   end, {"list-workspaces", "--focused"}):start()
 end
