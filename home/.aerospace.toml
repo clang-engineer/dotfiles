@@ -1,5 +1,11 @@
 # AeroSpace Config
 
+# Notify Hammerspoon on workspace change
+exec-on-workspace-change = [
+  '/bin/bash', '-c',
+  'open -g hammerspoon://aerospace-workspace-changed',
+]
+
 # Keybindings
 # NOTE: [mode.main.binding] overrides ALL defaults, so base keys must be listed
 [mode.main.binding]
