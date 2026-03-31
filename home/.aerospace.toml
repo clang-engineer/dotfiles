@@ -1,5 +1,7 @@
 # AeroSpace Config
 
+start-at-login = true
+
 # Notify Hammerspoon on workspace change
 exec-on-workspace-change = [
   '/bin/bash', '-c',
