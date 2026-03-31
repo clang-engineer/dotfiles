@@ -4,5 +4,11 @@
 
 WS="$1"
 APP=$(aerospace list-windows --focused --format '%{app-name}')
+
+if [ -z "$APP" ]; then
+  open -g "hammerspoon://aerospace-node-moved?ws=${WS}&app="
+  exit 0
+fi
+
 aerospace move-node-to-workspace "$WS"
 open -g "hammerspoon://aerospace-node-moved?ws=${WS}&app=${APP// /%20}"

@@ -68,8 +68,12 @@ hs.urlevent.bind("aerospace-node-moved", function(_, params)
   local targetWs = params and params.ws or nil
   if not targetWs then return end
 
-  local appName = params and params.app or "App"
+  local appName = params and params.app or ""
   local targetIcon = wsIcons[targetWs] or targetWs
 
-  showAlert(appName .. " → " .. targetIcon)
+  if appName == "" then
+    showAlert("Nothing to move")
+  else
+    showAlert(appName .. " → " .. targetIcon)
+  end
 end)
