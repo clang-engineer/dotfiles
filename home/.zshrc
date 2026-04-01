@@ -13,7 +13,8 @@ fi
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="random"
+# 테마 전환: "powerlevel10k/powerlevel10k" 또는 "robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 plugins=(
     git brew
@@ -72,3 +73,6 @@ if [[ -n "$BREW_PREFIX" ]]; then
 elif [[ -s /usr/share/autojump/autojump.sh ]]; then
   source /usr/share/autojump/autojump.sh
 fi
+
+# powerlevel10k config
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
