@@ -4,16 +4,18 @@
 - `home/`: `$HOME` 아래에 바로 매핑되는 플랫 파일 (예: `.bashrc`, `.zshrc`, `.tmux.conf`, `.gitconfig`).
 - `claude/`: Claude Code 설정 (`~/.claude`로 링크).
 - `hammerspoon/`: Hammerspoon 설정 (`~/.hammerspoon`으로 링크, macOS 전용).
-- `ssh/`: SSH 설정 (`~/.ssh`로 링크).
+- `ssh/`: SSH 설정 (자동 설정 대상 아님, 수동 실행 필요).
 - `nvim/`: Neovim 설정. LazyVim(`lazy/`)과 고전 Vimscript(`classic/`) 구성으로 나뉩니다.
 - `scripts/`: 오케스트레이터와 설치 스크립트가 위치합니다.
 
 ## 빠른 시작
 ### macOS/Linux
 ```sh
-./scripts/setup.sh
+./scripts/bootstrap.sh
 ```
 스크립트는 각 모듈의 setup.sh를 실행하여 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
+
+> ⚠️ **수동 설정 필요**: SSH는 자동 설정 대상이 아닙니다. 필요 시 `ssh/setup.sh`를 직접 실행하세요. `--force` 옵션 사용 시 기존 키가 유실될 수 있으니 주의하세요.
 
 옵션:
 - `--force`: 대상 위치에 있는 기존 파일이나 링크를 덮어씁니다.
@@ -21,7 +23,7 @@
 
 ### Windows
 ```powershell
-./scripts/setup.ps1
+./scripts/bootstrap.ps1
 ```
 Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성, 패키지 설치를 순서대로 수행합니다.
 
