@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=$(cat); FILE=$(echo \"$INPUT\" | jq -r \".tool_input.file_path // empty\"); if [[ \"$FILE\" == *\".env\"* ]] || [[ \"$FILE\" == *\".secrets\"* ]] || [[ \"$FILE\" == *\"credentials\"* ]]; then echo \"BLOCKED: $FILE is a protected sensitive file\" >&2; exit 2; fi; exit 0'"
+          }
+        ]
+      }
+    ]
+  }
+}
