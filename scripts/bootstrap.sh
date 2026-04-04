@@ -4,7 +4,7 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Usage: setup.sh [--force]
+Usage: bootstrap.sh [--force]
 
 Options:
   --force           Replace existing files/symlinks at the destination.
@@ -38,7 +38,6 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 # -- linking (module setup scripts) --
 sh "$REPO"/home/setup.sh
 sh "$REPO"/claude/setup.sh
-sh "$REPO"/ssh/setup.sh
 sh "$REPO"/hammerspoon/setup.sh
 sh "$REPO"/nvim/setup.sh
 
