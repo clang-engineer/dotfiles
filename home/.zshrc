@@ -13,8 +13,9 @@ fi
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-# 테마 전환: "powerlevel10k/powerlevel10k" 또는 "robbyrussell"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+# 테마 전환: 아래 둘 중 하나만 활성화
+# ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME=""  # starship 사용 시 비워둘 것
 
 plugins=(
     git brew
@@ -74,5 +75,8 @@ elif [[ -s /usr/share/autojump/autojump.sh ]]; then
   source /usr/share/autojump/autojump.sh
 fi
 
-# powerlevel10k config
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+# --- 프롬프트 테마 (둘 중 하나만 활성화) ---
+# p10k 사용 시:
+# [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+# starship 사용 시:
+eval "$(starship init zsh)"

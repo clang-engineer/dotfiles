@@ -1,0 +1,5 @@
+# starship config
+# 커스텀이 필요하면 여기에 추가
+# 프리셋 적용: starship preset <name> -o ~/.config/starship.toml
+# 프리셋 목록: starship preset --list
+# 설정 문서: https://starship.rs/config/
