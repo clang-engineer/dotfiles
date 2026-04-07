@@ -35,6 +35,16 @@ local function find_java(version)
     if vim.v.shell_error == 0 and jenv ~= "" then
       return jenv
     end
+    -- fallback: find exact version matching major version from jenv versions
+    local exact = vim.fn.trim(vim.fn.system(
+      "jenv versions --bare 2>/dev/null | grep '^" .. version .. "\\.' | tail -1"
+    ))
+    if vim.v.shell_error == 0 and exact ~= "" then
+      jenv = vim.fn.trim(vim.fn.system("jenv prefix " .. exact .. " 2>/dev/null"))
+      if vim.v.shell_error == 0 and jenv ~= "" then
+        return jenv
+      end
+    end
     local result = vim.fn.trim(vim.fn.system("/usr/libexec/java_home -v " .. version .. " 2>/dev/null"))
     if vim.v.shell_error == 0 and result ~= "" then
       return result
