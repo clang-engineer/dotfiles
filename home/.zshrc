@@ -1,5 +1,5 @@
-# tmux 자동 실행 (이미 tmux 안이 아닐 때만)
-if command -v tmux &>/dev/null && [[ -z "$TMUX" ]]; then
+# tmux 자동 실행 (이미 tmux 안이 아닐 때만, IDE 내장 터미널 제외)
+if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
   tmux attach -t default || tmux new -s default
 fi
 
