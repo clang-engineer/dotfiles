@@ -25,9 +25,7 @@ plugins=(
 
 source ~/.oh-my-zsh/oh-my-zsh.sh
 
-# Project directories (WORKSPACE_DIR is set in ~/.secrets per machine)
-export TOOLBOX_DIR="$WORKSPACE_DIR/toolbox"
-export BLOG_DIR="$WORKSPACE_DIR/clang-engineer.github.io"
+# Project directories (WORKSPACE_DIR, BLOG_DIR, TOOLBOX_DIR are set in ~/.secrets per machine)
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
