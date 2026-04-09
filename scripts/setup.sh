@@ -47,6 +47,9 @@ sh "$REPO"/scripts/unix/install-oh-my-zsh.sh
 sh "$REPO"/scripts/unix/install-zsh-plugins.sh
 sh "$REPO"/scripts/unix/install-tpm.sh
 
+# -- secrets (machine-local env vars) --
+sh "$REPO"/scripts/setup-secrets.sh
+
 # -- post-install --
 if command -v tmux >/dev/null 2>&1; then
   tmux source-file "$HOME/.tmux.conf" || true
