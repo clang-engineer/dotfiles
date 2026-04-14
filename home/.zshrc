@@ -3,6 +3,9 @@ if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" !=
   tmux attach -t default || tmux new -s default
 fi
 
+# Locale
+export LANG=ko_KR.UTF-8
+
 # Load secrets (tokens, credentials) from a local-only file
 [ -f ~/.secrets ] && source ~/.secrets
 
