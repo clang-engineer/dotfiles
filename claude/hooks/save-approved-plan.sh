@@ -1,7 +1,8 @@
 #!/bin/bash
 # PostToolUse hook for ExitPlanMode
-# Saves the approved plan to docs/plans/{date}.md in the current project
+# Saves the approved plan to dotfiles/docs/plans/{project}/{date}.md
 
+DOTFILES="${HOME}/Desktop/_zero/dotfiles"
 PLANS_DIR="${HOME}/.claude/plans"
 PLAN_FILE=$(ls -t "$PLANS_DIR"/*.md 2>/dev/null | head -1)
 
@@ -24,29 +25,22 @@ if [ -z "$TITLE" ]; then
   TITLE="Untitled"
 fi
 
-# Extract [ProjectName] from title, default to [General]
-PROJECT=$(echo "$TITLE" | grep -o '^\[.*\]' | head -1)
-if [ -z "$PROJECT" ]; then
-  PROJECT="[General]"
-else
-  TITLE=$(echo "$TITLE" | sed 's/^\[.*\] *//')
-fi
-
+PROJECT=$(basename "$PWD")
 DATE=$(date +%Y-%m-%d)
-TARGET="docs/plans/${DATE}.md"
-mkdir -p docs/plans
+TARGET_DIR="${DOTFILES}/docs/plans/${PROJECT}"
+TARGET="${TARGET_DIR}/${DATE}.md"
+mkdir -p "$TARGET_DIR"
 
 # Skip if already recorded
 if [ -f "$TARGET" ] && grep -qF "$TITLE" "$TARGET"; then
   exit 0
 fi
 
-# Append plan body (everything after the first heading)
 BODY=$(echo "$PLAN_CONTENT" | tail -n +2)
 
 {
   echo ""
-  echo "## ${PROJECT} ${TITLE}"
+  echo "## ${TITLE}"
   echo "${BODY}"
   echo ""
 } >> "$TARGET"
