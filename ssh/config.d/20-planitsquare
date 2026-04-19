@@ -39,3 +39,9 @@ Host shine-app
     Port 30022
     User shine
     IdentityFile ~/.ssh/id_rsa_github_clang-engineer
+
+Host shine-prod
+    HostName 175.45.222.162
+    Port 22
+    User planitsquare
+    IdentityFile ~/.ssh/id_rsa_github_clang-engineer
