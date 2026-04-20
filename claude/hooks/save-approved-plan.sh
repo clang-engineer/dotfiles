@@ -2,7 +2,7 @@
 # PostToolUse hook for ExitPlanMode
 # Saves the approved plan to dotfiles/docs/plans/{project}/{date}.md
 
-DOTFILES="${HOME}/Desktop/_zero/dotfiles"
+TOOLBOX_DIR="${TOOLBOX_DIR:-${HOME}/Desktop/_zero/toolbox}"
 PLANS_DIR="${HOME}/.claude/plans"
 PLAN_FILE=$(ls -t "$PLANS_DIR"/*.md 2>/dev/null | head -1)
 
@@ -27,7 +27,7 @@ fi
 
 PROJECT=$(basename "$PWD")
 DATE=$(date +%Y-%m-%d)
-TARGET_DIR="${DOTFILES}/docs/plans/${PROJECT}"
+TARGET_DIR="${TOOLBOX_DIR}/docs/plans/${PROJECT}"
 TARGET="${TARGET_DIR}/${DATE}.md"
 mkdir -p "$TARGET_DIR"
 
