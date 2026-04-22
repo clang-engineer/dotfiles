@@ -10,6 +10,7 @@ Write-Host "==> Windows setup" -ForegroundColor Cyan
 & "$RepoDir\home\setup.ps1"
 & "$RepoDir\nvim\setup.ps1"
 & "$RepoDir\ssh\setup.ps1"
+& "$RepoDir\claude\setup.ps1"
 
 Write-Host ""
 Write-Host "==> Done" -ForegroundColor Green

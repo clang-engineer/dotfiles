@@ -9,5 +9,4 @@ New-Junction -Source $Source -Dest $Dest
 # exrc
 $ExrcSource = Join-Path $RepoDir "nvim\exrc\exrc-windows.lua"
 $ExrcDest = Join-Path $env:USERPROFILE ".exrc.lua"
-cmd /c mklink /H "$ExrcDest" "$ExrcSource" 2>&1 | Out-Null
-Write-Host "Linked exrc" -ForegroundColor Green
+New-FileLink -Source $ExrcSource -Dest $ExrcDest | Out-Null
