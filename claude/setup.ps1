@@ -1,8 +1,8 @@
 $RepoDir = (Resolve-Path "$PSScriptRoot\..").Path
 . "$RepoDir\scripts\lib\common.ps1"
 
-$Source = Join-Path $RepoDir "ssh"
-$Dest = Join-Path $env:USERPROFILE ".ssh"
+$Source = Join-Path $RepoDir "claude"
+$Dest = Join-Path $env:USERPROFILE ".claude"
 
 if (Test-Path $Dest) {
     $Item = Get-Item $Dest -Force
@@ -14,9 +14,9 @@ if (Test-Path $Dest) {
     New-Item -ItemType Directory -Path $Dest | Out-Null
 }
 
-foreach ($f in @("config", "github_actions", "github_actions.pub")) {
-    $srcFile = Join-Path $Source $f
-    $destFile = Join-Path $Dest $f
-    if (-not (Test-Path $srcFile)) { continue }
-    New-FileLink -Source $srcFile -Dest $destFile | Out-Null
+foreach ($item in @("CLAUDE.md", "settings.json", "commands", "hooks")) {
+    $src = Join-Path $Source $item
+    $dst = Join-Path $Dest $item
+    if (-not (Test-Path $src)) { continue }
+    Link-Path -Source $src -Dest $dst | Out-Null
 }
