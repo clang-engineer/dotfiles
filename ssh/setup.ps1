@@ -20,3 +20,15 @@ foreach ($f in @("config", "github_actions", "github_actions.pub")) {
     if (-not (Test-Path $srcFile)) { continue }
     New-FileLink -Source $srcFile -Dest $destFile | Out-Null
 }
+
+$SrcConfigD = Join-Path $Source "config.d"
+$DestConfigD = Join-Path $Dest "config.d"
+if (Test-Path $SrcConfigD) {
+    if (-not (Test-Path $DestConfigD)) {
+        New-Item -ItemType Directory -Path $DestConfigD | Out-Null
+    }
+    foreach ($file in Get-ChildItem -Path $SrcConfigD -File) {
+        if ($file.Name -like "*.example") { continue }
+        New-FileLink -Source $file.FullName -Dest (Join-Path $DestConfigD $file.Name) | Out-Null
+    }
+}
