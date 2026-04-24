@@ -1,7 +1,10 @@
-# tmux 자동 실행 (이미 tmux 안이 아닐 때만)
-if command -v tmux &>/dev/null && [[ -z "$TMUX" ]]; then
+# tmux 자동 실행 (이미 tmux 안이 아닐 때만, IDE 내장 터미널 제외)
+if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
   tmux attach -t default || tmux new -s default
 fi
+
+# Locale
+export LANG=ko_KR.UTF-8
 
 # Load secrets (tokens, credentials) from a local-only file
 [ -f ~/.secrets ] && source ~/.secrets
@@ -13,7 +16,9 @@ fi
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="random"
+# 테마 전환: 아래 둘 중 하나만 활성화
+# ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME=""  # starship 사용 시 비워둘 것
 
 plugins=(
     git brew
@@ -23,9 +28,7 @@ plugins=(
 
 source ~/.oh-my-zsh/oh-my-zsh.sh
 
-# Project directories (WORKSPACE_DIR is set in ~/.secrets per machine)
-export TOOLBOX_DIR="$WORKSPACE_DIR/toolbox"
-export BLOG_DIR="$WORKSPACE_DIR/clang-engineer.github.io"
+# Project directories (WORKSPACE_DIR, BLOG_DIR, TOOLBOX_DIR are set in ~/.secrets per machine)
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -72,3 +75,9 @@ if [[ -n "$BREW_PREFIX" ]]; then
 elif [[ -s /usr/share/autojump/autojump.sh ]]; then
   source /usr/share/autojump/autojump.sh
 fi
+
+# --- 프롬프트 테마 (둘 중 하나만 활성화) ---
+# p10k 사용 시:
+# [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+# starship 사용 시:
+eval "$(starship init zsh)"
