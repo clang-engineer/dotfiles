@@ -31,3 +31,7 @@ claude/sessions/
 claude/telemetry/
 claude/mcp-needs-auth-cache.json
 claude/plugins/
+
+# local tool settings
+.claude/settings.local.json
+.serena/

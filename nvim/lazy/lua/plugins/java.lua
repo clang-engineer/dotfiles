@@ -9,6 +9,11 @@ return {
       -- JDK inputs (from .nvim.lua or shell):
       --   JDTLS_JAVA_HOME  = /path/to/jdk-21
       --   GRADLE_JAVA_HOME = /path/to/jdk-17
+      -- Auto-detect JDKs if .nvim.lua didn't run (e.g. trust not granted).
+      if not present(vim.env.JDTLS_JAVA_HOME) then
+        require("config.java-env").setup()
+      end
+
       local java_home = vim.env.JDTLS_JAVA_HOME
       local gradle_java_home = vim.env.GRADLE_JAVA_HOME
 
