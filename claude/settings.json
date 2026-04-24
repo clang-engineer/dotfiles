@@ -11,6 +11,18 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/save-approved-plan.sh",
+            "statusMessage": "Saving approved plan..."
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Edit|Write",
