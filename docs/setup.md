@@ -73,7 +73,7 @@ GitHub용 SSH 키를 `~/.ssh/id_rsa_github_{USERNAME}`에 생성하고 ssh-agent
 ### Java 버전 관리
 
 ```sh
-./scripts/unix/opt/setup-java-versions.sh
+./scripts/setup-java-versions.sh
 ```
 
 Homebrew로 설치된 openjdk(8, 11, 17, 21)에 대해 `/Library/Java/JavaVirtualMachines/` 심링크를 만들고 jenv에 등록한다. sudo 필요.
