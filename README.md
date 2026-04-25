@@ -105,7 +105,7 @@ cp ~/.secrets.example ~/.secrets
 chmod 600 ~/.secrets          # Linux/Mac만 해당
 ```
 
-자세한 내용은 [`docs/security.md`](docs/security.md)를 참고하세요.
+자세한 내용은 [`SECURITY.md`](SECURITY.md)를 참고하세요.
 
 ## 수동 링크 (선택 사항)
 각 항목을 개별적으로 링크하고 싶다면 다음 명령을 참고하세요.
