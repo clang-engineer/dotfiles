@@ -8,7 +8,9 @@
       "mcp__serena__read_file",
       "mcp__serena__create_text_file",
       "Bash(rm:*)",
-      "mcp__serena__list_dir"
+      "mcp__serena__list_dir",
+      "Bash(curl:*)",
+      "Bash(git mv *)"
     ]
   }
 }

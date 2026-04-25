@@ -2,6 +2,12 @@
 # ~/.secrets 파일에 머신별 환경변수를 설정한다.
 # 이미 설정된 변수는 건너뛴다.
 
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+. "$REPO/scripts/lib/common.sh"
+
+link_path "$REPO/scripts/.secrets.example" "$HOME/.secrets.example"
+link_path "$REPO/scripts/.secrets.ps1.example" "$HOME/.secrets.ps1.example"
+
 SECRETS="$HOME/.secrets"
 
 # 파일이 없으면 생성

@@ -1,6 +1,6 @@
 #!/bin/sh
 # tmux 기본 레이아웃 구성
-# Usage: ./scripts/tmux-layout.sh (tmux 밖에서 실행)
+# Usage: ./tmux/tmux-layout.sh (tmux 밖에서 실행)
 
 SESSION_DEFAULT="default"
 SESSION_WORKSPACE="workspace1"

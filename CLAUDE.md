@@ -4,12 +4,16 @@
 macOS 개발환경 설정 파일 모음. 셸, 에디터, 도구 설정을 한 곳에서 관리한다.
 
 ## 모듈 구조
-- `home/` — 홈 디렉터리 1:1 매핑 (`.zshrc`, `.gitconfig`, `.tmux.conf` 등)
+- `zsh/` — Zsh/Bash 설정 + 플러그인 설치 스크립트
+- `tmux/` — tmux 설정 + TPM 설치 스크립트
+- `git/` — Git 설정 + 다중 계정 관리 스크립트
+- `ssh/` — SSH 설정 (수동 실행)
 - `nvim/` — Neovim 설정 (`lazy/`: LazyVim Lua, `classic/`: Vimscript)
 - `hammerspoon/` — macOS 자동화 (윈도우 관리, 단축키)
 - `claude/` — Claude Code 설정 (hooks, keybindings, 슬래시 커맨드)
+- `home/` — 단독 설정 파일 (`.ideavimrc`, `.clang-format`, `.vimrc` 등)
 - `packages/` — Brewfile 기반 패키지 정의
-- `scripts/` — 설치·링크·유틸리티 스크립트
+- `scripts/` — 부트스트랩 오케스트레이터, 공통 라이브러리
 - `docs/` — 가이드 문서
 
 ## 빌드 및 검증 명령
