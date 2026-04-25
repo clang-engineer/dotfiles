@@ -53,3 +53,16 @@ brew bundle dump --file=packages/Brewfile --force
 
 1. `scoop-packages.txt` 또는 `Brewfile`을 직접 편집
 2. 설치 스크립트를 다시 실행
+
+## 참고: 추가로 쓸 만한 도구
+
+필요할 때 개별 설치. Brewfile에는 포함하지 않음.
+
+| 도구 | 용도 | 대체 대상 |
+|------|------|-----------|
+| `eza` | 파일 목록 (아이콘, Git 상태 표시) | `ls` |
+| `zoxide` | 스마트 디렉터리 점프 | `cd`/`autojump` |
+| `delta` | Git diff 구문 강조 | `git diff` |
+| `tldr` | 명령어 요약 도움말 | `man` |
+| `htop` | 프로세스 모니터 | `top` |
+| `dust` | 디스크 사용량 시각화 | `du` |
