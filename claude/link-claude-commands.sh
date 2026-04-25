@@ -3,8 +3,8 @@
 # Link shared Claude Code custom commands into a project.
 #
 # Usage:
-#   ./scripts/link-claude-commands.sh <project-path> [command1 command2 ...]
-#   ./scripts/link-claude-commands.sh --force <project-path> [command1 ...]
+#   ./claude/link-claude-commands.sh <project-path> [command1 command2 ...]
+#   ./claude/link-claude-commands.sh --force <project-path> [command1 ...]
 #
 # - No command names → link all .md files
 # - Specific names   → link only those (omit .md extension)
