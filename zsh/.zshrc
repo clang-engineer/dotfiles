@@ -68,6 +68,11 @@ if command -v pyenv &>/dev/null; then
   eval "$(pyenv virtualenv-init -)"
 fi
 
+# fzf (Ctrl+T 파일 선택, Ctrl+R 히스토리, Alt+C 디렉터리 이동)
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh)
+fi
+
 # autojump
 if [[ -n "$BREW_PREFIX" ]]; then
   AUTOJUMP_SH="$BREW_PREFIX/etc/profile.d/autojump.sh"
@@ -76,8 +81,3 @@ elif [[ -s /usr/share/autojump/autojump.sh ]]; then
   source /usr/share/autojump/autojump.sh
 fi
 
-# --- 프롬프트 테마 (둘 중 하나만 활성화) ---
-# p10k 사용 시:
-# [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-# starship 사용 시:
-eval "$(starship init zsh)"
