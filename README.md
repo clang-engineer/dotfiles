@@ -1,12 +1,15 @@
 # Dotfiles 설정 가이드
 
 ## 저장소 구조
-- `home/`: `$HOME` 아래에 바로 매핑되는 플랫 파일 (예: `.bashrc`, `.zshrc`, `.tmux.conf`, `.gitconfig`).
-- `claude/`: Claude Code 설정 (`~/.claude`로 링크).
-- `hammerspoon/`: Hammerspoon 설정 (`~/.hammerspoon`으로 링크, macOS 전용).
+- `zsh/`: Zsh/Bash 설정과 플러그인 설치 스크립트.
+- `tmux/`: tmux 설정과 TPM 설치 스크립트.
+- `git/`: Git 설정과 다중 계정 관리 스크립트.
 - `ssh/`: SSH 설정 (자동 설정 대상 아님, 수동 실행 필요).
 - `nvim/`: Neovim 설정. LazyVim(`lazy/`)과 고전 Vimscript(`classic/`) 구성으로 나뉩니다.
-- `scripts/`: 오케스트레이터와 설치 스크립트가 위치합니다.
+- `claude/`: Claude Code 설정 (`~/.claude`로 링크).
+- `hammerspoon/`: Hammerspoon 설정 (`~/.hammerspoon`으로 링크, macOS 전용).
+- `home/`: 단독 설정 파일 (`.ideavimrc`, `.clang-format`, `.vimrc` 등).
+- `scripts/`: 부트스트랩 오케스트레이터와 공통 라이브러리.
 
 ## 빠른 시작
 ### macOS/Linux
@@ -19,7 +22,10 @@
 
 | 모듈 | bootstrap.sh | 비고 |
 |------|:------------:|------|
-| `home/` | ✅ | .zshrc, .gitconfig 등 |
+| `home/` | ✅ | 단독 설정 파일 |
+| `zsh/` | ✅ | .zshrc + oh-my-zsh, 플러그인 설치 |
+| `tmux/` | ✅ | .tmux.conf + TPM 설치 |
+| `git/` | ✅ | .gitconfig |
 | `claude/` | ✅ | ~/.claude |
 | `hammerspoon/` | ✅ | macOS 전용 |
 | `nvim/` | ✅ | LazyVim 기본 |
@@ -43,7 +49,7 @@ Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성
 
 ### 통합 설정 (추천)
 ```sh
-./scripts/unix/setup-github-account.sh
+./git/setup-github-account.sh
 ```
 대화형 프롬프트로 다음을 한번에 설정합니다:
 1. SSH 키 생성
@@ -56,20 +62,20 @@ Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성
 
 **1. SSH 키 생성**
 ```sh
-./scripts/unix/opt/generate-ssh-key.sh
-./scripts/unix/opt/generate-ssh-key.sh myusername my@email.com
+./git/opt/generate-ssh-key.sh
+./git/opt/generate-ssh-key.sh myusername my@email.com
 ```
 
 **2. SSH config 추가**
 ```sh
-./scripts/unix/opt/add-ssh-config.sh
-./scripts/unix/opt/add-ssh-config.sh myusername
+./git/opt/add-ssh-config.sh
+./git/opt/add-ssh-config.sh myusername
 ```
 
 **3. Git includeIf 설정**
 ```sh
-./scripts/unix/opt/setup-git-includeif.sh
-./scripts/unix/opt/setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
+./git/opt/setup-git-includeif.sh
+./git/opt/setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
 ```
 
 ### 사용 예시
@@ -104,11 +110,11 @@ chmod 600 ~/.secrets          # Linux/Mac만 해당
 ## 수동 링크 (선택 사항)
 각 항목을 개별적으로 링크하고 싶다면 다음 명령을 참고하세요.
 ```sh
-ln -s "$PWD/home/.bashrc" ~/.bashrc
-ln -s "$PWD/home/.bash_profile" ~/.bash_profile
-ln -s "$PWD/home/.zshrc" ~/.zshrc
-ln -s "$PWD/home/.gitconfig" ~/.gitconfig
-ln -s "$PWD/home/.tmux.conf" ~/.tmux.conf
+ln -s "$PWD/zsh/.bashrc" ~/.bashrc
+ln -s "$PWD/zsh/.bash_profile" ~/.bash_profile
+ln -s "$PWD/zsh/.zshrc" ~/.zshrc
+ln -s "$PWD/git/.gitconfig" ~/.gitconfig
+ln -s "$PWD/tmux/.tmux.conf" ~/.tmux.conf
 tmux source-file ~/.tmux.conf
 ln -s "$PWD/home/.ideavimrc" ~/.ideavimrc
 ln -s "$PWD/hammerspoon" ~/.hammerspoon

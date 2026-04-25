@@ -35,16 +35,14 @@ export FORCE
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
-# -- linking (module setup scripts) --
+# -- module setup (linking + installs) --
 sh "$REPO"/home/setup.sh
+sh "$REPO"/zsh/setup.sh
+sh "$REPO"/tmux/setup.sh
+sh "$REPO"/git/setup.sh
 sh "$REPO"/claude/setup.sh
 sh "$REPO"/hammerspoon/setup.sh
 sh "$REPO"/nvim/setup.sh
-
-# -- install --
-sh "$REPO"/scripts/unix/install-oh-my-zsh.sh
-sh "$REPO"/scripts/unix/install-zsh-plugins.sh
-sh "$REPO"/scripts/unix/install-tpm.sh
 
 # -- secrets (machine-local env vars) --
 sh "$REPO"/scripts/setup-secrets.sh

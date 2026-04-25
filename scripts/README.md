@@ -9,15 +9,15 @@ scripts/
 ├── README.md
 ├── bootstrap.sh                # Unix 오케스트레이터
 ├── bootstrap.ps1               # Windows 오케스트레이터
+├── setup-secrets.sh            # 환경 변수 비밀 설정
+├── check-claude-env.sh         # Claude 환경 체크
 ├── link-claude-commands.sh     # Claude Code 커맨드 링크
 ├── lib/
 │   ├── common.sh               # 공용 함수 (link_path, ensure_dir)
 │   └── common.ps1              # 공용 함수 (Write-TaskHeader, New-Junction)
 ├── unix/
-│   ├── install-oh-my-zsh.sh    # oh-my-zsh 설치
-│   ├── install-zsh-plugins.sh  # zsh 플러그인 설치
-│   ├── install-tpm.sh          # TPM 설치
-│   └── opt/*.sh                # SSH/Git/Java 보조 스크립트
+│   └── opt/
+│       └── setup-java-versions.sh  # jenv 기반 Java 버전 설정
 └── windows/
     └── opt/*.ps1               # 보조 스크립트 (폰트, 터미널 등)
 ```
@@ -27,38 +27,32 @@ scripts/
 | 목적 | macOS/Linux | Windows | 비고 |
 | --- | --- | --- | --- |
 | 전체 환경 부트스트랩 | `./scripts/bootstrap.sh [--force]` | `.\scripts\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
-| 개별 모듈 링킹 | `./home/setup.sh`, `./claude/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
-| 선택형 도구 | `./scripts/unix/opt/add-ssh-config.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
+| 개별 모듈 링킹 | `./zsh/setup.sh`, `./tmux/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
+| 선택형 도구 | `./git/opt/generate-ssh-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
 
 ## Unix (macOS/Linux)
 
 ### 개별 모듈 실행
 
 ```sh
-./home/setup.sh              # 플랫 dotfile 링킹
+./home/setup.sh              # 단독 설정 파일 링킹
+./zsh/setup.sh               # zsh 설정 링킹 + oh-my-zsh/플러그인 설치
+./tmux/setup.sh              # tmux 설정 링킹 + TPM 설치
+./git/setup.sh               # .gitconfig 링킹
 ./claude/setup.sh            # ~/.claude 링킹
 ./ssh/setup.sh               # ~/.ssh 링킹
 ./hammerspoon/setup.sh       # ~/.hammerspoon 링킹
 ./nvim/setup.sh              # ~/.config/nvim + ~/.exrc.lua 링킹
 ```
 
-### Install scripts
-
-```sh
-./scripts/unix/install-oh-my-zsh.sh
-./scripts/unix/install-zsh-plugins.sh
-./scripts/unix/install-tpm.sh
-```
-
 ### Optional helpers
 
 ```sh
-./scripts/unix/opt/add-ssh-config.sh
-./scripts/unix/opt/generate-ssh-key.sh
-./scripts/unix/opt/setup-git-includeif.sh
-./scripts/unix/setup-github-account.sh
-./scripts/unix/opt/setup-java-versions.sh
-./scripts/unix/opt/generate-nvim-java.sh
+./git/setup-github-account.sh         # GitHub 다중 계정 통합 설정
+./git/opt/generate-ssh-key.sh         # SSH 키 생성
+./git/opt/setup-git-includeif.sh      # Git includeIf 설정
+./scripts/unix/opt/setup-java-versions.sh  # jenv 기반 Java 버전 설정
+./nvim/opt/generate-nvim-java.sh      # Neovim Java 설정 생성
 ```
 
 ## Windows
