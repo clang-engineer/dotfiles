@@ -57,7 +57,7 @@ nvim --headless "+Lazy sync" +qa
 ### SSH 키 생성
 
 ```sh
-./scripts/unix/opt/generate-ssh-key.sh [USERNAME] [EMAIL]
+./git/opt/generate-ssh-key.sh [USERNAME] [EMAIL]
 ```
 
 GitHub용 SSH 키를 `~/.ssh/id_rsa_github_{USERNAME}`에 생성하고 ssh-agent에 등록한다. 생성된 공개키를 https://github.com/settings/keys 에 추가할 것.
@@ -65,7 +65,7 @@ GitHub용 SSH 키를 `~/.ssh/id_rsa_github_{USERNAME}`에 생성하고 ssh-agent
 ### Git includeIf 설정 (워크스페이스별 계정 분리)
 
 ```sh
-./scripts/unix/opt/setup-git-includeif.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
+./git/opt/setup-git-includeif.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
 ```
 
 특정 디렉터리 하위의 Git 저장소에서 다른 이름/이메일을 사용하도록 설정한다. 회사/개인 계정을 분리할 때 사용.
@@ -81,5 +81,5 @@ Homebrew로 설치된 openjdk(8, 11, 17, 21)에 대해 `/Library/Java/JavaVirtua
 ### Neovim Java LSP 설정
 
 ```sh
-./scripts/unix/opt/generate-nvim-java.sh
+./nvim/opt/generate-nvim-java.sh
 ```

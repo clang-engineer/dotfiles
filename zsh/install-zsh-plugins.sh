@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-REPO="$(cd "$(dirname "$0")/../.." && pwd)"
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
 source "$REPO/scripts/lib/common.sh"
 
 # Install zsh plugins if oh-my-zsh is installed
