@@ -10,8 +10,6 @@ scripts/
 ├── bootstrap.sh                # Unix 오케스트레이터
 ├── bootstrap.ps1               # Windows 오케스트레이터
 ├── setup-secrets.sh            # 환경 변수 비밀 설정
-├── check-claude-env.sh         # Claude 환경 체크
-├── link-claude-commands.sh     # Claude Code 커맨드 링크
 ├── lib/
 │   ├── common.sh               # 공용 함수 (link_path, ensure_dir)
 │   └── common.ps1              # 공용 함수 (Write-TaskHeader, New-Junction)
