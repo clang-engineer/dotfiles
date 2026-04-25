@@ -10,12 +10,10 @@ scripts/
 ├── bootstrap.sh                # Unix 오케스트레이터
 ├── bootstrap.ps1               # Windows 오케스트레이터
 ├── setup-secrets.sh            # 환경 변수 비밀 설정
+├── setup-java-versions.sh      # jenv 기반 Java 버전 설정
 ├── lib/
 │   ├── common.sh               # 공용 함수 (link_path, ensure_dir)
 │   └── common.ps1              # 공용 함수 (Write-TaskHeader, New-Junction)
-├── unix/
-│   └── opt/
-│       └── setup-java-versions.sh  # jenv 기반 Java 버전 설정
 └── windows/
     └── opt/*.ps1               # 보조 스크립트 (폰트, 터미널 등)
 ```
@@ -49,7 +47,7 @@ scripts/
 ./git/setup-github-account.sh         # GitHub 다중 계정 통합 설정
 ./git/opt/generate-ssh-key.sh         # SSH 키 생성
 ./git/opt/setup-git-includeif.sh      # Git includeIf 설정
-./scripts/unix/opt/setup-java-versions.sh  # jenv 기반 Java 버전 설정
+./scripts/setup-java-versions.sh            # jenv 기반 Java 버전 설정
 ./nvim/opt/generate-nvim-java.sh      # Neovim Java 설정 생성
 ```
 
