@@ -19,6 +19,7 @@ brew "jenv"
 brew "jdtls"
 brew "openjdk@11"
 brew "openjdk@17"
+brew "openjdk@21"
 
 # Node.js
 brew "nvm"
