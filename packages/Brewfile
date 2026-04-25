@@ -2,13 +2,13 @@
 brew "git"
 brew "neovim"
 brew "tmux"
-brew "fzf"
-brew "ripgrep"
-brew "fd"
-brew "lazygit"
-brew "jq"
-brew "bat"
-brew "tree"
+brew "fzf"              # 퍼지 파인더 (Ctrl+R 히스토리, Ctrl+T 파일). zsh/neovim telescope 의존
+brew "ripgrep"          # rg: 초고속 텍스트 검색. neovim grep 백엔드
+brew "fd"               # fd: 직관적 파일 검색 (find 대체). neovim 파일 탐색 의존
+brew "lazygit"          # Git TUI 클라이언트
+brew "jq"               # CLI JSON 필터/변환. 스크립트 JSON 파싱
+brew "bat"              # cat 대체 (구문 강조, 행번호). fzf 미리보기 의존
+brew "tree"             # 디렉터리 트리 출력
 
 # zsh 플러그인
 brew "zsh-autosuggestions"
@@ -24,11 +24,11 @@ brew "openjdk@17"
 brew "nvm"
 
 # 상황에 따라 선택
-brew "autojump"          # zoxide로 대체 가능
+brew "autojump"          # j: 자주 가는 디렉터리 점프. zoxide로 대체 가능
 brew "git-lfs"           # 대용량 파일 다루는 프로젝트 없으면 불필요
-brew "libpq"             # PostgreSQL 안 쓰면 불필요
-brew "pyenv"             # uv로 대체 가능
-brew "pyenv-virtualenv"  # uv로 대체 가능
-brew "rbenv"             # Ruby 개발 안 하면 불필요
-brew "uv"                # pyenv 쓰면 중복될 수 있음
-brew "wget"              # curl이 기본 내장
+brew "libpq"             # psql CLI 포함. PostgreSQL 안 쓰면 불필요
+brew "pyenv"             # Python 버전 관리. uv로 대체 가능
+brew "pyenv-virtualenv"  # pyenv 가상환경. uv로 대체 가능
+brew "rbenv"             # Ruby 버전 관리. Ruby 개발 안 하면 불필요
+brew "uv"                # 초고속 Python 패키지 매니저. pyenv 쓰면 중복될 수 있음
+brew "wget"              # 파일 다운로더. curl이 기본 내장
