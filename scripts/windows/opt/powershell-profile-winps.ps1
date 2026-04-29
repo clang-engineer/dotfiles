@@ -1,5 +1,5 @@
-# zoxide (autojump 대체)
-zoxide init powershell | Out-String | Invoke-Expression
+# zoxide (autojump 대체) — `j` / `ji` 축약어로 바인딩
+zoxide init powershell --cmd j | Out-String | Invoke-Expression
 
 
 # PSReadLine 자동완성 강화
