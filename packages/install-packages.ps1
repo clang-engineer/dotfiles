@@ -27,8 +27,8 @@ if (-not (Test-Path $PackagesFile)) {
     Write-Host "ERROR: $PackagesFile not found" -ForegroundColor Red
     exit 1
 }
-# Read package list, skipping blank lines and comments (#)
-$Packages = Get-Content $PackagesFile | Where-Object { $_ -and -not $_.StartsWith("#") }
+# Read package list, stripping inline comments (#...) and skipping blank/comment-only lines
+$Packages = Get-Content $PackagesFile | ForEach-Object { ($_ -split '#', 2)[0].Trim() } | Where-Object { $_ }
 
 foreach ($pkg in $Packages) {
     if ($Force) {
