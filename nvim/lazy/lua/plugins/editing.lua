@@ -1,10 +1,5 @@
 -- editing.lua: 편집 관련 플러그인 모음
 return {
-  -- vim-tmux-navigator: tmux와 nvim 간 창 이동
-  {
-    "christoomey/vim-tmux-navigator",
-  },
-
   -- vim-visual-multi: 여러 단어를 동시에 편집
   {
     "mg979/vim-visual-multi",
