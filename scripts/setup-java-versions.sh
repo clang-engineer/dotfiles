@@ -3,7 +3,7 @@
 # macOS Java 버전 관리 자동화 스크립트
 # Homebrew로 설치된 Java에 대한 심볼릭 링크 생성 및 jenv 설정
 
-set -e
+set -euo pipefail
 
 # 색상 정의
 GREEN='\033[0;32m'
