@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # ~/.secrets 파일에 머신별 환경변수를 설정한다.
 # 이미 설정된 변수는 건너뛴다.
 
