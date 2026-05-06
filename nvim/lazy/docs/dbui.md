@@ -92,9 +92,14 @@ localhost:5432:eras:snuheras:실제비번
 
 기존 `.sql` 파일을 실행할 때는 `:DBUIFindBuffer`로 사이드바와 연결하거나, `:%DB <url>` 형태로 직접 명령어 실행.
 
-### 결과창 크기
+### 결과창 레이아웃
 
-dadbod이 `:split`로 여는 결과창(`dbout` 파일타입)의 기본 높이가 작다. `dbui.lua`에 autocmd가 들어 있어 결과창이 열릴 때 화면 절반 높이로 자동 리사이즈된다.
+dadbod이 `:split`로 여는 결과창(`dbout` 파일타입)은 가로 분할을 그대로 사용하되, `dbui.lua`의 autocmd가 두 가지를 자동 처리한다:
+
+- **fold 비활성화** (`setlocal nofoldenable`) — vim-dadbod-ui 메인테이너 공식 권장 (PR #203 머지 거부 시 댓글)
+- **화면 절반 높이로 리사이즈** (`resize lines/2`) — 기본 분할이 좁아 결과 행이 잘림
+
+답답하면 `<C-w>_`(높이 max), 균등으로 되돌릴 땐 `<C-w>=`.
 
 ## 트러블슈팅
 
