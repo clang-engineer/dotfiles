@@ -1,6 +1,10 @@
 vim.g.dbs = {
   {
-    name = "local postgres",
+    name = "docker postgres",
     url = "postgres://snuheras@localhost:5432/eras",
+  },
+  {
+    name = "순천향 ridex postgres meta",
+    url = "postgresql://rex@172.22.101.134:5432/psd_sch?connect_timeout=5",
   },
 }
