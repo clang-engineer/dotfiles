@@ -14,15 +14,16 @@ else
   PGPASS="$HOME/.pgpass"
 fi
 
-link_path "$REPO/scripts/.pgpass.example" "$HOME/.pgpass.example"
-
 ensure_dir "$PGPASS_DIR"
 
 if [[ ! -f "$PGPASS" ]]; then
-  printf '→ Creating %s from template\n' "$PGPASS"
   cp "$REPO/scripts/.pgpass.example" "$PGPASS"
   chmod 600 "$PGPASS"
-  printf '   Edit %s to fill in actual credentials.\n' "$PGPASS"
+  printf '→ Created %s\n' "$PGPASS"
+  printf '\n  ⚠ NEXT: edit the file above to replace <USER>:<PASSWORD>\n'
+  printf '    with real credentials, e.g.\n'
+  printf '      localhost:5432:eras:snuheras:<password>\n'
+  printf '      REDACTED_IP:5432:psd_sch:rex:<password>\n\n'
 else
   printf '✓ %s already exists (skipping)\n' "$PGPASS"
 fi
