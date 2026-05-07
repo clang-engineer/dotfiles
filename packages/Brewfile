@@ -23,7 +23,7 @@ brew "openjdk@21"
 brew "nvm"
 
 # 상황에 따라 선택
-brew "autojump"          # j: 자주 가는 디렉터리 점프. zoxide로 대체 가능
+brew "zoxide"            # z: 스마트 디렉터리 점프 (autojump 대체)
 brew "git-lfs"           # 대용량 파일 다루는 프로젝트 없으면 불필요
 brew "libpq"             # psql CLI 포함. PostgreSQL 안 쓰면 불필요
 brew "pyenv"             # Python 버전 관리. uv로 대체 가능
