@@ -5,7 +5,7 @@
 
 local M = {}
 
-local uname = vim.loop.os_uname()
+local uname = vim.uv.os_uname()
 local is_windows = uname.sysname:match("Windows") ~= nil
 local is_macos = uname.sysname == "Darwin"
 
@@ -79,9 +79,13 @@ function M.setup(opts)
 
   if jdtls_path then
     vim.env.JDTLS_JAVA_HOME = jdtls_path
+  else
+    vim.notify("[java-env] JDK " .. jdtls_ver .. " (jdtls) not found", vim.log.levels.WARN)
   end
   if gradle_path then
     vim.env.GRADLE_JAVA_HOME = gradle_path
+  else
+    vim.notify("[java-env] JDK " .. gradle_ver .. " (gradle) not found", vim.log.levels.WARN)
   end
 end
 
