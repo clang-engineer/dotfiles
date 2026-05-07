@@ -37,6 +37,10 @@ else
   export EDITOR='nvim'
 fi
 
+# 모던 CLI alias
+if command -v bat &>/dev/null; then alias cat="bat"; fi
+if command -v eza &>/dev/null; then alias ls="eza"; fi
+
 # c++ alias
 alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
@@ -73,11 +77,8 @@ if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
 fi
 
-# autojump
-if [[ -n "$BREW_PREFIX" ]]; then
-  AUTOJUMP_SH="$BREW_PREFIX/etc/profile.d/autojump.sh"
-  [[ -s "$AUTOJUMP_SH" ]] && source "$AUTOJUMP_SH"
-elif [[ -s /usr/share/autojump/autojump.sh ]]; then
-  source /usr/share/autojump/autojump.sh
+# zoxide (autojump 대체, z/zi 명령어)
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
 fi
 
