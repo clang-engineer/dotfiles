@@ -14,7 +14,7 @@
 ## 빠른 시작
 ### macOS/Linux
 ```sh
-./scripts/bootstrap.sh
+./bootstrap.sh
 ```
 스크립트는 각 모듈의 setup.sh를 실행하여 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
 
@@ -37,7 +37,7 @@
 
 ### Windows
 ```powershell
-./scripts/bootstrap.ps1
+./bootstrap.ps1
 ```
 Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성, 패키지 설치를 순서대로 수행합니다.
 

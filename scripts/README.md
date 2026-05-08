@@ -1,14 +1,12 @@
 # Scripts
 
-OS별 부트스트랩과 보조 도구가 `scripts/` 아래에 정리되어 있습니다.
+부트스트랩이 호출하는 보조 스크립트와 공용 라이브러리가 `scripts/` 아래에 모여 있습니다. 진입점은 저장소 루트의 `bootstrap.sh` / `bootstrap.ps1` 입니다.
 
 ## 구조
 
 ```
 scripts/
 ├── README.md
-├── bootstrap.sh                # Unix 오케스트레이터
-├── bootstrap.ps1               # Windows 오케스트레이터
 ├── setup-secrets.sh            # 환경 변수 비밀 설정
 ├── setup-java-versions.sh      # jenv 기반 Java 버전 설정
 ├── lib/
@@ -22,7 +20,7 @@ scripts/
 
 | 목적 | macOS/Linux | Windows | 비고 |
 | --- | --- | --- | --- |
-| 전체 환경 부트스트랩 | `./scripts/bootstrap.sh [--force]` | `.\scripts\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
+| 전체 환경 부트스트랩 | `./bootstrap.sh [--force]` | `.\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
 | 개별 모듈 링킹 | `./zsh/setup.sh`, `./tmux/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
 | 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
 

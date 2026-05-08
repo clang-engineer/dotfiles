@@ -2,7 +2,7 @@
 param([switch]$Force)
 
 $ErrorActionPreference = "Stop"
-$RepoDir = (Resolve-Path "$PSScriptRoot\..").Path
+$RepoDir = $PSScriptRoot
 
 Write-Host "==> Windows setup" -ForegroundColor Cyan
 
