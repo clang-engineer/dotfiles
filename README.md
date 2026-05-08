@@ -43,6 +43,17 @@ Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성
 
 필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file packages/Brewfile`를 실행하세요.
 
+## Git 기본 identity 설정
+
+`git/.gitconfig`는 PC 공통 설정만 담고 있고, 마지막 줄에서 `~/.gitconfig.local`을 include합니다. 새 PC에서는 템플릿을 복사하고 본인 정보를 채우세요.
+
+```sh
+cp git/.gitconfig.local.example ~/.gitconfig.local
+# 편집하여 [user] name/email 입력
+```
+
+`~/.gitconfig.local` 파일이 없어도 git이 조용히 무시하므로 부트스트랩이 실패하진 않지만, identity가 비어 commit 시 경고가 뜹니다.
+
 ## GitHub 다중 계정 관리
 
 GitHub 계정마다 SSH 키 + Host 별칭 + Git 사용자 정보를 분리합니다. 세 단계는 독립적이라 필요한 것만 실행하면 됩니다.

@@ -1,31 +1,9 @@
-[user]
-	email = clang.engineer@gmail.com
-	name = clang-engineer
-[includeIf "gitdir:~/Desktop/_zero/workspace/"]
-    path = ~/Desktop/_zero/workspace/company.inc
-
-# company.inc >> 와 같이 해당 디렉터리 아래애서 gitconfig 를 overwrite 함
-# [user]
-# 	email = zero@planit.ai		
-# 	name = zero
 [core]
 	autocrlf = input
-[commit]
-	template = .gitmessage
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-
-[includeIf "gitdir:/Users/zero/Desktop/_zero/private/"]
-    path = /Users/zero/Desktop/_zero/private/.gitconfig.inc
-
-[includeIf "gitdir:/Users/zero/Desktop/_zero/workspace/"]
-    path = /Users/zero/Desktop/_zero/workspace/.gitconfig.inc
+[include]
+	path = ~/.gitconfig.local
