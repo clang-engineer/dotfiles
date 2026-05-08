@@ -70,6 +70,15 @@ scripts/windows/
 ```powershell
 .\home\setup.ps1       # PowerShell 프로필 링크
 .\nvim\setup.ps1       # Neovim Junction 링크 + exrc
+.\git\setup.ps1        # ~\.gitconfig 링크
+.\ssh\setup.ps1        # ~\.ssh 링크
+```
+
+### Optional helpers (Windows)
+
+```powershell
+.\ssh\generate-key.ps1                  # SSH 키 생성 (Label, Email)
+.\git\add-workspace-user.ps1            # workspace별 Git user 등록 (includeIf)
 ```
 
 ### Notes
