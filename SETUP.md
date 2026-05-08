@@ -44,13 +44,22 @@ brew bundle --file packages/Brewfile
 
 > 기존 파일이 있으면 경고만 출력하고 건너뛴다. `--force`를 붙이면 기존 파일을 덮어쓴다.
 
-## 3. Neovim 플러그인 동기화
+## 3. Git identity 설정
+
+`git/.gitconfig`는 공통 설정만 들어 있다. 본인 identity는 `~/.gitconfig.local`에 둔다.
+
+```sh
+cp git/.gitconfig.local.example ~/.gitconfig.local
+# 편집하여 [user] name/email 입력
+```
+
+## 4. Neovim 플러그인 동기화
 
 ```sh
 nvim --headless "+Lazy sync" +qa
 ```
 
-## 4. 선택 사항 (scripts/unix/opt/)
+## 5. 선택 사항 (scripts/unix/opt/)
 
 필요한 것만 골라서 실행한다.
 
