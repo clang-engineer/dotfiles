@@ -11,7 +11,7 @@
 
 ### macOS / Linux
 
-- 전체 부트스트랩 시: `./scripts/bootstrap.sh` (기본 LazyVim).
+- 전체 부트스트랩 시: `./bootstrap.sh` (기본 LazyVim).
 - 특정 구성만 교체하려면:
 
   ```bash
