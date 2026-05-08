@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
+# Register a workspace-scoped Git user (name/email) via [includeIf "gitdir:..."]
+# in ~/.gitconfig, so repos under that path use a different identity.
 
 set -euo pipefail
 
-# Setup Git includeIf for workspace-specific user config
-
 usage() {
   cat <<'EOF'
-Usage: setup-git-includeif.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
+Usage: add-workspace-user.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
 
-Setup Git includeIf to use different user config per workspace.
+Register a workspace-scoped Git user via [includeIf "gitdir:..."].
 
 Arguments:
   WORKSPACE_PATH    Path to workspace directory (e.g., ~/workspace/company)
@@ -16,8 +16,8 @@ Arguments:
   GIT_EMAIL         Git email
 
 Examples:
-  ./setup-git-includeif.sh
-  ./setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
+  ./add-workspace-user.sh
+  ./add-workspace-user.sh ~/workspace/company "John Doe" john@company.com
 EOF
 }
 
