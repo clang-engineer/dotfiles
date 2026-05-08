@@ -14,7 +14,7 @@ brew bundle --file packages/Brewfile
 ## 2. 심링크 및 도구 설치
 
 ```sh
-./scripts/bootstrap.sh [--force]
+./bootstrap.sh [--force]
 ```
 
 이 스크립트가 아래 작업을 순서대로 수행한다:
