@@ -45,52 +45,36 @@ Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성
 
 ## GitHub 다중 계정 관리
 
-여러 GitHub 계정(개인/회사)을 한 PC에서 관리하기 위한 스크립트를 제공합니다.
+GitHub 계정마다 SSH 키 + Host 별칭 + Git 사용자 정보를 분리합니다. 세 단계는 독립적이라 필요한 것만 실행하면 됩니다.
 
-### 통합 설정 (추천)
+**1. SSH 키 생성** (`ssh/`)
 ```sh
-./git/setup-github-account.sh
-```
-대화형 프롬프트로 다음을 한번에 설정합니다:
-1. SSH 키 생성
-2. SSH config 추가
-3. Workspace별 Git 사용자 설정
-
-### 개별 스크립트
-
-필요한 부분만 설정하고 싶다면:
-
-**1. SSH 키 생성**
-```sh
-./git/opt/generate-ssh-key.sh
-./git/opt/generate-ssh-key.sh myusername my@email.com
+./ssh/generate-key.sh github_myuser my@email.com
+# → ~/.ssh/id_rsa_github_myuser 생성, 공개키 출력
+# 공개키를 https://github.com/settings/keys 에 추가
 ```
 
-**2. SSH config 추가**
-```sh
-./git/opt/add-ssh-config.sh
-./git/opt/add-ssh-config.sh myusername
+**2. SSH Host 별칭 등록** (`ssh/config.d/`)
+
+`ssh/config.d/10-personal` 같은 파일에 직접 추가합니다 (`ssh/config`가 `Include config.d/*` 처리):
+```ssh
+Host github.com-myuser
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_github_myuser
 ```
 
-**3. Git includeIf 설정**
+**3. Workspace별 Git 사용자 설정** (`git/`)
 ```sh
-./git/opt/setup-git-includeif.sh
-./git/opt/setup-git-includeif.sh ~/workspace/company "John Doe" john@company.com
+./git/add-workspace-user.sh ~/workspace/company "John Doe" john@company.com
 ```
 
 ### 사용 예시
 
-설정 후 다음과 같이 사용합니다:
-
 ```sh
-# 리포지토리 클론
-git clone git@github.com-myusername:username/repo.git
-
-# 기존 리포지토리 remote URL 변경
-git remote set-url origin git@github.com-myusername:username/repo.git
-
-# SSH 연결 테스트
-ssh -T git@github.com-myusername
+git clone git@github.com-myuser:username/repo.git
+git remote set-url origin git@github.com-myuser:username/repo.git
+ssh -T git@github.com-myuser
 ```
 
 workspace 경로에서 작업하면 해당 계정의 Git 사용자 정보가 자동으로 적용됩니다.

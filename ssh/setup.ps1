@@ -1,3 +1,4 @@
+# Link ssh/config, tracked keys, and ssh/config.d/* (excluding .example) into ~/.ssh/.
 $RepoDir = (Resolve-Path "$PSScriptRoot\..").Path
 . "$RepoDir\scripts\lib\common.ps1"
 

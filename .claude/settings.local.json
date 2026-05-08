@@ -10,7 +10,8 @@
       "Bash(rm:*)",
       "mcp__serena__list_dir",
       "Bash(curl:*)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(git rm *)"
     ]
   }
 }

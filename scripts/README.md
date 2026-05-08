@@ -24,7 +24,7 @@ scripts/
 | --- | --- | --- | --- |
 | 전체 환경 부트스트랩 | `./scripts/bootstrap.sh [--force]` | `.\scripts\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
 | 개별 모듈 링킹 | `./zsh/setup.sh`, `./tmux/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
-| 선택형 도구 | `./git/opt/generate-ssh-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
+| 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
 
 ## Unix (macOS/Linux)
 
@@ -44,9 +44,8 @@ scripts/
 ### Optional helpers
 
 ```sh
-./git/setup-github-account.sh         # GitHub 다중 계정 통합 설정
-./git/opt/generate-ssh-key.sh         # SSH 키 생성
-./git/opt/setup-git-includeif.sh      # Git includeIf 설정
+./ssh/generate-key.sh                 # SSH 키 생성 (label, email)
+./git/add-workspace-user.sh           # workspace별 Git user 등록 (includeIf)
 ./scripts/setup-java-versions.sh            # jenv 기반 Java 버전 설정
 ./nvim/opt/generate-nvim-java.sh      # Neovim Java 설정 생성
 ```
