@@ -57,15 +57,15 @@ nvim --headless "+Lazy sync" +qa
 ### SSH 키 생성
 
 ```sh
-./git/opt/generate-ssh-key.sh [USERNAME] [EMAIL]
+./ssh/generate-key.sh [LABEL] [EMAIL]
 ```
 
-GitHub용 SSH 키를 `~/.ssh/id_rsa_github_{USERNAME}`에 생성하고 ssh-agent에 등록한다. 생성된 공개키를 https://github.com/settings/keys 에 추가할 것.
+`~/.ssh/id_rsa_{LABEL}`에 키를 생성하고 ssh-agent에 등록한다. LABEL은 자유 식별자(`github_myuser`, `gcp_yorez333` 등). GitHub용이라면 생성된 공개키를 https://github.com/settings/keys 에 추가하고, `ssh/config.d/`에 Host 별칭을 작성할 것.
 
 ### Git includeIf 설정 (워크스페이스별 계정 분리)
 
 ```sh
-./git/opt/setup-git-includeif.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
+./git/add-workspace-user.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
 ```
 
 특정 디렉터리 하위의 Git 저장소에서 다른 이름/이메일을 사용하도록 설정한다. 회사/개인 계정을 분리할 때 사용.
