@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Register a workspace-scoped Git user (name/email) via [includeIf "gitdir:..."]
-# in ~/.gitconfig, so repos under that path use a different identity.
+# in ~/.gitconfig.local, so repos under that path use a different identity.
 
 set -euo pipefail
 
@@ -51,7 +51,7 @@ else
 fi
 
 CONFIG_FILE="${WORKSPACE_PATH}/.gitconfig.inc"
-GITCONFIG="$HOME/.gitconfig"
+GITCONFIG="$HOME/.gitconfig.local"
 
 echo ""
 echo "Configuration:"
