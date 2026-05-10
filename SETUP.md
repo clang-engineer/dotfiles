@@ -14,7 +14,7 @@ brew bundle --file packages/Brewfile
 ## 2. 심링크 및 도구 설치
 
 ```sh
-./scripts/bootstrap.sh [--force]
+./bootstrap.sh [--force]
 ```
 
 이 스크립트가 아래 작업을 순서대로 수행한다:
@@ -44,28 +44,37 @@ brew bundle --file packages/Brewfile
 
 > 기존 파일이 있으면 경고만 출력하고 건너뛴다. `--force`를 붙이면 기존 파일을 덮어쓴다.
 
-## 3. Neovim 플러그인 동기화
+## 3. Git identity 설정
+
+`git/.gitconfig`는 공통 설정만 들어 있다. 본인 identity는 `~/.gitconfig.local`에 둔다.
+
+```sh
+cp git/.gitconfig.local.example ~/.gitconfig.local
+# 편집하여 [user] name/email 입력
+```
+
+## 4. Neovim 플러그인 동기화
 
 ```sh
 nvim --headless "+Lazy sync" +qa
 ```
 
-## 4. 선택 사항 (scripts/unix/opt/)
+## 5. 선택 사항 (scripts/unix/opt/)
 
 필요한 것만 골라서 실행한다.
 
 ### SSH 키 생성
 
 ```sh
-./git/opt/generate-ssh-key.sh [USERNAME] [EMAIL]
+./ssh/generate-key.sh [LABEL] [EMAIL]
 ```
 
-GitHub용 SSH 키를 `~/.ssh/id_rsa_github_{USERNAME}`에 생성하고 ssh-agent에 등록한다. 생성된 공개키를 https://github.com/settings/keys 에 추가할 것.
+`~/.ssh/id_rsa_{LABEL}`에 키를 생성하고 ssh-agent에 등록한다. LABEL은 자유 식별자(`github_myuser`, `gcp_yorez333` 등). GitHub용이라면 생성된 공개키를 https://github.com/settings/keys 에 추가하고, `ssh/config.d/`에 Host 별칭을 작성할 것.
 
 ### Git includeIf 설정 (워크스페이스별 계정 분리)
 
 ```sh
-./git/opt/setup-git-includeif.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
+./git/add-workspace-user.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
 ```
 
 특정 디렉터리 하위의 Git 저장소에서 다른 이름/이메일을 사용하도록 설정한다. 회사/개인 계정을 분리할 때 사용.
