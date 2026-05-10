@@ -1,20 +1,21 @@
-# Generate SSH key for GitHub account
+# Generate an SSH key pair at ~/.ssh/id_rsa_<Label> and register it with ssh-agent.
+# Label is a free-form identifier (e.g. "github_myuser", "gcp_yorez333").
+# Host alias / IdentityFile binding is configured separately in ssh/config.d/.
 param(
-    [string]$Username,
+    [string]$Label,
     [string]$Email
 )
 
 $ErrorActionPreference = "Stop"
 
-if (-not $Username) { $Username = Read-Host "Enter GitHub username" }
-if (-not $Email)    { $Email    = Read-Host "Enter GitHub email" }
+if (-not $Label) { $Label = Read-Host "Enter key label (e.g. github_myuser)" }
+if (-not $Email) { $Email = Read-Host "Enter email (used as key comment)" }
 
-$KeyName = "id_rsa_github_$Username"
-$KeyPath = Join-Path $env:USERPROFILE ".ssh\$KeyName"
+$KeyPath = Join-Path $env:USERPROFILE ".ssh\id_rsa_$Label"
 
 Write-Host ""
 Write-Host "Configuration:"
-Write-Host "  Username: $Username"
+Write-Host "  Label:    $Label"
 Write-Host "  Email:    $Email"
 Write-Host "  Key path: $KeyPath"
 Write-Host ""
@@ -32,7 +33,6 @@ if (Test-Path $KeyPath) {
 Write-Host "Generating SSH key..."
 ssh-keygen -t rsa -b 4096 -C $Email -f $KeyPath -N '""'
 
-# ssh-agent service (Win32-OpenSSH)
 $agent = Get-Service ssh-agent -ErrorAction SilentlyContinue
 if ($agent) {
     if ($agent.StartType -eq 'Disabled') {
@@ -47,11 +47,9 @@ if ($agent) {
 }
 
 Write-Host ""
-Write-Host "SSH key generated successfully!" -ForegroundColor Green
+Write-Host "SSH key generated: $KeyPath" -ForegroundColor Green
 Write-Host ""
-Write-Host "Public key (add this to GitHub):"
+Write-Host "Public key:"
 Write-Host "========================================"
 Get-Content "$KeyPath.pub"
 Write-Host "========================================"
-Write-Host ""
-Write-Host "Add this key to: https://github.com/settings/keys"

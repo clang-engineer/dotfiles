@@ -1,14 +1,12 @@
 # Scripts
 
-OS별 부트스트랩과 보조 도구가 `scripts/` 아래에 정리되어 있습니다.
+부트스트랩이 호출하는 보조 스크립트와 공용 라이브러리가 `scripts/` 아래에 모여 있습니다. 진입점은 저장소 루트의 `bootstrap.sh` / `bootstrap.ps1` 입니다.
 
 ## 구조
 
 ```
 scripts/
 ├── README.md
-├── bootstrap.sh                # Unix 오케스트레이터
-├── bootstrap.ps1               # Windows 오케스트레이터
 ├── setup-secrets.sh            # 환경 변수 비밀 설정
 ├── setup-java-versions.sh      # jenv 기반 Java 버전 설정
 ├── lib/
@@ -22,9 +20,9 @@ scripts/
 
 | 목적 | macOS/Linux | Windows | 비고 |
 | --- | --- | --- | --- |
-| 전체 환경 부트스트랩 | `./scripts/bootstrap.sh [--force]` | `.\scripts\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
+| 전체 환경 부트스트랩 | `./bootstrap.sh [--force]` | `.\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
 | 개별 모듈 링킹 | `./zsh/setup.sh`, `./tmux/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
-| 선택형 도구 | `./git/opt/generate-ssh-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
+| 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
 
 ## Unix (macOS/Linux)
 
@@ -44,9 +42,8 @@ scripts/
 ### Optional helpers
 
 ```sh
-./git/setup-github-account.sh         # GitHub 다중 계정 통합 설정
-./git/opt/generate-ssh-key.sh         # SSH 키 생성
-./git/opt/setup-git-includeif.sh      # Git includeIf 설정
+./ssh/generate-key.sh                 # SSH 키 생성 (label, email)
+./git/add-workspace-user.sh           # workspace별 Git user 등록 (includeIf)
 ./scripts/setup-java-versions.sh            # jenv 기반 Java 버전 설정
 ./nvim/opt/generate-nvim-java.sh      # Neovim Java 설정 생성
 ```
@@ -71,6 +68,15 @@ scripts/windows/
 ```powershell
 .\home\setup.ps1       # PowerShell 프로필 링크
 .\nvim\setup.ps1       # Neovim Junction 링크 + exrc
+.\git\setup.ps1        # ~\.gitconfig 링크
+.\ssh\setup.ps1        # ~\.ssh 링크
+```
+
+### Optional helpers (Windows)
+
+```powershell
+.\ssh\generate-key.ps1                  # SSH 키 생성 (Label, Email)
+.\git\add-workspace-user.ps1            # workspace별 Git user 등록 (includeIf)
 ```
 
 ### Notes

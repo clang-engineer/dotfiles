@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Link ssh/config and tracked key files into ~/.ssh/ (per-file, not whole-dir).
 set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 source "$REPO/scripts/lib/common.sh"

@@ -33,7 +33,7 @@ done
 
 export FORCE
 
-REPO="$(cd "$(dirname "$0")/.." && pwd)"
+REPO="$(cd "$(dirname "$0")" && pwd)"
 
 # -- module setup (linking + installs) --
 sh "$REPO"/home/setup.sh
