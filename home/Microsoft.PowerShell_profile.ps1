@@ -26,10 +26,10 @@ if (Get-Command starship -ErrorAction SilentlyContinue) {
 }
 
 # ──────────────────────────────────────────────────────────────────
-# 디렉터리 점프 — zoxide (j / ji)
+# 디렉터리 점프 — zoxide (z / zi)
 # ──────────────────────────────────────────────────────────────────
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-    zoxide init powershell --cmd j | Out-String | Invoke-Expression
+    zoxide init powershell | Out-String | Invoke-Expression
 }
 
 # ──────────────────────────────────────────────────────────────────
