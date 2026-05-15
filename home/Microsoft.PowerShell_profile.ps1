@@ -81,6 +81,20 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
 }
 
 # ──────────────────────────────────────────────────────────────────
+# 명령어 오타 시 유사 명령어 후보 제시 (PS 5.1엔 "Did you mean?" 없음)
+#   PATH 내 실행파일 + cmdlet/함수/alias에서 유사한 이름 검색
+# ──────────────────────────────────────────────────────────────────
+$ExecutionContext.InvokeCommand.CommandNotFoundAction = {
+    param($CommandName, $EventArgs)
+    $candidates = Get-Command "*$CommandName*" -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty Name -Unique |
+        Select-Object -First 5
+    if ($candidates) {
+        Write-Host "Did you mean: $($candidates -join ', ')?" -ForegroundColor Yellow
+    }
+}
+
+# ──────────────────────────────────────────────────────────────────
 # Secrets (토큰, 자격증명) — 로컬 전용 파일
 # ──────────────────────────────────────────────────────────────────
 if (Test-Path "$HOME\.secrets.ps1") { . "$HOME\.secrets.ps1" }
