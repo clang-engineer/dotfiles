@@ -1,4 +1,4 @@
-# PowerShell Profile (Windows PowerShell 5.1)
+﻿# PowerShell Profile (Windows PowerShell 5.1)
 # Linked to: $HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
 
 # ──────────────────────────────────────────────────────────────────
