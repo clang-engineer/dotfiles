@@ -9,6 +9,9 @@ brew "lazygit"          # Git TUI 클라이언트
 brew "jq"               # CLI JSON 필터/변환. 스크립트 JSON 파싱
 brew "bat"              # cat 대체 (구문 강조, 행번호). fzf 미리보기 의존
 brew "tree"             # 디렉터리 트리 출력
+brew "eza"              # ls 대체 (컬러, git 상태, 아이콘)
+brew "gh"               # GitHub CLI (PR/이슈/Actions)
+brew "tldr"             # man 요약판 — 핵심 예시만
 
 # zsh 플러그인은 zsh/install-zsh-plugins.sh에서 oh-my-zsh custom 디렉토리에 설치
 
