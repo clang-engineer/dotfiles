@@ -7,3 +7,9 @@
 	required = true
 [include]
 	path = ~/.gitconfig.local
+[user]
+	name = clang-engineer
+	email = clang.engineer@gmail.com
+[core]
+	pager = delta
+[delta]
