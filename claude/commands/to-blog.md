@@ -7,10 +7,16 @@ Jekyll 블로그 포스트 형식의 md 파일로 작성해줘.
 "`BLOG_DIR` 환경변수가 설정되지 않았습니다. `.bashrc` 또는 `.zshrc`에
 `export BLOG_DIR=~/your-blog-repo` 를 추가한 뒤 셸을 재시작해주세요."
 
+다른 명령어와 구분:
+- 짧은 개인 학습 메모 → /to-til
+- 명령어/도구 모음 → /to-cheatsheet
+- 프로젝트/코드베이스 분석 (비공개) → /to-analysis
+
 요구사항:
 - 파일명: YYYY-MM-DD-제목.md (오늘 날짜 사용)
 - Front matter 포함 (layout, title, date, categories, tags)
 - 이슈 상황, 원인 분석, 해결 방법을 구조화해서 정리
+- 외부 독자가 읽는 글이라는 점 고려 (개인 맥락은 일반화)
 - 코드 블록에 언어 지정
 - 한국어로 작성
 
