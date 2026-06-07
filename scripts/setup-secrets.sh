@@ -48,5 +48,6 @@ printf '→ Checking ~/.secrets environment variables\n'
 ask_and_set "WORKSPACE_DIR" "작업 디렉토리 루트" ""
 ask_and_set "BLOG_DIR"      "Jekyll 블로그 경로" ""
 ask_and_set "TOOLBOX_DIR"   "Toolbox 경로"       ""
+ask_and_set "DOTFILES_DIR"  "Dotfiles 경로"      ""
 
 chmod 600 "$SECRETS"
