@@ -2,7 +2,13 @@
 
 ## 사전 준비
 
-- macOS + Homebrew 설치
+- macOS
+- Homebrew 설치:
+
+  ```sh
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+
 - 이 저장소를 클론: `git clone <repo> ~/Desktop/_zero/dotfiles`
 
 ## 1. 패키지 설치
