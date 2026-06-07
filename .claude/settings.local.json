@@ -12,7 +12,8 @@
       "Bash(curl:*)",
       "Bash(git mv *)",
       "Bash(git rm *)",
-      "Read(//Users/clang/.local/share/nvim/lazy/CopilotChat.nvim/lua/CopilotChat/**)"
+      "Read(//Users/clang/.local/share/nvim/lazy/CopilotChat.nvim/lua/CopilotChat/**)",
+      "Bash(sqlite3:*)"
     ]
   }
 }
