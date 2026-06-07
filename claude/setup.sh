@@ -13,10 +13,28 @@ fi
 
 ensure_dir "$CLAUDE_DIR"
 
-for f in CLAUDE.md settings.json; do
-  [[ -f "$REPO/claude/$f" ]] || continue
-  link_path "$REPO/claude/$f" "$CLAUDE_DIR/$f"
-done
+link_path "$REPO/claude/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+
+# settings.json: 템플릿에 머신별 경로를 주입하여 생성
+generate_settings() {
+  local dirs=()
+  [[ -n "${BLOG_DIR:-}" ]]     && dirs+=("\"$BLOG_DIR\"")
+  [[ -n "${TOOLBOX_DIR:-}" ]]  && dirs+=("\"$TOOLBOX_DIR\"")
+  [[ -n "${DOTFILES_DIR:-}" ]] && dirs+=("\"$DOTFILES_DIR\"")
+
+  local joined
+  joined=$(printf '%s, ' "${dirs[@]}")
+  joined="${joined%, }"
+
+  sed "s|\"additionalDirectories\": \[\]|\"additionalDirectories\": [$joined]|" \
+    "$REPO/claude/settings.json" > "$CLAUDE_DIR/settings.json"
+  printf '→ Generated %s with directories: %s\n' "$CLAUDE_DIR/settings.json" "$joined"
+}
+
+if [[ -L "$CLAUDE_DIR/settings.json" ]]; then
+  rm -f "$CLAUDE_DIR/settings.json"
+fi
+generate_settings
 
 for d in commands hooks; do
   [[ -d "$REPO/claude/$d" ]] || continue
