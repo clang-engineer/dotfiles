@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "additionalDirectories": []
+    "additionalDirectories": ["/Users/zero/Desktop/_zero/clang-engineer.github.io", "/Users/zero/Desktop/_zero/toolbox", "/Users/zero/Desktop/_zero/dotfiles"]
   },
   "hooks": {
     "Notification": [
