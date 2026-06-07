@@ -15,13 +15,26 @@ end
 
 -- 플로팅 창에 파일을 띄움 (q로 닫기, 마크다운은 render-markdown이 렌더)
 local function open_float(path)
-  Snacks.win({
+  local win = Snacks.win({
     file = path,
     width = 0.85,
     height = 0.85,
     border = "rounded",
     wo = { wrap = false, spell = false },
     keys = { q = "close" },
+  })
+
+  -- tmux에서 돌아올 때 float로 재포커스
+  local aug = vim.api.nvim_create_augroup("toolbox_refocus", { clear = true })
+  vim.api.nvim_create_autocmd("FocusGained", {
+    group = aug,
+    callback = function()
+      if win.win and vim.api.nvim_win_is_valid(win.win) then
+        vim.api.nvim_set_current_win(win.win)
+      else
+        vim.api.nvim_del_augroup_by_id(aug)
+      end
+    end,
   })
 end
 
