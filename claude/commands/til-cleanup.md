@@ -10,9 +10,9 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
 1. **CHEATSHEET** — 명령어/단축키/옵션/문법 모음
    → `$TOOLBOX_DIR/cheatsheets/` 의 **기존 파일**에 섹션 추가 (없으면 새 파일 생성 자제, 기존 가장 가까운 파일 우선)
 2. **DOC** — 아키텍처/설계/원리/개념 설명
-   → `$TOOLBOX_DIR/docs/{프로젝트명}/` 에 layout: doc 형식으로 작성
+   → `$TOOLBOX_DIR/analysis/{프로젝트명}/` 에 layout: doc 형식으로 작성
 3. **POST** — 이슈→원인→해결 형식의 트러블슈팅
-   → `$BLOG_DIR/_posts/dev/{카테고리}/` 에 Jekyll 형식으로 작성
+   → `$BLOG_DIR/_posts/{카테고리}/` 에 Jekyll 형식으로 작성
 4. **DELETE** — 가치가 낮거나 이미 다른 곳에 같은 내용이 있는 것
 
 ## 작업 흐름 (이 순서를 반드시 지킨다)
@@ -20,7 +20,7 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
 ### 1단계: 사전 점검
 
 - til 디렉토리 ls로 파일 목록 확인
-- 기존 cheatsheets/, docs/, _posts/dev/ 디렉토리 구조 파악
+- 기존 cheatsheets/, analysis/, _posts/ 디렉토리 구조 파악
 - 같은 이름/주제의 파일이 이미 다른 곳에 있는지 확인 (중복 변환 방지)
 - $BLOG_DIR 미설정 시 POST 분류된 파일은 til에 남겨두기
 
@@ -70,7 +70,7 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
   description : "본문 핵심 한 줄 요약 (50-100자)"
   date        : YYYY-MM-DD HH:MM:SS +0900
   updated     : YYYY-MM-DD HH:MM:SS +0900
-  categories  : [dev, {카테고리}]
+  categories  : [{카테고리}]
   tags        : [...]
   pin         : false
   hidden      : false
