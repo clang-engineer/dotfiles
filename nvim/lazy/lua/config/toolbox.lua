@@ -2,7 +2,7 @@
 --   :Toolbox          → 파일 피커 (repo 전체 퍼지 검색 + 미리보기, Enter로 플로팅 열람)
 --   :Toolbox <주제>   → cheatsheets/<주제>.md 바로 플로팅 열람 (탭 자동완성)
 --   :ToolboxGrep      → repo 전체 본문 grep 검색
--- 의존성 없음: 이미 깔린 snacks + render-markdown 재사용.
+-- 추가 플러그인 없음: 이미 깔린 snacks + render-markdown 재사용.
 
 local function toolbox_dir()
   local toolbox = vim.env.TOOLBOX_DIR
