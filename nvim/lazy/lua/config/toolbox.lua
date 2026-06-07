@@ -14,6 +14,12 @@ local function toolbox_dir()
 end
 
 -- 플로팅 창에 파일을 띄움 (q로 닫기, 마크다운은 render-markdown이 렌더)
+local function tmux_move(direction)
+  return function()
+    vim.fn.system("tmux select-pane -" .. direction)
+  end
+end
+
 local function open_float(path)
   local win = Snacks.win({
     file = path,
@@ -21,7 +27,13 @@ local function open_float(path)
     height = 0.85,
     border = "rounded",
     wo = { wrap = false, spell = false },
-    keys = { q = "close" },
+    keys = {
+      q = "close",
+      ["<C-h>"] = { tmux_move("L"), desc = "tmux left" },
+      ["<C-j>"] = { tmux_move("D"), desc = "tmux down" },
+      ["<C-k>"] = { tmux_move("U"), desc = "tmux up" },
+      ["<C-l>"] = { tmux_move("R"), desc = "tmux right" },
+    },
   })
 
   -- tmux에서 돌아올 때 float로 재포커스
