@@ -14,25 +14,16 @@ packages/Brewfile.lock.json
 .secrets
 .secrets.ps1
 
-# claude code cache (auto-generated)
-claude/debug/
-claude/file-history/
-claude/history.jsonl
-claude/plans/
-claude/projects/
-claude/session-env/
-claude/shell-snapshots/
-claude/statsig/
-claude/todos/
-claude/backups/
-claude/cache/
-claude/paste-cache/
-claude/sessions/
-claude/stats-cache.json
-claude/tasks/
-claude/telemetry/
-claude/mcp-needs-auth-cache.json
-claude/plugins/
+# claude code: ignore everything, allow only tracked configs
+claude/*
+!claude/CLAUDE.md
+!claude/README.md
+!claude/settings.json
+!claude/check-claude-env.sh
+!claude/link-claude-commands.sh
+!claude/setup.sh
+!claude/setup.ps1
+!claude/commands/
 
 # local tool settings
 .claude/settings.local.json
