@@ -1,120 +1,48 @@
-# Dotfiles 설정 가이드
+# Dotfiles
 
-## 저장소 구조
-- `zsh/`: Zsh/Bash 설정과 플러그인 설치 스크립트.
-- `tmux/`: tmux 설정과 TPM 설치 스크립트.
-- `git/`: Git 설정과 다중 계정 관리 스크립트.
-- `ssh/`: SSH 설정 (자동 설정 대상 아님, 수동 실행 필요).
-- `nvim/`: Neovim 설정. LazyVim(`lazy/`)과 고전 Vimscript(`classic/`) 구성으로 나뉩니다.
-- `claude/`: Claude Code 설정 (`~/.claude`로 링크).
-- `hammerspoon/`: Hammerspoon 설정 (`~/.hammerspoon`으로 링크, macOS 전용).
-- `home/`: 단독 설정 파일 (`.ideavimrc`, `.clang-format`, `.vimrc` 등).
-- `scripts/`: 부트스트랩 오케스트레이터와 공통 라이브러리.
+개인 환경 설정 모음. 새 머신에서 `bootstrap.sh` 한 줄로 zsh / tmux / git / nvim / claude / hammerspoon을 셋업합니다.
 
 ## 빠른 시작
-### macOS/Linux
-```sh
-./bootstrap.sh
-```
-스크립트는 각 모듈의 setup.sh를 실행하여 홈 디렉터리에 심볼릭 링크하고, 기본값으로 `nvim/lazy/`를 `~/.config/nvim`에 연결한 뒤 tmux 설정을 다시 로드합니다.
-
-### 자동 vs 수동 설정
-
-| 모듈 | bootstrap.sh | 비고 |
-|------|:------------:|------|
-| `home/` | ✅ | 단독 설정 파일 |
-| `zsh/` | ✅ | .zshrc + oh-my-zsh, 플러그인 설치 |
-| `tmux/` | ✅ | .tmux.conf + TPM 설치 |
-| `git/` | ✅ | .gitconfig |
-| `claude/` | ✅ | ~/.claude |
-| `hammerspoon/` | ✅ | macOS 전용 |
-| `nvim/` | ✅ | LazyVim 기본 |
-| `ssh/` | ❌ | **수동 실행 필요** — `--force` 시 기존 키 유실 위험 |
-
-옵션:
-- `--force`: 대상 위치에 있는 기존 파일이나 링크를 덮어씁니다.
-- `--help`: 사용법을 출력합니다.
-
-### Windows
-```powershell
-./bootstrap.ps1
-```
-Windows PowerShell에서 실행하면 PowerShell 프로필 링크, Neovim 구성, 패키지 설치를 순서대로 수행합니다.
-
-필요한 패키지를 한 번에 설치하려면 부트스트랩 후 `brew bundle install --file packages/Brewfile`를 실행하세요.
-
-## Git 기본 identity 설정
-
-`git/.gitconfig`는 PC 공통 설정만 담고 있고, 마지막 줄에서 `~/.gitconfig.local`을 include합니다. 새 PC에서는 템플릿을 복사하고 본인 정보를 채우세요.
 
 ```sh
-cp git/.gitconfig.local.example ~/.gitconfig.local
-# 편집하여 [user] name/email 입력
+./bootstrap.sh           # macOS / Linux  — 상세: SETUP.md
+./bootstrap.ps1          # Windows PowerShell — 프로필 링크 + Neovim 구성 + 패키지 설치
 ```
 
-`~/.gitconfig.local` 파일이 없어도 git이 조용히 무시하므로 부트스트랩이 실패하진 않지만, identity가 비어 commit 시 경고가 뜹니다.
-
-## GitHub 다중 계정 관리
-
-GitHub 계정마다 SSH 키 + Host 별칭 + Git 사용자 정보를 분리합니다. 세 단계는 독립적이라 필요한 것만 실행하면 됩니다.
-
-**1. SSH 키 생성** (`ssh/`)
-```sh
-./ssh/generate-key.sh github_myuser my@email.com
-# → ~/.ssh/id_rsa_github_myuser 생성, 공개키 출력
-# 공개키를 https://github.com/settings/keys 에 추가
-```
-
-**2. SSH Host 별칭 등록** (`ssh/config.d/`)
-
-`ssh/config.d/10-personal` 같은 파일에 직접 추가합니다 (`ssh/config`가 `Include config.d/*` 처리):
-```ssh
-Host github.com-myuser
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/id_rsa_github_myuser
-```
-
-**3. Workspace별 Git 사용자 설정** (`git/`)
-```sh
-./git/add-workspace-user.sh ~/workspace/company "John Doe" john@company.com
-```
-
-### 사용 예시
+설치 후 패키지를 한 번에 채우려면:
 
 ```sh
-git clone git@github.com-myuser:username/repo.git
-git remote set-url origin git@github.com-myuser:username/repo.git
-ssh -T git@github.com-myuser
+brew bundle install --file packages/Brewfile   # macOS
 ```
 
-workspace 경로에서 작업하면 해당 계정의 Git 사용자 정보가 자동으로 적용됩니다.
+- 상세 셋업 절차(macOS): [SETUP.md](SETUP.md)
+- 비밀 관리(SSH 키, `~/.secrets`, identity 등): [SECURITY.md](SECURITY.md)
 
-## 환경 변수 비밀 관리
+## 저장소 구조
 
-API 토큰 등 민감한 환경 변수는 `~/.secrets`(Bash/Zsh) 또는 `~/.secrets.ps1`(PowerShell)에서 관리합니다.
+| 폴더 | 설명 | bootstrap |
+|---|---|:-:|
+| `zsh/` | Zsh/Bash 설정 + 플러그인 설치 | ✅ |
+| `tmux/` | tmux 설정 + TPM 설치 | ✅ |
+| `git/` | 공통 `.gitconfig` + workspace 분리 스크립트 | ✅ |
+| `nvim/` | Neovim 설정 (LazyVim 기본, classic 별도) | ✅ |
+| `claude/` | Claude Code 설정 (`~/.claude` 링크) | ✅ |
+| `hammerspoon/` | macOS 자동화 (`~/.hammerspoon` 링크) | ✅ |
+| `home/` | 단독 파일 (`.ideavimrc`, `.clang-format` 등) | ✅ |
+| `ssh/` | SSH config + 키 생성 스크립트 | ❌ 수동 |
 
-```bash
-# 템플릿 복사 후 값 채우기
-cp ~/.secrets.example ~/.secrets
-chmod 600 ~/.secrets          # Linux/Mac만 해당
-```
+`ssh/`는 기존 키 유실 위험 때문에 bootstrap에서 자동화하지 않습니다 (`--force`도 건너뜀). `packages/`(Brewfile)와 `scripts/`(부트스트랩 오케스트레이터)는 직접 만질 일이 거의 없습니다.
 
-자세한 내용은 [`SECURITY.md`](SECURITY.md)를 참고하세요.
+## 옵션
 
-## 수동 링크 (선택 사항)
-각 항목을 개별적으로 링크하고 싶다면 다음 명령을 참고하세요.
-```sh
-ln -s "$PWD/zsh/.bashrc" ~/.bashrc
-ln -s "$PWD/zsh/.bash_profile" ~/.bash_profile
-ln -s "$PWD/zsh/.zshrc" ~/.zshrc
-ln -s "$PWD/git/.gitconfig" ~/.gitconfig
-ln -s "$PWD/tmux/.tmux.conf" ~/.tmux.conf
-tmux source-file ~/.tmux.conf
-ln -s "$PWD/home/.ideavimrc" ~/.ideavimrc
-ln -s "$PWD/hammerspoon" ~/.hammerspoon
-ln -s "$PWD/ssh" ~/.ssh        # 실제 키는 커밋하지 말고, 템플릿을 추가하면 .gitignore도 갱신하세요
-ln -s "$PWD/home/.clang-format" ~/.clang-format
-mkdir -p ~/.config
-ln -s "$PWD/nvim/lazy" ~/.config/nvim   # 클래식 구성을 쓰려면 "$PWD/nvim/classic" 사용
-```
+- `--force`: 대상 위치의 기존 파일/링크를 덮어씁니다.
+- `--help`: 사용법 출력.
+
+## 관련 저장소
+
+`claude/`에 정의된 Claude Code 스킬(`/to-til`, `/to-analysis`, `/to-blog` 등)이 아래 두 저장소로 메모를 적재·발행합니다.
+
+| 저장소 | 설명 |
+|---|---|
+| [toolbox](https://github.com/clang-engineer/toolbox) | TIL·cheatsheet·분석 노트 적재. `$TOOLBOX_DIR`로 연결 |
+| [clang-engineer.github.io](https://github.com/clang-engineer/clang-engineer.github.io) | 기술 블로그. `$BLOG_DIR/_posts/`로 발행 |
