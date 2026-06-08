@@ -69,13 +69,30 @@ nvim --headless "+Lazy sync" +qa
 
 필요한 것만 골라서 실행한다.
 
-### SSH 키 생성
+### SSH 키 생성 & GitHub 다중 계정
 
 ```sh
 ./ssh/generate-key.sh [LABEL] [EMAIL]
 ```
 
-`~/.ssh/id_rsa_{LABEL}`에 키를 생성하고 ssh-agent에 등록한다. LABEL은 자유 식별자(`github_myuser`, `gcp_yorez333` 등). GitHub용이라면 생성된 공개키를 https://github.com/settings/keys 에 추가하고, `ssh/config.d/`에 Host 별칭을 작성할 것.
+`~/.ssh/id_rsa_{LABEL}`에 키를 생성하고 ssh-agent에 등록한다. LABEL은 자유 식별자(`github_myuser`, `gcp_yorez333` 등). GitHub용이라면 생성된 공개키를 https://github.com/settings/keys 에 추가한다.
+
+같은 머신에서 GitHub 계정을 여러 개 쓰려면 `ssh/config.d/10-personal` 같은 파일에 Host 별칭을 추가한다 (`ssh/config`가 `Include config.d/*` 처리):
+
+```ssh
+Host github.com-myuser
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_github_myuser
+```
+
+이후 별칭으로 clone/remote 설정:
+
+```sh
+git clone git@github.com-myuser:username/repo.git
+git remote set-url origin git@github.com-myuser:username/repo.git
+ssh -T git@github.com-myuser   # 연결 확인
+```
 
 ### Git includeIf 설정 (워크스페이스별 계정 분리)
 
