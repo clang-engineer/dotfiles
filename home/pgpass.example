@@ -1,0 +1,31 @@
+# PostgreSQL 비밀번호 저장 파일 템플릿
+# 사용법:
+#   cp home/pgpass.example ~/.pgpass
+#   chmod 600 ~/.pgpass
+#   비밀번호 칸 채우기
+#
+# 형식: hostname:port:database:username:password
+# - 와일드카드 *: 모든 값 매칭
+# - 특수문자(:, \)는 \ 로 이스케이프
+
+# --- SNUH 운영 (metadb.snuh.org → 172.26.33.28) ---
+metadb.snuh.org:80:*:postgres:CHANGE_ME
+
+# --- SNUH 가명화(구) 172.26.33.23 ---
+172.26.33.23:5432:*:postgres:CHANGE_ME
+
+# --- SNUH 개발(구) 172.26.33.18 ---
+172.26.33.18:5432:rex:rex:CHANGE_ME
+
+# --- kcure ---
+172.16.38.21:45432:kcure:kcure:CHANGE_ME
+
+# --- shine ---
+101.101.216.244:5433:shine:shine:CHANGE_ME
+175.45.222.162:15432:shine:shine:CHANGE_ME
+
+# --- eras (SSH 터널 경유, localhost로 접속) ---
+localhost:15432:eras:eras:CHANGE_ME
+
+# --- 순천향 Ridex ---
+172.22.101.134:5432:psd_sch:rex:CHANGE_ME
