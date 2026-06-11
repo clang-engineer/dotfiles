@@ -1,4 +1,4 @@
-vim.g.dbs = require("config.options.dbs")
+vim.g.dbs = require("config.options.dbs").all()
 
 -- 쿼리 결과창(dbout) 가독성 개선:
 --   1) fold 비활성화 (메인테이너 공식 권장: PR #203 댓글)
