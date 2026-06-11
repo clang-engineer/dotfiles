@@ -1,0 +1,12 @@
+# PostgreSQL 비밀번호 저장 파일 템플릿
+# bootstrap.sh가 ~/.pgpass로 자동 복사 (이미 있으면 건너뜀).
+# 복사 후 실제 접속 정보로 교체할 것.
+#
+# 형식: hostname:port:database:username:password
+# - 와일드카드 *: 모든 값 매칭
+# - 특수문자(:, \)는 \ 로 이스케이프
+# - 퍼미션 600 필수 (bootstrap이 자동 설정)
+
+# 예시:
+# db.example.com:5432:mydb:myuser:CHANGE_ME
+# localhost:15432:*:postgres:CHANGE_ME
