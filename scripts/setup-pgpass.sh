@@ -17,7 +17,7 @@ fi
 ensure_dir "$PGPASS_DIR"
 
 if [[ ! -f "$PGPASS" ]]; then
-  cp "$REPO/home/pgpass.example" "$PGPASS"
+  cp "$REPO/home/.pgpass.example" "$PGPASS"
   chmod 600 "$PGPASS"
   printf '→ Created %s\n' "$PGPASS"
   printf '\n  ⚠ NEXT: edit the file above and replace each CHANGE_ME\n'
