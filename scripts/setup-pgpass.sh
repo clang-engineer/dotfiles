@@ -17,13 +17,11 @@ fi
 ensure_dir "$PGPASS_DIR"
 
 if [[ ! -f "$PGPASS" ]]; then
-  cp "$REPO/scripts/.pgpass.example" "$PGPASS"
+  cp "$REPO/home/pgpass.example" "$PGPASS"
   chmod 600 "$PGPASS"
   printf '→ Created %s\n' "$PGPASS"
-  printf '\n  ⚠ NEXT: edit the file above to replace <USER>:<PASSWORD>\n'
-  printf '    with real credentials, e.g.\n'
-  printf '      localhost:5432:eras:snuheras:<password>\n'
-  printf '      REDACTED_IP:5432:psd_sch:rex:<password>\n\n'
+  printf '\n  ⚠ NEXT: edit the file above and replace each CHANGE_ME\n'
+  printf '    with the real password.\n\n'
 else
   printf '✓ %s already exists (skipping)\n' "$PGPASS"
 fi
