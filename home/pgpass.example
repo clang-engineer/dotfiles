@@ -1,8 +1,8 @@
 # PostgreSQL 비밀번호 저장 파일 템플릿
-# 사용법:
-#   cp home/pgpass.example ~/.pgpass
-#   chmod 600 ~/.pgpass
-#   비밀번호 칸 채우기
+# bootstrap.sh가 ~/.pgpass로 자동 복사 (이미 있으면 건너뜀).
+# 직접 만들고 싶다면:
+#   cp home/pgpass.example ~/.pgpass && chmod 600 ~/.pgpass
+# 복사 후 CHANGE_ME 자리를 실제 비밀번호로 교체할 것.
 #
 # 형식: hostname:port:database:username:password
 # - 와일드카드 *: 모든 값 매칭
