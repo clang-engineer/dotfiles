@@ -46,6 +46,7 @@ sh "$REPO"/nvim/setup.sh
 
 # -- secrets (machine-local env vars) --
 sh "$REPO"/scripts/setup-secrets.sh
+sh "$REPO"/scripts/setup-pgpass.sh
 
 # -- post-install --
 if command -v tmux >/dev/null 2>&1; then
