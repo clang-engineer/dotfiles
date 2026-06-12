@@ -6,6 +6,14 @@ Host keras-app-prod
     Port 22
     User planitsquare
 
+## Eras DB SSH 터널 (Keras VPC 경유 → 10.1.2.6:15432)
+## 사용: ssh -N keras-eras-tunnel  (로컬 15432로 포트포워드만, 셸 X)
+Host keras-eras-tunnel
+    Hostname 101.79.9.95
+    Port 22
+    User planitsquare
+    LocalForward 15432 10.1.2.6:15432
+
 ## Keras VPC Dev
 Host keras-app-dev
     Hostname 49.50.132.171
