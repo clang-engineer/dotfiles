@@ -25,7 +25,8 @@ brew bundle install --file packages/Brewfile   # macOS
 | `zsh/` | Zsh/Bash 설정 + 플러그인 설치 | ✅ |
 | `tmux/` | tmux 설정 + TPM 설치 | ✅ |
 | `git/` | 공통 `.gitconfig` + workspace 분리 스크립트 | ✅ |
-| `nvim/` | Neovim 설정 (LazyVim 기본, classic 별도) | ✅ |
+| `nvim/` | Neovim 설정 (LazyVim) | ✅ |
+| `vim/` | Legacy Vim 설정 (vim-plug / Vundle 스냅샷) | ❌ 수동 (legacy) |
 | `claude/` | Claude Code 설정 (`~/.claude` 링크) | ✅ |
 | `hammerspoon/` | macOS 자동화 (`~/.hammerspoon` 링크) | ✅ |
 | `home/` | 단독 파일 (`.ideavimrc`, `.clang-format` 등) | ✅ |
