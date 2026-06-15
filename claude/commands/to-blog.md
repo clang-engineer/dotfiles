@@ -45,6 +45,7 @@ cheatsheet와 가르는 기준:
 - 파일명: YYYY-MM-DD-제목.md (오늘 날짜 사용)
 - Front matter 포함 (layout, title, date, categories, tags)
   - categories는 `[디렉토리, "서브카테고리"]` 2단계 형식 (디렉토리별 서브카테고리는 사용자 메모 참고)
+  - **가이드성 글**(개념·문법·튜토리얼·종합 정리)이면 `tags`에 `guide` 추가 — `/tags/guide/` 모음 페이지에 노출됨
 - 글 유형에 맞게 구조화:
   - 트러블슈팅: 이슈 상황 → 원인 분석 → 해결 방법
   - 가이드·튜토리얼: 개념 → 사용법 → 예시
