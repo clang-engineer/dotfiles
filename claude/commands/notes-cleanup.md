@@ -1,6 +1,6 @@
-$TOOLBOX_DIR/til 디렉토리에 누적된 TIL 파일들을 분류해서
+$TOOLBOX_DIR/notes 디렉토리에 누적된 Notes 파일들을 분류해서
 cheatsheet/doc/blog post 중 적절한 형식으로 재배치해줘.
-toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
+toolbox는 보관용이 아니므로 처리된 notes 파일은 삭제한다.
 
 만약 $TOOLBOX_DIR 환경변수가 설정되어 있지 않다면, 작업하지 말고 사용자에게 안내:
 "`TOOLBOX_DIR` 환경변수가 설정되지 않았습니다."
@@ -19,10 +19,10 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
 
 ### 1단계: 사전 점검
 
-- til 디렉토리 ls로 파일 목록 확인
+- notes 디렉토리 ls로 파일 목록 확인
 - 기존 cheatsheets/, analysis/, _posts/ 디렉토리 구조 파악
 - 같은 이름/주제의 파일이 이미 다른 곳에 있는지 확인 (중복 변환 방지)
-- $BLOG_DIR 미설정 시 POST 분류된 파일은 til에 남겨두기
+- $BLOG_DIR 미설정 시 POST 분류된 파일은 notes에 남겨두기
 
 ### 2단계: 분류표 작성
 
@@ -53,13 +53,13 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
 승인 후 다음을 수행:
 
 **CHEATSHEET 통합**
-- 기존 cheatsheet 파일 Read → til 정보 중 새로운 것만 정밀하게 Edit으로 섹션 추가
+- 기존 cheatsheet 파일 Read → notes 정보 중 새로운 것만 정밀하게 Edit으로 섹션 추가
 - 이미 있는 키맵/명령은 중복 추가 X
 - cheatsheet 본연의 톤 유지 (빠른 키 참조, 비교/설명은 최소화)
 
 **DOC 작성**
 - `layout: doc` front matter 추가 (categories/tags 유지 또는 보강)
-- 본문은 til 그대로 유지 (압축/요약 X)
+- 본문은 원본 그대로 유지 (압축/요약 X)
 - 파일명: `YYYY-MM-DD-{프로젝트}-{주제}.md`
 
 **POST 변환 (Jekyll Chirpy 형식)**
@@ -81,11 +81,11 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
 - 본문의 `# 제목` 헤딩은 제거 (front matter title과 중복)
 - 본문 내용 무가공 유지
 
-### 5단계: til 정리
+### 5단계: notes 정리
 
-- 처리 완료된 til 파일은 모두 삭제 (`rm`, git이 deleted로 인식)
-- `til/README.md`와 분류 후 새로 추가된 최신 til은 보존
-- til 디렉토리에 어떤 파일이 남았는지 보고
+- 처리 완료된 notes 파일은 모두 삭제 (`rm`, git이 deleted로 인식)
+- `notes/README.md`와 분류 후 새로 추가된 최신 notes 파일은 보존
+- notes 디렉토리에 어떤 파일이 남았는지 보고
 
 ### 6단계: 마무리
 
@@ -102,7 +102,7 @@ toolbox는 보관용이 아니므로 처리된 til은 삭제한다.
 ## 절대 하지 말 것
 
 - 분류표 승인 없이 파일 이동/삭제
-- til 본문 내용 임의 축약
+- notes 본문 내용 임의 축약
 - 자동 git commit (사용자 검토 후 진행)
 - 매핑되지 않은 위치에 파일 작성
 
