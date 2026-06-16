@@ -23,7 +23,7 @@ til 디렉토리는 자동 적재 작업 흐름 파일(`flow-<도구>-<작업>.m
 - til 디렉토리가 없으면 생성
 
 요구사항:
-- 파일명: `til-YYYY-MM-DD-제목.md` (오늘 날짜 사용, `til-` 접두어 필수)
+- 파일명: `til-제목.md` (`til-` 접두어 필수. 발견 일자는 frontmatter `date:`에 기록)
 - Front matter 포함 (layout: til, title, date, categories, tags)
 - TIL 특성에 맞게 짧고 핵심적으로 작성 (블로그 포스트보다 훨씬 간결하게)
 - 구조: 한 줄 요약 → 핵심 내용 (코드/명령어 포함) → (선택) 참고 링크
