@@ -6,12 +6,21 @@ $TOOLBOX_DIR/til 디렉토리에 마크다운 파일로 작성해줘.
 "`TOOLBOX_DIR` 환경변수가 설정되지 않았습니다. `.bashrc` 또는 `.zshrc`에
 `export TOOLBOX_DIR=~/your-toolbox-repo` 를 추가한 뒤 셸을 재시작해주세요."
 
+다른 명령어와 구분:
+- 다시 찾을 명령어/문법 → /to-cheatsheet
+- 외부 발신용 글 → /to-blog
+- 프로젝트/시스템 분석 → /to-analysis
+
+위 어디에도 안 맞는 짧은 학습 발견만 til.
+
+til 디렉토리는 자동 적재 작업 흐름 파일(`flow-<도구>-<작업>.md`)과 통합 누적된다. 사용자 명시 til 파일은 `til-` 접두어 필수.
+
 작성 전 확인사항:
 - 대화 내용 중 TIL로 정리할 만한 내용이 없으면 사용자에게 알려줘
 - til 디렉토리가 없으면 생성
 
 요구사항:
-- 파일명: YYYY-MM-DD-제목.md (오늘 날짜 사용)
+- 파일명: `til-YYYY-MM-DD-제목.md` (오늘 날짜 사용, `til-` 접두어 필수)
 - Front matter 포함 (layout: til, title, date, categories, tags)
 - TIL 특성에 맞게 짧고 핵심적으로 작성 (블로그 포스트보다 훨씬 간결하게)
 - 구조: 한 줄 요약 → 핵심 내용 (코드/명령어 포함) → (선택) 참고 링크
