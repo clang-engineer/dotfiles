@@ -11,7 +11,7 @@ return {
       --   GRADLE_JAVA_HOME = /path/to/jdk-17
       -- Auto-detect JDKs if .nvim.lua didn't run (e.g. trust not granted).
       if not present(vim.env.JDTLS_JAVA_HOME) then
-        require("config.java-env").setup()
+        require("jvm-env").setup()
       end
 
       local java_home = vim.env.JDTLS_JAVA_HOME
