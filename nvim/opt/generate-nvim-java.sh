@@ -6,9 +6,9 @@ JDTLS="${1:-21}"
 GRADLE="${2:-11}"
 
 if [[ "$JDTLS" == "21" && "$GRADLE" == "11" ]]; then
-    echo 'require("config.java-env").setup()' > .nvim.lua
+    echo 'require("jvm-env").setup()' > .nvim.lua
 else
-    echo "require(\"config.java-env\").setup({ jdtls = \"$JDTLS\", gradle = \"$GRADLE\" })" > .nvim.lua
+    echo "require(\"jvm-env\").setup({ jdtls = \"$JDTLS\", gradle = \"$GRADLE\" })" > .nvim.lua
 fi
 
 echo "Created: .nvim.lua"

@@ -9,9 +9,9 @@ param(
 $TargetFile = Join-Path (Get-Location) ".nvim.lua"
 
 if ($Jdtls -eq "21" -and $Gradle -eq "11") {
-    $Content = 'require("config.java-env").setup()'
+    $Content = 'require("jvm-env").setup()'
 } else {
-    $Content = "require(`"config.java-env`").setup({ jdtls = `"$Jdtls`", gradle = `"$Gradle`" })"
+    $Content = "require(`"jvm-env`").setup({ jdtls = `"$Jdtls`", gradle = `"$Gradle`" })"
 }
 
 Set-Content -Path $TargetFile -Value $Content -Encoding UTF8
