@@ -36,7 +36,7 @@ scripts/
 ./claude/setup.sh            # ~/.claude 링킹
 ./ssh/setup.sh               # ~/.ssh 링킹
 ./hammerspoon/setup.sh       # ~/.hammerspoon 링킹
-./nvim/setup.sh              # ~/.config/nvim + ~/.exrc.lua 링킹
+./nvim/setup.sh              # ~/.config/nvim 링킹
 ```
 
 ### Optional helpers
@@ -67,7 +67,7 @@ scripts/windows/
 
 ```powershell
 .\home\setup.ps1       # PowerShell 프로필 링크
-.\nvim\setup.ps1       # Neovim Junction 링크 + exrc
+.\nvim\setup.ps1       # Neovim Junction 링크
 .\git\setup.ps1        # ~\.gitconfig 링크
 .\ssh\setup.ps1        # ~\.ssh 링크
 ```
