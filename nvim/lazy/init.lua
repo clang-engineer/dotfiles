@@ -5,4 +5,4 @@ require("config.lazy")
 require("config.java-env").setup()
 
 -- toolbox 빠른 뷰어 (:Toolbox / :ToolboxGrep)
-require("config.toolbox")
+require("toolbox").setup()
