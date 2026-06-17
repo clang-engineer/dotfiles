@@ -14,7 +14,7 @@ require("jvm-env").setup({ jdtls = "21", gradle = "17" })
 `generate-nvim-java.sh 21 17` 또는 `generate-nvim-java.ps1 21 17` 로 자동 생성 가능.
 
 ### 전역 자동 탐지
-`nvim/lazy/init.lua` 가 시작 시 `require("jvm-env").setup()` 호출 — 기본값 `jdtls=21`, `gradle=11` 로 `vim.env.JDTLS_JAVA_HOME` / `vim.env.GRADLE_JAVA_HOME` 자동 채움.
+`nvim/lazy/lua/plugins/jvm-env.lua` 의 lazy spec (`lazy=false, priority=100`) 이 시작 시 [`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim) 의 `setup` 자동 호출 — 기본값 `jdtls=21`, `gradle=11` 로 `vim.env.JDTLS_JAVA_HOME` / `vim.env.GRADLE_JAVA_HOME` 자동 채움.
 
 ### jdtls 연결
 `nvim/lazy/lua/plugins/java.lua` 에서 두 환경변수를 읽어 jdtls `cmd` 와 `cmd_env` 에 연결.
