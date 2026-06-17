@@ -33,7 +33,7 @@ brew bundle --file packages/Brewfile
 | `claude/setup.sh` | `claude/` → `~/.claude` |
 | `ssh/setup.sh` | `ssh/` → `~/.ssh` |
 | `hammerspoon/setup.sh` | `hammerspoon/` → `~/.hammerspoon` |
-| `nvim/setup.sh` | `nvim/lazy/` → `~/.config/nvim`, `nvim/exrc/exrc-unix.lua` → `~/.exrc.lua` |
+| `nvim/setup.sh` | `nvim/lazy/` → `~/.config/nvim` |
 
 ### 도구 설치
 
