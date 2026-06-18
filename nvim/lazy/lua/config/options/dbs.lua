@@ -15,7 +15,7 @@ function M.all()
   local files = vim.api.nvim_get_runtime_file("lua/config/options/dbs/*.lua", true)
   table.sort(files)
   for _, path in ipairs(files) do
-    local mod = path:match("lua/(.+)%.lua$"):gsub("/", ".")
+    local mod = path:gsub("\\", "/"):match("lua/(.+)%.lua$"):gsub("/", ".")
     vim.list_extend(result, require(mod))
   end
   return result
