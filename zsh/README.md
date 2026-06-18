@@ -16,7 +16,7 @@
 5. 에디터, alias
 6. 버전 매니저 (rbenv, nvm, jenv, pyenv)
 7. fzf 키바인딩
-8. autojump
+8. zoxide (autojump 대체, z/zi 명령어)
 
 ## fzf 단축키
 
