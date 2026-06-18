@@ -14,6 +14,7 @@ fi
 ensure_dir "$CLAUDE_DIR"
 
 link_path "$REPO/claude/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+link_path "$REPO/claude/statusline.sh" "$CLAUDE_DIR/statusline.sh"
 
 # settings.json: 템플릿에 머신별 경로를 주입하여 생성
 generate_settings() {
