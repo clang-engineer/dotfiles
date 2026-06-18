@@ -40,7 +40,7 @@ brew bundle --file packages/Brewfile
 | 스크립트 | 동작 |
 |---|---|
 | `install-oh-my-zsh.sh` | oh-my-zsh 설치 |
-| `install-zsh-plugins.sh` | zsh-syntax-highlighting, zsh-autosuggestions, autojump 설치 |
+| `install-zsh-plugins.sh` | zsh-syntax-highlighting, zsh-autosuggestions 설치 |
 | `install-tpm.sh` | tmux plugin manager 설치 |
 
 ### 후처리
