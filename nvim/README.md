@@ -79,14 +79,10 @@ dotfiles/nvim/
 require("jvm-env").setup({ jdtls = "21", gradle = "17" })
 ```
 
-자동 생성 스크립트:
+프로젝트 루트에서 Neovim 명령으로 `.nvim.lua` 자동 생성:
 
-```bash
-~/dotfiles/nvim/opt/generate-nvim-java.sh 21 17
-```
-
-```powershell
-~/dotfiles/nvim/opt/generate-nvim-java.ps1 -Jdtls 21 -Gradle 17
+```vim
+:JvmEnvInit 21 17    " 인자 생략 시 활성 config 사용
 ```
 
 `.nvim.lua`는 Neovim 0.9+ `exrc` 룰로 디렉토리별 로드됩니다. `vim.o.exrc = true`는 `lazy/lua/config/options/default.lua`에서 이미 켜져 있으므로 해당 디렉토리에서 nvim을 처음 열 때 `:trust`만 해주면 됩니다.
@@ -198,5 +194,4 @@ sourceSets {
 - [`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim) — JDK 탐지/환경변수 주입 외부 플러그인 (소스·README·vimdoc)
 - `nvim/lazy/lua/plugins/jvm-env.lua` — 외부 플러그인 lazy spec
 - `nvim/lazy/lua/plugins/java.lua` — nvim-jdtls 와 jvm-env 환경변수 연결
-- `nvim/opt/generate-nvim-java.sh` — Unix `.nvim.lua` 생성 스크립트
-- `nvim/opt/generate-nvim-java.ps1` — Windows `.nvim.lua` 생성 스크립트
+- `:JvmEnvInit [jdtls] [gradle]` — 프로젝트 루트 `.nvim.lua` 생성 명령 (jvm-env.nvim 제공). 상세: `nvim/docs/java-lsp.md`
