@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
   "permissions": {
     "additionalDirectories": ["/Users/zero/Desktop/_zero/clang-engineer.github.io", "/Users/zero/Desktop/_zero/toolbox", "/Users/zero/Desktop/_zero/dotfiles"]
   },
