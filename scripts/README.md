@@ -44,9 +44,10 @@ scripts/
 ```sh
 ./ssh/generate-key.sh                 # SSH 키 생성 (label, email)
 ./git/add-workspace-user.sh           # workspace별 Git user 등록 (includeIf)
-./scripts/setup-java-versions.sh            # jenv 기반 Java 버전 설정
-./nvim/opt/generate-nvim-java.sh      # Neovim Java 설정 생성
+./scripts/setup-java-versions.sh      # jenv 기반 Java 버전 설정
 ```
+
+> Neovim Java LSP의 `.nvim.lua`는 셸 스크립트가 아니라 nvim 명령 `:JvmEnvInit`로 생성합니다 (`nvim/docs/java-lsp.md`).
 
 ## Windows
 

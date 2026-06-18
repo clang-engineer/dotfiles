@@ -112,6 +112,8 @@ Homebrew로 설치된 openjdk(8, 11, 17, 21)에 대해 `/Library/Java/JavaVirtua
 
 ### Neovim Java LSP 설정
 
-```sh
-./nvim/opt/generate-nvim-java.sh
+프로젝트 루트에서 Neovim 명령으로 `.nvim.lua` 생성:
+
+```vim
+:JvmEnvInit 21 17
 ```
