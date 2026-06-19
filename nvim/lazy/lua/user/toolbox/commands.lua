@@ -1,9 +1,9 @@
 -- :Toolbox / :ToolboxGrep 등록
 local M = {}
 
-local config = require("toolbox.config")
-local picker = require("toolbox.picker")
-local float = require("toolbox.float")
+local config = require("user.toolbox.config")
+local picker = require("user.toolbox.picker")
+local float = require("user.toolbox.float")
 
 function M.register()
   vim.api.nvim_create_user_command("Toolbox", function(opts)

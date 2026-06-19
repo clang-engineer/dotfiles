@@ -4,7 +4,7 @@ return {
   {
     "kristijanhusak/vim-dadbod-ui",
     init = function()
-      vim.g.dbs = require("db").all()
+      vim.g.dbs = require("user.db").all()
 
       -- 쿼리 결과창(dbout) 가독성 개선:
       --   1) fold 비활성화 (메인테이너 공식 권장: PR #203 댓글)
