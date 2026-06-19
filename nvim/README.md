@@ -49,12 +49,9 @@ JDK 환경변수 주입은 외부 플러그인 [clang-engineer/jvm-env.nvim](htt
 
 ```
 dotfiles/nvim/
-├── lazy/lua/plugins/
-│   ├── jvm-env.lua                   # 외부 플러그인 spec (옵션: jdtls/gradle 메이저 버전)
-│   └── java.lua                      # nvim-jdtls 와 jvm-env 환경변수 연결
-└── opt/
-    ├── generate-nvim-java.sh         # require("jvm-env").setup() 호출하는 .nvim.lua 생성
-    └── generate-nvim-java.ps1        # PowerShell 버전
+└── lazy/lua/plugins/
+    ├── jvm-env.lua                   # 외부 플러그인 spec (옵션: jdtls/gradle 메이저 버전)
+    └── java.lua                      # nvim-jdtls 와 jvm-env 환경변수 연결
 ```
 
 ## 작동 방식
