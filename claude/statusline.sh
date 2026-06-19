@@ -6,7 +6,9 @@ cwd=$(printf '%s' "$input" | jq -r '.workspace.current_dir // .cwd')
 
 dir="${cwd/#$HOME/~}"
 branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
+added=$(printf '%s' "$input" | jq -r '.workspace.added_dirs[]? | split("/") | last' | paste -sd ' ' -)
 
 out="📁 $dir"
 [[ -n "$branch" ]] && out+="  ⎇ $branch"
+[[ -n "$added" ]] && out+="  ➕ $added"
 printf '%s' "$out"
