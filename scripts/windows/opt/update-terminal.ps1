@@ -1,6 +1,6 @@
 # Update Windows Terminal settings (best effort)
 
-param([string]$FontName = "CascadiaCode-NF")
+param([string]$FontName = "JetBrainsMono Nerd Font")
 
 Write-Host "==> Updating Windows Terminal settings" -ForegroundColor Cyan
 
