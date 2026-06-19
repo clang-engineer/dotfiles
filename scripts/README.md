@@ -55,13 +55,10 @@ scripts/
 
 ```
 scripts/windows/
-├── opt/
-│   ├── install-font.ps1         # Nerd Font 설치
-│   ├── update-terminal.ps1      # Windows Terminal 설정
-│   ├── generate-nvim-java.ps1   # .nvim.lua 생성
-│   ├── export-settings.ps1      # 터미널/PS 프로필 내보내기
-│   └── powershell-profile-winps.ps1
-└── terminal-settings.json
+└── opt/
+    ├── install-font.ps1         # Nerd Font 설치
+    ├── update-terminal.ps1      # Windows Terminal 설정 (폰트/투명도 패치)
+    └── generate-nvim-java.ps1   # .nvim.lua 생성
 ```
 
 ### 개별 모듈 실행
