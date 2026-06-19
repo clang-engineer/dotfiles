@@ -22,7 +22,7 @@ scripts/
 | --- | --- | --- | --- |
 | 전체 환경 부트스트랩 | `./bootstrap.sh [--force]` | `.\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
 | 개별 모듈 링킹 | `./zsh/setup.sh`, `./tmux/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
-| 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
+| 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\update-terminal.ps1` 등 | 상황별 헬퍼입니다. |
 
 ## Unix (macOS/Linux)
 
@@ -57,8 +57,7 @@ scripts/
 scripts/windows/
 └── opt/
     ├── install-font.ps1         # Nerd Font 설치
-    ├── update-terminal.ps1      # Windows Terminal 설정 (폰트/투명도 패치)
-    └── generate-nvim-java.ps1   # .nvim.lua 생성
+    └── update-terminal.ps1      # Windows Terminal 설정 (폰트/투명도 패치)
 ```
 
 ### 개별 모듈 실행
