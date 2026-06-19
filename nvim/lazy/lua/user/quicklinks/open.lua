@@ -4,8 +4,8 @@
 -- 그 외 로컬 파일/디렉토리 → vim.ui.open (외부 앱)
 local M = {}
 
-local float = require("quicklinks.float")
-local config = require("quicklinks.config")
+local float = require("user.quicklinks.float")
+local config = require("user.quicklinks.config")
 
 local function is_url(target)
   return target:match("^https?://") ~= nil

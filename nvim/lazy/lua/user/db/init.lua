@@ -5,14 +5,14 @@
 -- 프로젝트별로 일부만 보고 싶다면 (exrc 활용):
 --   1) ~/.config/nvim 등 init 파일에 `vim.o.exrc = true` 추가 (한 번만)
 --   2) 프로젝트 루트에 .nvim.lua 만들고 오버라이드:
---        vim.g.dbs = require("db").pick("snuh", "shine")
+--        vim.g.dbs = require("user.db").pick("snuh", "shine")
 --   3) 첫 실행 시 :trust 명령으로 해당 .nvim.lua 신뢰 등록.
 
 local M = {}
 
 function M.all()
   local result = {}
-  local files = vim.api.nvim_get_runtime_file("lua/db/connections/*.lua", true)
+  local files = vim.api.nvim_get_runtime_file("lua/user/db/connections/*.lua", true)
   table.sort(files)
   for _, path in ipairs(files) do
     local mod = path:gsub("\\", "/"):match("lua/(.+)%.lua$"):gsub("/", ".")
@@ -24,7 +24,7 @@ end
 function M.pick(...)
   local result = {}
   for _, name in ipairs({ ... }) do
-    vim.list_extend(result, require("db.connections." .. name))
+    vim.list_extend(result, require("user.db.connections." .. name))
   end
   return result
 end

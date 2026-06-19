@@ -1,7 +1,7 @@
 -- 파일 picker / grep — 현재 Snacks 의존
 local M = {}
 
-local float = require("toolbox.float")
+local float = require("user.toolbox.float")
 
 function M.pick_files(dir)
   Snacks.picker.files({

@@ -1,9 +1,9 @@
 -- 통합 픽커: quicklinks.md 항목 + cheatsheets/*.md
 local M = {}
 
-local config = require("quicklinks.config")
-local store = require("quicklinks.store")
-local open = require("quicklinks.open")
+local config = require("user.quicklinks.config")
+local store = require("user.quicklinks.store")
+local open = require("user.quicklinks.open")
 
 local KIND_ICON = {
   url = "🔗",

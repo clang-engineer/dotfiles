@@ -1,9 +1,9 @@
 -- :Quicklinks / :QuicklinksAdd 등록
 local M = {}
 
-local config = require("quicklinks.config")
-local picker = require("quicklinks.picker")
-local store = require("quicklinks.store")
+local config = require("user.quicklinks.config")
+local picker = require("user.quicklinks.picker")
+local store = require("user.quicklinks.store")
 
 local function add_interactive(dir)
   vim.ui.input({ prompt = "이름: " }, function(name)
