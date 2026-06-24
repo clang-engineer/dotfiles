@@ -58,13 +58,9 @@ if command -v jenv >/dev/null 2>&1; then
   printf '→ Enabled jenv export plugin\n'
 fi
 
-# Install Node LTS via nvm (per-project .nvmrc overrides this baseline)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-if command -v nvm >/dev/null 2>&1; then
-  nvm install --lts || true
-  nvm use --lts || true
-  printf '→ Installed Node LTS via nvm\n'
-fi
+# -- manual setup (버전 매니저만 설치됨, 런타임은 직접 선택) --
+printf '\n==> Manual setup required\n'
+printf '  Node : nvm install --lts && nvm use --lts\n'
+printf '  Java : install a JDK, then jenv add <path-to-jdk>\n'
 
 printf '\nAll done. Review warnings above and rerun with --force if needed.\n'
