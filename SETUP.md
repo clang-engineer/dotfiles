@@ -33,14 +33,14 @@ brew bundle --file packages/Brewfile
 | `claude/setup.sh` | `claude/` → `~/.claude` |
 | `ssh/setup.sh` | `ssh/` → `~/.ssh` |
 | `hammerspoon/setup.sh` | `hammerspoon/` → `~/.hammerspoon` |
-| `nvim/setup.sh` | `nvim/lazy/` → `~/.config/nvim`, `nvim/exrc/exrc-unix.lua` → `~/.exrc.lua` |
+| `nvim/setup.sh` | `nvim/lazy/` → `~/.config/nvim` |
 
 ### 도구 설치
 
 | 스크립트 | 동작 |
 |---|---|
 | `install-oh-my-zsh.sh` | oh-my-zsh 설치 |
-| `install-zsh-plugins.sh` | zsh-syntax-highlighting, zsh-autosuggestions, autojump 설치 |
+| `install-zsh-plugins.sh` | zsh-syntax-highlighting, zsh-autosuggestions 설치 |
 | `install-tpm.sh` | tmux plugin manager 설치 |
 
 ### 후처리
@@ -112,6 +112,8 @@ Homebrew로 설치된 openjdk(8, 11, 17, 21)에 대해 `/Library/Java/JavaVirtua
 
 ### Neovim Java LSP 설정
 
-```sh
-./nvim/opt/generate-nvim-java.sh
+프로젝트 루트에서 Neovim 명령으로 `.nvim.lua` 생성:
+
+```vim
+:JvmEnvInit 21 17
 ```

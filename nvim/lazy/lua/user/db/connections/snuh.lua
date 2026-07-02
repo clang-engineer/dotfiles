@@ -4,6 +4,7 @@ return {
   { name = "[SNUH] 운영 rex_stage", url = "postgresql://postgres@metadb.snuh.org:80/rex_stage" },
   { name = "[SNUH] 운영 psd_client", url = "postgresql://postgres@metadb.snuh.org:80/psd_client" },
   { name = "[SNUH] 운영 ctdw_new", url = "postgresql://postgres@metadb.snuh.org:80/ctdw_new" },
+  { name = "[SNUH] 본사 rex", url = "postgresql://rex_stage@211.104.145.129:45432/rex_stage" },
 
   -- 가명화(구) 172.26.33.23
   { name = "[SNUH] 가명화(구) psd_server", url = "postgresql://postgres@172.26.33.23:5432/psd_server" },

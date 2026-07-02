@@ -1,5 +1,12 @@
 # Personal Accounts
 
+## Github default (gh repo clone 등 alias 없는 github.com 접근) -> clang-engineer
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_github_clang-engineer
+    IdentitiesOnly yes
+
 ## Github Personal account-yorez
 Host github.com-clang-engineer
     HostName github.com
