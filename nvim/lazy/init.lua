@@ -1,8 +1,8 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 
--- Setup Java environment (before jdtls starts)
-require("config.java-env").setup()
-
 -- toolbox 빠른 뷰어 (:Toolbox / :ToolboxGrep)
-require("config.toolbox")
+require("user.toolbox").setup()
+
+-- quicklinks 통합 픽커 (:Quicklinks / :QuicklinksAdd / :QuicklinksEdit)
+require("user.quicklinks").setup()
