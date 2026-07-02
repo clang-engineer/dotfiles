@@ -1,5 +1,5 @@
 -- ~/.config/nvim/lua/plugins/kotlin-dap.lua
--- kotln dap 설정
+-- kotlin dap 설정
 
 return {
   {

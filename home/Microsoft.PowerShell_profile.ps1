@@ -37,8 +37,12 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
 #   대화형 세션에서만 (non-interactive 자식 프로세스 stderr 오염 방지)
 # ──────────────────────────────────────────────────────────────────
 if (-not [Console]::IsOutputRedirected -and -not [Console]::IsInputRedirected) {
-    Set-PSReadLineOption -PredictionSource History
-    Set-PSReadLineOption -PredictionViewStyle ListView
+    # 5.1 내장 2.0.0 대신 최신 버전을 강제 로드 (예측 입력 기능)
+    Import-Module PSReadLine -MinimumVersion 2.2.0 -Force -ErrorAction SilentlyContinue
+    if ((Get-Module PSReadLine).Version -ge [version]'2.2.0') {
+        Set-PSReadLineOption -PredictionSource History
+        Set-PSReadLineOption -PredictionViewStyle ListView
+    }
 }
 
 # ──────────────────────────────────────────────────────────────────

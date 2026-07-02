@@ -1,3 +1,6 @@
+-- CP949/EUC-KR 한글 파일을 감지해 내부 UTF-8로 변환 (win32yank UTF-8 패닉 방지)
+vim.opt.fileencodings = { "ucs-bom", "utf-8", "cp949", "euc-kr", "latin1" }
+
 -- set norelativenumber
 vim.opt.relativenumber = false
 

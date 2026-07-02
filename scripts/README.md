@@ -22,7 +22,7 @@ scripts/
 | --- | --- | --- | --- |
 | 전체 환경 부트스트랩 | `./bootstrap.sh [--force]` | `.\bootstrap.ps1 [-Force]` | 모듈별 링킹 + 패키지 설치를 한 번에 수행합니다. |
 | 개별 모듈 링킹 | `./zsh/setup.sh`, `./tmux/setup.sh` 등 | `.\home\setup.ps1`, `.\nvim\setup.ps1` 등 | 필요한 모듈만 골라 실행하세요. |
-| 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\generate-nvim-java.ps1` 등 | 상황별 헬퍼입니다. |
+| 선택형 도구 | `./ssh/generate-key.sh` 등 | `.\scripts\windows\opt\update-terminal.ps1` 등 | 상황별 헬퍼입니다. |
 
 ## Unix (macOS/Linux)
 
@@ -36,7 +36,7 @@ scripts/
 ./claude/setup.sh            # ~/.claude 링킹
 ./ssh/setup.sh               # ~/.ssh 링킹
 ./hammerspoon/setup.sh       # ~/.hammerspoon 링킹
-./nvim/setup.sh              # ~/.config/nvim + ~/.exrc.lua 링킹
+./nvim/setup.sh              # ~/.config/nvim 링킹
 ```
 
 ### Optional helpers
@@ -44,9 +44,10 @@ scripts/
 ```sh
 ./ssh/generate-key.sh                 # SSH 키 생성 (label, email)
 ./git/add-workspace-user.sh           # workspace별 Git user 등록 (includeIf)
-./scripts/setup-java-versions.sh            # jenv 기반 Java 버전 설정
-./nvim/opt/generate-nvim-java.sh      # Neovim Java 설정 생성
+./scripts/setup-java-versions.sh      # jenv 기반 Java 버전 설정
 ```
+
+> Neovim Java LSP의 `.nvim.lua`는 셸 스크립트가 아니라 nvim 명령 `:JvmEnvInit`로 생성합니다 (`nvim/docs/java-lsp.md`).
 
 ## Windows
 
@@ -54,20 +55,16 @@ scripts/
 
 ```
 scripts/windows/
-├── opt/
-│   ├── install-font.ps1         # Nerd Font 설치
-│   ├── update-terminal.ps1      # Windows Terminal 설정
-│   ├── generate-nvim-java.ps1   # .nvim.lua 생성
-│   ├── export-settings.ps1      # 터미널/PS 프로필 내보내기
-│   └── powershell-profile-winps.ps1
-└── terminal-settings.json
+└── opt/
+    ├── install-font.ps1         # Nerd Font 설치
+    └── update-terminal.ps1      # Windows Terminal 설정 (폰트/투명도 패치)
 ```
 
 ### 개별 모듈 실행
 
 ```powershell
 .\home\setup.ps1       # PowerShell 프로필 링크
-.\nvim\setup.ps1       # Neovim Junction 링크 + exrc
+.\nvim\setup.ps1       # Neovim Junction 링크
 .\git\setup.ps1        # ~\.gitconfig 링크
 .\ssh\setup.ps1        # ~\.ssh 링크
 ```

@@ -84,7 +84,7 @@ function New-FileLink {
         Move-Item $Dest $BackupPath -Force
     }
 
-    $null = cmd /c mklink /H "$Dest" "$Source"
+    $null = cmd /c mklink "$Dest" "$Source"
     if ($LASTEXITCODE -eq 0) {
         Write-Host "→ Linked $Dest → $Source" -ForegroundColor Green
         return $true
