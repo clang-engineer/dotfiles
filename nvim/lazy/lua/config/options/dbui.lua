@@ -1,13 +1,4 @@
-vim.g.dbs = {
-  {
-    name = "Docker postgres",
-    url = "postgres://myuser@localhost:5432/mydb",
-  },
-  {
-    name = "remote postgres (SSH tunnel)",
-    url = "postgresql://myuser@REDACTED_IP:5432/mydb?connect_timeout=5",
-  },
-}
+vim.g.dbs = require("config.options.dbs").all()
 
 -- 쿼리 결과창(dbout) 가독성 개선:
 --   1) fold 비활성화 (메인테이너 공식 권장: PR #203 댓글)
