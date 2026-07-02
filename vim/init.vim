@@ -42,15 +42,6 @@ Plug 'xolox/vim-colorscheme-switcher' " 랜덤 컬러 선택기
 
 Plug 'rking/ag.vim'
 
-" nvim-treesitter 구문 파싱 하이라이팅
-" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-" Tagbar 코드 뷰어 창
-" Plug 'majutsushi/tagbar'
-" CScope 플러그인
-" Plug 'ronakg/quickr-cscope.vim'
-" VIM GAS(GNU ASsembler) Highlighting
-" Plug 'Shirk/vim-gas'
-"
 Plug 'dhruvasagar/vim-table-mode'
 
 
