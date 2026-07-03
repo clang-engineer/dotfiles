@@ -63,6 +63,15 @@ brew bundle dump --file=packages/Brewfile --force
 | `eza` | 파일 목록 (아이콘, Git 상태 표시) | `ls` |
 | `zoxide` | 스마트 디렉터리 점프 | `cd`/`autojump` |
 | `delta` | Git diff 구문 강조 | `git diff` |
+| `atuin` | 셸 히스토리 DB (맥락 기록·기기 간 동기화) | `Ctrl+R` / `fzf` 히스토리 |
 | `tldr` | 명령어 요약 도움말 | `man` |
 | `htop` | 프로세스 모니터 | `top` |
 | `dust` | 디스크 사용량 시각화 | `du` |
+
+### 향후 추가해볼 만한 설정
+
+현재 셋업은 모던 CLI 풀세트가 거의 다 갖춰짐. 실질적으로 더 볼 후보:
+
+- **`atuin`** — `fzf --zsh`로 `Ctrl+R` 퍼지 히스토리를 이미 쓰므로 빈 구멍이 아니라 업그레이드. 추가 이점은 실행 디렉토리·종료코드 맥락 필터 + 기기 간 동기화. **맥 여러 대를 쓰거나 맥락 검색이 잦을 때만** 값을 함.
+
+참고: p10k에 `direnv` 세그먼트가 켜져 있으나 Brewfile 미포함 + zshrc hook 없음. 프로젝트별 env var가 필요하면 마저 붙이고, 안 쓰면 p10k에서 제거.
