@@ -34,6 +34,7 @@ alt-shift-4 = ['exec-and-forget ~/.hammerspoon/modules/aerospace-move-node.sh 4:
 alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 alt-tab = 'workspace-back-and-forth'                # custom
+alt-shift-0 = ['exec-and-forget ~/.hammerspoon/modules/aerospace-reflow.sh']  # re-home all windows
 
 # Auto-assign apps to workspaces
 # 1: Browser & AI (Chrome, Safari, Claude, ChatGPT)

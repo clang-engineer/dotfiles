@@ -63,6 +63,12 @@ hs.urlevent.bind("aerospace-workspace-changed", function()
   showWorkspaceApps()
 end)
 
+-- Triggered by aerospace-reflow.sh after re-homing all windows
+hs.urlevent.bind("aerospace-reflowed", function(_, params)
+  local moved = params and params.moved or "0"
+  showAlert("Reflowed · " .. moved .. " moved")
+end)
+
 -- Triggered by AeroSpace on move-node-to-workspace
 hs.urlevent.bind("aerospace-node-moved", function(_, params)
   local targetWs = params and params.ws or nil
