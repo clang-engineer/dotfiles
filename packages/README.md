@@ -54,6 +54,23 @@ brew bundle dump --file=packages/Brewfile --force
 1. `scoop-packages.txt` 또는 `Brewfile`을 직접 편집
 2. 설치 스크립트를 다시 실행
 
+## 설치된 모던 도구 사용법
+
+Brewfile에 든 도구를 어떻게 설정해 쓰는지 요약. 키바인딩·alias는 `zsh/.zshrc`, git 페이저는 `git/.gitconfig`에 정의됨.
+
+| 도구 | 사용법 | 설정 위치 |
+|------|--------|-----------|
+| `eza` | `ls` 그대로 (alias). 아이콘·git 상태 포함 | `.zshrc` alias |
+| `bat` | `cat` 그대로 (alias). 구문강조·행번호. fzf 미리보기 백엔드 | `.zshrc` alias |
+| `zoxide` | `z <경로일부>`로 자주 간 폴더 점프, `zi`는 후보 목록 선택 | `.zshrc` (`zoxide init`) |
+| `fzf` | `Ctrl+T` 파일 선택 · `Ctrl+R` 히스토리 검색 · `Alt+C` 디렉터리 이동 | `.zshrc` (`fzf --zsh`) |
+| `ripgrep` | `rg <패턴>` 초고속 검색. neovim grep 백엔드 | 기본 |
+| `fd` | `fd <이름>` 직관적 파일 검색 (`find` 대체) | 기본 |
+| `lazygit` | `lazygit` 실행 (스테이징·리베이스 TUI). Neovim에선 `<leader>gg` | LazyVim 통합 |
+| `delta` | `git diff`/`show`/`log -p` 시 자동 적용 (별도 명령 없음) | `.gitconfig` `core.pager` |
+| `gh` | `gh pr create` · `gh issue list` · `gh repo view` 등 GitHub CLI | 기본 |
+| `tldr` | `tldr <명령>` — man 대신 핵심 예시만 | 기본 |
+
 ## 참고: 추가로 쓸 만한 도구
 
 필요할 때 개별 설치. Brewfile에는 포함하지 않음.
