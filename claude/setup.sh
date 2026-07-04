@@ -5,18 +5,9 @@ source "$REPO/scripts/lib/common.sh"
 
 CLAUDE_DIR="$HOME/.claude"
 
-if [[ -L "$CLAUDE_DIR" ]]; then
-  printf '⚠︎ %s is a symlink (legacy whole-dir setup); skipping claude linking.\n' "$CLAUDE_DIR"
-  printf '  Remove it manually, then rerun to migrate to per-file links.\n'
-  exit 0
-fi
-
-ensure_dir "$CLAUDE_DIR"
-
-link_path "$REPO/claude/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-link_path "$REPO/claude/statusline.sh" "$CLAUDE_DIR/statusline.sh"
-
-# settings.json: 템플릿에 머신별 경로를 주입하여 생성
+# settings.json: 템플릿(settings.template.json)에 머신별 경로를 주입해 생성.
+# additionalDirectories는 env 확장이 안 되므로 절대경로를 여기서 박아 넣는다.
+# 생성물(settings.json)은 gitignore 대상 — 머신 경로가 repo에 커밋되지 않게 한다.
 generate_settings() {
   local dirs=()
   [[ -n "${BLOG_DIR:-}" ]]     && dirs+=("\"$BLOG_DIR\"")
@@ -28,9 +19,20 @@ generate_settings() {
   joined="${joined%, }"
 
   sed "s|\"additionalDirectories\": \[\]|\"additionalDirectories\": [$joined]|" \
-    "$REPO/claude/settings.json" > "$CLAUDE_DIR/settings.json"
+    "$REPO/claude/settings.template.json" > "$CLAUDE_DIR/settings.json"
   printf '→ Generated %s with directories: %s\n' "$CLAUDE_DIR/settings.json" "$joined"
 }
+
+# whole-dir 심링크(~/.claude → repo/claude): 파일은 이미 제자리라 링크 불필요.
+# 단 settings.json은 템플릿에서 생성해야 하므로 그것만 처리하고 종료.
+if [[ -L "$CLAUDE_DIR" ]]; then
+  generate_settings
+  exit 0
+fi
+
+ensure_dir "$CLAUDE_DIR"
+link_path "$REPO/claude/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+link_path "$REPO/claude/statusline.sh" "$CLAUDE_DIR/statusline.sh"
 
 if [[ -L "$CLAUDE_DIR/settings.json" ]]; then
   rm -f "$CLAUDE_DIR/settings.json"
