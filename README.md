@@ -40,7 +40,7 @@ brew bundle install --file packages/Brewfile   # macOS
 
 ## 관련 저장소
 
-`claude/`에 정의된 Claude Code 스킬(`/to-til`, `/to-analysis`, `/to-blog` 등)이 아래 두 저장소로 메모를 적재·발행합니다.
+`claude/`에 정의된 Claude Code 스킬(`/notes`, `/blog`, `/notes-cleanup` 등)이 아래 두 저장소로 메모를 적재·발행합니다.
 
 | 저장소 | 설명 |
 |---|---|
