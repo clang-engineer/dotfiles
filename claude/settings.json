@@ -4,7 +4,7 @@
     "command": "~/.claude/statusline.sh"
   },
   "permissions": {
-    "additionalDirectories": ["/Users/clang/Desktop/_zero/private/clang-engineer.github.io", "/Users/clang/Desktop/_zero/private/toolbox", "/Users/clang/Desktop/_zero/private/dotfiles"]
+    "additionalDirectories": ["$BLOG_DIR", "$TOOLBOX_DIR", "$DOTFILES_DIR"]
   },
   "hooks": {
     "Notification": [
