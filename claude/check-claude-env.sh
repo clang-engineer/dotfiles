@@ -23,7 +23,7 @@ check() {
 
 echo "Claude /to-xxx 환경변수 점검"
 echo "─────────────────────────────"
-check "BLOG_DIR"    "$BLOG_DIR"    "/to-post, /to-todo, /done-todo"
+check "BLOG_DIR"    "$BLOG_DIR"    "/blog, /blog-improve"
 check "TOOLBOX_DIR" "$TOOLBOX_DIR" "/notes, /notes-cleanup"
 echo "─────────────────────────────"
 echo "  결과: ${ok}개 정상, ${fail}개 문제"
