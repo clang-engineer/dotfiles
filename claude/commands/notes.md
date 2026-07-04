@@ -7,11 +7,10 @@ $TOOLBOX_DIR/notes 디렉토리에 마크다운 파일로 작성해줘.
 `export TOOLBOX_DIR=~/your-toolbox-repo` 를 추가한 뒤 셸을 재시작해주세요."
 
 다른 명령어와 구분:
-- 다시 찾을 명령어/문법 → /to-cheatsheet
-- 외부 발신용 글 → /to-blog
-- 프로젝트/시스템 분석 → /to-analysis
+- 외부 발신용 공개 글 → /blog
 
-위 어디에도 안 맞는 짧은 학습 발견만 notes.
+명령어 모음(cheatsheet)·프로젝트 분석(analysis)도 일단 notes로 캡처한다.
+/notes-cleanup이 나중에 cheatsheet/analysis/blog로 분류·재배치한다. 즉 notes는 개인용 캡처의 단일 정문.
 
 notes 디렉토리는 자동 적재 작업 흐름 파일(`flow-<도구>-<작업>.md`)과 통합 누적된다. 사용자 명시 notes 파일은 `note-` 접두어 필수.
 
