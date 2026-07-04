@@ -20,8 +20,8 @@ claude/*
 !claude/README.md
 !claude/settings.json
 !claude/statusline.sh
-!claude/check-claude-env.sh
-!claude/link-claude-commands.sh
+!claude/check-env.sh
+!claude/link-commands.sh
 !claude/setup.sh
 !claude/setup.ps1
 !claude/commands/
