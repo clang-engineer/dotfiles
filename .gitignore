@@ -18,7 +18,7 @@ packages/Brewfile.lock.json
 claude/*
 !claude/CLAUDE.md
 !claude/README.md
-!claude/settings.json
+!claude/settings.template.json
 !claude/statusline.sh
 !claude/check-env.sh
 !claude/link-commands.sh
