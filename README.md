@@ -44,5 +44,6 @@ brew bundle install --file packages/Brewfile   # macOS
 
 | 저장소 | 설명 |
 |---|---|
-| toolbox _(private)_ | TIL·cheatsheet·분석 노트 적재. `$TOOLBOX_DIR`로 연결 |
+| vault _(private)_ | TIL·분석 노트 적재. `$TOOLBOX_DIR`로 연결 |
+| [devkit](https://github.com/clang-engineer/devkit) | 공개 레퍼런스 — cheatsheets·templates·개념노트 |
 | [clang-engineer.github.io](https://github.com/clang-engineer/clang-engineer.github.io) | 기술 블로그. `$BLOG_DIR/_posts/`로 발행 |
