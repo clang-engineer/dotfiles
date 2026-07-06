@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Link ssh/config and tracked key files into ~/.ssh/ (per-file, not whole-dir).
+# Link ssh/config and the generic config.d entries into ~/.ssh/ (per-file, not whole-dir).
 set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 source "$REPO/scripts/lib/common.sh"
@@ -15,7 +15,14 @@ fi
 ensure_dir "$SSH_DIR"
 chmod 700 "$SSH_DIR"
 
-for f in config github_actions github_actions.pub; do
-  [[ -f "$REPO/ssh/$f" ]] || continue
-  link_path "$REPO/ssh/$f" "$SSH_DIR/$f"
+link_path "$REPO/ssh/config" "$SSH_DIR/config"
+
+# Link the generic config.d entries (skip *.example templates).
+# Private, machine-specific hosts are linked separately by the `secrets` repo.
+ensure_dir "$SSH_DIR/config.d"
+for f in "$REPO"/ssh/config.d/*; do
+  case "$f" in *.example) continue ;; esac
+  link_path "$f" "$SSH_DIR/config.d/$(basename "$f")"
 done
+
+# Keys are generated per machine (see ssh/generate-key.sh), never committed.
