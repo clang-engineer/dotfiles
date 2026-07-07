@@ -47,7 +47,9 @@ ask_and_set() {
 printf '→ Checking ~/.secrets environment variables\n'
 ask_and_set "WORKSPACE_DIR" "작업 디렉토리 루트" ""
 ask_and_set "BLOG_DIR"      "Jekyll 블로그 경로" ""
-ask_and_set "TOOLBOX_DIR"   "Toolbox 경로"       ""
+ask_and_set "VAULT_DIR"   "Vault 경로"       ""
 ask_and_set "DOTFILES_DIR"  "Dotfiles 경로"      ""
+ask_and_set "DEVKIT_DIR"    "Devkit 경로 (공개 레퍼런스)" ""
+ask_and_set "PROFILE_DIR"   "GitHub 프로필 README repo 경로" ""
 
 chmod 600 "$SECRETS"

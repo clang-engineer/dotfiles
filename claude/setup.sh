@@ -11,8 +11,10 @@ CLAUDE_DIR="$HOME/.claude"
 generate_settings() {
   local dirs=()
   [[ -n "${BLOG_DIR:-}" ]]     && dirs+=("\"$BLOG_DIR\"")
-  [[ -n "${TOOLBOX_DIR:-}" ]]  && dirs+=("\"$TOOLBOX_DIR\"")
+  [[ -n "${VAULT_DIR:-}" ]]  && dirs+=("\"$VAULT_DIR\"")
+  [[ -n "${DEVKIT_DIR:-}" ]]  && dirs+=("\"$DEVKIT_DIR\"")
   [[ -n "${DOTFILES_DIR:-}" ]] && dirs+=("\"$DOTFILES_DIR\"")
+  [[ -n "${PROFILE_DIR:-}" ]]  && dirs+=("\"$PROFILE_DIR\"")
 
   local joined
   joined=$(printf '%s, ' "${dirs[@]}")

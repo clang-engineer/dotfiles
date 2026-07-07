@@ -1,10 +1,10 @@
 현재 대화에서 새로 알게 된 핵심 내용을 짧은 학습 메모(Notes) 형식으로 정리해서
-$TOOLBOX_DIR/notes 디렉토리에 마크다운 파일로 작성해줘.
+$VAULT_DIR/notes 디렉토리에 마크다운 파일로 작성해줘.
 
-만약 $TOOLBOX_DIR 환경변수가 설정되어 있지 않다면, 파일을 작성하지 말고
+만약 $VAULT_DIR 환경변수가 설정되어 있지 않다면, 파일을 작성하지 말고
 사용자에게 다음과 같이 안내해줘:
-"`TOOLBOX_DIR` 환경변수가 설정되지 않았습니다. `.bashrc` 또는 `.zshrc`에
-`export TOOLBOX_DIR=~/your-toolbox-repo` 를 추가한 뒤 셸을 재시작해주세요."
+"`VAULT_DIR` 환경변수가 설정되지 않았습니다. `.bashrc` 또는 `.zshrc`에
+`export VAULT_DIR=~/your-vault-repo` 를 추가한 뒤 셸을 재시작해주세요."
 
 다른 명령어와 구분:
 - 외부 발신용 공개 글 → /blog

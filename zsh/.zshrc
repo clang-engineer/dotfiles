@@ -31,7 +31,7 @@ source ~/.oh-my-zsh/oh-my-zsh.sh
 # 명령어 오타 교정: 'gti status' → "correct 'gti' to 'git' [nyae]?" 프롬프트
 setopt CORRECT
 
-# Project directories (WORKSPACE_DIR, BLOG_DIR, TOOLBOX_DIR are set in ~/.secrets per machine)
+# Project directories (WORKSPACE_DIR, BLOG_DIR, VAULT_DIR, DEVKIT_DIR are set in ~/.secrets per machine)
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then

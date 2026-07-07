@@ -24,7 +24,8 @@ check() {
 echo "Claude /to-xxx 환경변수 점검"
 echo "─────────────────────────────"
 check "BLOG_DIR"    "$BLOG_DIR"    "/blog, /blog-improve"
-check "TOOLBOX_DIR" "$TOOLBOX_DIR" "/notes, /notes-cleanup"
+check "VAULT_DIR" "$VAULT_DIR" "/notes, /notes-cleanup"
+check "DEVKIT_DIR"  "$DEVKIT_DIR"  "/notes-cleanup (cheatsheet·note 발행)"
 echo "─────────────────────────────"
 echo "  결과: ${ok}개 정상, ${fail}개 문제"
 
