@@ -1,0 +1,9 @@
+{{/* Pull the private secrets repo on `chezmoi apply`. URL and path come from
+     ~/.secrets env, so nothing private is committed to this public repo. A clone
+     without SECRETS_REPO set (public users) skips the whole block. */}}
+{{- if and (env "SECRETS_REPO") (env "SECRETS_DIR") }}
+["{{ env "SECRETS_DIR" | trimPrefix (printf "%s/" .chezmoi.homeDir) }}"]
+    type = "git-repo"
+    url = {{ env "SECRETS_REPO" | quote }}
+    refreshPeriod = "168h"
+{{- end }}

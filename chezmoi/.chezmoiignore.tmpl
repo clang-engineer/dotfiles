@@ -1,0 +1,22 @@
+{{ if ne .chezmoi.os "windows" }}
+# Windows-only subtrees — ignored on macOS/Linux
+AppData
+Documents
+{{ else }}
+# Unix-only targets — ignored on Windows
+.zshrc
+.bashrc
+.bash_profile
+.p10k.zsh
+.tmux.conf
+.aerospace.toml
+.opencode_aliases
+.hammerspoon
+.ssh
+.config/nvim
+10-install-shell-tools.sh
+20-generate-claude-settings.sh
+30-secrets-overlay.sh
+{{ end }}
+# SSH host configs overlaid by the private secrets repo (both OS)
+.ssh/config.d/[1-9]*

@@ -56,7 +56,7 @@ brew bundle dump --file=packages/Brewfile --force
 
 ## 설치된 모던 도구 사용법
 
-Brewfile에 든 도구를 어떻게 설정해 쓰는지 요약. 키바인딩·alias는 `zsh/.zshrc`, git 페이저는 `git/.gitconfig`에 정의됨.
+Brewfile에 든 도구를 어떻게 설정해 쓰는지 요약. 키바인딩·alias는 `chezmoi/dot_zshrc`, git 페이저는 `chezmoi/dot_gitconfig`에 정의됨.
 
 | 도구 | 사용법 | 설정 위치 |
 |------|--------|-----------|

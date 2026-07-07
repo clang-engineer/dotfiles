@@ -9,75 +9,102 @@
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
 
-- 이 저장소를 클론: `git clone <repo> ~/Desktop/_zero/dotfiles`
+- chezmoi 설치: `brew install chezmoi`
+- 이 저장소를 클론: `git clone <repo> ~/Desktop/_zero/private/dotfiles`
 
-## 1. 패키지 설치
+## 1. chezmoi 연결 (머신-로컬, 1회)
+
+chezmoi가 이 repo를 소스로 쓰도록 `~/.config/chezmoi/chezmoi.toml`을 만든다:
+
+```sh
+mkdir -p ~/.config/chezmoi
+cat > ~/.config/chezmoi/chezmoi.toml <<'TOML'
+sourceDir = "/Users/you/Desktop/_zero/private/dotfiles"
+[data]
+    dotfilesDir = "/Users/you/Desktop/_zero/private/dotfiles"
+TOML
+```
+
+> `.chezmoiroot`가 소스 루트를 `chezmoi/` 하위로 잡으므로, docs·packages·scripts는
+> chezmoi 대상에서 자동 제외된다.
+
+## 2. 적용
+
+```sh
+chezmoi diff     # 무엇이 바뀔지 미리보기
+chezmoi apply    # 링크·복사·설치·생성 한 번에
+```
+
+`chezmoi apply`가 순서대로 수행하는 것:
+
+### 파일 배치
+
+| 소스 | 결과 | 방식 |
+|---|---|---|
+| `dot_zshrc`, `dot_gitconfig`, `dot_tmux.conf`, `dot_p10k.zsh` 등 | `~/.zshrc` 등 | managed 실파일 |
+| `private_dot_ssh/` | `~/.ssh/` (0700) + `config`, `config.d/00-global` | managed (키는 미관리) |
+| `symlink_dot_config/nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | symlink |
+| `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` | symlink |
+| `symlink_dot_claude.tmpl` | `~/.claude` | symlink |
+
+### 스크립트 (run\_)
+
+| 스크립트 | 동작 |
+|---|---|
+| `run_once_after_10-install-shell-tools.sh` | oh-my-zsh, zsh 플러그인, TPM, jenv |
+| `run_after_20-generate-claude-settings.sh` | `~/.secrets` env로 `claude/settings.json` 생성 |
+| `run_after_30-secrets-overlay.sh` | `SECRETS_DIR` 있으면 secrets repo 오버레이 실행 |
+
+> 이후 config 수정은 `chezmoi edit --apply ~/.zshrc` (소스 편집 + 즉시 적용).
+> nvim/hammerspoon/claude는 symlink라 평소처럼 직접 편집하면 된다.
+
+## 3. 패키지 설치
 
 ```sh
 brew bundle --file packages/Brewfile
 ```
 
-## 2. 심링크 및 도구 설치
+## 4. 머신-로컬 시크릿 (`~/.secrets`)
+
+토큰·머신 경로는 `~/.secrets`에 둔다 (repo에 안 들어감). 셸이 자동 source.
 
 ```sh
-./bootstrap.sh [--force]
+cp scripts/.secrets.example ~/.secrets && chmod 600 ~/.secrets
+$EDITOR ~/.secrets   # GITHUB_TOKEN, 워크스페이스 경로, (선택) SECRETS_REPO 등
 ```
 
-이 스크립트가 아래 작업을 순서대로 수행한다:
+## 5. Git identity 설정
 
-### 심링크 생성
-
-| 모듈 스크립트 | 동작 |
-|---|---|
-| `home/setup.sh` | `home/.*` 파일들 → `~/` (`.zshrc`, `.gitconfig`, `.tmux.conf` 등) |
-| `claude/setup.sh` | `claude/` → `~/.claude` |
-| `ssh/setup.sh` | `ssh/` → `~/.ssh` |
-| `hammerspoon/setup.sh` | `hammerspoon/` → `~/.hammerspoon` |
-| `nvim/setup.sh` | `nvim/lazy/` → `~/.config/nvim` |
-
-### 도구 설치
-
-| 스크립트 | 동작 |
-|---|---|
-| `install-oh-my-zsh.sh` | oh-my-zsh 설치 |
-| `install-zsh-plugins.sh` | zsh-syntax-highlighting, zsh-autosuggestions 설치 |
-| `install-tpm.sh` | tmux plugin manager 설치 |
-
-### 후처리
-
-- tmux 설정 반영 (`tmux source-file`)
-- jenv export 플러그인 활성화 (jenv가 있는 경우)
-
-> 기존 파일이 있으면 경고만 출력하고 건너뛴다. `--force`를 붙이면 기존 파일을 덮어쓴다.
-
-## 3. Git identity 설정
-
-`git/.gitconfig`는 공통 설정만 들어 있다. 본인 identity는 `~/.gitconfig.local`에 둔다.
+`dot_gitconfig`는 공통 설정 + `[include] ~/.gitconfig.local`만 있다. 본인 identity는
+`~/.gitconfig.local`에 둔다:
 
 ```sh
-cp git/.gitconfig.local.example ~/.gitconfig.local
+cp scripts/.gitconfig.local.example ~/.gitconfig.local
 # 편집하여 [user] name/email 입력
 ```
 
-## 4. Neovim 플러그인 동기화
+## 6. Neovim 플러그인 동기화
 
 ```sh
 nvim --headless "+Lazy sync" +qa
 ```
 
-## 5. 선택 사항 (scripts/unix/opt/)
+## 7. 선택 사항 (scripts/)
 
 필요한 것만 골라서 실행한다.
 
 ### SSH 키 생성 & GitHub 다중 계정
 
 ```sh
-./ssh/generate-key.sh [LABEL] [EMAIL]
+./scripts/generate-key.sh [LABEL] [EMAIL]
 ```
 
-`~/.ssh/id_rsa_{LABEL}`에 키를 생성하고 ssh-agent에 등록한다. LABEL은 자유 식별자(`github_myuser`, `gcp_yorez333` 등). GitHub용이라면 생성된 공개키를 https://github.com/settings/keys 에 추가한다.
+`~/.ssh/id_rsa_{LABEL}`에 키를 생성하고 ssh-agent에 등록한다. LABEL은 자유 식별자
+(`github_myuser`, `gcp_yorez333` 등). GitHub용이라면 공개키를
+https://github.com/settings/keys 에 추가한다.
 
-같은 머신에서 GitHub 계정을 여러 개 쓰려면 `ssh/config.d/10-personal` 같은 파일에 Host 별칭을 추가한다 (`ssh/config`가 `Include config.d/*` 처리):
+Host 별칭은 `~/.ssh/config.d/`에 추가한다 (`~/.ssh/config`가 `Include config.d/*`).
+공개 repo는 `00-global`만 관리하고, 실제 사설 호스트는 `secrets` repo가 오버레이한다:
 
 ```ssh
 Host github.com-myuser
@@ -97,10 +124,11 @@ ssh -T git@github.com-myuser   # 연결 확인
 ### Git includeIf 설정 (워크스페이스별 계정 분리)
 
 ```sh
-./git/add-workspace-user.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
+./scripts/add-workspace-user.sh [WORKSPACE_PATH] [GIT_NAME] [GIT_EMAIL]
 ```
 
-특정 디렉터리 하위의 Git 저장소에서 다른 이름/이메일을 사용하도록 설정한다. 회사/개인 계정을 분리할 때 사용.
+특정 디렉터리 하위의 Git 저장소에서 다른 이름/이메일을 사용하도록 설정한다.
+회사/개인 계정을 분리할 때 사용.
 
 ### Java 버전 관리
 
@@ -108,7 +136,8 @@ ssh -T git@github.com-myuser   # 연결 확인
 ./scripts/setup-java-versions.sh
 ```
 
-Homebrew로 설치된 openjdk(8, 11, 17, 21)에 대해 `/Library/Java/JavaVirtualMachines/` 심링크를 만들고 jenv에 등록한다. sudo 필요.
+Homebrew openjdk(8, 11, 17, 21)에 대해 `/Library/Java/JavaVirtualMachines/` 심링크를
+만들고 jenv에 등록한다. sudo 필요.
 
 ### Neovim Java LSP 설정
 

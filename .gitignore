@@ -2,10 +2,16 @@
 tags
 .DS_Store
 
-# private-key, public-key ignore
-id_rsa*
+# SSH keys / sensitive — machine-specific, never commit (any name, repo-wide)
+id_*
+github_actions
+github_actions.pub
 known_hosts*
-configs/nvim-classic/pack
+*.pem
+*.key
+authorized_keys
+# SSH host configs overlaid from the private `secrets` repo (only 00-global tracked)
+chezmoi/private_dot_ssh/config.d/[1-9]*
 packages/Brewfile.lock.json
 
 *.swp
@@ -23,8 +29,6 @@ claude/*
 !claude/statusline.sh
 !claude/check-env.sh
 !claude/link-commands.sh
-!claude/setup.sh
-!claude/setup.ps1
 !claude/commands/
 
 # local tool settings

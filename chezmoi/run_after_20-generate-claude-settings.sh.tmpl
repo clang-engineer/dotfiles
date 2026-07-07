@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Generate ~/.claude/settings.json from the template, injecting machine-local
+# additionalDirectories. ~/.claude is a symlink to the repo, so this writes into
+# repo/claude/settings.json (gitignored) — same as bootstrap's generate_settings.
+# Machine paths come from ~/.secrets env; source it so this works non-interactively.
+set -euo pipefail
+REPO="{{ .dotfilesDir }}"
+[ -f "$HOME/.secrets" ] && . "$HOME/.secrets"
+
+dirs=()
+[ -n "${BLOG_DIR:-}" ]     && dirs+=("\"$BLOG_DIR\"")
+[ -n "${VAULT_DIR:-}" ]    && dirs+=("\"$VAULT_DIR\"")
+[ -n "${DEVKIT_DIR:-}" ]   && dirs+=("\"$DEVKIT_DIR\"")
+[ -n "${DOTFILES_DIR:-}" ] && dirs+=("\"$DOTFILES_DIR\"")
+[ -n "${PROFILE_DIR:-}" ]  && dirs+=("\"$PROFILE_DIR\"")
+
+joined=$(printf '%s, ' "${dirs[@]}")
+joined="${joined%, }"
+
+sed "s|\"additionalDirectories\": \[\]|\"additionalDirectories\": [$joined]|" \
+  "$REPO/claude/settings.template.json" > "$REPO/claude/settings.json"
+printf '→ Generated claude/settings.json with directories: %s\n' "$joined"
