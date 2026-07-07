@@ -4,15 +4,14 @@
 param([switch]$Force)
 
 $ErrorActionPreference = "Stop"
-$RepoDir = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)  # scripts/windows -> repo root
 
 Write-Host "==> Windows installs" -ForegroundColor Cyan
 
-# packages (includes Nerd Font)
-& "$RepoDir\packages\install-packages.ps1" -Force:$Force
+# packages (includes Nerd Font) — reads packages/scoop-packages.txt
+& "$PSScriptRoot\install-packages.ps1" -Force:$Force
 
 # terminal (apply Nerd Font)
-& "$RepoDir\scripts\windows\opt\update-terminal.ps1"
+& "$PSScriptRoot\opt\update-terminal.ps1"
 
 Write-Host ""
 Write-Host "==> Done. Open a new terminal and run: nvim" -ForegroundColor Green

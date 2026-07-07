@@ -21,7 +21,7 @@ foreach ($b in $Buckets) {
     }
 }
 
-$RepoRoot = (Resolve-Path "$PSScriptRoot/..").Path
+$RepoRoot = (Resolve-Path "$PSScriptRoot/../..").Path  # scripts/windows -> repo root
 $PackagesFile = Join-Path $RepoRoot "packages/scoop-packages.txt"
 if (-not (Test-Path $PackagesFile)) {
     Write-Host "ERROR: $PackagesFile not found" -ForegroundColor Red

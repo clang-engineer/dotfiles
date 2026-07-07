@@ -1,6 +1,6 @@
 # packages
 
-패키지 목록 관리 및 설치를 위한 디렉터리.
+패키지 **목록(선언적 데이터)** 디렉터리. 설치 스크립트는 `scripts/windows/`에 있다.
 
 ## 구조
 
@@ -9,19 +9,19 @@
 | `scoop-packages.txt` | Windows Scoop 패키지 목록 |
 | `Brewfile` | macOS Homebrew CLI 패키지 목록 |
 | `Brewfile.cask` | macOS Homebrew Cask (GUI 앱·폰트) 목록 |
-| `install-packages.ps1` | Windows용 Scoop 패키지 설치 스크립트 |
+
 ## 설치
 
 ### Windows (Scoop)
 
 ```powershell
-.\packages\install-packages.ps1
+.\scripts\windows\install-packages.ps1
 ```
 
 이미 설치된 패키지를 강제 재설치하려면:
 
 ```powershell
-.\packages\install-packages.ps1 -Force
+.\scripts\windows\install-packages.ps1 -Force
 ```
 
 ### macOS (Homebrew)

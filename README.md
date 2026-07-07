@@ -61,7 +61,7 @@ place, no round-trip. Everything else is a managed file; edit with
 | `nvim/` | Neovim (LazyVim) — symlinked to `~/.config/nvim` |
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `claude/` | Claude Code config — symlinked to `~/.claude` |
-| `packages/` | Brewfile (macOS) / scoop list + `install-packages.ps1` (Windows) |
+| `packages/` | package manifests only — Brewfile (macOS), scoop-packages.txt (Windows) |
 | `scripts/` | tooling: key gen, workspace identity, secrets/pgpass/java setup, Windows installers |
 | `vim/` | legacy Vim (not linked; kept for reference) |
 
