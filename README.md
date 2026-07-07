@@ -5,6 +5,9 @@ machine `chezmoi apply` links every config, runs the one-time installs, generate
 machine-local bits, and (optionally) pulls the private `secrets` companion — one
 command, macOS and Windows.
 
+> The previous shell / `bootstrap.sh` version (symlink-based) is preserved at the
+> **`pre-chezmoi`** git tag — restore with `git checkout pre-chezmoi`.
+
 ## Quick start
 
 **macOS / Linux**
