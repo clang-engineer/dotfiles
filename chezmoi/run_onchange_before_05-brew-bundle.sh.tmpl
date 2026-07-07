@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Install Homebrew packages — absorbed from the manual `brew bundle` step.
 # run_onchange: re-runs whenever a Brewfile changes (checksums below force it).
-# Brewfile      {{ output "shasum" "-a" "256" (joinPath .dotfilesDir "packages/Brewfile") | trim }}
-# Brewfile.cask {{ output "shasum" "-a" "256" (joinPath .dotfilesDir "packages/Brewfile.cask") | trim }}
+# Brewfile      {{ output "shasum" "-a" "256" (joinPath (.chezmoi.sourceDir | dir) "packages/Brewfile") | trim }}
+# Brewfile.cask {{ output "shasum" "-a" "256" (joinPath (.chezmoi.sourceDir | dir) "packages/Brewfile.cask") | trim }}
 set -euo pipefail
 command -v brew >/dev/null 2>&1 || { printf '→ brew not found; skipping packages\n'; exit 0; }
 
-brew bundle --file="{{ .dotfilesDir }}/packages/Brewfile"
-brew bundle --file="{{ .dotfilesDir }}/packages/Brewfile.cask"
+brew bundle --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile"
+brew bundle --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile.cask"

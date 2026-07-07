@@ -13,13 +13,9 @@ command, macOS and Windows.
 brew install chezmoi
 git clone <repo> ~/Desktop/_zero/private/dotfiles
 
-# one-time, machine-local: point chezmoi at the repo
+# one-time, machine-local: point chezmoi at the repo (~ is expanded)
 mkdir -p ~/.config/chezmoi
-cat > ~/.config/chezmoi/chezmoi.toml <<'TOML'
-sourceDir = "/Users/you/Desktop/_zero/private/dotfiles"
-[data]
-    dotfilesDir = "/Users/you/Desktop/_zero/private/dotfiles"
-TOML
+echo 'sourceDir = "~/Desktop/_zero/private/dotfiles"' > ~/.config/chezmoi/chezmoi.toml
 
 chezmoi apply
 brew bundle --file packages/Brewfile
@@ -29,7 +25,7 @@ brew bundle --file packages/Brewfile
 
 ```powershell
 winget install twpayne.chezmoi
-# clone, write chezmoi.toml (sourceDir/dotfilesDir), then:
+# clone, write chezmoi.toml (sourceDir), then:
 chezmoi apply
 .\scripts\windows\install-windows.ps1   # packages, Nerd Font, terminal
 ```

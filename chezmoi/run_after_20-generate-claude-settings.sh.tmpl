@@ -4,7 +4,7 @@
 # repo/claude/settings.json (gitignored) — same as bootstrap's generate_settings.
 # Machine paths come from ~/.secrets env; source it so this works non-interactively.
 set -euo pipefail
-REPO="{{ .dotfilesDir }}"
+REPO="{{ .chezmoi.sourceDir | dir }}"
 [ -f "$HOME/.secrets" ] && . "$HOME/.secrets"
 
 dirs=()

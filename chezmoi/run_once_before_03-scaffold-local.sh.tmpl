@@ -2,7 +2,7 @@
 # Scaffold machine-local files from templates if missing — never overwrites.
 # (Interactive customization still available via scripts/setup-secrets.sh.)
 set -euo pipefail
-REPO="{{ .dotfilesDir }}"
+REPO="{{ .chezmoi.sourceDir | dir }}"
 
 scaffold() {  # <example> <target> <mode>
   [ -f "$2" ] && return 0
