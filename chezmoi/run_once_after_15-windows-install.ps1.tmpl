@@ -1,0 +1,6 @@
+# Windows installs (scoop packages, Nerd Font, terminal) — absorbed trigger.
+# Invokes the installer so `chezmoi apply` covers Windows too.
+# UNTESTED after the migration — verify on a real Windows machine.
+# (chezmoi needs a ps1 interpreter configured to run this; standalone fallback:
+#  .\scripts\windows\install-windows.ps1)
+& "{{ .dotfilesDir }}\scripts\windows\install-windows.ps1"

@@ -29,11 +29,17 @@ if [ -d "$HOME/.oh-my-zsh" ]; then
   done
 fi
 
-# --- TPM (Tmux Plugin Manager) ---
-if [ ! -d "$HOME/.tmux/plugins/tpm" ] && command -v tmux >/dev/null 2>&1; then
-  printf '→ Installing TPM...\n'
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" \
-    || printf '⚠︎ TPM install failed\n'
+# --- TPM (Tmux Plugin Manager) + declared plugins ---
+if command -v tmux >/dev/null 2>&1; then
+  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    printf '→ Installing TPM...\n'
+    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" \
+      || printf '⚠︎ TPM install failed\n'
+  fi
+  # install plugins declared in ~/.tmux.conf (non-interactive, was: prefix + I)
+  if [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
+    "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null 2>&1 || true
+  fi
 fi
 
 # --- jenv export plugin ---

@@ -1,9 +1,10 @@
 {{ if ne .chezmoi.os "windows" }}
-# Windows-only subtrees — ignored on macOS/Linux
+# Windows-only — ignored on macOS/Linux
 AppData
 Documents
+15-windows-install.ps1
 {{ else }}
-# Unix-only targets — ignored on Windows
+# Unix-only — ignored on Windows
 .zshrc
 .bashrc
 .bash_profile
@@ -14,6 +15,8 @@ Documents
 .hammerspoon
 .ssh
 .config/nvim
+03-scaffold-local.sh
+05-brew-bundle.sh
 10-install-shell-tools.sh
 20-generate-claude-settings.sh
 30-secrets-overlay.sh
