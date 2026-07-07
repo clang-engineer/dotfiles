@@ -5,11 +5,10 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+# Identity ([user] name/email) is set per-machine in ~/.gitconfig.local
+# (gitignored). Template: scripts/.gitconfig.local.example
 [include]
 	path = ~/.gitconfig.local
-[user]
-	name = clang-engineer
-	email = clang.engineer@gmail.com
 [core]
 	pager = delta
 [delta]
