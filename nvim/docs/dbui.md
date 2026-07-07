@@ -35,13 +35,13 @@ vim.g.dbs = {
   },
   {
     name = "remote postgres (SSH tunnel)",
-    url = "postgresql://REDACTED_IP:5432/mydb?connect_timeout=5",
+    url = "postgresql://REMOTE_HOST:5432/mydb?connect_timeout=5",
   },
 }
 ```
 
 - `name`은 사이드바에 표시되는 라벨 (한국어 OK)
-- URL에 **비밀번호를 절대 박지 않는다** — 이 파일은 git에 올라간다
+- URL에 **비밀번호를 절대 박지 않는다** — 비번은 `~/.pgpass`로 분리 (접속 파일은 `secrets` repo가 오버레이)
 - 원격/VPN 의존 항목엔 `?connect_timeout=5`를 붙여 fail-fast (libpq 기본 timeout이 매우 길어서 nvim이 멈칫함)
 
 ## 인증 셋업 (`.pgpass`)
@@ -55,18 +55,14 @@ dadbod은 비대화식으로 `psql`을 호출하므로 비밀번호 프롬프트
 
 ### 셋업 절차
 
-```sh
-./scripts/setup-pgpass.sh
-```
-
-처음 실행 시 `~/.pgpass`(Windows: `%APPDATA%\postgresql\pgpass.conf`)가 템플릿으로부터 생성되고 퍼미션 600이 적용된다. 이후 파일을 편집해 placeholder를 실제 값으로 교체:
+`chezmoi apply`가 `~/.pgpass`(Windows: `%APPDATA%\postgresql\pgpass.conf`)를 템플릿에서
+생성하고 퍼미션 600을 적용한다 (`run_once_before_03-scaffold-local.sh`, 없을 때만).
+이후 파일을 편집해 placeholder를 실제 값으로 교체:
 
 ```
-localhost:5432:mydb:myuser:실제비번
-REDACTED_IP:5432:mydb:실제유저:실제비번
+localhost:5432:mydb:myuser:CHANGE_ME
+REMOTE_HOST:5432:mydb:myuser:CHANGE_ME
 ```
-
-스크립트는 멱등이라 두 번째 실행부터는 기존 파일을 건드리지 않는다.
 
 ## 사용법
 

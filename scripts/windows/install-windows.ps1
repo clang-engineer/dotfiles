@@ -11,7 +11,7 @@ Write-Host "==> Windows installs" -ForegroundColor Cyan
 & "$PSScriptRoot\install-packages.ps1" -Force:$Force
 
 # terminal (apply Nerd Font)
-& "$PSScriptRoot\opt\update-terminal.ps1"
+& "$PSScriptRoot\update-terminal.ps1"
 
 Write-Host ""
 Write-Host "==> Done. Open a new terminal and run: nvim" -ForegroundColor Green

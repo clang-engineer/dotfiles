@@ -13,15 +13,14 @@ scripts/
 ├── .pgpass.example                           # ~/.pgpass 템플릿
 ├── generate-key.sh / .ps1                    # SSH 키 생성 + ssh-agent 등록
 ├── add-workspace-user.sh / .ps1              # workspace별 git identity (includeIf)
-├── setup-secrets.sh                          # ~/.secrets 초기화
-├── setup-pgpass.sh                           # ~/.pgpass 설정
+├── setup-secrets.sh                          # ~/.secrets 인터랙티브 커스터마이저 (선택)
 ├── setup-java-versions.sh                    # jenv 기반 Java 버전 설정
 ├── tmux-layout.sh                            # tmux 레이아웃 헬퍼
 ├── lib/                                      # 공용 함수 (common.sh)
 └── windows/
     ├── install-windows.ps1                   # 윈도우 설치 오케스트레이터
     ├── install-packages.ps1                  # Scoop 패키지 설치 (packages/scoop-packages.txt)
-    └── opt/ (install-font.ps1, update-terminal.ps1)
+    └── update-terminal.ps1                   # Windows Terminal 폰트 적용
 ```
 
 ## 실행 요약

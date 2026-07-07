@@ -1,4 +1,2 @@
-# Private DB connections (real hosts) are symlinked in from the `secrets` repo —
-# never commit them. Only the generic localhost example is tracked.
+# All real DB connections are overlaid from the private `secrets` repo — never commit.
 *.lua
-!docker.lua
