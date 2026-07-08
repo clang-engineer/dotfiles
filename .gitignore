@@ -20,9 +20,10 @@ packages/Brewfile.lock.json
 .secrets
 .secrets.ps1
 
-# claude code: ignore everything, allow only tracked configs
+# claude code: ignore everything, allow only the public scaffold.
+# personal instructions (CLAUDE.md) and vault/blog-bound skills stay out of the
+# public repo — the private `secrets` overlay drops them into ~/.claude locally.
 claude/*
-!claude/CLAUDE.md
 !claude/README.md
 !claude/settings.template.json
 !claude/keybindings.json
@@ -30,6 +31,8 @@ claude/*
 !claude/check-env.sh
 !claude/link-commands.sh
 !claude/commands/
+claude/commands/*
+!claude/commands/commit-push.md
 
 # local tool settings
 .claude/settings.local.json

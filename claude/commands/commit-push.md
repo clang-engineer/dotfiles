@@ -1,17 +1,17 @@
-현재 git 저장소의 변경사항을 커밋하고 푸시해줘.
+Commit and push the changes in the current git repository.
 
-동작:
-1. 이번 대화에서 실제로 만들거나 수정한 파일만 스테이징한다.
-   - 세션과 무관한 기존 변경(예: `.claude/settings.local.json` 류)은 건드리지 않는다.
-   - 무엇을 스테이징할지 애매하면 `git status`로 확인하고 사용자에게 짚어준 뒤 진행한다.
-2. 스테이징한 변경의 diff를 읽고, 이 저장소의 커밋 컨벤션에 맞춰 메시지를 작성한다.
-   - 최근 `git log`를 참고해 형식을 맞춘다 (예: `feat(scope):`, `fix(scope):`, `docs(scope):`, `chore:`).
-   - 제목은 한 줄 요약. 변경이 여럿이면 본문에 무엇을/왜를 간단히 덧붙인다.
-3. 커밋 후 현재 브랜치를 push한다.
-   - upstream이 없으면 `git push -u origin <현재브랜치>`.
+Behavior:
+1. Stage only the files actually created or modified in this conversation.
+   - Don't touch pre-existing changes unrelated to the session (e.g. `.claude/settings.local.json` and the like).
+   - If it's unclear what to stage, check `git status`, point it out to the user, then proceed.
+2. Read the diff of the staged changes and write a message following this repo's commit convention.
+   - Match the format by referring to recent `git log` (e.g. `feat(scope):`, `fix(scope):`, `docs(scope):`, `chore:`).
+   - Subject is a one-line summary. If there are multiple changes, briefly add what/why in the body.
+3. After committing, push the current branch.
+   - If there's no upstream, `git push -u origin <current-branch>`.
 
-주의:
-- 여러 저장소를 건드린 세션이면 현재 작업 디렉토리(cwd)의 저장소만 대상으로 한다. 다른 저장소도 커밋이 필요하면 사용자에게 알려준다.
-- push가 실패하면(원격 앞섬, 충돌 등) 강제 푸시하지 말고 상황을 그대로 보고한다.
+Notes:
+- If the session touched multiple repositories, target only the repository in the current working directory (cwd). If other repositories also need committing, let the user know.
+- If the push fails (remote ahead, conflict, etc.), don't force-push — report the situation as-is.
 
-추가 인자가 있으면 커밋 메시지 힌트로 사용: $ARGUMENTS
+If extra arguments are given, use them as a commit message hint: $ARGUMENTS

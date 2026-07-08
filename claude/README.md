@@ -1,27 +1,27 @@
-# Claude Code 설정 가이드
+# Claude Code Configuration Guide
 
-Claude Code의 주요 설정 파일과 활용법을 정리한다.
+An overview of Claude Code's main configuration files and how to use them.
 
 ---
 
-## 설정 파일 위치 및 우선순위
+## Config File Locations and Priority
 
-높은 순서대로 적용된다 (위가 우선):
+Applied in descending order of precedence (higher wins):
 
-| 우선순위 | 파일 | 용도 |
+| Priority | File | Purpose |
 |---------|------|------|
-| 1 | Managed Policy | 조직 관리자가 설정 (enterprise) |
-| 2 | `.claude/settings.local.json` | 프로젝트 로컬 (gitignore 대상) |
-| 3 | `.claude/settings.json` | 프로젝트 공유 설정 |
-| 4 | `~/.claude/settings.json` | 사용자 전역 설정 |
+| 1 | Managed Policy | Set by the org admin (enterprise) |
+| 2 | `.claude/settings.local.json` | Project-local (gitignored) |
+| 3 | `.claude/settings.json` | Shared project settings |
+| 4 | `~/.claude/settings.json` | User-global settings |
 
 ---
 
-## settings.json 주요 옵션
+## Key settings.json Options
 
 ### hooks
 
-이벤트 발생 시 자동으로 실행되는 명령을 정의한다.
+Defines commands that run automatically when an event occurs.
 
 ```json
 {
@@ -32,7 +32,7 @@ Claude Code의 주요 설정 파일과 활용법을 정리한다.
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"작업 완료\" with title \"Claude Code\"'"
+            "command": "osascript -e 'display notification \"Task complete\" with title \"Claude Code\"'"
           }
         ]
       }
@@ -43,7 +43,7 @@ Claude Code의 주요 설정 파일과 활용법을 정리한다.
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c '... 민감 파일 차단 스크립트 ...'"
+            "command": "bash -c '... script to block sensitive files ...'"
           }
         ]
       }
@@ -52,22 +52,22 @@ Claude Code의 주요 설정 파일과 활용법을 정리한다.
 }
 ```
 
-**Hook 이벤트 종류:**
+**Hook event types:**
 
-| 이벤트 | 시점 | 용도 |
+| Event | When | Purpose |
 |--------|------|------|
-| `PreToolUse` | 도구 실행 전 | 파일 보호, 명령 차단 |
-| `PostToolUse` | 도구 실행 후 | 린트, 포맷팅 자동 실행 |
-| `Notification` | 사용자 입력 대기 시 | 알림 전송 |
-| `Stop` | 응답 완료 후 | 후처리 작업 |
+| `PreToolUse` | Before a tool runs | Protect files, block commands |
+| `PostToolUse` | After a tool runs | Auto-run lint, formatting |
+| `Notification` | When waiting for user input | Send notifications |
+| `Stop` | After a response completes | Post-processing tasks |
 
-**종료 코드:**
-- `0` — 통과
-- `2` — 차단 (stderr 메시지가 Claude에게 전달됨)
+**Exit codes:**
+- `0` — pass
+- `2` — block (the stderr message is passed to Claude)
 
 ### permissions
 
-도구 사용 허용/차단 규칙. `allow`와 `deny` 배열로 구성한다.
+Rules for allowing/blocking tool use. Composed of `allow` and `deny` arrays.
 
 ```json
 {
@@ -86,13 +86,13 @@ Claude Code의 주요 설정 파일과 활용법을 정리한다.
 }
 ```
 
-패턴 문법: `ToolName(args:*)` 형태로 와일드카드를 쓸 수 있다.
+Pattern syntax: use wildcards in the form `ToolName(args:*)`.
 
 ---
 
 ## keybindings.json
 
-키보드 단축키를 커스터마이즈한다. 위치: `~/.claude/keybindings.json` 또는 `.claude/keybindings.json`
+Customize keyboard shortcuts. Location: `~/.claude/keybindings.json` or `.claude/keybindings.json`
 
 ```json
 {
@@ -116,69 +116,69 @@ Claude Code의 주요 설정 파일과 활용법을 정리한다.
 }
 ```
 
-### 주요 액션 목록
+### Key Actions
 
-**Chat 컨텍스트:**
-- `chat:submit` — 메시지 전송
-- `chat:cancel` — 취소
-- `chat:externalEditor` — 외부 에디터에서 편집
-- `chat:stash` — 입력 임시 저장
-- `chat:cycleMode` — 모드 전환
-- `chat:modelPicker` — 모델 선택
-- `chat:thinkingToggle` — 사고 모드 토글
+**Chat context:**
+- `chat:submit` — send message
+- `chat:cancel` — cancel
+- `chat:externalEditor` — edit in external editor
+- `chat:stash` — temporarily save input
+- `chat:cycleMode` — switch mode
+- `chat:modelPicker` — pick model
+- `chat:thinkingToggle` — toggle thinking mode
 
-**Global 컨텍스트:**
-- `app:interrupt` — 중단
-- `app:exit` — 종료
-- `app:toggleTodos` — 태스크 패널 토글
-- `app:toggleTranscript` — 트랜스크립트 토글
-- `history:search` — 히스토리 검색
+**Global context:**
+- `app:interrupt` — interrupt
+- `app:exit` — exit
+- `app:toggleTodos` — toggle task panel
+- `app:toggleTranscript` — toggle transcript
+- `history:search` — search history
 
-**키 문법:**
-- 수식키: `ctrl`, `alt`, `shift`, `meta`/`cmd`
-- 특수키: `escape`, `enter`, `tab`, `space`, `up`, `down`
-- 코드키: `ctrl+k ctrl+s` (연속 입력)
-- `null` 할당 시 기본 바인딩 해제
+**Key syntax:**
+- Modifiers: `ctrl`, `alt`, `shift`, `meta`/`cmd`
+- Special keys: `escape`, `enter`, `tab`, `space`, `up`, `down`
+- Chord keys: `ctrl+k ctrl+s` (pressed in sequence)
+- Assign `null` to unbind the default binding
 
 ---
 
 ## CLAUDE.md / .claude/rules/
 
-프로젝트별 지시사항을 Claude Code에 전달하는 방법.
+How to pass project-specific instructions to Claude Code.
 
-### CLAUDE.md (레포 루트)
+### CLAUDE.md (repo root)
 
-프로젝트 개요, 빌드 명령, 코딩 컨벤션을 작성한다. 대화 시작 시 자동으로 로드된다.
+Write the project overview, build commands, and coding conventions. Loaded automatically at the start of a conversation.
 
 ```markdown
-# 프로젝트명
+# Project Name
 
-## 빌드 명령
+## Build commands
 npm run build
 
-## 코딩 컨벤션
-- TypeScript strict mode 사용
-- 함수명은 camelCase
+## Coding conventions
+- Use TypeScript strict mode
+- Function names in camelCase
 ```
 
 ### .claude/rules/
 
-특정 주제별 규칙을 개별 파일로 분리할 수 있다.
+You can split topic-specific rules into individual files.
 
 ```
 .claude/rules/
-├── testing.md      # 테스트 작성 규칙
-├── security.md     # 보안 관련 규칙
-└── naming.md       # 네이밍 규칙
+├── testing.md      # test-writing rules
+├── security.md     # security-related rules
+└── naming.md       # naming rules
 ```
 
-`CLAUDE.md`와 동일하게 자동 로드된다.
+Loaded automatically, just like `CLAUDE.md`.
 
 ---
 
-## MCP 서버 설정 (mcp.json)
+## MCP Server Configuration (mcp.json)
 
-외부 도구 서버를 Claude Code에 연결한다. 위치: `.claude/mcp.json`
+Connect external tool servers to Claude Code. Location: `.claude/mcp.json`
 
 ```json
 {
@@ -198,15 +198,15 @@ npm run build
 }
 ```
 
-**설정 위치별 범위:**
-- `~/.claude/mcp.json` — 전역 (모든 프로젝트)
-- `.claude/mcp.json` — 프로젝트 전용
+**Scope by config location:**
+- `~/.claude/mcp.json` — global (all projects)
+- `.claude/mcp.json` — project-only
 
 ---
 
-## 슬래시 커맨드 만들기
+## Creating Slash Commands
 
-`.claude/commands/` 디렉터리에 마크다운 파일을 만들면 `/명령어`로 사용할 수 있다.
+Create a markdown file in the `.claude/commands/` directory and it becomes usable as `/command`.
 
 ```
 .claude/commands/
@@ -215,40 +215,40 @@ npm run build
 └── deploy.md       →  /deploy
 ```
 
-**파일 내용 예시** (`.claude/commands/review.md`):
+**Example file contents** (`.claude/commands/review.md`):
 
 ```markdown
-코드를 리뷰해줘. 다음 관점에서 확인:
-- 보안 취약점
-- 성능 문제
-- 코딩 컨벤션 위반
+Review the code. Check from these angles:
+- Security vulnerabilities
+- Performance issues
+- Coding convention violations
 
-$ARGUMENTS 파일을 중심으로 검토해줘.
+Focus your review on the $ARGUMENTS files.
 ```
 
-- `$ARGUMENTS` — 슬래시 커맨드 뒤에 입력한 텍스트로 치환된다
-- 전역 커맨드: `~/.claude/commands/`에 배치
+- `$ARGUMENTS` — replaced with the text typed after the slash command
+- Global commands: place them in `~/.claude/commands/`
 
 ---
 
-## 환경변수
+## Environment Variables
 
-Claude Code 동작을 제어하는 주요 환경변수:
+Key environment variables that control Claude Code's behavior:
 
-| 변수 | 설명 | 예시 |
+| Variable | Description | Example |
 |------|------|------|
-| `ANTHROPIC_MODEL` | 사용할 모델 지정 | `claude-sonnet-4-6` |
-| `CLAUDE_CODE_USE_BEDROCK` | AWS Bedrock 사용 | `1` |
-| `CLAUDE_CODE_USE_VERTEX` | GCP Vertex 사용 | `1` |
-| `ANTHROPIC_API_KEY` | API 키 (직접 지정 시) | `sk-ant-...` |
-| `CLAUDE_CODE_MAX_TURNS` | 비대화형 모드 최대 턴 수 | `10` |
-| `DISABLE_PROMPT_CACHING` | 프롬프트 캐싱 비활성화 | `1` |
+| `ANTHROPIC_MODEL` | Specify the model to use | `claude-sonnet-4-6` |
+| `CLAUDE_CODE_USE_BEDROCK` | Use AWS Bedrock | `1` |
+| `CLAUDE_CODE_USE_VERTEX` | Use GCP Vertex | `1` |
+| `ANTHROPIC_API_KEY` | API key (when set directly) | `sk-ant-...` |
+| `CLAUDE_CODE_MAX_TURNS` | Max turns in non-interactive mode | `10` |
+| `DISABLE_PROMPT_CACHING` | Disable prompt caching | `1` |
 
 ---
 
-## 팁
+## Tips
 
-- **설정 확인**: Claude Code 내에서 `/config` 명령으로 현재 설정을 확인할 수 있다
-- **Hook 디버깅**: stderr 출력이 Claude에게 전달되므로 `echo "debug info" >&2`로 디버깅
-- **권한 관리**: `settings.local.json`은 git에 포함하지 않으므로 머신별 권한을 분리할 수 있다
-- **슬래시 커맨드 공유**: `.claude/commands/`를 레포에 커밋하면 팀 전체가 사용 가능
+- **Check settings**: run the `/config` command inside Claude Code to view the current settings
+- **Hook debugging**: stderr output is passed to Claude, so debug with `echo "debug info" >&2`
+- **Permission management**: `settings.local.json` is not committed to git, so you can keep per-machine permissions separate
+- **Sharing slash commands**: commit `.claude/commands/` to the repo so the whole team can use them

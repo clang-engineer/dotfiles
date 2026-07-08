@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Generate an SSH key pair at ~/.ssh/id_rsa_<LABEL> and register it with ssh-agent.
-# LABEL is a free-form identifier (e.g. "github_myuser", "gcp_yorez333").
+# LABEL is a free-form identifier (e.g. "github_myuser", "gcp_myuser").
 # Host alias / IdentityFile binding is configured separately in ssh/config.d/.
 
 set -euo pipefail
@@ -12,12 +12,12 @@ Usage: generate-key.sh [LABEL] [EMAIL]
 Generate an SSH key pair at ~/.ssh/id_rsa_<LABEL>.
 
 Arguments:
-  LABEL    Key identifier suffix (e.g. github_myuser, gcp_yorez333)
+  LABEL    Key identifier suffix (e.g. github_myuser, gcp_myuser)
   EMAIL    Comment embedded in the key (typically your email)
 
 Examples:
   ./generate-key.sh github_myuser my@email.com
-  ./generate-key.sh gcp_yorez333 my@email.com
+  ./generate-key.sh gcp_myuser my@email.com
 EOF
 }
 

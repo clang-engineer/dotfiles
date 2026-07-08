@@ -1,107 +1,107 @@
-# Neovim 구성 안내
+# Neovim Configuration Guide
 
-LazyVim 기반 단일 구성. `nvim/lazy/lua/` 이하에 플러그인과 설정이 모듈화되어 있습니다.
+A single LazyVim-based configuration. Plugins and settings are modularized under `nvim/lazy/lua/`.
 
-> 옛 Vimscript 기반 설정은 최상위 [`vim/`](../vim/README.md)으로 분리되었습니다 (legacy, 수동 링크).
+> The old Vimscript-based configuration has been split out into the top-level [`vim/`](../vim/README.md) (legacy, manually linked).
 
-## 설치
+## Installation
 
 ### macOS / Linux
 
-- `chezmoi apply` — `~/.config/nvim`을 `nvim/lazy`로 symlink합니다.
-- 수동 링크가 필요하다면:
+- `chezmoi apply` — symlinks `~/.config/nvim` to `nvim/lazy`.
+- If you need to link manually:
 
   ```bash
   mkdir -p ~/.config
   ln -snf "$PWD/nvim/lazy" ~/.config/nvim
   ```
 
-- 변경 직후 `nvim --headless "+Lazy sync" +qa`를 실행하면 플러그인이 최신 상태인지 확인할 수 있습니다.
+- Right after making changes, run `nvim --headless "+Lazy sync" +qa` to confirm the plugins are up to date.
 
 ### Windows
 
-- `chezmoi apply`가 `%LOCALAPPDATA%\nvim`(`AppData/Local/nvim`)을 `nvim/lazy`로 symlink합니다 (⚠️ 윈도우 미검증 — 심링크에 개발자 모드/관리자 권한 필요).
+- `chezmoi apply` symlinks `%LOCALAPPDATA%\nvim` (`AppData/Local/nvim`) to `nvim/lazy` (⚠️ untested on Windows — symlinks require developer mode/administrator privileges).
 
-## 추천 흐름
+## Recommended Workflow
 
-- `nvim/lazy/init.lua`에서 필요한 플러그인을 선언하고 `nvim/lazy/lua/plugins/`에 세부 구성을 분리합니다. 개별 기능 문서는 각 모듈 폴더의 README에 추가합니다.
+- Declare the plugins you need in `nvim/lazy/init.lua`, and split their detailed configuration into `nvim/lazy/lua/plugins/`. Add per-feature documentation to the README in each module folder.
 
-## 체크리스트
+## Checklist
 
-1. 기존 `~/.config/nvim` 또는 `%LOCALAPPDATA%/nvim` 링크를 제거합니다.
-2. 새 링크를 생성합니다.
-3. `nvim --headless "+Lazy! sync" +qa`로 플러그인 메타데이터를 갱신합니다.
-4. tmux/IDE에서 `nvim`을 다시 열고 `:checkhealth`로 상태를 확인합니다.
-5. Java나 언어별 설정이 필요한 프로젝트라면 `.nvim.lua`를 생성하고 아래 Java Environment Setup 섹션을 참고합니다.
+1. Remove the existing `~/.config/nvim` or `%LOCALAPPDATA%/nvim` link.
+2. Create the new link.
+3. Refresh plugin metadata with `nvim --headless "+Lazy! sync" +qa`.
+4. Reopen `nvim` in tmux/IDE and check the state with `:checkhealth`.
+5. For a project that needs Java or language-specific settings, create a `.nvim.lua` and refer to the Java Environment Setup section below.
 
-## 문제 해결
+## Troubleshooting
 
-- `:checkhealth` 출력에서 LuaRocks, node, python3 등 의존성이 없으면 Brew/Scoop로 설치한 뒤 다시 실행합니다.
-- 플러그인 설치 중 오류가 발생하면 `rm -rf ~/.local/share/nvim`(또는 Windows `%LOCALAPPDATA%\nvim-data`) 후 `nvim --headless "+Lazy sync" +qa`를 재실행합니다.
+- If `:checkhealth` output shows missing dependencies such as LuaRocks, node, or python3, install them via Brew/Scoop and run it again.
+- If an error occurs during plugin installation, run `rm -rf ~/.local/share/nvim` (or Windows `%LOCALAPPDATA%\nvim-data`) and re-run `nvim --headless "+Lazy sync" +qa`.
 
 ---
 
 # Java Environment Setup
 
-JDK 환경변수 주입은 외부 플러그인 [clang-engineer/jvm-env.nvim](https://github.com/clang-engineer/jvm-env.nvim) 이 담당합니다. dotfiles 안에는 lazy spec(`lazy/lua/plugins/jvm-env.lua`)만 두고 GitHub 에서 받아 씁니다.
+JDK environment variable injection is handled by the external plugin [clang-engineer/jvm-env.nvim](https://github.com/clang-engineer/jvm-env.nvim). Within dotfiles there is only the lazy spec (`lazy/lua/plugins/jvm-env.lua`); the plugin itself is fetched from GitHub.
 
-## 구조
+## Structure
 
 ```
 dotfiles/nvim/
 └── lazy/lua/plugins/
-    ├── jvm-env.lua                   # 외부 플러그인 spec (옵션: jdtls/gradle 메이저 버전)
-    └── java.lua                      # nvim-jdtls 와 jvm-env 환경변수 연결
+    ├── jvm-env.lua                   # external plugin spec (options: jdtls/gradle major version)
+    └── java.lua                      # wires nvim-jdtls to jvm-env env vars
 ```
 
-## 작동 방식
+## How It Works
 
-1. lazy.nvim 이 시작 시점에 `jvm-env.nvim` 의 `setup(opts)` 자동 호출 (`lazy = false, priority = 100`)
-2. OS 자동 감지 (Windows/macOS/Linux)
-3. JDK 경로 자동 탐색 후 환경변수 설정:
-   - `JDTLS_JAVA_HOME` — jdtls 실행용 (기본: Java 21)
-   - `GRADLE_JAVA_HOME` — Gradle 빌드용 (기본: Java 11)
+1. lazy.nvim automatically calls `jvm-env.nvim`'s `setup(opts)` at startup (`lazy = false, priority = 100`)
+2. Automatic OS detection (Windows/macOS/Linux)
+3. Auto-discovers the JDK path and sets environment variables:
+   - `JDTLS_JAVA_HOME` — for running jdtls (default: Java 21)
+   - `GRADLE_JAVA_HOME` — for Gradle builds (default: Java 11)
 
-## 사용법
+## Usage
 
-### 기본
+### Basic
 
-프로젝트별 설정 필요 없음. nvim 시작 시 자동 설정됨.
+No per-project setup required. Configured automatically when nvim starts.
 
-### 프로젝트별 커스텀 버전
+### Per-Project Custom Versions
 
-`.nvim.lua` 파일 생성:
+Create a `.nvim.lua` file:
 
 ```lua
 require("jvm-env").setup({ jdtls = "21", gradle = "17" })
 ```
 
-프로젝트 루트에서 Neovim 명령으로 `.nvim.lua` 자동 생성:
+Auto-generate `.nvim.lua` with a Neovim command from the project root:
 
 ```vim
-:JvmEnvInit 21 17    " 인자 생략 시 활성 config 사용
+:JvmEnvInit 21 17    " omit args to use the active config
 ```
 
-`.nvim.lua`는 Neovim 0.9+ `exrc` 룰로 디렉토리별 로드됩니다. `vim.o.exrc = true`는 `lazy/lua/config/options/default.lua`에서 이미 켜져 있으므로 해당 디렉토리에서 nvim을 처음 열 때 `:trust`만 해주면 됩니다.
+`.nvim.lua` is loaded per-directory via the Neovim 0.9+ `exrc` rule. Since `vim.o.exrc = true` is already enabled in `lazy/lua/config/options/default.lua`, you only need to run `:trust` the first time you open nvim in that directory.
 
-## Java 트러블슈팅
+## Java Troubleshooting
 
-### jdtls가 시작되지 않음
+### jdtls does not start
 
-1. Java 경로 확인:
+1. Check the Java paths:
 ```vim
 :lua print(vim.env.JDTLS_JAVA_HOME)
 :lua print(vim.env.GRADLE_JAVA_HOME)
 ```
 
-2. jdtls 상태 확인:
+2. Check jdtls status:
 ```vim
 :LspInfo
 ```
 
-### "psd-RidEx does not exist" 등 프로젝트 인식 에러
+### Project recognition errors such as "psd-RidEx does not exist"
 
-**jdtls 캐시 삭제:**
+**Delete the jdtls cache:**
 
 ```powershell
 # Windows
@@ -116,27 +116,27 @@ rm -rf ~/Library/Caches/jdtls
 rm -rf ~/.cache/jdtls
 ```
 
-그 후 nvim 재시작.
+Then restart nvim.
 
-### Python 관련 에러
+### Python-related errors
 
-jdtls wrapper가 Python 필요:
+The jdtls wrapper requires Python:
 
 ```powershell
 scoop install python
 ```
 
-### QueryDSL Q-클래스 인식 안 됨
+### QueryDSL Q-classes not recognized
 
-Q-클래스가 생성되지 않았거나 jdtls가 generated 소스 경로를 못 찾는 경우.
+The Q-classes were not generated, or jdtls cannot find the generated source path.
 
-**1. Q-클래스 생성:**
+**1. Generate Q-classes:**
 
 ```powershell
 # Windows
-cd C:\Users\planit\Desktop\workspace\{project}
+cd <project-root>
 .\gradlew compileQuerydsl
-# 또는
+# or
 .\gradlew compileJava
 ```
 
@@ -145,22 +145,22 @@ cd C:\Users\planit\Desktop\workspace\{project}
 ./gradlew compileQuerydsl
 ```
 
-**2. nvim에서 LSP 재시작:**
+**2. Restart the LSP in nvim:**
 
 ```vim
 :LspRestart
 ```
 
-**3. 여전히 안 되면:**
+**3. If it still doesn't work:**
 
 ```powershell
-# 1. build 폴더 삭제 후 재빌드
+# 1. delete the build folder and rebuild
 .\gradlew clean build
 
-# 2. jdtls 캐시 삭제
+# 2. clear the jdtls cache
 rm -r -Force "$env:APPDATA\jdtls"
 
-# 3. .classpath, .project 삭제 (jdtls가 새로 생성)
+# 3. delete .classpath, .project (jdtls regenerates them)
 rm .classpath, .project -ErrorAction SilentlyContinue
 ```
 
@@ -172,9 +172,9 @@ rm -rf ~/.cache/jdtls          # Linux
 rm -f .classpath .project
 ```
 
-그 후 nvim 재시작.
+Then restart nvim.
 
-**4. generated 소스 경로 확인 (build.gradle):**
+**4. Check the generated source path (build.gradle):**
 
 ```groovy
 sourceSets {
@@ -186,9 +186,9 @@ sourceSets {
 }
 ```
 
-## 관련 파일
+## Related Files
 
-- [`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim) — JDK 탐지/환경변수 주입 외부 플러그인 (소스·README·vimdoc)
-- `nvim/lazy/lua/plugins/jvm-env.lua` — 외부 플러그인 lazy spec
-- `nvim/lazy/lua/plugins/java.lua` — nvim-jdtls 와 jvm-env 환경변수 연결
-- `:JvmEnvInit [jdtls] [gradle]` — 프로젝트 루트 `.nvim.lua` 생성 명령 (jvm-env.nvim 제공). 상세: `nvim/docs/java-lsp.md`
+- [`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim) — external plugin for JDK detection/environment variable injection (source · README · vimdoc)
+- `nvim/lazy/lua/plugins/jvm-env.lua` — lazy spec for the external plugin
+- `nvim/lazy/lua/plugins/java.lua` — connects nvim-jdtls with jvm-env environment variables
+- `:JvmEnvInit [jdtls] [gradle]` — command to generate `.nvim.lua` in the project root (provided by jvm-env.nvim). Details: `nvim/docs/java-lsp.md`

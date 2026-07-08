@@ -14,11 +14,11 @@ command, macOS and Windows.
 
 ```sh
 brew install chezmoi
-git clone <repo> ~/Desktop/_zero/private/dotfiles
+git clone <repo> ~/dotfiles
 
 # one-time, machine-local: point chezmoi at the repo (~ is expanded)
 mkdir -p ~/.config/chezmoi
-echo 'sourceDir = "~/Desktop/_zero/private/dotfiles"' > ~/.config/chezmoi/chezmoi.toml
+echo 'sourceDir = "~/dotfiles"' > ~/.config/chezmoi/chezmoi.toml
 
 chezmoi apply
 brew bundle --file packages/Brewfile
@@ -80,18 +80,7 @@ are a TODO.
 Nothing private lives in this repo. The private `secrets` companion (real SSH hosts,
 nvim DB connections) is pulled by `.chezmoiexternal` **only when `SECRETS_REPO` is
 set** in `~/.secrets`; a public clone without it just skips the whole thing. See
-[SETUP.md](SETUP.md#8-보안--민감-경로-원칙--배포-전-점검).
-
-## Related repositories
-
-The Claude Code skills in `claude/` (`/notes`, `/blog`, `/notes-cleanup`, …) file
-and publish notes into the repositories below.
-
-| Repository | What |
-|---|---|
-| vault _(private)_ | TIL / analysis notes. Resolved via `$VAULT_DIR` |
-| [devkit](https://github.com/clang-engineer/devkit) | Public reference — cheatsheets & templates |
-| [clang-engineer.github.io](https://github.com/clang-engineer/clang-engineer.github.io) | Tech blog. Published to `$BLOG_DIR/_posts/` |
+[SETUP.md](SETUP.md#8-security).
 
 > Comments inside the config files are in Korean, but the configs themselves are
 > language-agnostic — the setup works the same regardless.
