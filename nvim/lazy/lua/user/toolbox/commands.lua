@@ -3,7 +3,7 @@ local M = {}
 
 local config = require("user.toolbox.config")
 local picker = require("user.toolbox.picker")
-local float = require("user.toolbox.float")
+local float = require("user.util.float")
 
 function M.register()
   vim.api.nvim_create_user_command("Toolbox", function(opts)
@@ -16,7 +16,7 @@ function M.register()
       -- 인자 = cheatsheet 이름 → 바로 열기
       local path = dir .. "/cheatsheets/" .. opts.args .. ".md"
       if vim.fn.filereadable(path) == 1 then
-        float.open(path)
+        float.open(path, "toolbox_refocus")
       else
         vim.notify("cheatsheet 없음: " .. opts.args, vim.log.levels.WARN, { title = "toolbox" })
       end

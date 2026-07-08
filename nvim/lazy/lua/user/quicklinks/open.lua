@@ -4,7 +4,7 @@
 -- 그 외 로컬 파일/디렉토리 → vim.ui.open (외부 앱)
 local M = {}
 
-local float = require("user.quicklinks.float")
+local float = require("user.util.float")
 local config = require("user.quicklinks.config")
 
 local function is_url(target)
@@ -32,7 +32,7 @@ function M.dispatch(target)
   local is_dir = vim.fn.isdirectory(path) == 1
 
   if is_md and readable then
-    float.open(path)
+    float.open(path, "quicklinks_refocus")
   elseif readable or is_dir then
     vim.ui.open(path)
   else

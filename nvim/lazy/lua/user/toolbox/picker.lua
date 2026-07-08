@@ -1,7 +1,7 @@
 -- 파일 picker / grep — 현재 Snacks 의존
 local M = {}
 
-local float = require("user.toolbox.float")
+local float = require("user.util.float")
 
 function M.pick_files(dir)
   Snacks.picker.files({
@@ -9,7 +9,7 @@ function M.pick_files(dir)
     confirm = function(picker, item)
       picker:close()
       if item then
-        float.open(dir .. "/" .. item.file)
+        float.open(dir .. "/" .. item.file, "toolbox_refocus")
       end
     end,
   })

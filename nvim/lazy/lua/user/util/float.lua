@@ -1,4 +1,4 @@
--- floating window 열람 + tmux refocus
+-- floating window 열람 + tmux refocus (quicklinks / toolbox 공용)
 local M = {}
 
 local function tmux_move(direction)
@@ -7,7 +7,7 @@ local function tmux_move(direction)
   end
 end
 
-function M.open(path)
+function M.open(path, augroup_name)
   local win = Snacks.win({
     file = path,
     width = 0.85,
@@ -24,7 +24,7 @@ function M.open(path)
   })
 
   -- tmux 패널 이동 후 nvim 으로 돌아올 때 float 로 재포커스
-  local aug = vim.api.nvim_create_augroup("quicklinks_refocus", { clear = true })
+  local aug = vim.api.nvim_create_augroup(augroup_name or "user_float_refocus", { clear = true })
   vim.api.nvim_create_autocmd("FocusGained", {
     group = aug,
     callback = function()
