@@ -1,4 +1,4 @@
--- markdown을 미리 보여주는 플러그인
+-- plugins for previewing markdown
 return {
   {
     "MeanderingProgrammer/render-markdown.nvim",

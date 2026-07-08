@@ -1,5 +1,5 @@
 -- ~/.config/nvim/lua/plugins/kotlin-dap.lua
--- kotlin dap 설정
+-- kotlin dap settings
 
 return {
   {
@@ -26,12 +26,12 @@ return {
           -- and of course you have to build before you debug
           mainClass = function()
             local fname = vim.api.nvim_buf_get_name(0)
-            -- src/main/kotlin/ 이후만 추출
+            -- extract only the part after src/main/kotlin/
             local relative = fname:match("src/main/kotlin/(.*)%.kt$")
             if relative then
-              return relative:gsub("/", ".") -- JVM 패키지 구분자
+              return relative:gsub("/", ".") -- JVM package separator
             else
-              -- fallback: 파일 이름만
+              -- fallback: just the file name
               return vim.fn.fnamemodify(fname, ":t:r")
             end
           end,

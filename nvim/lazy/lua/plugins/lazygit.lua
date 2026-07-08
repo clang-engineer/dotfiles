@@ -1,5 +1,5 @@
--- lazygit.nvim: git UI를 nvim에서 사용,
--- 별도 사전 설치 필요,
+-- lazygit.nvim: use the git UI from within nvim,
+-- requires separate installation,
 -- mac: brew install lazygit
 -- ubuntu: apt install lazygit
 -- nvim v0.8.0
@@ -10,8 +10,8 @@ return {
     "nvim-lua/plenary.nvim",
   },
 
-  -- snacks.nvim lazygit: Windows에서 editPreset "nvim-remote"가
-  -- bash 문법([)을 사용하여 cmd.exe에서 에러 발생 → 비활성화
+  -- snacks.nvim lazygit: on Windows the editPreset "nvim-remote" uses
+  -- bash syntax ([), which errors in cmd.exe -> disable it
   {
     "folke/snacks.nvim",
     opts = {

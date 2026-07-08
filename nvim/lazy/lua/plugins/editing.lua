@@ -1,15 +1,15 @@
--- editing.lua: 편집 관련 플러그인 모음
+-- editing.lua: collection of editing-related plugins
 return {
-  -- vim-visual-multi: 여러 단어를 동시에 편집
+  -- vim-visual-multi: edit multiple words at once
   {
     "mg979/vim-visual-multi",
     branch = "master",
     keys = {
-      { "<C-n>", mode = { "n", "v" } }, -- 단어 선택 후 Ctrl+n으로 다음 단어 선택
+      { "<C-n>", mode = { "n", "v" } }, -- select a word, then Ctrl+n to select the next one
     },
   },
 
-  -- nvim-nocut: x, d, dd 등의 삭제 동작이 레지스터를 덮어쓰지 않도록 설정
+  -- nvim-nocut: keep delete operations (x, d, dd, etc.) from overwriting the register
   {
     "maarutan/nvim-nocut",
     config = function()

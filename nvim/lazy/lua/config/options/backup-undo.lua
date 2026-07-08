@@ -1,21 +1,21 @@
--- backup-undo.lua: 백업, swap, undo 파일 설정
--- 파일 손실 방지 및 영구 undo 히스토리 유지
+-- backup-undo.lua: backup, swap, and undo file settings
+-- Prevent file loss and keep persistent undo history
 
 local data_dir = vim.fn.stdpath("data")
 
--- 영구 undo 활성화 (Neovim 재시작 후에도 undo 히스토리 유지)
+-- Enable persistent undo (keep undo history across Neovim restarts)
 vim.opt.undofile = true
 vim.opt.undodir = data_dir .. "/undo"
 
--- Swap 파일 설정 (크래시 복구용)
+-- Swap file settings (for crash recovery)
 vim.opt.swapfile = true
 vim.opt.directory = data_dir .. "/swap//"
 
--- 백업 파일 설정
-vim.opt.backup = false -- 저장 시 백업 파일 생성 안 함 (git이 있으므로)
-vim.opt.writebackup = true -- 저장 중에만 임시 백업 (안전성)
+-- Backup file settings
+vim.opt.backup = false -- Don't create a backup file on write (git handles it)
+vim.opt.writebackup = true -- Temporary backup only during write (safety)
 
--- 디렉토리 자동 생성
+-- Auto-create directories
 local function ensure_dir(path)
   if vim.fn.isdirectory(path) == 0 then
     vim.fn.mkdir(path, "p")
@@ -25,6 +25,6 @@ end
 ensure_dir(vim.opt.undodir:get()[1])
 ensure_dir(vim.opt.directory:get()[1])
 
--- Undo 파일 보관 기간 설정
-vim.opt.undolevels = 10000 -- undo 단계 수
-vim.opt.undoreload = 10000 -- 버퍼 다시 로드 시 undo 가능한 라인 수
+-- Undo retention settings
+vim.opt.undolevels = 10000 -- number of undo steps
+vim.opt.undoreload = 10000 -- max lines to save for undo on buffer reload

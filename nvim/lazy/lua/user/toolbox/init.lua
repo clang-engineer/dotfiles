@@ -1,6 +1,6 @@
--- toolbox.nvim 진입점
--- 사용: require("user.toolbox").setup({ dir = "~/notes" })
---       require("user.toolbox").setup()  -- TOOLBOX_DIR 환경변수 사용
+-- toolbox.nvim entry point
+-- Usage: require("user.toolbox").setup({ dir = "~/notes" })
+--        require("user.toolbox").setup()  -- use the TOOLBOX_DIR environment variable
 local M = {}
 
 function M.setup(opts)

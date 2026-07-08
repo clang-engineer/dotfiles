@@ -1,14 +1,14 @@
--- dadbod-ui 설정. 플러그인 본체는 lazyvim.plugins.extras.lang.sql가 제공.
--- 여기선 접속 목록(vim.g.dbs)과 결과창 가독성만 얹는다.
+-- dadbod-ui settings. The plugin itself is provided by lazyvim.plugins.extras.lang.sql.
+-- Here we only add the connection list (vim.g.dbs) and result-window readability.
 return {
   {
     "kristijanhusak/vim-dadbod-ui",
     init = function()
       vim.g.dbs = require("user.db").all()
 
-      -- 쿼리 결과창(dbout) 가독성 개선:
-      --   1) fold 비활성화 (메인테이너 공식 권장: PR #203 댓글)
-      --   2) 콘텐츠 행 수에 맞춰 리사이즈, 화면 절반을 상한으로 (작은 결과는 좁게, 큰 결과는 절반에서 컷)
+      -- Improve query result window (dbout) readability:
+      --   1) Disable folds (maintainer's official recommendation: PR #203 comment)
+      --   2) Resize to fit content line count, capped at half the screen (small results stay narrow, large ones cut at half)
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "dbout",
         callback = function()

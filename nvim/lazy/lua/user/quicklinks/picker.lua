@@ -1,4 +1,4 @@
--- 통합 픽커: quicklinks.md 항목 + cheatsheets/*.md
+-- unified picker: quicklinks.md entries + cheatsheets/*.md
 local M = {}
 
 local config = require("user.quicklinks.config")
@@ -21,7 +21,7 @@ end
 local function build_items(dir)
   local items = {}
 
-  -- quicklinks.md 항목
+  -- quicklinks.md entries
   for _, entry in ipairs(store.load(dir)) do
     table.insert(items, {
       text = entry.name,
@@ -31,7 +31,7 @@ local function build_items(dir)
     })
   end
 
-  -- cheatsheets/*.md 자동 인덱싱 (README 제외)
+  -- auto-index cheatsheets/*.md (excluding README)
   for _, file in ipairs(vim.fn.globpath(dir .. "/cheatsheets", "*.md", false, true)) do
     local name = vim.fn.fnamemodify(file, ":t:r")
     if name ~= "README" then
@@ -65,7 +65,7 @@ function M.open()
 
   local items = build_items(dir)
   if #items == 0 then
-    vim.notify("quicklinks: 항목이 없습니다.", vim.log.levels.INFO, { title = "quicklinks" })
+    vim.notify("quicklinks: no entries.", vim.log.levels.INFO, { title = "quicklinks" })
     return
   end
 

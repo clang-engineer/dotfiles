@@ -1,8 +1,8 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 
--- toolbox 빠른 뷰어 (:Toolbox / :ToolboxGrep)
+-- toolbox quick viewer (:Toolbox / :ToolboxGrep)
 require("user.toolbox").setup()
 
--- quicklinks 통합 픽커 (:Quicklinks / :QuicklinksAdd / :QuicklinksEdit)
+-- quicklinks unified picker (:Quicklinks / :QuicklinksAdd / :QuicklinksEdit)
 require("user.quicklinks").setup()

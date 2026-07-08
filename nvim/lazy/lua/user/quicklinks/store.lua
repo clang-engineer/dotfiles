@@ -1,5 +1,5 @@
--- quicklinks.md 파싱 + 추가
--- 형식: - [name](target) #tag1 #tag2
+-- quicklinks.md parsing + appending
+-- format: - [name](target) #tag1 #tag2
 local M = {}
 
 local FILENAME = "quicklinks.md"

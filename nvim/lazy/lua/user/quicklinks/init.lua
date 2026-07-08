@@ -1,6 +1,6 @@
--- quicklinks.nvim 진입점
--- 사용: require("user.quicklinks").setup({ dir = "~/notes" })
---       require("user.quicklinks").setup()  -- VAULT_DIR 환경변수 사용
+-- quicklinks.nvim entry point
+-- Usage: require("user.quicklinks").setup({ dir = "~/notes" })
+--        require("user.quicklinks").setup()  -- use the VAULT_DIR environment variable
 local M = {}
 
 function M.setup(opts)

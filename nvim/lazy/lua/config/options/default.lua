@@ -1,4 +1,4 @@
--- CP949/EUC-KR 한글 파일을 감지해 내부 UTF-8로 변환 (win32yank UTF-8 패닉 방지)
+-- Detect CP949/EUC-KR Korean files and convert to UTF-8 internally (avoids win32yank UTF-8 panic)
 vim.opt.fileencodings = { "ucs-bom", "utf-8", "cp949", "euc-kr", "latin1" }
 
 -- set norelativenumber

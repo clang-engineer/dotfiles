@@ -1,4 +1,4 @@
--- :Toolbox / :ToolboxGrep 등록
+-- register :Toolbox / :ToolboxGrep
 local M = {}
 
 local config = require("user.toolbox.config")
@@ -13,12 +13,12 @@ function M.register()
     end
 
     if opts.args ~= "" then
-      -- 인자 = cheatsheet 이름 → 바로 열기
+      -- arg = cheatsheet name → open directly
       local path = dir .. "/cheatsheets/" .. opts.args .. ".md"
       if vim.fn.filereadable(path) == 1 then
         float.open(path, "toolbox_refocus")
       else
-        vim.notify("cheatsheet 없음: " .. opts.args, vim.log.levels.WARN, { title = "toolbox" })
+        vim.notify("cheatsheet not found: " .. opts.args, vim.log.levels.WARN, { title = "toolbox" })
       end
     else
       picker.pick_files(dir)
@@ -39,7 +39,7 @@ function M.register()
       end
       return names
     end,
-    desc = "toolbox 검색 (인자 없으면 전체 피커, 인자는 cheatsheet 바로 열기)",
+    desc = "toolbox search (no arg = full picker, arg opens a cheatsheet directly)",
   })
 
   vim.api.nvim_create_user_command("ToolboxGrep", function()
@@ -48,7 +48,7 @@ function M.register()
       return config.warn_no_dir()
     end
     picker.grep(dir)
-  end, { desc = "toolbox 전체 본문 grep 검색" })
+  end, { desc = "toolbox full-text grep search" })
 end
 
 return M

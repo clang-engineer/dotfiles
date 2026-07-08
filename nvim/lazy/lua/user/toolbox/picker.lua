@@ -1,4 +1,4 @@
--- 파일 picker / grep — 현재 Snacks 의존
+-- file picker / grep — currently depends on Snacks
 local M = {}
 
 local float = require("user.util.float")

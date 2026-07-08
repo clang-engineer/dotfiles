@@ -1,7 +1,7 @@
--- lsp.lua: LSP 관련 설정 모음
+-- lsp.lua: collection of LSP-related settings
 return {
-  -- clangd: C/C++ 언어 서버 UTF-16 인코딩 설정
-  -- kotlin_language_server: fwcd v1.3.13 #600 우회 (documentHighlight 끔). v1.3.14 릴리스되면 제거 (fwcd/kotlin-language-server#671)
+  -- clangd: UTF-16 encoding setting for the C/C++ language server
+  -- kotlin_language_server: workaround for fwcd v1.3.13 #600 (disables documentHighlight). Remove once v1.3.14 is released (fwcd/kotlin-language-server#671)
   {
     "neovim/nvim-lspconfig",
     opts = {
@@ -18,7 +18,7 @@ return {
     },
   },
 
-  -- conform.nvim: 포맷터 설정 (markdown 포맷터 비활성화)
+  -- conform.nvim: formatter settings (markdown formatter disabled)
   {
     "stevearc/conform.nvim",
     opts = {

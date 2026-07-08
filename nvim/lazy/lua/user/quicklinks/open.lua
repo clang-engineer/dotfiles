@@ -1,7 +1,7 @@
--- 선택 항목 타입별 동작 분기
--- URL → vim.ui.open (브라우저)
--- *.md → 플로팅 윈도우
--- 그 외 로컬 파일/디렉토리 → vim.ui.open (외부 앱)
+-- dispatch behavior by selected item type
+-- URL → vim.ui.open (browser)
+-- *.md → floating window
+-- other local files/directories → vim.ui.open (external app)
 local M = {}
 
 local float = require("user.util.float")
@@ -13,7 +13,7 @@ end
 
 local function resolve(target, dir)
   local path = vim.fs.normalize(target)
-  -- 상대 경로면 toolbox dir 기준
+  -- relative paths are resolved against the toolbox dir
   if not path:match("^/") then
     path = (dir or "") .. "/" .. path
   end
@@ -37,7 +37,7 @@ function M.dispatch(target)
     vim.ui.open(path)
   else
     vim.notify(
-      "quicklinks: 경로를 찾을 수 없음: " .. target,
+      "quicklinks: path not found: " .. target,
       vim.log.levels.WARN,
       { title = "quicklinks" }
     )

@@ -1,12 +1,12 @@
--- DB 접속 정보 로더.
--- 새 그룹 추가: db/connections/그룹명.lua 만들면 .all()에 자동 포함.
--- 비활성화: 파일 이름을 .lua.disabled로 바꾸거나 삭제.
+-- DB connection info loader.
+-- Add a new group: create db/connections/<group>.lua and it's auto-included in .all().
+-- Disable: rename the file to .lua.disabled or delete it.
 --
--- 프로젝트별로 일부만 보고 싶다면 (exrc 활용):
---   1) ~/.config/nvim 등 init 파일에 `vim.o.exrc = true` 추가 (한 번만)
---   2) 프로젝트 루트에 .nvim.lua 만들고 오버라이드:
+-- To see only a subset per project (using exrc):
+--   1) Add `vim.o.exrc = true` to an init file like ~/.config/nvim (once).
+--   2) Create .nvim.lua at the project root and override:
 --        vim.g.dbs = require("user.db").pick("group-a", "group-b")
---   3) 첫 실행 시 :trust 명령으로 해당 .nvim.lua 신뢰 등록.
+--   3) On first run, register trust for that .nvim.lua with the :trust command.
 
 local M = {}
 
