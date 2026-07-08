@@ -1,22 +1,22 @@
-# 핵심 도구
+# Core tools
 brew "git"
 brew "neovim"
 brew "tmux"
-brew "fzf"              # 퍼지 파인더 (Ctrl+R 히스토리, Ctrl+T 파일). zsh/neovim telescope 의존
-brew "ripgrep"          # rg: 초고속 텍스트 검색. neovim grep 백엔드
-brew "fd"               # fd: 직관적 파일 검색 (find 대체). neovim 파일 탐색 의존
-brew "lazygit"          # Git TUI 클라이언트
-brew "git-delta"        # delta: git diff 구문 강조 페이저. .gitconfig core.pager 의존
-brew "jq"               # CLI JSON 필터/변환. 스크립트 JSON 파싱
-brew "bat"              # cat 대체 (구문 강조, 행번호). fzf 미리보기 의존
-brew "tree"             # 디렉터리 트리 출력
-brew "eza"              # ls 대체 (컬러, git 상태, 아이콘)
-brew "gh"               # GitHub CLI (PR/이슈/Actions)
-brew "tldr"             # man 요약판 — 핵심 예시만
+brew "fzf"              # Fuzzy finder (Ctrl+R history, Ctrl+T files). Used by zsh/neovim telescope
+brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
+brew "fd"               # fd: intuitive file search (find replacement). Used by neovim file navigation
+brew "lazygit"          # Git TUI client
+brew "git-delta"        # delta: syntax-highlighting pager for git diff. Used by .gitconfig core.pager
+brew "jq"               # CLI JSON filter/transform. Used for JSON parsing in scripts
+brew "bat"              # cat replacement (syntax highlight, line numbers). Used by fzf preview
+brew "tree"             # Print directory tree
+brew "eza"              # ls replacement (color, git status, icons)
+brew "gh"               # GitHub CLI (PR/issue/Actions)
+brew "tldr"             # Condensed man pages — just the key examples
 
-# zsh 플러그인은 zsh/install-zsh-plugins.sh에서 oh-my-zsh custom 디렉토리에 설치
+# zsh plugins are installed into the oh-my-zsh custom directory by zsh/install-zsh-plugins.sh
 
-# Java 개발
+# Java development
 brew "jenv"
 brew "jdtls"
 brew "openjdk@11"
@@ -26,12 +26,12 @@ brew "openjdk@21"
 # Node.js
 brew "nvm"
 
-# 상황에 따라 선택
-brew "zoxide"            # z: 스마트 디렉터리 점프 (autojump 대체)
-brew "git-lfs"           # 대용량 파일 다루는 프로젝트 없으면 불필요
-brew "libpq"             # psql CLI 포함. PostgreSQL 안 쓰면 불필요
-brew "pyenv"             # Python 버전 관리. uv로 대체 가능
-brew "pyenv-virtualenv"  # pyenv 가상환경. uv로 대체 가능
-brew "rbenv"             # Ruby 버전 관리. Ruby 개발 안 하면 불필요
-brew "uv"                # 초고속 Python 패키지 매니저. pyenv 쓰면 중복될 수 있음
-brew "wget"              # 파일 다운로더. curl이 기본 내장
+# Optional, depending on your needs
+brew "zoxide"            # z: smart directory jump (autojump replacement)
+brew "git-lfs"           # Not needed if you have no projects with large files
+brew "libpq"             # Includes the psql CLI. Not needed if you don't use PostgreSQL
+brew "pyenv"             # Python version management. Can be replaced by uv
+brew "pyenv-virtualenv"  # pyenv virtualenvs. Can be replaced by uv
+brew "rbenv"             # Ruby version management. Not needed if you don't do Ruby dev
+brew "uv"                # Blazing-fast Python package manager. May overlap if you use pyenv
+brew "wget"              # File downloader. curl is built in by default

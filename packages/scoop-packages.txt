@@ -1,23 +1,23 @@
 # Scoop packages for Windows
-# Format: <package> [# 설명]  — install-packages.ps1이 인라인 주석과 빈 줄을 자동으로 제거함
+# Format: <package> [# description]  — install-packages.ps1 strips inline comments and blank lines automatically
 
-7zip              # 범용 압축/해제 도구
-dark              # WiX Decompiler. MSI 설치 파일 분석용
-fd                # find 대체. 빠른 파일 검색 (예: fd -e ts)
-fzf               # 범용 퍼지 파인더. 파이프라인과 조합해 대화형 선택 (예: vim $(fzf))
-gcc               # GNU C/C++ 컴파일러
-git-lfs           # Git Large File Storage. 대용량 바이너리/이미지 관리 (git lfs track "*.psd")
-jenv              # Java 버전 전환 도구 (JDK는 별도 설치, jenv add /path/to/jdk)
-JetBrainsMono-NF  # JetBrains Mono + Nerd Font 아이콘 (터미널 폰트)
-jq                # CLI JSON 프로세서 (예: curl ... | jq '.items[].name')
-lazygit           # Git TUI 클라이언트. 스테이징/커밋/리베이스를 키보드로 조작
-mingw             # Windows용 GCC 툴체인 (네이티브 바이너리 빌드)
-neovim            # Vim 기반 모던 에디터. Lua 설정, 비동기 플러그인 지원
-nvm               # Node.js 버전 관리자 (예: nvm install 20 && nvm use 20)
-opencode          # 터미널 기반 AI 코딩 어시스턴트
-python            # Windows용 Python 인터프리터
-ripgrep           # grep 대체. 초고속 텍스트 검색, .gitignore 자동 반영 (예: rg -i "todo")
-starship          # 크로스 플랫폼 프롬프트. Git 상태·언어 버전을 프롬프트에 표시
-tree-sitter       # 증분 파싱 라이브러리. Neovim 구문 강조·코드 접기에 사용
-uv                # 초고속 Python 패키지 매니저 & 가상환경 도구 (pip/venv 대체)
-zoxide            # autojump/z 대체. 스마트 디렉터리 점프 (예: z dotfiles, zi)
+7zip              # General-purpose compression/extraction tool
+dark              # WiX Decompiler. For inspecting MSI installers
+fd                # find replacement. Fast file search (e.g. fd -e ts)
+fzf               # General-purpose fuzzy finder. Combine with pipelines for interactive select (e.g. vim $(fzf))
+gcc               # GNU C/C++ compiler
+git-lfs           # Git Large File Storage. Manage large binaries/images (git lfs track "*.psd")
+jenv              # Java version switcher (install JDKs separately, jenv add /path/to/jdk)
+JetBrainsMono-NF  # JetBrains Mono + Nerd Font icons (terminal font)
+jq                # CLI JSON processor (e.g. curl ... | jq '.items[].name')
+lazygit           # Git TUI client. Stage/commit/rebase from the keyboard
+mingw             # GCC toolchain for Windows (build native binaries)
+neovim            # Vim-based modern editor. Lua config, async plugins
+nvm               # Node.js version manager (e.g. nvm install 20 && nvm use 20)
+opencode          # Terminal-based AI coding assistant
+python            # Python interpreter for Windows
+ripgrep           # grep replacement. Blazing-fast text search, respects .gitignore (e.g. rg -i "todo")
+starship          # Cross-platform prompt. Shows git status / language versions in the prompt
+tree-sitter       # Incremental parsing library. Used by Neovim for syntax highlighting/code folding
+uv                # Blazing-fast Python package manager & virtualenv tool (pip/venv replacement)
+zoxide            # autojump/z replacement. Smart directory jump (e.g. z dotfiles, zi)
