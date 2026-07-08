@@ -1,28 +1,28 @@
 #!/bin/sh
-# tmux 기본 레이아웃 구성
-# Usage: ./tmux/tmux-layout.sh (tmux 밖에서 실행)
+# Set up the default tmux layout
+# Usage: ./tmux/tmux-layout.sh (run outside of tmux)
 
 SESSION_DEFAULT="default"
 SESSION_WORKSPACE="workspace1"
 
-# tmux 안에서 실행하면 세션 kill 시 자기 자신이 죽으므로 차단
+# Running inside tmux would kill this very session, so block it
 if [ -n "$TMUX" ]; then
-  echo "tmux 밖에서 실행해 주세요"
+  echo "Please run outside of tmux"
   exit 1
 fi
 
-# 기존 세션 전부 정리 (continuum 자동복원 방지를 위해 개별 kill)
+# Clear all existing sessions (kill individually to prevent continuum auto-restore)
 tmux list-sessions -F '#S' 2>/dev/null | while read -r s; do
   tmux kill-session -t "$s"
 done
 
-# -- default 세션 (먼저 생성해서 세션 목록 상단 유지) --
+# -- default session (create first so it stays at the top of the session list) --
 tmux new-session -d -s "$SESSION_DEFAULT"
 
-# -- workspace 세션 --
+# -- workspace session --
 tmux new-session -d -s "$SESSION_WORKSPACE" -n "server"
 
-# server 윈도우: 위아래 분할 → 위쪽을 좌우 분할
+# server window: split top/bottom → split the top pane left/right
 # ┌───────┬───────┐
 # │       │       │
 # ├───────┴───────┤
@@ -32,10 +32,10 @@ tmux split-window -v -t "$SESSION_WORKSPACE:server"
 tmux select-pane -t "$SESSION_WORKSPACE:server.0"
 tmux split-window -h -t "$SESSION_WORKSPACE:server.0"
 
-# editor 윈도우: 단일 패인
+# editor window: single pane
 tmux new-window -t "$SESSION_WORKSPACE" -n "editor"
 
-# server 윈도우 첫 번째 패인으로 포커스
+# focus the first pane of the server window
 tmux select-window -t "$SESSION_WORKSPACE:server"
 tmux select-pane -t "$SESSION_WORKSPACE:server.0"
 

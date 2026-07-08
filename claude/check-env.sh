@@ -1,5 +1,5 @@
 #!/bin/sh
-# /to-xxx 슬래시 커맨드에 필요한 환경변수 점검
+# Check the environment variables required by the /to-xxx slash commands
 
 ok=0
 fail=0
@@ -10,10 +10,10 @@ check() {
   commands=$3
 
   if [ -z "$val" ]; then
-    echo "  ✗ $name — 미설정 (사용: $commands)"
+    echo "  ✗ $name — not set (used by: $commands)"
     fail=$((fail + 1))
   elif [ ! -d "$val" ]; then
-    echo "  ✗ $name=$val — 경로 없음 (사용: $commands)"
+    echo "  ✗ $name=$val — path not found (used by: $commands)"
     fail=$((fail + 1))
   else
     echo "  ✓ $name=$val"
@@ -21,12 +21,12 @@ check() {
   fi
 }
 
-echo "Claude /to-xxx 환경변수 점검"
+echo "Claude /to-xxx environment variable check"
 echo "─────────────────────────────"
 check "BLOG_DIR"    "$BLOG_DIR"    "/blog, /blog-improve"
 check "VAULT_DIR" "$VAULT_DIR" "/notes, /notes-cleanup"
-check "DEVKIT_DIR"  "$DEVKIT_DIR"  "/notes-cleanup (cheatsheet·note 발행)"
+check "DEVKIT_DIR"  "$DEVKIT_DIR"  "/notes-cleanup (publish cheatsheets/notes)"
 echo "─────────────────────────────"
-echo "  결과: ${ok}개 정상, ${fail}개 문제"
+echo "  Result: ${ok} ok, ${fail} problem(s)"
 
 [ "$fail" -eq 0 ]

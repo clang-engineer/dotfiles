@@ -1,4 +1,4 @@
-# tmux 자동 실행 (이미 tmux 안이 아닐 때만, IDE 내장 터미널 제외)
+# Auto-start tmux (only when not already inside tmux, excluding IDE built-in terminals)
 if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
   tmux attach || tmux new -s default
 fi
@@ -9,16 +9,16 @@ export LANG=ko_KR.UTF-8
 # Load secrets (tokens, credentials) from a local-only file
 [ -f ~/.secrets ] && source ~/.secrets
 
-# brew prefix 캐싱 (brew --prefix는 느려서 한 번만 호출)
+# Cache the brew prefix (brew --prefix is slow, so call it only once)
 if command -v brew >/dev/null 2>&1; then
   BREW_PREFIX="$(brew --prefix)"
 fi
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-# 테마 전환: 아래 둘 중 하나만 활성화
+# Theme switch: enable only one of the two below
 # ZSH_THEME="powerlevel10k/powerlevel10k"
-ZSH_THEME=""  # starship 사용 시 비워둘 것
+ZSH_THEME=""  # leave empty when using starship
 
 plugins=(
     git brew
@@ -28,7 +28,7 @@ plugins=(
 
 source ~/.oh-my-zsh/oh-my-zsh.sh
 
-# 명령어 오타 교정: 'gti status' → "correct 'gti' to 'git' [nyae]?" 프롬프트
+# Command typo correction: 'gti status' → "correct 'gti' to 'git' [nyae]?" prompt
 setopt CORRECT
 
 # Project directories (WORKSPACE_DIR, BLOG_DIR, VAULT_DIR, DEVKIT_DIR are set in ~/.secrets per machine)
@@ -40,7 +40,7 @@ else
   export EDITOR='nvim'
 fi
 
-# 모던 CLI alias
+# Modern CLI aliases
 if command -v bat &>/dev/null; then alias cat="bat"; fi
 if command -v eza &>/dev/null; then alias ls="eza"; fi
 
@@ -75,12 +75,12 @@ if command -v pyenv &>/dev/null; then
   eval "$(pyenv virtualenv-init -)"
 fi
 
-# fzf (Ctrl+T 파일 선택, Ctrl+R 히스토리, Alt+C 디렉터리 이동)
+# fzf (Ctrl+T file select, Ctrl+R history, Alt+C directory jump)
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
 fi
 
-# zoxide (autojump 대체, z/zi 명령어)
+# zoxide (autojump replacement, z/zi commands)
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
 fi

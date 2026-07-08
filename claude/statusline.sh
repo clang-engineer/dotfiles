@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Claude Code statusline: 현재 작업 디렉토리 + git 브랜치를 화면 하단에 고정 표시.
-# Claude Code가 세션 정보를 JSON으로 stdin에 흘려준다.
+# Claude Code statusline: pin the current working directory + git branch at the bottom of the screen.
+# Claude Code streams session info as JSON on stdin.
 input=$(cat)
 cwd=$(printf '%s' "$input" | jq -r '.workspace.current_dir // .cwd')
 
 dir="${cwd/#$HOME/~}"
 branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
-# cwd 자기 자신/하위는 이미 권한 경계 안이라 add-dir해도 무의미 → 표시에서 제외
+# cwd itself/its subdirs are already inside the permission boundary, so add-dir is meaningless → exclude from display
 added=$(printf '%s' "$input" | jq -r --arg cwd "$cwd" '.workspace.added_dirs[]? | select(startswith($cwd) | not) | split("/") | last' | paste -sd ' ' -)
 
 out="📁 $dir"
