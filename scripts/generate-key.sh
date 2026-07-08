@@ -55,6 +55,7 @@ if [[ -f "$KEY_PATH" ]]; then
     cat "${KEY_PATH}.pub"
     exit 0
   fi
+  rm -f "$KEY_PATH" "${KEY_PATH}.pub"
 fi
 
 echo "Generating SSH key..."

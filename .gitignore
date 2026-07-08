@@ -11,7 +11,7 @@ known_hosts*
 *.key
 authorized_keys
 # SSH host configs overlaid from the private `secrets` repo (only 00-global tracked)
-chezmoi/private_dot_ssh/config.d/[1-9]*
+chezmoi/private_dot_ssh/private_config.d/[1-9]*
 packages/Brewfile.lock.json
 
 *.swp

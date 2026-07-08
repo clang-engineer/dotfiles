@@ -28,7 +28,7 @@ echo ""
 echo "📎 심볼릭 링크 생성 중..."
 for version in "${JAVA_VERSIONS[@]}"; do
   # Homebrew Cellar에서 Java 경로 찾기
-  JAVA_PATH=$(find /opt/homebrew/Cellar/openjdk@${version} -name "openjdk.jdk" 2>/dev/null | head -1)
+  JAVA_PATH=$(find /opt/homebrew/Cellar/openjdk@${version} -name "openjdk.jdk" 2>/dev/null | head -1 || true)
 
   if [ -z "$JAVA_PATH" ]; then
     echo -e "${YELLOW}⚠ openjdk@${version}이 설치되어 있지 않습니다. 건너뜁니다.${NC}"
