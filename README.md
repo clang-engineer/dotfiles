@@ -33,8 +33,7 @@ chezmoi apply
 .\scripts\windows\install-windows.ps1   # packages, Nerd Font, terminal
 ```
 
-- Setup walkthrough: [SETUP.md](SETUP.md)
-- Secret handling (SSH keys, `~/.secrets`, identity): [SECURITY.md](SECURITY.md)
+- Setup walkthrough — including secret handling (SSH keys, `~/.secrets`, identity): [SETUP.md](SETUP.md)
 
 ## How it works
 
@@ -81,7 +80,7 @@ are a TODO.
 Nothing private lives in this repo. The private `secrets` companion (real SSH hosts,
 nvim DB connections) is pulled by `.chezmoiexternal` **only when `SECRETS_REPO` is
 set** in `~/.secrets`; a public clone without it just skips the whole thing. See
-[SECURITY.md](SECURITY.md).
+[SETUP.md](SETUP.md#8-보안--민감-경로-원칙--배포-전-점검).
 
 ## Related repositories
 
