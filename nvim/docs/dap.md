@@ -1,108 +1,88 @@
-# Neovim DAP (Debug Adapter Protocol) 사용법
+# Neovim DAP (Debug Adapter Protocol) usage
 
-## 기본 명령어
+## Keymaps
 
-| 명령 | 설명 |
-|------|------|
-| `:lua require("dap").continue()` | 디버깅 시작 / 재개 |
-| `:lua require("dap").toggle_breakpoint()` | breakpoint 토글 |
-| `:lua require("dap").step_over()` | step over |
-| `:lua require("dap").step_into()` | step into |
-| `:lua require("dap").step_out()` | step out |
-| `:lua require("dap").terminate()` | 디버깅 종료 |
-| `:lua require("dapui").toggle()` | DAP UI 열기/닫기 |
+DAP is lazy-loaded, so `:Dap*` commands are only active once a Java/Kotlin file is open.
+If they don't show up, call `:lua require("dap").continue()` directly.
 
-> DAP은 lazy-load 되어 있어 Java/Kotlin 파일을 연 상태에서만 `:Dap*` 명령이 활성화됨.
-> 안 보이면 `:lua require("dap").continue()` 로 직접 호출.
+The core `<leader>d*` keymaps come from LazyVim's `dap.core` extra (`<leader>db` toggle breakpoint,
+`<leader>dc` continue, `<leader>di/do/dO` step, `<leader>du` DAP UI, etc.) — see the
+[LazyVim dap.core keymaps](https://www.lazyvim.org/extras/dap/core) for the full list.
 
-## LazyVim 기본 키맵
+The rest of this doc covers only the setup that is specific to this config.
 
-LazyVim extras (`lang.java`, `dap.core`) 활성화 시:
+## Java debugging (jdtls launch)
 
-| 키 | 설명 |
-|----|------|
-| `<leader>db` | breakpoint 토글 |
-| `<leader>dB` | 조건부 breakpoint |
-| `<leader>dc` | continue |
-| `<leader>dC` | run to cursor |
-| `<leader>di` | step into |
-| `<leader>do` | step over |
-| `<leader>dO` | step out |
-| `<leader>dt` | terminate |
-| `<leader>du` | DAP UI 토글 |
+### Setup
 
-## Java 디버깅 (jdtls launch 방식)
+LazyVim's `lang.java` extra enables DAP automatically (no extra config needed).
 
-### 설정
+### Usage
 
-LazyVim `lang.java` extra가 DAP을 자동 활성화함 (별도 설정 불필요).
+1. Open a Java file
+2. Set a breakpoint (`<leader>db`)
+3. `:lua require("dap").continue()` or `<leader>dc`
+4. Pick a launch config from the list
 
-### 사용법
+jdtls runs the JVM in debug mode itself, so no separate Gradle run is needed.
 
-1. Java 파일 열기
-2. breakpoint 설정 (`<leader>db`)
-3. `:lua require("dap").continue()` 또는 `<leader>dc`
-4. 설정 목록에서 launch 선택
+> Java DAP also uses `console = "integratedTerminal"` (`java.lua`'s `dap.config_overrides`).
+> The program output stays in nvim's built-in terminal, so it's still readable after the session ends.
 
-jdtls가 직접 JVM을 debug 모드로 실행해줌. 별도 Gradle 실행 불필요.
+## Java/Kotlin debugging (Gradle attach)
 
-> Java DAP도 `console = "integratedTerminal"` 적용됨 (`java.lua`의 `dap.config_overrides`).
-> 프로그램 출력이 nvim 내장 터미널에 남아 세션 종료 후에도 확인 가능.
+The traditional approach: start the JVM in debug mode manually, then attach.
 
-## Java/Kotlin 디버깅 (Gradle attach 방식)
-
-수동으로 JVM을 debug 모드로 띄운 뒤 attach 하는 전통적 방식.
-
-### 1단계: Gradle을 debug 모드로 실행
+### Step 1: run Gradle in debug mode
 
 ```bash
-# 테스트 디버깅
+# debug a test
 ./gradlew test --debug-jvm
 
-# Spring Boot 디버깅
+# debug Spring Boot
 ./gradlew bootRun --debug-jvm
 ```
 
-`Listening for transport dt_socket at address: 5005` 메시지가 나오면 준비 완료.
+It's ready once you see `Listening for transport dt_socket at address: 5005`.
 
-### 2단계: nvim에서 attach
+### Step 2: attach from nvim
 
-1. breakpoint 설정 (`<leader>db`)
-2. `:lua require("dap").continue()` 또는 `<leader>dc`
-3. 설정 목록에서 "Attach to debugging session" 선택
+1. Set a breakpoint (`<leader>db`)
+2. `:lua require("dap").continue()` or `<leader>dc`
+3. Pick "Attach to debugging session" from the list
 
-### 3단계: UI 열기
+### Step 3: open the UI
 
 ```
 :lua require("dapui").toggle()
 ```
 
-또는 `<leader>du`
+or `<leader>du`
 
-### 이미 실행 중인 JVM에 attach
+### Attach to an already-running JVM
 
-JVM 옵션에 아래를 추가하면 5005 포트로 debug attach 가능:
+Add the following to the JVM options to allow a debug attach on port 5005:
 
 ```
 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
 ```
 
-`suspend=y`로 바꾸면 debugger 연결까지 JVM이 대기함.
+Change `suspend=y` to make the JVM wait until a debugger connects.
 
-## Kotlin DAP 설정
+## Kotlin DAP setup
 
-`kotlin-dap.lua` 참고. kotlin-debug-adapter 사용.
+See `kotlin-dap.lua`. Uses kotlin-debug-adapter.
 
-- **launch**: 현재 파일의 `main()` 직접 실행 (단일 파일용)
-- **attach**: Gradle `--debug-jvm`으로 띄운 JVM에 연결 (Spring Boot 등)
-- **console**: `integratedTerminal` — 프로그램 출력이 nvim 내장 터미널 버퍼에 표시되어 세션 종료 후에도 확인 가능
-- **dapui 자동 닫힘 비활성화**: 디버깅 실패/종료 시 dapui가 자동으로 닫히지 않음. 수동으로 닫으려면 `<leader>du` 또는 `:lua require("dapui").toggle()`
+- **launch**: run the current file's `main()` directly (for a single file)
+- **attach**: connect to a JVM started with Gradle `--debug-jvm` (Spring Boot, etc.)
+- **console**: `integratedTerminal` — program output shows in nvim's built-in terminal buffer, readable after the session ends
+- **dapui auto-close disabled**: dapui does not close automatically on debug failure/exit. Close it manually with `<leader>du` or `:lua require("dapui").toggle()`
 
-## 추천 workflow
+## Recommended workflow
 
-| 상황 | 방식 |
-|------|------|
-| Java 단위 테스트 | jdtls launch (가장 편함) |
-| Spring Boot | jdtls launch 또는 Gradle attach |
+| Situation | Approach |
+|-----------|----------|
+| Java unit test | jdtls launch (easiest) |
+| Spring Boot | jdtls launch or Gradle attach |
 | Kotlin | Gradle attach (`--debug-jvm`) |
-| 원격 JVM | attach (포트 지정) |
+| Remote JVM | attach (specify the port) |

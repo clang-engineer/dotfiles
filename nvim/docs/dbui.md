@@ -1,31 +1,32 @@
-# vim-dadbod / dadbod-ui 사용법
+# vim-dadbod / dadbod-ui usage
 
-## 개요
+## Overview
 
-LazyVim의 `lang.sql` extra가 활성화되어 있어 다음 세 플러그인이 자동으로 설치된다:
+LazyVim's `lang.sql` extra is enabled, so these three plugins are installed automatically:
 
-| 플러그인 | 역할 |
-|----------|------|
-| `tpope/vim-dadbod` | DB 어댑터 (`postgres`, `mysql`, `sqlite`, `mongodb` 등 호출) |
-| `kristijanhusak/vim-dadbod-ui` | 사이드바 UI (`:DBUIToggle`) |
-| `kristijanhusak/vim-dadbod-completion` | SQL 자동완성 |
+| Plugin | Role |
+|--------|------|
+| `tpope/vim-dadbod` | DB adapter (drives `postgres`, `mysql`, `sqlite`, `mongodb`, etc.) |
+| `kristijanhusak/vim-dadbod-ui` | Sidebar UI (`:DBUIToggle`) |
+| `kristijanhusak/vim-dadbod-completion` | SQL completion |
 
-연결 정의는 `nvim/lazy/lua/config/options/dbui.lua`의 `vim.g.dbs` 테이블에서 관리한다.
+Connection definitions are managed in the `vim.g.dbs` table in `nvim/lazy/lua/config/options/dbui.lua`.
 
-## 어댑터 한계
+## Adapter limitations
 
-vim-dadbod 내장 어댑터: `postgres`, `mysql`, `sqlite`, `sqlserver`, `mongodb`, `redis`, `oracle`, `bigquery`, `clickhouse`, `duckdb` 등.
+vim-dadbod's built-in adapters: `postgres`, `mysql`, `sqlite`, `sqlserver`, `mongodb`, `redis`, `oracle`, `bigquery`, `clickhouse`, `duckdb`, and more.
 
-**JDBC URL은 지원하지 않는다.**
+**JDBC URLs are not supported.**
 
-| 잘못된 URL | 결과 |
-|-----------|------|
+| Wrong URL | Result |
+|-----------|--------|
 | `jdbc:postgresql://...` | `E605: no adapter for jdbc` |
 | `jdbc:h2:file:...` | `E605: no adapter for jdbc` |
 
-→ JDBC 접두어를 떼고 dadbod이 인식하는 스킴(`postgres://`, `postgresql://` 등)으로 써야 한다. **H2는 어댑터가 없으므로 dadbod 대신 H2 Web Console 또는 IntelliJ Database 툴 사용**.
+→ Drop the JDBC prefix and use a scheme dadbod recognizes (`postgres://`, `postgresql://`, etc.).
+**H2 has no adapter, so use the H2 Web Console or the IntelliJ Database tool instead of dadbod.**
 
-## URL 형식
+## URL format
 
 ```lua
 vim.g.dbs = {
@@ -40,89 +41,91 @@ vim.g.dbs = {
 }
 ```
 
-- `name`은 사이드바에 표시되는 라벨 (한국어 OK)
-- URL에 **비밀번호를 절대 박지 않는다** — 비번은 `~/.pgpass`로 분리 (접속 파일은 `secrets` repo가 오버레이)
-- 원격/VPN 의존 항목엔 `?connect_timeout=5`를 붙여 fail-fast (libpq 기본 timeout이 매우 길어서 nvim이 멈칫함)
+- `name` is the label shown in the sidebar.
+- **Never hardcode the password in the URL** — keep it in `~/.pgpass` (the connection file is overlaid by the `secrets` repo).
+- Add `?connect_timeout=5` to remote/VPN-dependent entries to fail fast (libpq's default timeout is very long, so nvim appears to hang).
 
-## 인증 셋업 (`.pgpass`)
+## Auth setup (`.pgpass`)
 
-dadbod은 비대화식으로 `psql`을 호출하므로 비밀번호 프롬프트가 동작하지 않는다. 셋업 방법은 두 가지가 있는데:
+dadbod invokes `psql` non-interactively, so the password prompt does not work. There are two setup options:
 
-| 방식 | 다중 DB 지원 | 권장 |
-|------|------------|------|
-| `$PGUSER` / `$PGPASSWORD` 환경변수 | ❌ 세션 전역이라 DB별로 다른 비번 처리 불가 | 사용 X |
-| `~/.pgpass` 파일 | ✅ host:port:db 단위로 분리 | ⭕ |
+| Method | Multi-DB support | Recommended |
+|--------|:---:|:---:|
+| `$PGUSER` / `$PGPASSWORD` env vars | ❌ session-global, can't hold a different password per DB | No |
+| `~/.pgpass` file | ✅ split per host:port:db | Yes |
 
-### 셋업 절차
+### Setup procedure
 
-`~/.pgpass`는 private `secrets` 레포가 소유한다. `chezmoi apply`가 `.chezmoiexternal`로
-secrets를 받아온 뒤 `run_after_30-secrets-overlay.sh` → `secrets/setup.sh`가
-`secrets/postgres/pgpass`를 `~/.pgpass`로 심링크하고 원본에 퍼미션 600을 적용한다.
-비번을 레포에서 관리하므로 새 머신에서 손편집이 필요 없다. secrets 접근이 없는 공개
-사용자는 `scripts/.pgpass.example`를 참고해 직접 만든다 (Windows: `%APPDATA%\postgresql\pgpass.conf`):
+`~/.pgpass` is owned by the private `secrets` repo. After `chezmoi apply` pulls secrets via
+`.chezmoiexternal`, `run_after_30-secrets-overlay.sh` → `secrets/setup.sh` symlinks
+`secrets/postgres/pgpass` to `~/.pgpass` and sets the source to permission 600.
+Since the password lives in the repo, no hand-editing is needed on a new machine. Public users
+without secrets access can create it by hand from `scripts/.pgpass.example`
+(Windows: `%APPDATA%\postgresql\pgpass.conf`):
 
 ```
 localhost:5432:mydb:myuser:CHANGE_ME
 REMOTE_HOST:5432:mydb:myuser:CHANGE_ME
 ```
 
-## 사용법
+## Usage
 
-| 명령 | 설명 |
-|------|------|
-| `:DBUIToggle` | 사이드바 토글 |
-| `:DBUI` | 사이드바 열기 |
-| `:DBUIAddConnection` | 연결 추가 (세션 한정, 영속화하려면 `dbui.lua`에 추가) |
-| `:DBUIFindBuffer` | 현재 SQL 버퍼를 사이드바에서 찾기 |
+| Command | Description |
+|---------|-------------|
+| `:DBUIToggle` | Toggle the sidebar |
+| `:DBUI` | Open the sidebar |
+| `:DBUIAddConnection` | Add a connection (session-only; add it to `dbui.lua` to persist) |
+| `:DBUIFindBuffer` | Find the current SQL buffer in the sidebar |
 
-사이드바에서 DB 항목 위에 커서를 두고 `<CR>`로 펼치면 스키마/테이블이 로드된다. 테이블 위 `<CR>`은 미리 정의된 쿼리(예: `SELECT * FROM ... LIMIT 200`).
+In the sidebar, put the cursor on a DB entry and press `<CR>` to expand it and load schemas/tables.
+`<CR>` on a table runs a predefined query (e.g. `SELECT * FROM ... LIMIT 200`).
 
-### 직접 쿼리 작성/실행
+### Writing/running your own queries
 
-펼친 DB 트리에 `New query` 항목이 있다. 그 위에서 `<CR>`을 누르면 해당 DB에 묶인 빈 SQL 스크래치 버퍼가 열린다.
+An expanded DB tree has a `New query` entry. Press `<CR>` on it to open an empty SQL scratch buffer bound to that DB.
 
-| 동작 | 매핑 |
-|------|------|
-| 전체 쿼리 실행 | `<leader>S` |
-| 선택 영역만 실행 | 비주얼 선택 후 `<leader>S` |
-| 쿼리 저장 (Saved queries 트리에 추가) | `<leader>W` |
-| 결과창 최대화 / 균등화 | `<C-w>_` / `<C-w>=` |
+| Action | Mapping |
+|--------|---------|
+| Run the whole query | `<leader>S` |
+| Run only the selection | visual-select, then `<leader>S` |
+| Save the query (adds to the Saved queries tree) | `<leader>W` |
+| Maximize / equalize the result window | `<C-w>_` / `<C-w>=` |
 
-기존 `.sql` 파일을 실행할 때는 `:DBUIFindBuffer`로 사이드바와 연결하거나, `:%DB <url>` 형태로 직접 명령어 실행.
+To run an existing `.sql` file, connect it to the sidebar with `:DBUIFindBuffer`, or run it directly with `:%DB <url>`.
 
-### 결과창 레이아웃
+### Result window layout
 
-dadbod이 `:split`로 여는 결과창(`dbout` 파일타입)은 가로 분할을 그대로 사용하되, `dbui.lua`의 autocmd가 두 가지를 자동 처리한다:
+The result window dadbod opens with `:split` (filetype `dbout`) keeps the horizontal split, but the autocmd in `dbui.lua` handles two things automatically:
 
-- **fold 비활성화** (`setlocal nofoldenable`) — vim-dadbod-ui 메인테이너 공식 권장 (PR #203 머지 거부 시 댓글)
-- **화면 절반 높이로 리사이즈** (`resize lines/2`) — 기본 분할이 좁아 결과 행이 잘림
+- **Disables folding** (`setlocal nofoldenable`) — officially recommended by the vim-dadbod-ui maintainer (in the comment when PR #203 was rejected).
+- **Resizes to half the screen height** (`resize lines/2`) — the default split is too narrow and clips result rows.
 
-답답하면 `<C-w>_`(높이 max), 균등으로 되돌릴 땐 `<C-w>=`.
+If it feels cramped, use `<C-w>_` (max height); `<C-w>=` to equalize back.
 
-## 트러블슈팅
+## Troubleshooting
 
-| 증상 | 원인 / 해결 |
-|------|-------------|
-| `E605: no adapter for jdbc` | URL이 `jdbc:postgresql://`로 시작 → `jdbc:` 접두어 제거 |
-| `fe_sendauth: no password supplied` | `.pgpass`에 해당 host:port:db 줄 없음 또는 퍼미션이 600이 아님 |
-| 연결 시 nvim이 한참 멈춤 | URL에 `?connect_timeout=5` 추가 |
-| 원격 DB 연결 timeout | VPN/방화벽 확인. `psql -h <host> -U <user> -d <db>`로 직접 테스트해 dbui 외부 문제인지 분리 |
-| `.pgpass` 안 읽힘 | Unix는 `chmod 600 ~/.pgpass` 필수. Windows는 `%APPDATA%\postgresql\pgpass.conf` 위치 확인 |
+| Symptom | Cause / fix |
+|---------|-------------|
+| `E605: no adapter for jdbc` | URL starts with `jdbc:postgresql://` → remove the `jdbc:` prefix |
+| `fe_sendauth: no password supplied` | Missing host:port:db line in `.pgpass`, or its permission isn't 600 |
+| nvim hangs for a while on connect | Add `?connect_timeout=5` to the URL |
+| Remote DB connection timeout | Check VPN/firewall. Test directly with `psql -h <host> -U <user> -d <db>` to isolate whether it's a dbui-external problem |
+| `.pgpass` not being read | On Unix, `chmod 600 ~/.pgpass` is required. On Windows, check the `%APPDATA%\postgresql\pgpass.conf` location |
 
-## 다른 DB (mysql / oracle / mssql) 추가 시
+## Adding another DB (mysql / oracle / mssql)
 
-`.pgpass`는 PostgreSQL 전용이다. 다른 DB는 각자 표준 인증 파일을 사용:
+`.pgpass` is PostgreSQL-only. Other DBs use their own standard auth file:
 
-| DB | 표준 인증 파일 / 방법 |
-|----|----------------------|
-| MySQL | `~/.my.cnf` (`[client]` 섹션) 또는 `~/.mylogin.cnf` (mysql_config_editor) |
+| DB | Standard auth file / method |
+|----|-----------------------------|
+| MySQL | `~/.my.cnf` (`[client]` section) or `~/.mylogin.cnf` (mysql_config_editor) |
 | Oracle | Oracle Wallet (`mkstore`) + `tnsnames.ora` |
-| SQL Server | 표준 파일 없음 — `SQLCMDPASSWORD` 환경변수 또는 Windows 인증 (`-E`) |
+| SQL Server | No standard file — `SQLCMDPASSWORD` env var or Windows auth (`-E`) |
 
-각 DB별 셋업 스크립트는 실제 추가 시점에 `scripts/setup-<db>-auth.sh` 형태로 동일 컨벤션으로 추가한다.
+Per-DB setup scripts are added under the same convention as `scripts/setup-<db>-auth.sh` when a DB is actually added.
 
-## 참고
+## References
 
 - vim-dadbod: <https://github.com/tpope/vim-dadbod>
 - vim-dadbod-ui: <https://github.com/kristijanhusak/vim-dadbod-ui>
-- libpq pgpass 문서: <https://www.postgresql.org/docs/current/libpq-pgpass.html>
+- libpq pgpass docs: <https://www.postgresql.org/docs/current/libpq-pgpass.html>

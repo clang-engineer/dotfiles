@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# ~/.secrets 파일에 머신별 환경변수를 설정한다.
-# 이미 설정된 변수는 건너뛴다.
+# Set per-machine environment variables in the ~/.secrets file.
+# Skips variables that are already set.
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 . "$REPO/scripts/lib/common.sh"
@@ -10,14 +10,14 @@ link_path "$REPO/scripts/.secrets.ps1.example" "$HOME/.secrets.ps1.example"
 
 SECRETS="$HOME/.secrets"
 
-# 파일이 없으면 생성
+# Create the file if it doesn't exist
 if [ ! -f "$SECRETS" ]; then
   printf '→ Creating %s\n' "$SECRETS"
   touch "$SECRETS"
   chmod 600 "$SECRETS"
 fi
 
-# 변수가 파일에 없으면 사용자에게 물어보고 추가
+# If the variable isn't in the file, prompt the user and append it
 ask_and_set() {
   var_name=$1
   description=$2
@@ -45,13 +45,13 @@ ask_and_set() {
 }
 
 printf '→ Checking ~/.secrets environment variables\n'
-ask_and_set "WORKSPACE_DIR" "작업 디렉토리 루트" ""
-ask_and_set "BLOG_DIR"      "Jekyll 블로그 경로" ""
-ask_and_set "VAULT_DIR"   "Vault 경로"       ""
-ask_and_set "DOTFILES_DIR"  "Dotfiles 경로"      ""
-ask_and_set "DEVKIT_DIR"    "Devkit 경로 (공개 레퍼런스)" ""
-ask_and_set "PROFILE_DIR"   "GitHub 프로필 README repo 경로" ""
-ask_and_set "SECRETS_REPO"  "Private secrets repo (owner/repo, 비우면 overlay 스킵)" ""
-ask_and_set "SECRETS_DIR"   "secrets repo 클론 경로" "$HOME/Desktop/_zero/private/secrets"
+ask_and_set "WORKSPACE_DIR" "Workspace root directory" ""
+ask_and_set "BLOG_DIR"      "Jekyll blog path" ""
+ask_and_set "VAULT_DIR"   "Vault path"       ""
+ask_and_set "DOTFILES_DIR"  "Dotfiles path"      ""
+ask_and_set "DEVKIT_DIR"    "Devkit path (public reference)" ""
+ask_and_set "PROFILE_DIR"   "GitHub profile README repo path" ""
+ask_and_set "SECRETS_REPO"  "Private secrets repo (owner/repo, leave empty to skip overlay)" ""
+ask_and_set "SECRETS_DIR"   "secrets repo clone path" "$HOME/workspace/secrets"
 
 chmod 600 "$SECRETS"

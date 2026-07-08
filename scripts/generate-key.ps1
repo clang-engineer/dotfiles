@@ -1,5 +1,5 @@
 # Generate an SSH key pair at ~/.ssh/id_rsa_<Label> and register it with ssh-agent.
-# Label is a free-form identifier (e.g. "github_myuser", "gcp_yorez333").
+# Label is a free-form identifier (e.g. "github_myuser", "gcp_myuser").
 # Host alias / IdentityFile binding is configured separately in ssh/config.d/.
 param(
     [string]$Label,

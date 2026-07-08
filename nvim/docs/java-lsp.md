@@ -1,37 +1,39 @@
 # LazyVim Java LSP notes
 
-## 목적
-- jdtls는 Java 21 이상으로 실행
-- Gradle/빌드는 프로젝트 요구 JDK로 분리
+## Goal
+- Run jdtls on Java 21+
+- Keep Gradle/build on the JDK the project requires (separate from jdtls)
 
-## 권장 — jvm-env 사용
+## Recommended — use jvm-env
 
-### 프로젝트별 `.nvim.lua` (한 줄)
+### Per-project `.nvim.lua` (one line)
 ```lua
 require("jvm-env").setup({ jdtls = "21", gradle = "17" })
 ```
 
-프로젝트 루트에서 `:JvmEnvInit 21 17` 로 자동 생성 가능 (인자 생략 시 활성 config 사용).
+Generate it from the project root with `:JvmEnvInit 21 17` (omit the args to reuse the active config).
 
-### 전역 자동 탐지
-`nvim/lazy/lua/plugins/jvm-env.lua` 의 lazy spec (`lazy=false, priority=100`) 이 시작 시 [`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim) 의 `setup` 자동 호출 — 기본값 `jdtls=21`, `gradle=11` 로 `vim.env.JDTLS_JAVA_HOME` / `vim.env.GRADLE_JAVA_HOME` 자동 채움.
+### Global auto-detection
+The lazy spec in `nvim/lazy/lua/plugins/jvm-env.lua` (`lazy=false, priority=100`) calls
+[`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim)'s `setup` on startup —
+with defaults `jdtls=21`, `gradle=11` it auto-populates `vim.env.JDTLS_JAVA_HOME` / `vim.env.GRADLE_JAVA_HOME`.
 
-### jdtls 연결
-`nvim/lazy/lua/plugins/java.lua` 에서 두 환경변수를 읽어 jdtls `cmd` 와 `cmd_env` 에 연결.
-- `cmd` 에 `--java-executable $JDTLS_JAVA_HOME/bin/java` 추가
+### jdtls wiring
+`nvim/lazy/lua/plugins/java.lua` reads those two env vars and wires them into jdtls `cmd` and `cmd_env`:
+- appends `--java-executable $JDTLS_JAVA_HOME/bin/java` to `cmd`
 - `cmd_env.JAVA_HOME = $GRADLE_JAVA_HOME` + `GRADLE_OPTS=-Dorg.gradle.java.home=...`
-- Lombok jar 있으면 `--jvm-arg=-javaagent:...` 로 자동 추가
+- if a Lombok jar is present, adds `--jvm-arg=-javaagent:...` automatically
 
-## env 템플릿 (셸에서 export)
+## env template (export from the shell)
 ```bash
 export JDTLS_JAVA_HOME="/path/to/jdk-21"
 export GRADLE_JAVA_HOME="/path/to/jdk-17"
 ```
-이 경우 `jvm-env.setup` 호출 없이 셸 값이 그대로 사용됨.
+In this case the shell values are used as-is, without calling `jvm-env.setup`.
 
-## 참고 — jvm-env 없이 수동 작성 시 (OS별 스니펫)
+## Reference — manual setup without jvm-env (per-OS snippets)
 
-`.nvim.lua` 안에서 직접 환경변수를 채우는 옛 방식. jvm-env 가 이 모든 분기를 흡수.
+The old way of populating the env vars directly inside `.nvim.lua`. jvm-env absorbs all of these branches.
 
 ### macOS
 ```lua
@@ -39,13 +41,13 @@ vim.env.JDTLS_JAVA_HOME = vim.fn.trim(vim.fn.system("/usr/libexec/java_home -v 2
 vim.env.GRADLE_JAVA_HOME = vim.fn.trim(vim.fn.system("/usr/libexec/java_home -v 17"))
 ```
 
-### Linux (배포판에 따라 경로 다름)
+### Linux (paths vary by distro)
 ```lua
 vim.env.JDTLS_JAVA_HOME = vim.fn.trim(vim.fn.system("readlink -f /usr/lib/jvm/java-21-openjdk"))
 vim.env.GRADLE_JAVA_HOME = vim.fn.trim(vim.fn.system("readlink -f /usr/lib/jvm/java-17-openjdk"))
 ```
 
-### Windows (env에서 읽기)
+### Windows (read from env)
 ```lua
 vim.env.JDTLS_JAVA_HOME = vim.fn.trim(vim.fn.system(
   "powershell -NoProfile -Command \"[Environment]::GetEnvironmentVariable('JDTLS_JAVA_HOME','User')\""
