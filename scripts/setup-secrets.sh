@@ -51,5 +51,7 @@ ask_and_set "VAULT_DIR"   "Vault 경로"       ""
 ask_and_set "DOTFILES_DIR"  "Dotfiles 경로"      ""
 ask_and_set "DEVKIT_DIR"    "Devkit 경로 (공개 레퍼런스)" ""
 ask_and_set "PROFILE_DIR"   "GitHub 프로필 README repo 경로" ""
+ask_and_set "SECRETS_REPO"  "Private secrets repo (owner/repo, 비우면 overlay 스킵)" ""
+ask_and_set "SECRETS_DIR"   "secrets repo 클론 경로" "$HOME/Desktop/_zero/private/secrets"
 
 chmod 600 "$SECRETS"

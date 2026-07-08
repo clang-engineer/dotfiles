@@ -1,9 +1,12 @@
-{{/* Pull the private secrets repo on `chezmoi apply`. URL and path come from
-     ~/.secrets env, so nothing private is committed to this public repo. A clone
-     without SECRETS_REPO set (public users) skips the whole block. */}}
-{{- if and (env "SECRETS_REPO") (env "SECRETS_DIR") }}
+{{/* Pull the private secrets repo on `chezmoi apply`. SECRETS_REPO is an
+     owner/repo slug; it's cloned over HTTPS with GITHUB_TOKEN so it never depends
+     on ~/.ssh — which this repo itself provides, so an SSH clone would deadlock on
+     a fresh machine. All values come from ~/.secrets, so nothing private is
+     committed to this public repo. A clone without SECRETS_REPO/GITHUB_TOKEN set
+     (public users) skips the whole block. */}}
+{{- if and (env "SECRETS_REPO") (env "SECRETS_DIR") (env "GITHUB_TOKEN") }}
 ["{{ env "SECRETS_DIR" | trimPrefix (printf "%s/" .chezmoi.homeDir) }}"]
     type = "git-repo"
-    url = {{ env "SECRETS_REPO" | quote }}
+    url = "https://x-access-token:{{ env "GITHUB_TOKEN" }}@github.com/{{ env "SECRETS_REPO" }}.git"
     refreshPeriod = "168h"
 {{- end }}
