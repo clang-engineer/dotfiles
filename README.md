@@ -45,7 +45,7 @@ turns it into your home directory:
 |---|---|---|
 | `dot_zshrc`, `dot_gitconfig`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.gitconfig`, … | **managed file** (copy) |
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
-| `symlink_dot_config/nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
+| `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
 | `symlink_dot_claude.tmpl` | `~/.claude` → `claude/` | symlink |
 | `run_once_*`, `run_after_*` | installs · claude settings · secrets overlay | scripts |

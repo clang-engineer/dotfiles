@@ -12,4 +12,5 @@ scaffold() {  # <example> <target> <mode>
 
 scaffold "$REPO/scripts/.secrets.example"         "$HOME/.secrets"         600
 scaffold "$REPO/scripts/.gitconfig.local.example" "$HOME/.gitconfig.local" 644
-scaffold "$REPO/scripts/.pgpass.example"          "$HOME/.pgpass"          600
+# ~/.pgpass is not scaffolded here — the private secrets repo owns it and
+# symlinks it into place via run_after_30-secrets-overlay.sh → secrets/setup.sh.

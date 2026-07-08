@@ -34,17 +34,8 @@ chezmoi diff     # 무엇이 바뀔지 미리보기
 chezmoi apply    # 링크·복사·설치·생성 한 번에
 ```
 
-`chezmoi apply`가 순서대로 수행하는 것:
-
-### 파일 배치
-
-| 소스 | 결과 | 방식 |
-|---|---|---|
-| `dot_zshrc`, `dot_gitconfig`, `dot_tmux.conf`, `dot_p10k.zsh` 등 | `~/.zshrc` 등 | managed 실파일 |
-| `private_dot_ssh/` | `~/.ssh/` (0700) + `config`, `config.d/00-global` | managed (키는 미관리) |
-| `symlink_dot_config/nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | symlink |
-| `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` | symlink |
-| `symlink_dot_claude.tmpl` | `~/.claude` | symlink |
+`chezmoi apply`가 순서대로 수행하는 것 — 파일 배치(소스→타겟, managed vs symlink)는
+[README](README.md#how-it-works) 표가 1차 출처다. 여기서는 실행되는 스크립트만 정리한다:
 
 ### 스크립트 (run\_)
 

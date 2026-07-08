@@ -55,9 +55,11 @@ dadbod은 비대화식으로 `psql`을 호출하므로 비밀번호 프롬프트
 
 ### 셋업 절차
 
-`chezmoi apply`가 `~/.pgpass`(Windows: `%APPDATA%\postgresql\pgpass.conf`)를 템플릿에서
-생성하고 퍼미션 600을 적용한다 (`run_once_before_03-scaffold-local.sh`, 없을 때만).
-이후 파일을 편집해 placeholder를 실제 값으로 교체:
+`~/.pgpass`는 private `secrets` 레포가 소유한다. `chezmoi apply`가 `.chezmoiexternal`로
+secrets를 받아온 뒤 `run_after_30-secrets-overlay.sh` → `secrets/setup.sh`가
+`secrets/postgres/pgpass`를 `~/.pgpass`로 심링크하고 원본에 퍼미션 600을 적용한다.
+비번을 레포에서 관리하므로 새 머신에서 손편집이 필요 없다. secrets 접근이 없는 공개
+사용자는 `scripts/.pgpass.example`를 참고해 직접 만든다 (Windows: `%APPDATA%\postgresql\pgpass.conf`):
 
 ```
 localhost:5432:mydb:myuser:CHANGE_ME

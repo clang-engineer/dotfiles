@@ -10,7 +10,7 @@ scripts/
 ├── README.md
 ├── .secrets.example / .secrets.ps1.example   # ~/.secrets 템플릿
 ├── .gitconfig.local.example                  # git identity 템플릿
-├── .pgpass.example                           # ~/.pgpass 템플릿
+├── .pgpass.example                           # ~/.pgpass 형식 참조 (실파일은 secrets 레포가 오버레이)
 ├── generate-key.sh / .ps1                    # SSH 키 생성 + ssh-agent 등록
 ├── add-workspace-user.sh / .ps1              # workspace별 git identity (includeIf)
 ├── setup-secrets.sh                          # ~/.secrets 인터랙티브 커스터마이저 (선택)
