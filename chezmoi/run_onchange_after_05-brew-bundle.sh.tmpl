@@ -6,5 +6,10 @@
 set -euo pipefail
 command -v brew >/dev/null 2>&1 || { printf '→ brew not found; skipping packages\n'; exit 0; }
 
-brew bundle --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile"
-brew bundle --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile.cask"
+# --no-upgrade: install missing packages only, don't bump versions
+# (a docker-desktop upgrade needs sudo, which can't prompt in a non-interactive apply).
+brew bundle --no-upgrade --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile"
+
+# brew 6.0 refuses casks from untrusted third-party taps; aerospace needs this.
+brew trust nikitabobko/tap
+brew bundle --no-upgrade --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile.cask"
