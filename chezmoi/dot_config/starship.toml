@@ -1,0 +1,6 @@
+# starship prompt — https://starship.rs/config/
+# Defaults are sensible; tweak here and `chezmoi apply`. For a ready-made look,
+# run e.g. `starship preset pastel-powerline -o ~/.config/starship.toml`.
+
+# Bump from the 500ms default so git status in large repos doesn't blank the prompt.
+command_timeout = 1000

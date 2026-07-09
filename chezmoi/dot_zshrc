@@ -16,9 +16,9 @@ fi
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-# Theme switch: enable only one of the two below
-# ZSH_THEME="powerlevel10k/powerlevel10k"
-ZSH_THEME=""  # leave empty when using starship
+# Prompt is handled by starship (init at the end of this file), so keep the
+# oh-my-zsh theme empty.
+ZSH_THEME=""
 
 plugins=(
     git brew
@@ -83,5 +83,10 @@ fi
 # zoxide (autojump replacement, z/zi commands)
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
+fi
+
+# starship (cross-shell prompt; replaced the old powerlevel10k theme)
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
 fi
 

@@ -2,6 +2,7 @@
 brew "git"
 brew "neovim"
 brew "tmux"
+brew "starship"        # Cross-shell prompt (replaces powerlevel10k); init in .zshrc
 brew "fzf"              # Fuzzy finder (Ctrl+R history, Ctrl+T files). Used by zsh/neovim telescope
 brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
 brew "fd"               # fd: intuitive file search (find replacement). Used by neovim file navigation
