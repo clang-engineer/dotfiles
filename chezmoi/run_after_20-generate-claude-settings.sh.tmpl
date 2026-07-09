@@ -7,12 +7,12 @@ set -euo pipefail
 REPO="{{ .chezmoi.sourceDir | dir }}"
 [ -f "$HOME/.secrets" ] && . "$HOME/.secrets"
 
+# Which personal dirs to expose to Claude comes from $CLAUDE_EXTRA_DIRS (a space-
+# separated list set in the private secrets repo's env); empty for public clones.
 dirs=()
-[ -n "${BLOG_DIR:-}" ]     && dirs+=("\"$BLOG_DIR\"")
-[ -n "${VAULT_DIR:-}" ]    && dirs+=("\"$VAULT_DIR\"")
-[ -n "${DEVKIT_DIR:-}" ]   && dirs+=("\"$DEVKIT_DIR\"")
-[ -n "${DOTFILES_DIR:-}" ] && dirs+=("\"$DOTFILES_DIR\"")
-[ -n "${PROFILE_DIR:-}" ]  && dirs+=("\"$PROFILE_DIR\"")
+for d in ${CLAUDE_EXTRA_DIRS:-}; do
+  dirs+=("\"$d\"")
+done
 
 joined=$(printf '%s, ' "${dirs[@]}")
 joined="${joined%, }"
