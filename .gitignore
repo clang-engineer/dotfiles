@@ -29,9 +29,7 @@ nvim/lazy/lua/user/db/*/
 # public repo — the private `secrets` overlay drops them into ~/.claude locally.
 claude/*
 !claude/README.md
-!claude/settings.template.json
 !claude/keybindings.json
-!claude/statusline.sh
 !claude/check-env.sh
 !claude/link-commands.sh
 !claude/commands/

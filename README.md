@@ -47,7 +47,7 @@ turns it into your home directory:
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
 | `symlink_dot_claude.tmpl` | `~/.claude` → `claude/` | symlink |
-| `run_once_*`, `run_after_*` | installs · claude settings | scripts |
+| `run_once_*` | shell-tool installs (oh-my-zsh, plugins, TPM, jenv) | scripts |
 
 **Managed vs symlink:** big, live-edited config directories (`nvim/`,
 `hammerspoon/`, `claude/`) stay as their own folders and are symlinked — edit in
@@ -63,15 +63,15 @@ place, no round-trip. Everything else is a managed file; edit with
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `claude/` | Claude Code config — symlinked to `~/.claude` |
 | `packages/` | package manifests only — Brewfile (macOS), scoop-packages.txt (Windows) |
-| `scripts/` | tooling: key gen, workspace identity, secrets/pgpass/java setup, Windows installers |
+| `scripts/` | tooling: key gen, workspace identity, secrets/java setup, Windows installers |
 | `vim/` | legacy Vim (not linked; kept for reference) |
 
 ## Cross-platform
 
 `chezmoi/.chezmoiignore.tmpl` branches by OS — Unix ignores the PowerShell profile
 and Windows nvim path; Windows ignores `.zshrc`/`.tmux.conf`/etc. and the `.sh`
-run-scripts. **Windows is scaffolded but untested after the migration**: the claude
-settings run-script is `.sh` (Unix-only); PowerShell equivalents are a TODO.
+run-scripts. **Windows is scaffolded but untested after the migration**: the install
+run-script is `.sh` (Unix-only); PowerShell equivalents are a TODO.
 
 ## Secrets
 

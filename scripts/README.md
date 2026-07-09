@@ -8,7 +8,6 @@ some are invoked by chezmoi run-scripts, but most are helpers you run manually w
 ```
 scripts/
 ├── README.md
-├── .pgpass.example                           # ~/.pgpass format reference (real file overlaid by secrets repo)
 ├── generate-key.sh / .ps1                    # SSH key generation + ssh-agent registration
 ├── add-workspace-user.sh / .ps1              # per-workspace git identity (includeIf)
 ├── setup-java-versions.sh                    # jenv-based Java version setup

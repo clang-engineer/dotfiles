@@ -80,8 +80,8 @@ Machine paths (`WORKSPACE_DIR`, `VAULT_DIR`, …) and any synced credentials are
 in the public scaffold — they live in the private `secrets` repo. If you have access,
 clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
 sources its `env`, overlays real SSH hosts, nvim DB connections, and `~/.pgpass`, and
-generates `~/.claude/settings.json` from the public template (`claude/settings.template.json`).
-That repo's README documents the exact clone command.
+generates `~/.claude/settings.json` (its own claude overlay owns the settings template
+and statusline). That repo's README documents the exact clone command.
 
 ## 5. Git identity
 

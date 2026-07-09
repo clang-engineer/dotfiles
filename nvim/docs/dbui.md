@@ -59,7 +59,7 @@ dadbod invokes `psql` non-interactively, so the password prompt does not work. T
 `~/.pgpass` is owned by the private `secrets` repo. Its `setup.sh` symlinks
 `secrets/postgres/pgpass` to `~/.pgpass` and sets the source to permission 600.
 Since the password lives in the repo, no hand-editing is needed on a new machine. Public users
-without secrets access can create it by hand from `scripts/.pgpass.example`
+without secrets access can create it by hand in this format
 (Windows: `%APPDATA%\postgresql\pgpass.conf`):
 
 ```
