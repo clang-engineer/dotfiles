@@ -5,6 +5,7 @@ Documents
 15-windows-install.ps1
 {{ else }}
 # Unix-only — ignored on Windows
+.secrets
 .zshrc
 .bashrc
 .bash_profile
@@ -17,7 +18,6 @@ Documents
 05-brew-bundle.sh
 10-install-shell-tools.sh
 20-generate-claude-settings.sh
-30-secrets-overlay.sh
 {{ end }}
 # SSH host configs overlaid by the private secrets repo (both OS)
 .ssh/config.d/[1-9]*

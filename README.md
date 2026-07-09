@@ -47,8 +47,7 @@ turns it into your home directory:
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
 | `symlink_dot_claude.tmpl` | `~/.claude` → `claude/` | symlink |
-| `run_once_*`, `run_after_*` | installs · claude settings · secrets overlay | scripts |
-| `.chezmoiexternal.toml.tmpl` | pulls the private `secrets` repo | external |
+| `run_once_*`, `run_after_*` | installs · claude settings | scripts |
 
 **Managed vs symlink:** big, live-edited config directories (`nvim/`,
 `hammerspoon/`, `claude/`) stay as their own folders and are symlinked — edit in
@@ -72,15 +71,14 @@ place, no round-trip. Everything else is a managed file; edit with
 `chezmoi/.chezmoiignore.tmpl` branches by OS — Unix ignores the PowerShell profile
 and Windows nvim path; Windows ignores `.zshrc`/`.tmux.conf`/etc. and the `.sh`
 run-scripts. **Windows is scaffolded but untested after the migration**: the claude
-settings + secrets-overlay run-scripts are `.sh` (Unix-only); PowerShell equivalents
-are a TODO.
+settings run-script is `.sh` (Unix-only); PowerShell equivalents are a TODO.
 
 ## Secrets
 
-Nothing private lives in this repo. The private `secrets` companion (real SSH hosts,
-nvim DB connections) is pulled by `.chezmoiexternal` **only when `SECRETS_REPO` is
-set** in `~/.secrets`; a public clone without it just skips the whole thing. See
-[SETUP.md](SETUP.md#8-security).
+Nothing private lives in this repo. `chezmoi apply` installs only the public config.
+The private `secrets` companion (real SSH hosts, nvim DB connections, `~/.pgpass`) owns
+its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
+command. Public clones simply skip it. See [SETUP.md](SETUP.md#8-security).
 
 > Comments inside the config files are in Korean, but the configs themselves are
 > language-agnostic — the setup works the same regardless.

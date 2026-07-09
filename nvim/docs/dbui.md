@@ -56,8 +56,7 @@ dadbod invokes `psql` non-interactively, so the password prompt does not work. T
 
 ### Setup procedure
 
-`~/.pgpass` is owned by the private `secrets` repo. After `chezmoi apply` pulls secrets via
-`.chezmoiexternal`, `run_after_30-secrets-overlay.sh` → `secrets/setup.sh` symlinks
+`~/.pgpass` is owned by the private `secrets` repo. Its `setup.sh` symlinks
 `secrets/postgres/pgpass` to `~/.pgpass` and sets the source to permission 600.
 Since the password lives in the repo, no hand-editing is needed on a new machine. Public users
 without secrets access can create it by hand from `scripts/.pgpass.example`

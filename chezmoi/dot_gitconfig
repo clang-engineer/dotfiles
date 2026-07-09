@@ -6,7 +6,7 @@
 	process = git-lfs filter-process
 	required = true
 # Identity ([user] name/email) is set per-machine in ~/.gitconfig.local
-# (gitignored). Template: scripts/.gitconfig.local.example
+# (gitignored), created by chezmoi/create_dot_gitconfig.local.tmpl at init.
 [include]
 	path = ~/.gitconfig.local
 [core]

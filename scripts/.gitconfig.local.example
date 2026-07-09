@@ -1,6 +1,0 @@
-# Copy this to ~/.gitconfig.local and fill in your identity.
-# Workspace-scoped users will be appended here by ./scripts/add-workspace-user.sh.
-
-[user]
-	name = Your Name
-	email = you@example.com

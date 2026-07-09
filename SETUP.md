@@ -53,7 +53,6 @@ of truth. This section lists only the scripts that run:
 |---|---|
 | `run_once_after_10-install-shell-tools.sh` | oh-my-zsh, zsh plugins, TPM, jenv |
 | `run_after_20-generate-claude-settings.sh` | generate `claude/settings.json` from `~/.secrets` env |
-| `run_after_30-secrets-overlay.sh` | overlay the secrets repo when `SECRETS_DIR` is set |
 
 > Edit configs afterwards with `chezmoi edit --apply ~/.zshrc` (edit source + apply
 > immediately). nvim/hammerspoon/claude are symlinks, so edit them directly as usual.
@@ -66,17 +65,24 @@ brew bundle --file packages/Brewfile
 
 ## 4. Machine-local secrets (`~/.secrets`)
 
-Tokens and machine paths go in `~/.secrets` (never committed). The shell sources
-it automatically.
+Bootstrap tokens live in `~/.secrets` (never committed). `chezmoi apply` creates it
+once from a scaffold (`create_private_` → mode 0600, written only if missing and never
+overwritten), so anything you fill in survives later applies:
 
 ```sh
-cp scripts/.secrets.example ~/.secrets && chmod 600 ~/.secrets
-$EDITOR ~/.secrets   # GITHUB_TOKEN, workspace paths, (optional) SECRETS_REPO, etc.
+$EDITOR ~/.secrets   # add GITHUB_TOKEN, API keys, etc. as you need them
 ```
 
-On Windows: `scripts/.secrets.ps1.example` → `~/.secrets.ps1`. Both files are in
-`.gitignore` so they're never committed, and `.zshrc` / `.bashrc` / PowerShell
-`$PROFILE` source them automatically.
+The shell (`.zshrc` / `.bashrc`) sources it automatically — open a new shell to load
+edits. On Windows, PowerShell's `$PROFILE` sources `~/.secrets.ps1`, which you create
+by hand (chezmoi scaffolds only the Unix `~/.secrets`).
+
+Machine paths (`WORKSPACE_DIR`, `VAULT_DIR`, …) and any synced credentials are **not**
+in the public scaffold — they live in the private `secrets` repo. If you have access,
+clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
+sources its `env`, and overlays real SSH hosts, nvim DB connections, and `~/.pgpass`.
+Re-run `chezmoi apply` afterward so scripts that read those paths (e.g. claude settings)
+pick them up. That repo's README documents the exact clone command.
 
 ## 5. Git identity
 
@@ -85,8 +91,7 @@ On Windows: `scripts/.secrets.ps1.example` → `~/.secrets.ps1`. Both files are 
 name/email you entered at `chezmoi init` (step 1), and chezmoi never overwrites
 it afterwards. Change them later with `chezmoi edit ~/.gitconfig.local` or by
 editing the file directly. If you skipped the prompts, the `[user]` fields are
-left empty and git asks on your first commit. Reference:
-`scripts/.gitconfig.local.example`.
+left empty and git asks on your first commit.
 
 To add a workspace-scoped identity (a different name/email for repos under a
 given directory), run `scripts/add-workspace-user.sh` — it appends an
