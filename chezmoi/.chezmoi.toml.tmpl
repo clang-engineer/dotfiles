@@ -1,0 +1,18 @@
+{{- /*
+  chezmoi config, generated once by `chezmoi init`. This is the only place
+  chezmoi allows prompt* functions, so the per-machine Git identity is asked
+  here and exposed to templates as .gitName / .gitEmail (used by
+  create_dot_gitconfig.local.tmpl).
+
+  sourceDir is derived, not hardcoded: `.chezmoiroot` puts the source under
+  chezmoi/, so `.chezmoi.sourceDir` points at <repo>/chezmoi — strip the last
+  segment with `dir` to get the repo root. This replaces the old manual
+  `echo 'sourceDir = ...' > chezmoi.toml` bootstrap step.
+
+  Empty defaults keep a non-interactive `chezmoi init` from failing.
+*/ -}}
+sourceDir = {{ .chezmoi.sourceDir | dir | quote }}
+
+[data]
+    gitName  = {{ promptStringOnce . "gitName" "Git user name" "" | quote }}
+    gitEmail = {{ promptStringOnce . "gitEmail" "Git user email" "" | quote }}

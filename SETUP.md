@@ -14,19 +14,20 @@
 
 ## 1. Link chezmoi (machine-local, once)
 
-Create `~/.config/chezmoi/chezmoi.toml` so chezmoi uses this repo as its source:
+Generate `~/.config/chezmoi/chezmoi.toml` so chezmoi uses this repo as its source:
 
 ```sh
-mkdir -p ~/.config/chezmoi
-echo 'sourceDir = "~/dotfiles"' > ~/.config/chezmoi/chezmoi.toml
+chezmoi init --source ~/dotfiles
 ```
 
-> `~` is expanded by chezmoi, so there's nothing to change per machine. Templates
-> derive the repo path via `{{ .chezmoi.sourceDir | dir }}`, so no extra setting
-> like `dotfilesDir` is needed.
+> This runs `.chezmoi.toml.tmpl`, which **prompts once for your git name/email**
+> (stored as `.gitName` / `.gitEmail`, used by `create_dot_gitconfig.local.tmpl`)
+> and derives `sourceDir` from where you cloned via `{{ .chezmoi.sourceDir | dir }}`
+> — so there's nothing to hardcode per machine.
 >
-> `.chezmoiroot` scopes the source root under `chezmoi/`, so docs, packages, and
-> scripts are automatically excluded from chezmoi's targets.
+> `.chezmoiroot` scopes the source root under `chezmoi/` (so `.chezmoi.sourceDir`
+> is `<repo>/chezmoi` and `dir` strips it back to the repo root); docs, packages,
+> and scripts are automatically excluded from chezmoi's targets.
 
 ## 2. Apply
 
@@ -80,12 +81,16 @@ On Windows: `scripts/.secrets.ps1.example` → `~/.secrets.ps1`. Both files are 
 ## 5. Git identity
 
 `dot_gitconfig` holds only shared settings plus `[include] ~/.gitconfig.local`.
-Put your own identity in `~/.gitconfig.local`:
+`~/.gitconfig.local` is created by `create_dot_gitconfig.local.tmpl` from the
+name/email you entered at `chezmoi init` (step 1), and chezmoi never overwrites
+it afterwards. Change them later with `chezmoi edit ~/.gitconfig.local` or by
+editing the file directly. If you skipped the prompts, the `[user]` fields are
+left empty and git asks on your first commit. Reference:
+`scripts/.gitconfig.local.example`.
 
-```sh
-cp scripts/.gitconfig.local.example ~/.gitconfig.local
-# edit and fill in [user] name/email
-```
+To add a workspace-scoped identity (a different name/email for repos under a
+given directory), run `scripts/add-workspace-user.sh` — it appends an
+`[includeIf "gitdir:..."]` block to the same file.
 
 ## 6. Sync Neovim plugins
 

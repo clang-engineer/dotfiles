@@ -1,0 +1,12 @@
+{{- /*
+  Machine-local Git identity. `create_` = chezmoi writes this once if it's
+  missing, then never touches it again — so `scripts/add-workspace-user.sh`
+  can append [includeIf "gitdir:..."] blocks afterwards without being clobbered.
+  Values come from the prompt in .chezmoi.toml.tmpl (asked once at `chezmoi
+  init`); `index` keeps this from erroring if that data is somehow absent, in
+  which case git fails loudly on the first commit rather than using a placeholder.
+  Change them later with `chezmoi edit ~/.gitconfig.local` or edit the file.
+*/ -}}
+[user]
+	name  = {{ index . "gitName" | default "" }}
+	email = {{ index . "gitEmail" | default "" }}
