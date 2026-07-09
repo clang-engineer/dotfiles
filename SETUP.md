@@ -52,7 +52,6 @@ of truth. This section lists only the scripts that run:
 | Script | Action |
 |---|---|
 | `run_once_after_10-install-shell-tools.sh` | oh-my-zsh, zsh plugins, TPM, jenv |
-| `run_after_20-generate-claude-settings.sh` | generate `claude/settings.json` from `~/.secrets` env |
 
 > Edit configs afterwards with `chezmoi edit --apply ~/.zshrc` (edit source + apply
 > immediately). nvim/hammerspoon/claude are symlinks, so edit them directly as usual.
@@ -80,9 +79,9 @@ by hand (chezmoi scaffolds only the Unix `~/.secrets`).
 Machine paths (`WORKSPACE_DIR`, `VAULT_DIR`, …) and any synced credentials are **not**
 in the public scaffold — they live in the private `secrets` repo. If you have access,
 clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
-sources its `env`, and overlays real SSH hosts, nvim DB connections, and `~/.pgpass`.
-Re-run `chezmoi apply` afterward so scripts that read those paths (e.g. claude settings)
-pick them up. That repo's README documents the exact clone command.
+sources its `env`, overlays real SSH hosts, nvim DB connections, and `~/.pgpass`, and
+generates `~/.claude/settings.json` from the public template (`claude/settings.template.json`).
+That repo's README documents the exact clone command.
 
 ## 5. Git identity
 

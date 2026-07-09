@@ -48,9 +48,6 @@ if command -v eza &>/dev/null; then alias ls="eza"; fi
 alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
 
-# OpenCode aliases
-[ -f ~/.opencode_aliases ] && source ~/.opencode_aliases
-
 # rbenv
 if command -v rbenv &>/dev/null; then
   eval "$(rbenv init - zsh)"

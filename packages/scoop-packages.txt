@@ -14,7 +14,6 @@ lazygit           # Git TUI client. Stage/commit/rebase from the keyboard
 mingw             # GCC toolchain for Windows (build native binaries)
 neovim            # Vim-based modern editor. Lua config, async plugins
 nvm               # Node.js version manager (e.g. nvm install 20 && nvm use 20)
-opencode          # Terminal-based AI coding assistant
 python            # Python interpreter for Windows
 ripgrep           # grep replacement. Blazing-fast text search, respects .gitignore (e.g. rg -i "todo")
 starship          # Cross-platform prompt. Shows git status / language versions in the prompt
