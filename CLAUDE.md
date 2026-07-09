@@ -19,6 +19,9 @@ nvim --headless "+Lazy sync" +qa            # sync plugins
 - Lua: stylua (indent 2, column 120)
 - Filenames: lowercase + hyphen (`my-script.sh`)
 - Commits: `feat(scope):`, `fix(scope):`, `chore:` format
+- **Prefer chezmoi-native over scripts**: reach for built-in features (`create_`,
+  `symlink_`, `.chezmoiexternal`, init prompts, templates) before adding a `run_`
+  shell script. Minimize script dependencies so `chezmoi apply` stays declarative.
 
 ## Security (must hold before every commit)
 - Never commit `.env`, `.secrets`, `credentials`, or real keys. Private values live in
