@@ -25,6 +25,17 @@ return {
           table.insert(cmd, string.format("--jvm-arg=-javaagent:%s", lombok_jar))
         end
       end
+      -- jdtls runtime: throughput GC tuning (jdtls' own recommended args, which
+      -- mason's launcher omits). Cuts GC overhead during indexing. Heap (-Xmx)
+      -- left at the JVM default on purpose: 16GB RAM is tight, raising it risks swap.
+      for _, arg in ipairs({
+        "-XX:+UseParallelGC",
+        "-XX:GCTimeRatio=4",
+        "-XX:AdaptiveSizePolicyWeight=90",
+        "-Dsun.zip.disableMemoryMapping=true",
+      }) do
+        table.insert(cmd, "--jvm-arg=" .. arg)
+      end
       -- jdtls runtime: pin the JDK used to start the server.
       table.insert(cmd, "--java-executable")
       table.insert(cmd, java_home .. "/bin/java")
