@@ -20,6 +20,10 @@ packages/Brewfile.lock.json
 .secrets
 .secrets.ps1
 
+# nvim DB connections are private (overlaid from the secrets repo) — only db/init.lua is tracked.
+# Any subdirectory here (connections/, backups, etc.) must never be committed.
+nvim/lazy/lua/user/db/*/
+
 # claude code: ignore everything, allow only the public scaffold.
 # personal instructions (CLAUDE.md) and vault/blog-bound skills stay out of the
 # public repo — the private `secrets` overlay drops them into ~/.claude locally.
