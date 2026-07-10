@@ -1,0 +1,19 @@
+# ~/.config/smug/workspace1.yml
+# tmux-layout.sh의 workspace1 세션 이식 · 실행: smug start workspace1
+session: workspace1
+root: ~/                    # 모든 pane 시작 디렉토리 (원본 셸의 cd ~/)
+windows:
+  # server: 위 좌/우 2개 + 아래 전체폭 1개.
+  # tmux 표준 프리셋(main-vertical 등)에 없는 배치라 tmux 레이아웃 문자열로 고정한다.
+  # ┌───────┬───────┐
+  # │ pane0 │ pane1 │
+  # ├───────┴───────┤
+  # │     pane2     │
+  # └───────────────┘
+  - name: server
+    layout: 60d1,220x50,0,0[220x25,0,0{110x25,0,0,0,109x25,111,0,2},220x24,0,26,1]
+    panes:                  # base 1개 + 2개 = 3 panes (배치는 위 layout 문자열이 확정)
+      -
+      -
+  # editor: 단일 pane
+  - name: editor
