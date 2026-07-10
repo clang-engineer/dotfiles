@@ -3,10 +3,7 @@
 start-at-login = true
 
 # Notify Hammerspoon on workspace change
-exec-on-workspace-change = [
-  '/bin/bash', '-c',
-  'open -g hammerspoon://aerospace-workspace-changed',
-]
+exec-on-workspace-change = ['open', '-g', 'hammerspoon://aerospace-workspace-changed']
 
 # Keybindings
 # NOTE: [mode.main.binding] overrides ALL defaults, so base keys must be listed
@@ -43,7 +40,7 @@ alt-shift-0 = ['exec-and-forget ~/.hammerspoon/modules/aerospace-reflow.sh']  # 
 # 4: Dev Tools (IntelliJ, DataGrip)
 
 # ╔══════════════════════════════════════════╗
-# ║  Workspace 1: Browser & AI              ║
+# ║  Workspace 1: Browser & AI               ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'              # Chrome
@@ -62,14 +59,14 @@ if.app-id = 'com.google.Chrome.app.dgbbiofhojegonmgagbboheelnddaopf' # ChatGPT (
 run = ['move-node-to-workspace 1:Browser', 'layout floating']
 
 # ╔══════════════════════════════════════════╗
-# ║  Workspace 2: Terminal                  ║
+# ║  Workspace 2: Terminal                   ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'          # Ghostty
-run = 'move-node-to-workspace 2:Terminal'
+run = ['move-node-to-workspace 2:Terminal']  # only tiling workspace — no 'layout floating'
 
 # ╔══════════════════════════════════════════╗
-# ║  Workspace 3: Communication             ║
+# ║  Workspace 3: Communication              ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'           # Teams
@@ -80,7 +77,7 @@ if.app-id = 'com.microsoft.Outlook'          # Outlook
 run = ['move-node-to-workspace 3:Company', 'layout floating']
 
 # ╔══════════════════════════════════════════╗
-# ║  Workspace 4: Dev Tools                ║
+# ║  Workspace 4: Dev Tools                  ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.intellij'            # IntelliJ IDEA
@@ -91,7 +88,7 @@ if.app-id = 'com.jetbrains.datagrip'            # DataGrip
 run = ['move-node-to-workspace 4:JetBrains', 'layout floating']
 
 # ╔══════════════════════════════════════════╗
-# ║  Default: Floating                      ║
+# ║  Default: Floating                       ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
-run = 'layout floating'
+run = ['layout floating']
