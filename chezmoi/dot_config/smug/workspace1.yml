@@ -13,7 +13,7 @@ windows:
   - name: server
     layout: 60d1,220x50,0,0[220x25,0,0{110x25,0,0,0,109x25,111,0,2},220x24,0,26,1]
     panes:                  # base 1개 + 2개 = 3 panes (배치는 위 layout 문자열이 확정)
-      -
-      -
+      - {}                  # bare '-'(null)는 smug가 버려서 pane이 안 생김 → 빈 map으로 명시
+      - {}
   # editor: 단일 pane
   - name: editor
