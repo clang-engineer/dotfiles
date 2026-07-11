@@ -91,4 +91,5 @@ run = ['move-node-to-workspace 4:JetBrains', 'layout floating']
 # ║  Default: Floating                       ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
+if = 'true'
 run = ['layout floating']
