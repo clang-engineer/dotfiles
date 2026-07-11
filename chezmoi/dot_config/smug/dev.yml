@@ -1,13 +1,11 @@
-# ~/.config/smug/dev.yml
-# 좌우 2분할 개발 세션 · 오른쪽 pane에 claude 자동 실행
-# 실행(tmux 안): smug switch dev   # 생성 + 현재 클라이언트를 dev로 전환
-#   ※ tmux 안에서 'smug start dev'는 세션만 만들고 화면 전환 안 됨 → -a(=switch) 필요
-# 레이아웃/명령 바꾼 뒤 다시 읽으려면: smug stop dev && smug switch dev
+# 좌우 2분할, 왼쪽 pane에 claude 자동 실행
+# 실행: smug switch dev   (tmux 안에서는 start 아닌 switch)
 session: dev
-root: ~/                       # 모든 pane 시작 디렉토리
+root: ~/
 windows:
   - name: dev
-    layout: even-horizontal    # 좌우 균등 2분할. 상하로 원하면 even-vertical
-    panes:                     # base pane(왼쪽) + 아래 1개 = 2 panes
-      - commands:              # 오른쪽 pane
-          - claude
+    layout: even-horizontal
+    commands:
+      - claude
+    panes:
+      - commands: []
