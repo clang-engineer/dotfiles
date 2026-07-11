@@ -1,7 +1,0 @@
-# ~/.config/smug/default.yml
-# 빈 default 세션 (원본 스크립트가 세션 목록 정렬용으로 먼저 만들던 것) · 실행: smug start default
-# 필요 없으면 지워도 됨 — workspace1.yml만으로 부트스트랩은 충분하다.
-session: default
-root: ~/
-windows:
-  - name: default

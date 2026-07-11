@@ -11,7 +11,6 @@ scripts/
 ├── generate-key.sh / .ps1                    # SSH key generation + ssh-agent registration
 ├── add-workspace-user.sh / .ps1              # per-workspace git identity (includeIf)
 ├── setup-java-versions.sh                    # jenv-based Java version setup
-├── tmux-layout.sh                            # tmux layout helper
 ├── lib/                                      # shared functions (common.sh)
 └── windows/
     ├── install-windows.ps1                   # Windows install orchestrator
