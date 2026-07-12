@@ -29,7 +29,7 @@ tmux_conf_new_session_prompt=false
 #   - true
 #   - false (default)
 #   - disabled (do not modify new-session bindings)
-tmux_conf_new_session_retain_current_path=true
+tmux_conf_new_session_retain_current_path=false
 
 
 # -- windows & pane creation ---------------------------------------------------
@@ -38,7 +38,7 @@ tmux_conf_new_session_retain_current_path=true
 #   - true
 #   - false (default)
 #   - disabled (do not modify new-window bindings)
-tmux_conf_new_window_retain_current_path=true
+tmux_conf_new_window_retain_current_path=false
 
 # new window tries to reconnect ssh sessions, possible values are:
 #   - true
@@ -89,7 +89,7 @@ tmux_conf_theme=enabled
 tmux_conf_theme_colour_1="#080808"    # dark gray
 tmux_conf_theme_colour_2="#303030"    # gray
 tmux_conf_theme_colour_3="#8a8a8a"    # light gray
-tmux_conf_theme_colour_4="#00afaf"    # cyan (Oh my tmux! default is light blue #00afff)
+tmux_conf_theme_colour_4="#00afff"    # light blue
 tmux_conf_theme_colour_5="#ffff00"    # yellow
 tmux_conf_theme_colour_6="#080808"    # dark gray
 tmux_conf_theme_colour_7="#e4e4e4"    # white
@@ -370,7 +370,7 @@ tmux_conf_theme_clock_style="24"
 #   - false (default)
 #   - disabled
 # on Linux, this requires xsel, xclip or wl-copy
-tmux_conf_copy_to_os_clipboard=true
+tmux_conf_copy_to_os_clipboard=false
 
 
 # -- urlscan -------------------------------------------------------------------
@@ -404,35 +404,15 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # if you don't want Oh my tmux! to alter a binding or a setting, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
-# -- my overrides --------------------------------------------------------------
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (keymaps) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-# bigger scrollback (Oh my tmux! sets 5000; we relied on tmux-sensible's 50000)
-set -g history-limit 50000
-
-# vi copy mode + let apps inside tmux set the system clipboard over OSC 52
+# vi copy-mode (OMT defaults emacs; enables Y below)
 setw -g mode-keys vi
-set -g set-clipboard on
 
-# reclaim prefix + m for pane marking. This is tmux's STOCK binding
-# (prefix + m = select-pane -m, prefix + M = clear); Oh my tmux! overrode it with a
-# mouse toggle, but we keep the mouse always on. The Y binding below targets '{marked}'.
-bind m select-pane -m
+# paste selection into the marked pane (agent); no focus/Enter. Mark via right-click → Mark
+bind -T copy-mode-vi Y send -X copy-pipe-and-cancel "tmux load-buffer -b agent -; if [ $(tmux display-message -p '#{pane_marked_set}') = 1 ]; then tmux paste-buffer -t '{marked}' -b agent -p -d; else tmux display-message 'no marked pane — right-click the agent pane and choose Mark'; fi"
 
-# mouse-drag release keeps the selection and stays in copy mode (default copies &
-# cancels, exiting copy mode) so a mouse selection can be followed by Y.
-bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-selection-no-clear
-
-# Y: send the copy-mode selection to the marked pane (an AI agent) via bracketed
-# paste — no focus change, no trailing Enter (nothing submits until you press it).
-# Mark the agent pane first with prefix + m. y/Enter still copy to the OS clipboard.
-bind -T copy-mode-vi Y send -X copy-pipe-and-cancel "tmux load-buffer -b agent -; if [ $(tmux display-message -p '#{pane_marked_set}') = 1 ]; then tmux paste-buffer -t '{marked}' -b agent -p -d; else tmux display-message 'no marked pane — press prefix+m on the agent pane'; fi"
-
-# tmux-agent-sidebar auto-close: the plugin wires it to `pane-exited`, which never
-# fires on kill-pane (prefix + x). We ADD a `window-layout-changed` hook (fires on any
-# pane removal, with the correct #{hook_window}) to cover that gap. The plugin's dedup
-# leaves window-layout-changed untouched, so this survives plugin load — no post-tpm
-# ordering dance needed. Upstream bug; drop once a fix ships.
-set-hook -ga window-layout-changed 'run-shell "\"#{@agent_sidebar_bin}\" auto-close \"#{hook_window}\""'
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end MY-OVERRIDE (keymaps) <<<<<<<<<<<<<<<<<<<<<<<<
 
 # move status line to top
 #set -g status-position top
@@ -450,12 +430,12 @@ set-hook -ga window-layout-changed 'run-shell "\"#{@agent_sidebar_bin}\" auto-cl
 # by default, launching tmux will update tpm and all plugins
 #   - true (default)
 #   - false
-tmux_conf_update_plugins_on_launch=false
+tmux_conf_update_plugins_on_launch=true
 
 # by default, reloading the configuration will update tpm and all plugins
 #   - true (default)
 #   - false
-tmux_conf_update_plugins_on_reload=false
+tmux_conf_update_plugins_on_reload=true
 
 # by default, reloading the configuration will uninstall tpm and plugins when no
 # plugins are enabled
@@ -474,27 +454,26 @@ tmux_conf_uninstall_plugins_on_reload=true
 # /!\ the 'set -g @tpm_plugins' syntax is not supported
 # to enable a plugin, use the 'set -g @plugin' syntax:
 # visit https://github.com/tmux-plugins for available plugins
-# NB: do NOT re-add tmux-sensible (Oh my tmux! already applies sensible defaults),
-#     tmux-themepack (we use Oh my tmux!'s own theme), or tpm itself (see above).
-set -g @plugin 'christoomey/vim-tmux-navigator'   # Ctrl-hjkl across tmux panes and vim/nvim splits
-set -g @plugin 'tmux-plugins/tmux-resurrect'      # persist/restore sessions across restarts
-set -g @plugin 'tmux-plugins/tmux-continuum'      # auto-save sessions (and restore on start)
-set -g @plugin 'hiroppy/tmux-agent-sidebar'       # AI agent (Claude Code/Codex) status sidebar
-set -g @plugin 'accessd/tmux-agent-indicator'     # agent state on the pane border
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (plugins) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# don't re-add: tmux-sensible / tmux-themepack / tpm (OMT already covers these)
+set -g @plugin 'christoomey/vim-tmux-navigator'   # Ctrl-hjkl across tmux/vim splits
+set -g @plugin 'tmux-plugins/tmux-resurrect'      # persist/restore sessions
+set -g @plugin 'tmux-plugins/tmux-continuum'      # auto-save (+ restore on start)
+set -g @plugin 'hiroppy/tmux-agent-sidebar'       # AI agent status sidebar
+set -g @plugin 'accessd/tmux-agent-indicator'     # agent state on pane border
 
 set -g @resurrect-capture-pane-contents 'on'
 set -g @continuum-restore 'on'
 
-# tmux-agent-sidebar: toggle keys default to e/E; e collides with Oh my tmux!'s "edit
-# .tmux.conf.local", so move the sidebar to a/A (keeps the case pairing, frees E).
+# sidebar toggle → a/A (OMT uses e for "edit config")
 set -g @sidebar_key 'a'
 set -g @sidebar_key_all 'A'
-set -g @sidebar_auto_create 'off'                 # open manually with prefix + a, not on every new window
+set -g @sidebar_auto_create 'off'                 # manual open (prefix+a), not auto
 
-# tmux-agent-indicator: border-only — no bg fill (would cover pane content), no
-# status-bar icons (would collide with the theme's status-right).
+# indicator: border-only (no bg fill, no status icons)
 set -g @agent-indicator-background-enabled 'off'
 set -g @agent-indicator-indicator-enabled 'off'
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end MY-OVERRIDE (plugins) <<<<<<<<<<<<<<<<<<<<<<<<
 
 
 # -- custom variables ----------------------------------------------------------
