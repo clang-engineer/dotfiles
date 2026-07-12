@@ -1,13 +1,48 @@
 -- dashboard: snacks.dashboard 헤더를 ASCII 고양이 아트로 교체
 -- 순수 텍스트라 폰트에서 100% 선명 — 의존성 0, 크로스플랫폼
 --
--- CAT 한 단어로 전환: "sitting"(앉은 고양이) | "lying"(누워있는 고양이)
+-- CAT 한 단어로 전환: "magic" | "coding" | "sitting" | "lying"
 -- 주의: snacks는 header를 줄 단위로 center 정렬한다(D:block/align). 줄마다 폭이 다르면
 -- center 오프셋이 달라져 왼쪽 시작점이 어긋나며 아트가 깨진다.
 -- → 아래에서 모든 줄을 최대 폭으로 오른쪽 패딩해 폭을 통일 = 오프셋 동일 = 정렬 유지.
-local CAT = "sitting"
+local CAT = "magic"
 
 local cats = {
+  -- cat on a fence under a magic cloud — by Joan Stark (jgs), asciiart.website/art/7597
+  magic = [[
+           *     ,MMM8&&&.            *
+                MMMM88&&&&&    .
+               MMMM88&&&&&&&
+   *           MMM88&&&&&&&&
+               MMM88&&&&&&&&
+               'MMM88&&&&&&'
+                 'MMM8&&&'      *
+        |\___/|
+        )     (             .              '
+       =\     /=
+         )===(       *
+        /     \
+        |     |
+       /       \
+       \       /
+_/\_/\_/\__  _/_/\_/\_/\_/\_/\_/\_/\_/\_/\_
+|  |  |  |( (  |  |  |  |  |  |  |  |  |  |
+|  |  |  | ) ) |  |  |  |  |  |  |  |  |  |
+|  |  |  |(_(  |  |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+jgs|  |  |  |  |  |  |  |  |  |  |  |  |  |]],
+
+  coding = [[
+        /\_/\
+       ( o.o )   < commit?
+       / > < \
+      (       )
+     _|_______|_
+    |  _______  |
+    | | >_    | |
+    | |_______| |
+    |___________|]],
+
   lying = [[
    |\      _,,,---,,_
    /,`.-'`'    -.  ;-;;,_
