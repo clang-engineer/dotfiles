@@ -1,0 +1,8 @@
+# Oh my tmux! — the engine (.tmux.conf) lives upstream and is symlinked to
+# ~/.tmux.conf (see symlink_dot_tmux.conf.tmpl). Our customizations live in
+# ~/.tmux.conf.local (managed as dot_tmux.conf.local). tpm installs plugins into
+# ~/.tmux/plugins on first launch.
+[".tmux"]
+    type = "git-repo"
+    url = "https://github.com/gpakosz/.tmux.git"
+    refreshPeriod = "168h"
