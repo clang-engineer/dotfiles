@@ -2,7 +2,7 @@
 brew "git"
 brew "neovim"
 brew "tmux"
-brew "smug"            # tmux 세션 매니저 — 선언형 YAML로 세션/윈도우/pane 부트스트랩 (~/.config/smug/)
+brew "sesh"            # tmux 스마트 세션 매니저 — fzf+zoxide 피커로 디렉토리/git repo 세션 점프 (tmux prefix+T)
 brew "starship"        # Cross-shell prompt (replaces powerlevel10k); init in .zshrc
 brew "fzf"              # Fuzzy finder (Ctrl+R history, Ctrl+T files). Used by zsh/neovim telescope
 brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
