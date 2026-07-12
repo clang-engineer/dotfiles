@@ -1,0 +1,4 @@
+# Ghostty — 테마 단위 적용 지점.
+# theme 한 줄로 터미널 색이 정해지고, tmux(OMT ansi 변형)가 이 ANSI 팔레트를 따라옴.
+# 다른 테마로 바꾸려면 이 줄만 교체 (내장 목록: `ghostty +list-themes`).
+theme = cyberdream
