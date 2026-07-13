@@ -30,7 +30,11 @@ if [ -d "$HOME/.oh-my-zsh" ]; then
 fi
 
 # --- TPM (Tmux Plugin Manager) + declared plugins ---
-if command -v tmux >/dev/null 2>&1; then
+# Require ~/.tmux to be the oh-my-tmux clone (the .chezmoiexternal git-repo).
+# Without this guard, a failed/skipped external clone would let `git clone tpm`
+# create ~/.tmux/plugins/ on its own, leaving ~/.tmux a non-git dir that later
+# breaks `chezmoi apply` (git pull → exit 128).
+if command -v tmux >/dev/null 2>&1 && [ -d "$HOME/.tmux/.git" ]; then
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     printf '→ Installing TPM...\n'
     git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" \
