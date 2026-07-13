@@ -1,0 +1,8 @@
+# sesh — 새 세션 생성 시 기본 동작
+# startup_command 는 세션이 "생성될 때만" 실행된다 (기존 세션 재접속 시 X).
+# 좌우로 분할하고 왼쪽 pane 에서 claude 를 띄운다:
+#   - tmux split-window -h -d : 오른쪽에 빈 셸 pane 생성, -d 로 focus 는 왼쪽 유지
+#   - claude                  : 왼쪽(원래) pane 에서 실행
+# 명시 config 가 없는 모든 세션(디렉토리/zoxide 점프 포함)에 적용된다.
+[default_session]
+startup_command = "tmux split-window -h -d -c '#{pane_current_path}'; claude"
