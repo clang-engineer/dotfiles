@@ -116,7 +116,7 @@ return {
 
     local header = {}
     for i, line in ipairs(lines) do
-      -- 서명 줄: "clang.engineer"(pink) + 우측 펜스(grey) 로 분리
+      -- 서명 줄: "clang.engineer"(CatSign) + 우측 펜스(CatFence) 로 분리
       local name, rest = line:match("^(clang%.engineer)(.*)$")
       if name then
         header[#header + 1] = { name, hl = "CatSign" }
