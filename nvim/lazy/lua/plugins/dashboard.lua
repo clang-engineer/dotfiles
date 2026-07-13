@@ -13,9 +13,9 @@ local cats = {
   duo = [[
            *     ,MMM8&&&.            *
                 MMMM88&&&&&    .
-               MMMM88&&&&&&&
+               MMMM88&&&&&&&           C
    *           MMM88&&&&&&&&
-               MMM88&&&&&&&&
+               MMM88&&&&&&&&        .
                'MMM88&&&&&&'
                  'MMM8&&&'      *    _
         |\___/|                      \\
@@ -37,16 +37,16 @@ clang.engineer |  |  |  |  |  |  |  |  |  |]],
   magic = [[
            *     ,MMM8&&&.            *
                 MMMM88&&&&&    .
-               MMMM88&&&&&&&
+               MMMM88&&&&&&&        C
    *           MMM88&&&&&&&&
-               MMM88&&&&&&&&
+               MMM88&&&&&&&&          .
                'MMM88&&&&&&'
                  'MMM8&&&'      *
-        |\___/|
+        |\___/|                  +
         )     (             .              '
-       =\     /=
+       =\     /=        *
          )===(       *
-        /     \
+        /     \            .
         |     |
        /       \
        \       /
@@ -70,11 +70,62 @@ return {
       lines[i] = l .. (" "):rep(width - vim.fn.strdisplaywidth(l))
     end
 
+    -- 영역별 색 — 전부 cyberdream 팔레트 hex. ColorScheme 시 재적용 → 테마가 덮어써도 복구.
+    -- 색 바꾸려면 fg hex 만 교체.
+    local function set_palette()
+      vim.api.nvim_set_hl(0, "CatSky", { fg = "#bd5eff" }) -- 구름 (purple)
+      vim.api.nvim_set_hl(0, "CatStar", { fg = "#f1ff5e", bold = true }) -- 별·초승달 (yellow, purple 보색)
+      vim.api.nvim_set_hl(0, "CatBody", { fg = "#5ef1ff" }) -- 고양이 (cyan)
+      vim.api.nvim_set_hl(0, "CatFence", { fg = "#7b8496" }) -- 펜스 (grey)
+      vim.api.nvim_set_hl(0, "CatSign", { fg = "#ff5ea0", bold = true }) -- 서명 (pink)
+    end
+    vim.api.nvim_create_autocmd("ColorScheme", { callback = set_palette })
+    set_palette()
+
+    -- 줄 내용으로 영역 판별 (줄 번호 하드코딩 X → duo·magic 공용). 순서 주의: 서명 먼저.
+    local function hl_for(line)
+      if line:find("clang%.engineer") then
+        return "CatSign"
+      elseif line:find("|  |") or line:find("^_/\\") then
+        return "CatFence"
+      elseif line:find("[M&]") then
+        return "CatSky"
+      end
+      return "CatBody"
+    end
+
+    -- 한 줄을 fragment 로 분해: 별 문자(* + C)만 골드로 빼고 나머지는 영역색.
+    local star_chars = { ["*"] = true, ["+"] = true, ["C"] = true }
+    local function push_line(header, line, base)
+      local run, run_hl = "", nil
+      local function flush()
+        if run ~= "" then
+          header[#header + 1] = { run, hl = run_hl }
+        end
+        run = ""
+      end
+      for ch in line:gmatch(".") do
+        local hl = star_chars[ch] and "CatStar" or base
+        if hl ~= run_hl then
+          flush()
+          run_hl = hl
+        end
+        run = run .. ch
+      end
+      flush()
+    end
+
+    local header = {}
+    for i, line in ipairs(lines) do
+      push_line(header, line, hl_for(line))
+      if i < #lines then
+        header[#header + 1] = { "\n" }
+      end
+    end
+
     opts.dashboard = opts.dashboard or {}
-    opts.dashboard.preset = opts.dashboard.preset or {}
-    opts.dashboard.preset.header = table.concat(lines, "\n")
     opts.dashboard.sections = {
-      { section = "header", padding = 1 },
+      { text = header, align = "center", padding = 1 },
       { section = "keys", gap = 1, padding = 1 },
       { section = "startup" },
     }
