@@ -76,17 +76,16 @@ return {
       vim.api.nvim_set_hl(0, "CatSky", { fg = "#bd5eff" }) -- 구름 (purple)
       vim.api.nvim_set_hl(0, "CatStar", { fg = "#f1ff5e", bold = true }) -- 별·초승달 (yellow, purple 보색)
       vim.api.nvim_set_hl(0, "CatBody", { fg = "#5ef1ff" }) -- 고양이 (cyan)
-      vim.api.nvim_set_hl(0, "CatFence", { fg = "#7b8496" }) -- 펜스 (grey)
-      vim.api.nvim_set_hl(0, "CatSign", { fg = "#ff5ea0", bold = true }) -- 서명 (pink)
+      vim.api.nvim_set_hl(0, "CatFence", { fg = "#9aa5b1" }) -- 펜스 (grey)
+      vim.api.nvim_set_hl(0, "CatSign", { fg = "#ffbd5e", bold = true }) -- 서명 (orange 명패)
     end
     vim.api.nvim_create_autocmd("ColorScheme", { callback = set_palette })
     set_palette()
 
-    -- 줄 내용으로 영역 판별 (줄 번호 하드코딩 X → duo·magic 공용). 순서 주의: 서명 먼저.
+    -- 줄 내용으로 영역 판별 (줄 번호 하드코딩 X → duo·magic 공용).
+    -- 서명 줄은 아래 루프에서 이름/펜스로 따로 쪼개므로 여기선 안 다룸.
     local function hl_for(line)
-      if line:find("clang%.engineer") then
-        return "CatSign"
-      elseif line:find("|  |") or line:find("^_/\\") then
+      if line:find("|  |") or line:find("^_/\\") then
         return "CatFence"
       elseif line:find("[M&]") then
         return "CatSky"
@@ -117,7 +116,14 @@ return {
 
     local header = {}
     for i, line in ipairs(lines) do
-      push_line(header, line, hl_for(line))
+      -- 서명 줄: "clang.engineer"(pink) + 우측 펜스(grey) 로 분리
+      local name, rest = line:match("^(clang%.engineer)(.*)$")
+      if name then
+        header[#header + 1] = { name, hl = "CatSign" }
+        push_line(header, rest, "CatFence")
+      else
+        push_line(header, line, hl_for(line))
+      end
       if i < #lines then
         header[#header + 1] = { "\n" }
       end
