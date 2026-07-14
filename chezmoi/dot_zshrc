@@ -12,21 +12,15 @@ export LANG=ko_KR.UTF-8
 # Cache the brew prefix (brew --prefix is slow, so call it only once)
 if command -v brew >/dev/null 2>&1; then
   BREW_PREFIX="$(brew --prefix)"
+  # Homebrew completions (must be on fpath before compinit)
+  fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
 fi
 
-# oh-my-zsh
-export ZSH="$HOME/.oh-my-zsh"
-# Prompt is handled by starship (init at the end of this file), so keep the
-# oh-my-zsh theme empty.
-ZSH_THEME=""
-
-plugins=(
-    git brew
-    zsh-syntax-highlighting
-    zsh-autosuggestions
-)
-
-source ~/.oh-my-zsh/oh-my-zsh.sh
+# Completion system (git, etc.) — was provided by oh-my-zsh
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive matching
+zstyle ':completion:*' menu select                      # arrow-key menu selection
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
 # Command typo correction: 'gti status' → "correct 'gti' to 'git' [nyae]?" prompt
 setopt CORRECT
@@ -85,5 +79,12 @@ fi
 # starship (cross-shell prompt; replaced the old powerlevel10k theme)
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
+fi
+
+# zsh plugins (installed via brew; replaced oh-my-zsh's plugin loader).
+# syntax-highlighting must be sourced last, after all other zle setup.
+if [[ -n "$BREW_PREFIX" ]]; then
+  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 

@@ -16,7 +16,9 @@ brew "eza"              # ls replacement (color, git status, icons)
 brew "gh"               # GitHub CLI (PR/issue/Actions)
 brew "tldr"             # Condensed man pages — just the key examples
 
-# zsh plugins are installed into the oh-my-zsh custom directory by zsh/install-zsh-plugins.sh
+# zsh plugins (sourced directly in .zshrc — no framework)
+brew "zsh-autosuggestions"       # fish-style suggestions from history
+brew "zsh-syntax-highlighting"   # fish-style command syntax highlighting
 
 # Java development
 brew "jenv"
