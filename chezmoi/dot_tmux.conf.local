@@ -85,49 +85,24 @@ tmux_conf_24b_colour=auto
 #   - tmux_conf_theme_synchronized
 tmux_conf_theme=enabled
 
-# ┌─ CUSTOM: ansi 변형 사용 (stock 기본은 hex 블록) ───────────────────
-# │ 상태줄 색을 hex로 고정하지 않고 터미널 ANSI 팔레트(colour0~15)에 위임.
-# │ → Ghostty theme(cyberdream)이 바뀌면 tmux 상태줄도 한 벌로 따라옴.
-# │ stock hex 팔레트로 되돌리려면 아래 hex 블록 주석 해제 + ansi 블록 주석.
-# └────────────────────────────────────────────────────────────────────
-
-# stock default theme (hex) — 비활성 (ansi 변형 사용 중)
-#tmux_conf_theme_colour_1="#080808"    # dark gray
-#tmux_conf_theme_colour_2="#303030"    # gray
-#tmux_conf_theme_colour_3="#8a8a8a"    # light gray
-#tmux_conf_theme_colour_4="#00afff"    # light blue
-#tmux_conf_theme_colour_5="#ffff00"    # yellow
-#tmux_conf_theme_colour_6="#080808"    # dark gray
-#tmux_conf_theme_colour_7="#e4e4e4"    # white
-#tmux_conf_theme_colour_8="#080808"    # dark gray
-#tmux_conf_theme_colour_9="#ffff00"    # yellow
-#tmux_conf_theme_colour_10="#ff00af"   # pink
-#tmux_conf_theme_colour_11="#5fff00"   # green
-#tmux_conf_theme_colour_12="#8a8a8a"   # light gray
-#tmux_conf_theme_colour_13="#e4e4e4"   # white
-#tmux_conf_theme_colour_14="#080808"   # dark gray
-#tmux_conf_theme_colour_15="#080808"   # dark gray
-#tmux_conf_theme_colour_16="#d70000"   # red
-#tmux_conf_theme_colour_17="#e4e4e4"   # white
-
-# default theme (ansi) — 활성: 터미널 팔레트를 따름
-tmux_conf_theme_colour_1="colour0"
-tmux_conf_theme_colour_2="colour8"
-tmux_conf_theme_colour_3="colour8"
-tmux_conf_theme_colour_4="colour14"
-tmux_conf_theme_colour_5="colour11"
-tmux_conf_theme_colour_6="colour0"
-tmux_conf_theme_colour_7="colour15"
-tmux_conf_theme_colour_8="colour0"
-tmux_conf_theme_colour_9="colour11"
-tmux_conf_theme_colour_10="colour13"
-tmux_conf_theme_colour_11="colour10"
-tmux_conf_theme_colour_12="colour8"
-tmux_conf_theme_colour_13="colour15"
-tmux_conf_theme_colour_14="colour0"
-tmux_conf_theme_colour_15="colour0"
-tmux_conf_theme_colour_16="colour1"
-tmux_conf_theme_colour_17="colour15"
+# stock default theme (hex) — omt 순정 팔레트 사용 중
+tmux_conf_theme_colour_1="#080808"    # dark gray
+tmux_conf_theme_colour_2="#303030"    # gray
+tmux_conf_theme_colour_3="#8a8a8a"    # light gray
+tmux_conf_theme_colour_4="#00afff"    # light blue
+tmux_conf_theme_colour_5="#ffff00"    # yellow
+tmux_conf_theme_colour_6="#080808"    # dark gray
+tmux_conf_theme_colour_7="#e4e4e4"    # white
+tmux_conf_theme_colour_8="#080808"    # dark gray
+tmux_conf_theme_colour_9="#ffff00"    # yellow
+tmux_conf_theme_colour_10="#ff00af"   # pink
+tmux_conf_theme_colour_11="#5fff00"   # green
+tmux_conf_theme_colour_12="#8a8a8a"   # light gray
+tmux_conf_theme_colour_13="#e4e4e4"   # white
+tmux_conf_theme_colour_14="#080808"   # dark gray
+tmux_conf_theme_colour_15="#080808"   # dark gray
+tmux_conf_theme_colour_16="#d70000"   # red
+tmux_conf_theme_colour_17="#e4e4e4"   # white
 
 # window style
 tmux_conf_theme_window_fg="default"
@@ -410,10 +385,10 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # if you don't want Oh my tmux! to alter a binding or a setting, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (keymaps) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# display a message after toggling mouse support
+bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?#{mouse},on,off}'
 
-# paste selection into the marked pane (agent); no focus/Enter. Mark the pane first with prefix + m
-bind -T copy-mode-vi Y send -X copy-pipe-and-cancel "tmux load-buffer -b agent -; if [ $(tmux display-message -p '#{pane_marked_set}') = 1 ]; then tmux paste-buffer -t '{marked}' -b agent -p -d; else tmux display-message 'no marked pane — press prefix+m on the agent pane'; fi"
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (keymaps) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # sesh session picker (fzf+zoxide) — prefix+T; in picker: ^a all ^t tmux ^g configs ^x zoxide ^f dirs, ^d kill
 bind-key T run-shell "sesh connect \"$(
