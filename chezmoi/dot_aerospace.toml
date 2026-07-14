@@ -94,5 +94,5 @@ run = ['move-node-to-workspace 4:JetBrains', 'layout floating']
 # ║  Default: Floating                       ║
 # ╚══════════════════════════════════════════╝
 [[on-window-detected]]
-if = 'true'
+# if 생략 = 모든 창 매칭 (앞 규칙에 안 걸린 나머지 → floating)
 run = ['layout floating']
