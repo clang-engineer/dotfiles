@@ -27,8 +27,7 @@ init.lua                              ← [Neovim] entry point
  │             ├─ config/options.lua  (immediately, before UI)
  │             ├─ config/keymaps.lua  (VeryLazy)
  │             └─ config/autocmds.lua (VeryLazy)
- ├─ require("user.toolbox").setup()   ← direct require
- └─ require("user.quicklinks").setup()← direct require
+ └─ require("user.docs").setup()      ← direct require
 ```
 
 There are only three top-level `lua/` entries — `config/` (LazyVim rules), `plugins/` (lazy.nvim specs), and `user/` (all the code I wrote). Grouping my personal modules under `user/` avoids global namespace collisions (especially generic names like `db`) and cleanly separates framework code from mine at a glance.
@@ -40,7 +39,7 @@ Modules that LazyVim and lazy.nvim know nothing about, living **purely off the r
 | `config/options/*.lua` | required directly by `config/options.lua` |
 | `config/autocmds/*.lua` | required directly by `config/autocmds.lua` |
 | `user/db/` (init + connections) | `init` in `plugins/dadbod.lua` calls `require("user.db")` |
-| `user/toolbox/`, `user/quicklinks/` | `init.lua` calls `require(...).setup()` |
+| `user/docs/` | `init.lua` calls `require("user.docs").setup()` |
 
 Adding a file to `user/db/connections/` gets picked up automatically not because of a LazyVim folder scan, but because **`user/db/init.lua` runs a runtime glob itself**.
 

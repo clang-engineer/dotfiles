@@ -1,4 +1,4 @@
--- floating window viewer + tmux refocus (shared by quicklinks / toolbox)
+-- floating window viewer + tmux refocus (used by user.docs)
 local M = {}
 
 local function tmux_move(direction)
@@ -7,7 +7,7 @@ local function tmux_move(direction)
   end
 end
 
-function M.open(path, augroup_name)
+function M.open(path)
   local win = Snacks.win({
     file = path,
     width = 0.85,
@@ -24,7 +24,7 @@ function M.open(path, augroup_name)
   })
 
   -- refocus the float when returning to nvim after moving tmux panes
-  local aug = vim.api.nvim_create_augroup(augroup_name or "user_float_refocus", { clear = true })
+  local aug = vim.api.nvim_create_augroup("user_float_refocus", { clear = true })
   vim.api.nvim_create_autocmd("FocusGained", {
     group = aug,
     callback = function()
