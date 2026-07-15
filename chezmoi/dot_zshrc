@@ -42,28 +42,11 @@ if command -v eza &>/dev/null; then alias ls="eza"; fi
 alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
 
-# rbenv
-if command -v rbenv &>/dev/null; then
-  eval "$(rbenv init - zsh)"
-fi
-
-# nvm
-export NVM_DIR=~/.nvm
-if [[ -n "$BREW_PREFIX" && -s "$BREW_PREFIX/opt/nvm/nvm.sh" ]]; then
-  source "$BREW_PREFIX/opt/nvm/nvm.sh"
-fi
-
-# jenv
-if command -v jenv &>/dev/null; then
-  export PATH="$HOME/.jenv/bin:$PATH"
-  eval "$(jenv init -)"
-fi
-
-# pyenv
-if command -v pyenv &>/dev/null; then
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
+# mise — one manager for node/ruby/java runtimes (replaced rbenv/jenv/pyenv/nvm).
+# Reads ~/.config/mise/config.toml; activate hooks PATH per shell, no shims.
+# (Python is on uv, not mise — uv needs no shell init.)
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
 fi
 
 # fzf (Ctrl+T file select, Ctrl+R history, Alt+C directory jump)

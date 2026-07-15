@@ -20,22 +20,13 @@ brew "tldr"             # Condensed man pages — just the key examples
 brew "zsh-autosuggestions"       # fish-style suggestions from history
 brew "zsh-syntax-highlighting"   # fish-style command syntax highlighting
 
-# Java development
-brew "jenv"
-brew "jdtls"
-brew "openjdk@11"
-brew "openjdk@17"
-brew "openjdk@21"
-
-# Node.js
-brew "nvm"
+# Runtime version management — mise owns node/ruby/java (see ~/.config/mise/config.toml)
+brew "mise"
+brew "jdtls"             # Eclipse JDT language server (nvim LSP; not a runtime)
 
 # Optional, depending on your needs
 brew "zoxide"            # z: smart directory jump (autojump replacement)
 brew "git-lfs"           # Not needed if you have no projects with large files
 brew "libpq"             # Includes the psql CLI. Not needed if you don't use PostgreSQL
-brew "pyenv"             # Python version management. Can be replaced by uv
-brew "pyenv-virtualenv"  # pyenv virtualenvs. Can be replaced by uv
-brew "rbenv"             # Ruby version management. Not needed if you don't do Ruby dev
-brew "uv"                # Blazing-fast Python package manager. May overlap if you use pyenv
+brew "uv"                # Fast Python package/venv manager — owns Python (mise handles node/ruby/java)
 brew "wget"              # File downloader. curl is built in by default

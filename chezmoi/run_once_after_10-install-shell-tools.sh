@@ -23,17 +23,9 @@ if command -v tmux >/dev/null 2>&1 && [ -d "$HOME/.tmux/.git" ]; then
   fi
 fi
 
-# --- jenv: register brew JDKs + export plugin ---
-if command -v jenv >/dev/null 2>&1; then
-  jenv enable-plugin export || true
-  # Register each brew-installed JDK via its version-independent opt path.
-  # (Cellar paths embed the patch version, so `brew cleanup` after a patch
-  #  upgrade deletes the old dir and leaves jenv symlinks dangling.)
-  for v in 11 17 21; do
-    home="$(brew --prefix)/opt/openjdk@$v/libexec/openjdk.jdk/Contents/Home"
-    [ -x "$home/bin/java" ] && jenv add "$home" >/dev/null 2>&1 || true
-  done
-  jenv rehash >/dev/null 2>&1 || true
-  # Default global to 11 only if nothing is pinned yet.
-  [ "$(jenv global 2>/dev/null)" = "system" ] && jenv global 11 || true
+# --- mise: install declared runtimes (node/ruby/java) ---
+# Versions live in ~/.config/mise/config.toml (chezmoi-managed). mise builds/
+# downloads each and puts them on PATH via `mise activate` in the shell rc.
+if command -v mise >/dev/null 2>&1; then
+  mise install >/dev/null 2>&1 || printf '⚠︎ mise install failed (run `mise install` manually)\n'
 fi
