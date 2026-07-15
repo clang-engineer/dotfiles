@@ -23,6 +23,18 @@ function M.open(path)
     },
   })
 
+  -- render-markdown is off globally (noisy while editing); enable it just for this
+  -- read-only viewer so referenced docs render prettily. buf-scoped, global untouched.
+  if win.buf and vim.bo[win.buf].filetype == "markdown" then
+    vim.schedule(function()
+      if vim.api.nvim_buf_is_valid(win.buf) then
+        vim.api.nvim_buf_call(win.buf, function()
+          require("render-markdown.api").buf_enable()
+        end)
+      end
+    end)
+  end
+
   -- refocus the float when returning to nvim after moving tmux panes
   local aug = vim.api.nvim_create_augroup("user_float_refocus", { clear = true })
   vim.api.nvim_create_autocmd("FocusGained", {
