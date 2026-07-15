@@ -1,4 +1,4 @@
--- plugins for previewing markdown
+-- plugins for previewing and authoring markdown
 return {
   {
     "MeanderingProgrammer/render-markdown.nvim",
@@ -12,5 +12,10 @@ return {
     config = function()
       vim.g.mkdp_auto_close = 0
     end,
+  },
+  -- highlight ```mermaid``` fenced blocks (injected into markdown)
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = { ensure_installed = { "mermaid" } },
   },
 }
