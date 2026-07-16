@@ -390,6 +390,10 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (keymaps) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# avoid raw CSI-u sequences (e.g. '9;5u') leaking into zsh when pressing Ctrl keys
+set -s extended-keys off
+set -g xterm-keys on
+
 # (disabled) paste selection into the marked pane (agent); no focus/Enter.
 # to re-enable: mark the target pane (right-click > Mark; prefix+m is mouse toggle), then Y in copy-mode
 #bind -T copy-mode-vi Y send -X copy-pipe-and-cancel "tmux load-buffer -b agent -; if [ $(tmux display-message -p '#{pane_marked_set}') = 1 ]; then tmux paste-buffer -t '{marked}' -b agent -p -d; else tmux display-message 'no marked pane — right-click the agent pane > Mark'; fi"
