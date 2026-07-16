@@ -9,7 +9,7 @@ local M = {}
 
 function M.setup(opts)
   require("user.docs.config").setup(opts)
-  require("user.docs.commands").register()
+  require("user.docs.picker").register()
 end
 
 return M

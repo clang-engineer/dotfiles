@@ -1,8 +1,17 @@
--- pickers: file finder (:Docs) + full-text grep (:DocsGrep) across the roots
+-- pickers + command registration: file finder (:Docs) + full-text grep (:DocsGrep)
 local M = {}
 
 local config = require("user.docs.config")
-local open = require("user.docs.open")
+local float = require("user.util.float")
+
+-- open a selected file: *.md in a floating viewer, other text files in a buffer
+local function open_file(path)
+  if path:match("%.md$") then
+    float.open(path)
+  else
+    vim.cmd.edit(vim.fn.fnameescape(path))
+  end
+end
 
 -- file picker over `dirs`; open the chosen file (md → float, else buffer).
 -- on_back (optional): <C-o> closes this picker and calls it — steps back to the
@@ -13,7 +22,7 @@ local function browse_files(dirs, on_back)
     confirm = function(picker, item)
       picker:close()
       if item then
-        open.dispatch(Snacks.picker.util.path(item))
+        open_file(Snacks.picker.util.path(item))
       end
     end,
     actions = on_back and {
@@ -55,7 +64,7 @@ local function browse_subdirs(root)
   })
 end
 
-function M.open(name)
+local function open(name)
   local root = name and config.find_root(name)
   if root and root.subdirs then
     return browse_subdirs(root)
@@ -67,12 +76,34 @@ function M.open(name)
   browse_files(dirs)
 end
 
-function M.grep(name)
+local function grep(name)
   local dirs = config.grep_roots(name)
   if #dirs == 0 then
     return name and config.warn_unknown_root(name, config.root_names(true)) or config.warn_no_roots()
   end
   Snacks.picker.grep({ dirs = dirs })
+end
+
+function M.register()
+  vim.api.nvim_create_user_command("Docs", function(cmd)
+    open(cmd.args ~= "" and cmd.args or nil)
+  end, {
+    nargs = "?",
+    complete = function()
+      return config.root_names(false)
+    end,
+    desc = "browse docs across the knowledge roots (optionally one root by name)",
+  })
+
+  vim.api.nvim_create_user_command("DocsGrep", function(cmd)
+    grep(cmd.args ~= "" and cmd.args or nil)
+  end, {
+    nargs = "?",
+    complete = function()
+      return config.root_names(true)
+    end,
+    desc = "full-text grep across the knowledge roots (optionally one root by name)",
+  })
 end
 
 return M
