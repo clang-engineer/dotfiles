@@ -1,13 +1,5 @@
--- ~/.config/nvim/lua/custom/vimwikiauto.lua
-
-vim.g.vimwiki_list = {
-  {
-    path = vim.fn.expand("~") .. "/clang-engineer.github.io/_posts/",
-    ext = ".md",
-    diary_rel_path = ".",
-  },
-}
-vim.g.vimwiki_conceallevel = 0
+-- Jekyll 블로그 포스트(`*posts/*.md`)에 frontmatter 템플릿을 깔고
+-- 저장 시 `updated:` 타임스탬프를 갱신한다. vimwiki와는 무관하다.
 
 local function stamp_kr()
   return os.date("%Y-%m-%d %H:%M:%S ") .. "+0900"
@@ -34,7 +26,7 @@ local function NewTemplate()
 
   vim.api.nvim_buf_set_lines(0, 0, -1, false, t)
   vim.cmd("normal! G$")
-  vim.notify("new wiki page has created", vim.log.levels.INFO, { title = "Vimwiki" })
+  vim.notify("new blog post created", vim.log.levels.INFO, { title = "Blog" })
 end
 
 local function LastModified()
@@ -65,7 +57,7 @@ local function LastModified()
   end
 end
 
-local group = vim.api.nvim_create_augroup("vimwikiauto", { clear = true })
+local group = vim.api.nvim_create_augroup("blog_frontmatter", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
   group = group,

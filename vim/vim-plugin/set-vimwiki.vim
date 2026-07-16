@@ -1,4 +1,4 @@
- let g:vimwiki_list = [{'path': '~/clang-engineer.github.io/_posts/', 'ext': '.md', 'diary_rel_path': '.'}]
+ let g:vimwiki_list = [{'path': '~/Desktop/_zero/clang-engineer.github.io/_posts/', 'ext': '.md', 'diary_rel_path': '.'}]
  let g:vimwiki_conceallevel = 0
 
 augroup vimwikiauto
