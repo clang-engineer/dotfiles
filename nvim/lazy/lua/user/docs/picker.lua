@@ -40,7 +40,8 @@ local function browse_subdirs(root)
   local items = {}
   for entry, kind in vim.fs.dir(root.dir) do
     if kind == "directory" then
-      items[#items + 1] = { text = entry, dir = root.dir .. "/" .. entry }
+      local dir = root.dir .. "/" .. entry
+      items[#items + 1] = { text = entry, dir = dir, file = dir }
     end
   end
   if #items == 0 then
