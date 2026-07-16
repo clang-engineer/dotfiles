@@ -1,23 +1,15 @@
--- resolve knowledge-base roots (search targets) from env or setup opts
+-- resolve knowledge-base roots (search targets) from setup opts
 local M = {}
 
--- default roots, in order. grep_only roots are searched by :DocsGrep only.
--- dir    = path with $ENV and ~ expanded; roots that don't resolve are skipped.
--- name   = alias used to scope a search: :Docs vault / :DocsGrep devkit
--- scoped = search only when named (excluded from the no-arg "all"), for subfolder
---          aliases that would otherwise double-count with their parent. :Docs analysis
-local default_specs = {
-  { name = "vault", dir = "$VAULT_DIR" },
-  { name = "devkit", dir = "$DEVKIT_DIR" },
-  { name = "blog", dir = "$BLOG_DIR", grep_only = true },
-  { name = "analysis", dir = "$VAULT_DIR/analysis", scoped = true },
-  -- { name = "notes", dir = "$VAULT_DIR/notes", scoped = true },
-  -- { name = "wiki", dir = "~/personal-wiki" },
-}
-
-local function build_default_roots()
+-- Each root spec:
+-- dir       = path with $ENV and ~ expanded; roots that don't resolve are skipped.
+-- name      = alias used to scope a search: :Docs vault / :DocsGrep devkit
+-- grep_only = searched by :DocsGrep only (excluded from the :Docs file picker).
+-- scoped    = searched only when named (excluded from the no-arg "all"), for subfolder
+--             aliases that would otherwise double-count with their parent. :Docs analysis
+local function build_roots(specs)
   local roots = {}
-  for _, spec in ipairs(default_specs) do
+  for _, spec in ipairs(specs) do
     local dir = vim.fs.normalize(spec.dir)
     if vim.fn.isdirectory(dir) == 1 then
       table.insert(roots, {
@@ -31,7 +23,7 @@ local function build_default_roots()
   return roots
 end
 
--- setup({ roots = { { name = "notes", dir = "...", scoped = true }, ... } }) overrides the env default.
+-- setup({ roots = { { name = "notes", dir = "$VAULT_DIR/notes", scoped = true }, ... } })
 local options = {}
 
 function M.setup(opts)
@@ -39,7 +31,7 @@ function M.setup(opts)
 end
 
 function M.roots()
-  return options.roots or build_default_roots()
+  return build_roots(options.roots or {})
 end
 
 -- collect root dirs matching `include`. with a name → just that root (scoped or not);
@@ -82,8 +74,7 @@ end
 
 function M.warn_no_roots()
   vim.notify(
-    "docs: no search roots found.\n"
-      .. "Set VAULT_DIR / DEVKIT_DIR / BLOG_DIR, or pass setup({ roots = ... }).",
+    "docs: no search roots found. Pass setup({ roots = { { dir = ... } } }).",
     vim.log.levels.WARN,
     { title = "docs" }
   )

@@ -1,6 +1,10 @@
 -- docs.nvim entry point — unified viewer/search over knowledge roots
--- Usage: require("user.docs").setup()  -- roots from VAULT_DIR / DEVKIT_DIR / BLOG_DIR
---        require("user.docs").setup({ roots = { { dir = "~/notes" } } })
+-- Usage: require("user.docs").setup({
+--          roots = {
+--            { name = "notes", dir = "~/notes" },
+--            { name = "wiki", dir = "~/wiki", grep_only = true },
+--          },
+--        })
 local M = {}
 
 function M.setup(opts)
