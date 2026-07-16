@@ -4,8 +4,10 @@ local M = {}
 local config = require("user.docs.config")
 local open = require("user.docs.open")
 
--- file picker over `dirs`; open the chosen file (md → float, else buffer)
-local function browse_files(dirs)
+-- file picker over `dirs`; open the chosen file (md → float, else buffer).
+-- on_back (optional): <C-o> closes this picker and calls it — steps back to the
+-- subdir chooser when the picked folder was wrong.
+local function browse_files(dirs, on_back)
   Snacks.picker.files({
     dirs = dirs,
     confirm = function(picker, item)
@@ -14,6 +16,13 @@ local function browse_files(dirs)
         open.dispatch(Snacks.picker.util.path(item))
       end
     end,
+    actions = on_back and {
+      docs_back = function(picker)
+        picker:close()
+        on_back()
+      end,
+    } or nil,
+    win = on_back and { input = { keys = { ["<c-o>"] = { "docs_back", mode = { "i", "n" } } } } } or nil,
   })
 end
 
@@ -38,7 +47,9 @@ local function browse_subdirs(root)
     confirm = function(picker, item)
       picker:close()
       if item then
-        browse_files({ item.dir })
+        browse_files({ item.dir }, function()
+          browse_subdirs(root)
+        end)
       end
     end,
   })

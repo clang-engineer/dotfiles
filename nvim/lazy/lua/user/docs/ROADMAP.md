@@ -61,6 +61,14 @@ Dash / DevDocs의 "내 디렉토리 버전"에 가깝고, note 관리(obsidian·
   컨테이너용. **동작이 범용 플래그이고 `name`은 임의 alias** — `analysis`든 `projects`든 폴더 성격에 맞게
   붙이고, 같은 형태를 다른 폴더에 다른 이름으로 얼마든지 등록한다. `:DocsGrep <name>`은 그대로 전 하위
   재귀 grep이라, 루트 직속 loose 파일(`순천향 인수인계.md` 등 subdirs 리스트에 안 뜨는 것)은 grep으로 잡힌다.
+  파일 picker에서 폴더를 잘못 골랐으면 `<C-o>`(vim의 뒤로-점프 니모닉)로 chooser로 되돌아간다.
+- **드릴인은 1레벨 고정 (recursive 옵션은 보류)**: 폴더 chooser는 바로 아래 한 겹만, 그 밑은 파일 picker가
+  재귀로 훑어 `raw/foo.md`처럼 상대경로 flat으로 낸다. `recursive=true`로 폴더-안-폴더마다 또 chooser를
+  띄우는 안은 **보류** — (1) 현재 깊은 트리가 `claude-export-mining/raw/` 한 겹뿐이라 실수요 0,
+  (2) 이 lane은 "아는 파일 참조"라 fuzzy flat이 레벨별 chooser보다 빠름(chooser는 클릭만 늘림),
+  (3) `recursive` 플래그는 등록 시점에 "이 root는 깊다"를 예단하게 만들어 구조 변화에 어긋남.
+  **착수 트리거**: 여러 프로젝트가 실제로 2겹+ 폴더 트리를 갖고, 용도가 "아는 파일 찾기"에서
+  "구조 둘러보기"로 넘어가 flat이 실제 불편이 될 때. 그 전까진 flat이 더 낫다.
 
 ## 배포 (보류)
 
