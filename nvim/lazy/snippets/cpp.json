@@ -1,0 +1,35 @@
+{
+  "split by string delimiter": {
+    "prefix": "split",
+    "description": "문자열 구분자로 split (string::find 기반)",
+    "body": [
+      "vector<string> split(string input, string delimiter) {",
+      "\tvector<string> vec;",
+      "\tsize_t pos = 0;",
+      "\tstring token;",
+      "\twhile ((pos = input.find(delimiter)) != string::npos) {",
+      "\t\ttoken = input.substr(0, pos);",
+      "\t\tvec.push_back(token);",
+      "\t\tinput.erase(0, pos + delimiter.length());",
+      "\t}",
+      "\tvec.push_back(input);",
+      "\treturn vec;",
+      "}"
+    ]
+  },
+  "split by char delimiter": {
+    "prefix": "splitc",
+    "description": "char 구분자로 split (stringstream/getline)",
+    "body": [
+      "vector<string> split(const string& str, char delimiter) {",
+      "\tvector<string> vec;",
+      "\tstring token;",
+      "\tstringstream ss(str);",
+      "\twhile (getline(ss, token, delimiter)) {",
+      "\t\tvec.push_back(token);",
+      "\t}",
+      "\treturn vec;",
+      "}"
+    ]
+  }
+}
