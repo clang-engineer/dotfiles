@@ -56,6 +56,11 @@ Dash / DevDocs의 "내 디렉토리 버전"에 가깝고, note 관리(obsidian·
   프로젝트가 계속 늘어 full 리스트를 잡아먹는 폴더를 `:Docs analysis`로 미리 좁혀 본다.
 - **함정(처리됨)**: 하위폴더 alias는 부모 root와 겹쳐서, 기본 전체 검색에 포함되면 중복으로 뜬다.
   그래서 `scoped=true`로 표시해 **arg 없는 "전체"에선 빠지고 이름으로 부를 때만** 걸린다.
+- **`subdirs=true` (2-단계 브라우징, 구현 완료)**: 하위폴더 alias를 flat 파일 리스트가 아니라
+  **폴더 고르기 → 그 폴더 안 브라우징**으로 연다. `analysis/<project>/…`처럼 자식이 각각 별개 주제인
+  컨테이너용. **동작이 범용 플래그이고 `name`은 임의 alias** — `analysis`든 `projects`든 폴더 성격에 맞게
+  붙이고, 같은 형태를 다른 폴더에 다른 이름으로 얼마든지 등록한다. `:DocsGrep <name>`은 그대로 전 하위
+  재귀 grep이라, 루트 직속 loose 파일(`순천향 인수인계.md` 등 subdirs 리스트에 안 뜨는 것)은 grep으로 잡힌다.
 
 ## 배포 (보류)
 

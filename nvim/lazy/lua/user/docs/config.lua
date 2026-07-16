@@ -7,6 +7,9 @@ local M = {}
 -- grep_only = searched by :DocsGrep only (excluded from the :Docs file picker).
 -- scoped    = searched only when named (excluded from the no-arg "all"), for subfolder
 --             aliases that would otherwise double-count with their parent. :Docs analysis
+-- subdirs   = :Docs <name> first lists this dir's immediate subfolders; pick one, then
+--             browse its files. for a container whose children are separate topics
+--             (analysis/<project>/…). the name is just an alias — call it whatever fits.
 local function build_roots(specs)
   local roots = {}
   for _, spec in ipairs(specs) do
@@ -17,6 +20,7 @@ local function build_roots(specs)
         dir = dir,
         grep_only = spec.grep_only or false,
         scoped = spec.scoped or false,
+        subdirs = spec.subdirs or false,
       })
     end
   end
@@ -32,6 +36,15 @@ end
 
 function M.roots()
   return build_roots(options.roots or {})
+end
+
+-- the resolved root registered under `name` (scoped ones included), or nil
+function M.find_root(name)
+  for _, root in ipairs(M.roots()) do
+    if root.name == name then
+      return root
+    end
+  end
 end
 
 -- collect root dirs matching `include`. with a name → just that root (scoped or not);

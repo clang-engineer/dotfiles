@@ -4,11 +4,8 @@ local M = {}
 local config = require("user.docs.config")
 local open = require("user.docs.open")
 
-function M.open(name)
-  local dirs = config.file_roots(name)
-  if #dirs == 0 then
-    return name and config.warn_unknown_root(name, config.root_names(false)) or config.warn_no_roots()
-  end
+-- file picker over `dirs`; open the chosen file (md → float, else buffer)
+local function browse_files(dirs)
   Snacks.picker.files({
     dirs = dirs,
     confirm = function(picker, item)
@@ -18,6 +15,45 @@ function M.open(name)
       end
     end,
   })
+end
+
+-- subdirs=true root: pick one of its immediate subfolders, then browse that folder
+local function browse_subdirs(root)
+  local items = {}
+  for entry, kind in vim.fs.dir(root.dir) do
+    if kind == "directory" then
+      items[#items + 1] = { text = entry, dir = root.dir .. "/" .. entry }
+    end
+  end
+  if #items == 0 then
+    return vim.notify(("docs: no subfolders in %s"):format(root.name), vim.log.levels.WARN, { title = "docs" })
+  end
+  table.sort(items, function(a, b)
+    return a.text < b.text
+  end)
+  Snacks.picker.pick({
+    items = items,
+    format = "text",
+    title = root.name,
+    confirm = function(picker, item)
+      picker:close()
+      if item then
+        browse_files({ item.dir })
+      end
+    end,
+  })
+end
+
+function M.open(name)
+  local root = name and config.find_root(name)
+  if root and root.subdirs then
+    return browse_subdirs(root)
+  end
+  local dirs = config.file_roots(name)
+  if #dirs == 0 then
+    return name and config.warn_unknown_root(name, config.root_names(false)) or config.warn_no_roots()
+  end
+  browse_files(dirs)
 end
 
 function M.grep(name)
