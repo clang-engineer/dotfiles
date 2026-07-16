@@ -52,6 +52,11 @@ fi
 # fzf (Ctrl+T file select, Ctrl+R history, Alt+C directory jump)
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
+
+  # gco — fzf로 로컬/원격 브랜치 골라 checkout
+  gco() {
+    git checkout "$(git branch --all | grep -v HEAD | fzf | tr -d ' *' | sed 's|remotes/origin/||')"
+  }
 fi
 
 # zoxide (autojump replacement, z/zi commands)

@@ -42,6 +42,21 @@ Dash / DevDocs의 "내 디렉토리 버전"에 가깝고, note 관리(obsidian·
   충돌 관점에서도 subcommand는 안전한 `:DocsGrep`을 없애고 위험한 generic `:Docs`를 남길 뿐이라 이득 작다.
   → **작업이 3개+로 늘 때** subcommand(`:Docs open/grep …`)로 접는다.
 
+## 스코핑 arg (구현 완료)
+
+`:Docs [name]` / `:DocsGrep [name]` — arg 없으면 지금처럼 전 roots, 이름 주면 그 root **하나로 한정**.
+문서가 많을 때 애초에 좁혀서 브라우징/grep하려는 동선. tab 완성으로 root 이름 제공.
+
+- **subcommand 디스패처와 다른 축**이라 "flat 유지" 결정과 안 충돌 — 새 *작업*을 추가한 게 아니라
+  기존 작업에 옵셔널 스코프를 얹은 것. 작업이 3개+로 늘 때 subcommand로 접는 결정은 그대로.
+- **경로 표기 통일**: root spec은 `dir` 한 필드. `$VAR`·`$VAR/하위`·`~/절대` 모두 `vim.fs.normalize`가
+  확장하고, 안 풀리는 root(미설정 env 등)는 조용히 스킵. env/dir/sub 3필드를 이걸로 합침
+  (`vim.fn.expand`는 미설정 var를 `/x`로 뭉개서 탈락 — normalize라야 원문 유지 → isdirectory=0 스킵).
+- **하위폴더 alias**: `{ name = "analysis", dir = "$VAULT_DIR/analysis", scoped = true }`. `analysis/`처럼
+  프로젝트가 계속 늘어 full 리스트를 잡아먹는 폴더를 `:Docs analysis`로 미리 좁혀 본다.
+- **함정(처리됨)**: 하위폴더 alias는 부모 root와 겹쳐서, 기본 전체 검색에 포함되면 중복으로 뜬다.
+  그래서 `scoped=true`로 표시해 **arg 없는 "전체"에선 빠지고 이름으로 부를 때만** 걸린다.
+
 ## 배포 (보류)
 
 - 별도 repo로 추출·공개는 **보류**, 현재 위치(dotfiles 안)에서만 작업.

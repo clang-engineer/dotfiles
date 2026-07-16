@@ -4,10 +4,10 @@ local M = {}
 local config = require("user.docs.config")
 local open = require("user.docs.open")
 
-function M.open()
-  local dirs = config.file_roots()
+function M.open(name)
+  local dirs = config.file_roots(name)
   if #dirs == 0 then
-    return config.warn_no_roots()
+    return name and config.warn_unknown_root(name, config.root_names(false)) or config.warn_no_roots()
   end
   Snacks.picker.files({
     dirs = dirs,
@@ -20,10 +20,10 @@ function M.open()
   })
 end
 
-function M.grep()
-  local dirs = config.grep_roots()
+function M.grep(name)
+  local dirs = config.grep_roots(name)
   if #dirs == 0 then
-    return config.warn_no_roots()
+    return name and config.warn_unknown_root(name, config.root_names(true)) or config.warn_no_roots()
   end
   Snacks.picker.grep({ dirs = dirs })
 end
