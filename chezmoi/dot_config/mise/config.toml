@@ -2,7 +2,7 @@
 # `mise install` reads this; `mise activate` (in .zshrc) puts them on PATH.
 # Python is intentionally absent — uv owns Python here.
 [tools]
-node = "22"
+node = "24"
 ruby = "3.4.2"
 # First entry is the default on PATH; the rest are switchable via `mise use java@17`.
 java = ["temurin-21", "temurin-17", "temurin-11"]
