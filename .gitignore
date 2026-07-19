@@ -32,6 +32,7 @@ claude/*
 !claude/keybindings.json
 !claude/check-env.sh
 !claude/link-commands.sh
+!claude/statusline.sh
 !claude/commands/
 claude/commands/*
 !claude/commands/commit-push.md
