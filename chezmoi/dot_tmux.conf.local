@@ -394,6 +394,11 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 set -s extended-keys off
 set -g xterm-keys on
 
+# force vi copy-mode. OMT ships the copy-mode-vi bindings (v/y) but leaves
+# mode-keys to tmux's auto-detect, which lands on emacs here: the server starts
+# at the top of .zshrc before `export EDITOR=nvim` runs, so detection sees no "vi".
+set -g mode-keys vi
+
 # (disabled) paste selection into the marked pane (agent); no focus/Enter.
 # to re-enable: mark the target pane (right-click > Mark; prefix+m is mouse toggle), then Y in copy-mode
 #bind -T copy-mode-vi Y send -X copy-pipe-and-cancel "tmux load-buffer -b agent -; if [ $(tmux display-message -p '#{pane_marked_set}') = 1 ]; then tmux paste-buffer -t '{marked}' -b agent -p -d; else tmux display-message 'no marked pane — right-click the agent pane > Mark'; fi"
