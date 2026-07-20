@@ -16,22 +16,28 @@ local function open_file(path, on_back)
   end
 end
 
--- <C-o> back rebuilds the picker from scratch, so the cursor would land at the top.
--- restore it to the path we came from instead. the file finder is async, so we wait on
--- find()'s on_done rather than reading the list now, and match by path (not index) so
--- frecency reordering the list can't put the cursor on the wrong file.
-local function focus_path(picker, path)
-  path = vim.fs.normalize(path)
-  picker:find({
-    on_done = function()
-      for item, idx in picker:iter() do
-        if item.file and vim.fs.normalize(Snacks.picker.util.path(item)) == path then
-          picker.list:move(idx, true)
-          return
+-- an on_show handler that lands the cursor back on `focus` after a <C-o> back (which
+-- rebuilds the picker from scratch, so it would otherwise open at the top). the file
+-- finder is async, so we wait on find()'s on_done rather than reading the list now, and
+-- match by path (not index) so frecency reordering can't misplace the cursor.
+-- nil focus → no handler (fresh views open at the top).
+local function restore_cursor(focus)
+  if not focus then
+    return nil
+  end
+  focus = vim.fs.normalize(focus)
+  return function(picker)
+    picker:find({
+      on_done = function()
+        for item, idx in picker:iter() do
+          if item.file and vim.fs.normalize(Snacks.picker.util.path(item)) == focus then
+            picker.list:move(idx, true)
+            return
+          end
         end
-      end
-    end,
-  })
+      end,
+    })
+  end
 end
 
 -- <C-o> in a picker reopens the previous view (browser-style back). every view is
@@ -49,6 +55,23 @@ local function back_keys(on_back)
   }
   local win = { input = { keys = { ["<c-o>"] = { "docs_back", mode = { "i", "n" } } } } }
   return actions, win
+end
+
+-- confirm handler shared by every picker: close it, then act on the picked item (if any).
+local function on_pick(handle)
+  return function(picker, item)
+    picker:close()
+    if item then
+      handle(item)
+    end
+  end
+end
+
+-- attach <C-p> (pin toggle) to a picker. each view supplies its own handler — the pin
+-- semantics differ (file vs folder, refresh vs reopen) — but the wiring is identical.
+local function bind_pin(actions, win, handler)
+  actions.docs_pin = handler
+  win.input.keys["<c-p>"] = { "docs_pin", mode = { "i", "n" } }
 end
 
 -- unpinning a folder asks first (folders are coarse, deliberate pins). the picker is
@@ -69,7 +92,7 @@ end
 -- show a 📌 and sort to the top (score boost); frecency orders everything else.
 -- `reopen` rebuilds this view after a confirmed folder unpin.
 local function pin_opts(actions, win, reopen)
-  actions.docs_pin = function(picker)
+  bind_pin(actions, win, function(picker)
     local item = picker:current()
     if not item then
       return
@@ -81,8 +104,7 @@ local function pin_opts(actions, win, reopen)
       pins.toggle(path)
       picker:refresh()
     end
-  end
-  win.input.keys["<c-p>"] = { "docs_pin", mode = { "i", "n" } }
+  end)
   return {
     matcher = { frecency = true },
     transform = function(item)
@@ -114,20 +136,13 @@ local function browse_files(dirs, on_back, focus)
     browse_files(dirs, on_back)
   end)
   opts.dirs = dirs
-  opts.confirm = function(picker, item)
-    picker:close()
-    if item then
-      local path = Snacks.picker.util.path(item)
-      open_file(path, function()
-        browse_files(dirs, on_back, path)
-      end)
-    end
-  end
-  if focus then
-    opts.on_show = function(picker)
-      focus_path(picker, focus)
-    end
-  end
+  opts.confirm = on_pick(function(item)
+    local path = Snacks.picker.util.path(item)
+    open_file(path, function()
+      browse_files(dirs, on_back, path)
+    end)
+  end)
+  opts.on_show = restore_cursor(focus)
   opts.actions = actions
   opts.win = win
   Snacks.picker.files(opts)
@@ -158,26 +173,19 @@ local function browse_all(dirs, on_back, focus)
   end)
   opts.finder = Finder.multi({ pinned_finder, files_finder })
   opts.dirs = dirs
-  opts.confirm = function(picker, item)
-    picker:close()
-    if item then
-      local path = Snacks.picker.util.path(item)
-      if vim.fn.isdirectory(path) == 1 then
-        browse_files({ path }, function()
-          browse_all(dirs, on_back, path)
-        end)
-      else
-        open_file(path, function()
-          browse_all(dirs, on_back, path)
-        end)
-      end
+  opts.confirm = on_pick(function(item)
+    local path = Snacks.picker.util.path(item)
+    if vim.fn.isdirectory(path) == 1 then
+      browse_files({ path }, function()
+        browse_all(dirs, on_back, path)
+      end)
+    else
+      open_file(path, function()
+        browse_all(dirs, on_back, path)
+      end)
     end
-  end
-  if focus then
-    opts.on_show = function(picker)
-      focus_path(picker, focus)
-    end
-  end
+  end)
+  opts.on_show = restore_cursor(focus)
   opts.actions = actions
   opts.win = win
   Snacks.picker.pick(opts)
@@ -201,7 +209,7 @@ local function browse_subdirs(root, on_back, focus)
     return a.name < b.name
   end)
   local actions, win = back_keys(on_back)
-  actions.docs_pin = function(picker)
+  bind_pin(actions, win, function(picker)
     local item = picker:current()
     if not item then
       return
@@ -215,23 +223,17 @@ local function browse_subdirs(root, on_back, focus)
       picker:close()
       browse_subdirs(root, on_back) -- reopen so the 📌 marker refreshes
     end
-  end
-  win.input.keys["<c-p>"] = { "docs_pin", mode = { "i", "n" } }
+  end)
   Snacks.picker.pick({
     items = items,
     format = "text",
     title = root.name,
-    confirm = function(picker, item)
-      picker:close()
-      if item then
-        browse_files({ item.dir }, function()
-          browse_subdirs(root, on_back, item.dir)
-        end)
-      end
-    end,
-    on_show = focus and function(picker)
-      focus_path(picker, focus)
-    end or nil,
+    confirm = on_pick(function(item)
+      browse_files({ item.dir }, function()
+        browse_subdirs(root, on_back, item.dir)
+      end)
+    end),
+    on_show = restore_cursor(focus),
     actions = actions,
     win = win,
   })
@@ -276,37 +278,31 @@ local function browse_roots(on_back, focus)
   vim.list_extend(items, roots)
 
   local actions, win = back_keys(on_back)
-  actions.docs_pin = function(picker)
+  bind_pin(actions, win, function(picker)
     local item = picker:current()
     if item and item.pinned then
       confirm_unpin_folder(picker, item.dir, function()
         browse_roots(on_back) -- rebuild so the unpinned folder drops off the list
       end)
     end
-  end
-  win.input.keys["<c-p>"] = { "docs_pin", mode = { "i", "n" } }
+  end)
 
   Snacks.picker.pick({
     items = items,
     format = "text",
     title = "docs roots",
-    confirm = function(picker, item)
-      picker:close()
-      if item then
-        if item.root then
-          open_root(item.root, function()
-            browse_roots(on_back, item.file)
-          end)
-        else
-          browse_files({ item.dir }, function()
-            browse_roots(on_back, item.file)
-          end)
-        end
+    confirm = on_pick(function(item)
+      if item.root then
+        open_root(item.root, function()
+          browse_roots(on_back, item.file)
+        end)
+      else
+        browse_files({ item.dir }, function()
+          browse_roots(on_back, item.file)
+        end)
       end
-    end,
-    on_show = focus and function(picker)
-      focus_path(picker, focus)
-    end or nil,
+    end),
+    on_show = restore_cursor(focus),
     actions = actions,
     win = win,
   })
@@ -316,28 +312,24 @@ end
 -- so `:Docs` ⇄ root chooser toggles, and drilling into a root walks back out the same way.
 local function open(name)
   local root = name and config.find_root(name)
+  local show_initial, show_roots
   if root and root.subdirs then
-    local show_subdirs, show_roots
-    show_subdirs = function()
+    show_initial = function()
       browse_subdirs(root, show_roots)
     end
-    show_roots = function()
-      browse_roots(show_subdirs)
+  else
+    local dirs = config.file_roots(name)
+    if #dirs == 0 then
+      return name and config.warn_unknown_root(name, config.root_names(false)) or config.warn_no_roots()
     end
-    return show_subdirs()
-  end
-  local dirs = config.file_roots(name)
-  if #dirs == 0 then
-    return name and config.warn_unknown_root(name, config.root_names(false)) or config.warn_no_roots()
-  end
-  local show_all, show_roots
-  show_all = function()
-    browse_all(dirs, show_roots)
+    show_initial = function()
+      browse_all(dirs, show_roots)
+    end
   end
   show_roots = function()
-    browse_roots(show_all)
+    browse_roots(show_initial)
   end
-  show_all()
+  show_initial()
 end
 
 local function grep(name)
