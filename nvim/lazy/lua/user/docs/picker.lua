@@ -16,6 +16,24 @@ local function open_file(path, on_back)
   end
 end
 
+-- <C-o> back rebuilds the picker from scratch, so the cursor would land at the top.
+-- restore it to the path we came from instead. the file finder is async, so we wait on
+-- find()'s on_done rather than reading the list now, and match by path (not index) so
+-- frecency reordering the list can't put the cursor on the wrong file.
+local function focus_path(picker, path)
+  path = vim.fs.normalize(path)
+  picker:find({
+    on_done = function()
+      for item, idx in picker:iter() do
+        if item.file and vim.fs.normalize(Snacks.picker.util.path(item)) == path then
+          picker.list:move(idx, true)
+          return
+        end
+      end
+    end,
+  })
+end
+
 -- <C-o> in a picker reopens the previous view (browser-style back). every view is
 -- reached with an on_back thunk that reopens whoever opened it, so <C-o> retraces the
 -- exact path in (doc → files → folder → root → files …). we always map the key even
@@ -90,7 +108,7 @@ end
 
 -- file picker over `dirs`; open the chosen file (md → float, else buffer).
 -- <C-o> steps back one level (threaded into the float too).
-local function browse_files(dirs, on_back)
+local function browse_files(dirs, on_back, focus)
   local actions, win = back_keys(on_back)
   local opts = pin_opts(actions, win, function()
     browse_files(dirs, on_back)
@@ -99,9 +117,15 @@ local function browse_files(dirs, on_back)
   opts.confirm = function(picker, item)
     picker:close()
     if item then
-      open_file(Snacks.picker.util.path(item), function()
-        browse_files(dirs, on_back)
+      local path = Snacks.picker.util.path(item)
+      open_file(path, function()
+        browse_files(dirs, on_back, path)
       end)
+    end
+  end
+  if focus then
+    opts.on_show = function(picker)
+      focus_path(picker, focus)
     end
   end
   opts.actions = actions
@@ -125,7 +149,7 @@ end
 -- top-level :Docs view: pinned folders + files, then the frecency-sorted file list.
 -- reuses Snacks' real files finder (fd/rg/find) via multi(), just prepending the pins.
 -- confirm opens files in the viewer and browses into folders; <C-p> pins/unpins.
-local function browse_all(dirs, on_back)
+local function browse_all(dirs, on_back, focus)
   local Finder = require("snacks.picker.core.finder")
   local files_finder = require("snacks.picker.config").finder("files")
   local actions, win = back_keys(on_back)
@@ -140,13 +164,18 @@ local function browse_all(dirs, on_back)
       local path = Snacks.picker.util.path(item)
       if vim.fn.isdirectory(path) == 1 then
         browse_files({ path }, function()
-          browse_all(dirs, on_back)
+          browse_all(dirs, on_back, path)
         end)
       else
         open_file(path, function()
-          browse_all(dirs, on_back)
+          browse_all(dirs, on_back, path)
         end)
       end
+    end
+  end
+  if focus then
+    opts.on_show = function(picker)
+      focus_path(picker, focus)
     end
   end
   opts.actions = actions
@@ -156,7 +185,7 @@ end
 
 -- subdirs=true root: pick one of its immediate subfolders, then browse that folder.
 -- on_back: <C-o> from the folder chooser steps up (to the root chooser).
-local function browse_subdirs(root, on_back)
+local function browse_subdirs(root, on_back, focus)
   local items = {}
   for entry, kind in vim.fs.dir(root.dir) do
     if kind == "directory" then
@@ -196,10 +225,13 @@ local function browse_subdirs(root, on_back)
       picker:close()
       if item then
         browse_files({ item.dir }, function()
-          browse_subdirs(root, on_back)
+          browse_subdirs(root, on_back, item.dir)
         end)
       end
     end,
+    on_show = focus and function(picker)
+      focus_path(picker, focus)
+    end or nil,
     actions = actions,
     win = win,
   })
@@ -218,7 +250,7 @@ end
 -- root chooser: pinned folders on top (📌), then browsable roots. pick a root to narrow
 -- into it, or a pinned folder to browse it directly. <C-p> unpins the selected pin.
 -- on_back reopens whatever view opened this chooser.
-local function browse_roots(on_back)
+local function browse_roots(on_back, focus)
   local pinned, roots = {}, {}
   for _, path in ipairs(pins.list()) do
     if vim.fn.isdirectory(path) == 1 then
@@ -263,15 +295,18 @@ local function browse_roots(on_back)
       if item then
         if item.root then
           open_root(item.root, function()
-            browse_roots(on_back)
+            browse_roots(on_back, item.file)
           end)
         else
           browse_files({ item.dir }, function()
-            browse_roots(on_back)
+            browse_roots(on_back, item.file)
           end)
         end
       end
     end,
+    on_show = focus and function(picker)
+      focus_path(picker, focus)
+    end or nil,
     actions = actions,
     win = win,
   })
