@@ -4,10 +4,12 @@ local M = {}
 local config = require("user.docs.config")
 local float = require("user.util.float")
 
--- open a selected file: *.md in a floating viewer, other text files in a buffer
-local function open_file(path)
+-- open a selected file: *.md in a floating viewer, other text files in a buffer.
+-- on_back (md only): <C-o> in the float steps back to the picker it was opened from.
+-- buffers keep <C-o> as vim's jumplist (you've left the viewer into editing).
+local function open_file(path, on_back)
   if path:match("%.md$") then
-    float.open(path)
+    float.open(path, { on_back = on_back })
   else
     vim.cmd.edit(vim.fn.fnameescape(path))
   end
@@ -15,14 +17,17 @@ end
 
 -- file picker over `dirs`; open the chosen file (md → float, else buffer).
 -- on_back (optional): <C-o> closes this picker and calls it — steps back to the
--- subdir chooser when the picked folder was wrong.
+-- subdir chooser when the picked folder was wrong. the same <C-o> back is threaded
+-- into the opened float, so it reopens this picker (one consistent step-back stack).
 local function browse_files(dirs, on_back)
   Snacks.picker.files({
     dirs = dirs,
     confirm = function(picker, item)
       picker:close()
       if item then
-        open_file(Snacks.picker.util.path(item))
+        open_file(Snacks.picker.util.path(item), function()
+          browse_files(dirs, on_back)
+        end)
       end
     end,
     actions = on_back and {

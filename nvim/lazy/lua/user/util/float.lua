@@ -7,20 +7,34 @@ local function tmux_move(direction)
   end
 end
 
-function M.open(path)
+-- opts.on_back (optional): <C-o> closes the float and calls it — steps back to the
+-- picker the doc was opened from, mirroring the picker→chooser back one level up.
+function M.open(path, opts)
+  opts = opts or {}
+  local keys = {
+    q = "close",
+    ["<C-h>"] = { tmux_move("L"), desc = "tmux left" },
+    ["<C-j>"] = { tmux_move("D"), desc = "tmux down" },
+    ["<C-k>"] = { tmux_move("U"), desc = "tmux up" },
+    ["<C-l>"] = { tmux_move("R"), desc = "tmux right" },
+  }
+  if opts.on_back then
+    keys["<C-o>"] = {
+      function(self)
+        self:close()
+        vim.schedule(opts.on_back)
+      end,
+      desc = "docs: back to picker",
+    }
+  end
+
   local win = Snacks.win({
     file = path,
     width = 0.85,
     height = 0.85,
     border = "rounded",
     wo = { wrap = false, spell = false },
-    keys = {
-      q = "close",
-      ["<C-h>"] = { tmux_move("L"), desc = "tmux left" },
-      ["<C-j>"] = { tmux_move("D"), desc = "tmux down" },
-      ["<C-k>"] = { tmux_move("U"), desc = "tmux up" },
-      ["<C-l>"] = { tmux_move("R"), desc = "tmux right" },
-    },
+    keys = keys,
   })
 
   -- render-markdown is off globally (noisy while editing); enable it just for this
