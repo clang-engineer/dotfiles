@@ -15,11 +15,28 @@ local function open_file(path, on_back)
   end
 end
 
+-- <C-o> in a picker reopens the previous view (browser-style back). every view is
+-- reached with an on_back thunk that reopens whoever opened it, so <C-o> retraces the
+-- exact path in (doc → files → folder → root → files …). we always map the key even
+-- when on_back is nil, so it can't leak to vim's i_CTRL-O and collapse the picker.
+local function back_keys(on_back)
+  local actions = {
+    docs_back = function(picker)
+      if on_back then
+        picker:close()
+        on_back()
+      end
+    end,
+  }
+  local win = { input = { keys = { ["<c-o>"] = { "docs_back", mode = { "i", "n" } } } } }
+  return actions, win
+end
+
 -- file picker over `dirs`; open the chosen file (md → float, else buffer).
--- on_back (optional): <C-o> closes this picker and calls it — steps back to the
--- subdir chooser when the picked folder was wrong. the same <C-o> back is threaded
--- into the opened float, so it reopens this picker (one consistent step-back stack).
+-- on_back (optional): <C-o> steps back one level. the same on_back is threaded into
+-- the opened float, so the whole stack (doc → files → subdir → root) walks back on <C-o>.
 local function browse_files(dirs, on_back)
+  local actions, win = back_keys(on_back)
   Snacks.picker.files({
     dirs = dirs,
     confirm = function(picker, item)
@@ -30,18 +47,14 @@ local function browse_files(dirs, on_back)
         end)
       end
     end,
-    actions = on_back and {
-      docs_back = function(picker)
-        picker:close()
-        on_back()
-      end,
-    } or nil,
-    win = on_back and { input = { keys = { ["<c-o>"] = { "docs_back", mode = { "i", "n" } } } } } or nil,
+    actions = actions,
+    win = win,
   })
 end
 
--- subdirs=true root: pick one of its immediate subfolders, then browse that folder
-local function browse_subdirs(root)
+-- subdirs=true root: pick one of its immediate subfolders, then browse that folder.
+-- on_back: <C-o> from the folder chooser steps up (to the root chooser).
+local function browse_subdirs(root, on_back)
   local items = {}
   for entry, kind in vim.fs.dir(root.dir) do
     if kind == "directory" then
@@ -55,6 +68,7 @@ local function browse_subdirs(root)
   table.sort(items, function(a, b)
     return a.text < b.text
   end)
+  local actions, win = back_keys(on_back)
   Snacks.picker.pick({
     items = items,
     format = "text",
@@ -63,23 +77,84 @@ local function browse_subdirs(root)
       picker:close()
       if item then
         browse_files({ item.dir }, function()
-          browse_subdirs(root)
+          browse_subdirs(root, on_back)
         end)
       end
     end,
+    actions = actions,
+    win = win,
   })
 end
 
+-- open a root the user picked in the root chooser. on_back reopens the root chooser,
+-- so <C-o> out of the chosen root's files/folders lands back on the root list.
+local function open_root(root, on_back)
+  if root.subdirs then
+    browse_subdirs(root, on_back)
+  else
+    browse_files({ root.dir }, on_back)
+  end
+end
+
+-- root chooser: list browsable roots; pick one to narrow into it (subdirs root → its
+-- folder chooser, else its file list). on_back reopens whatever view opened this chooser.
+local function browse_roots(on_back)
+  local items = {}
+  for _, root in ipairs(config.roots()) do
+    if root.name and not root.grep_only then
+      items[#items + 1] = { text = root.name, root = root, file = root.dir }
+    end
+  end
+  if #items == 0 then
+    return config.warn_no_roots()
+  end
+  table.sort(items, function(a, b)
+    return a.text < b.text
+  end)
+  local actions, win = back_keys(on_back)
+  Snacks.picker.pick({
+    items = items,
+    format = "text",
+    title = "docs roots",
+    confirm = function(picker, item)
+      picker:close()
+      if item then
+        open_root(item.root, function()
+          browse_roots(on_back)
+        end)
+      end
+    end,
+    actions = actions,
+    win = win,
+  })
+end
+
+-- entry point. the initial view and the root chooser are each other's <C-o> target,
+-- so `:Docs` ⇄ root chooser toggles, and drilling into a root walks back out the same way.
 local function open(name)
   local root = name and config.find_root(name)
   if root and root.subdirs then
-    return browse_subdirs(root)
+    local show_subdirs, show_roots
+    show_subdirs = function()
+      browse_subdirs(root, show_roots)
+    end
+    show_roots = function()
+      browse_roots(show_subdirs)
+    end
+    return show_subdirs()
   end
   local dirs = config.file_roots(name)
   if #dirs == 0 then
     return name and config.warn_unknown_root(name, config.root_names(false)) or config.warn_no_roots()
   end
-  browse_files(dirs)
+  local show_files, show_roots
+  show_files = function()
+    browse_files(dirs, show_roots)
+  end
+  show_roots = function()
+    browse_roots(show_files)
+  end
+  show_files()
 end
 
 local function grep(name)
