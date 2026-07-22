@@ -409,6 +409,9 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (keymaps) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# disable OMT's prefix+e (edit .tmux.conf.local) — unused
+unbind e
+
 # avoid raw CSI-u sequences (e.g. '9;5u') leaking into zsh when pressing Ctrl keys
 set -s extended-keys off
 set -g xterm-keys on
