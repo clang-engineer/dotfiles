@@ -1,3 +1,6 @@
+# Load secrets before tmux so the server and directly launched commands inherit project paths.
+[ -f ~/.secrets ] && source ~/.secrets
+
 # Auto-start tmux (only when not already inside tmux, excluding IDE built-in terminals)
 if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
   tmux attach || tmux new -s default
@@ -5,9 +8,6 @@ fi
 
 # Locale
 export LANG=ko_KR.UTF-8
-
-# Load secrets (tokens, credentials) from a local-only file
-[ -f ~/.secrets ] && source ~/.secrets
 
 # Cache the brew prefix (brew --prefix is slow, so call it only once)
 if command -v brew >/dev/null 2>&1; then
