@@ -3,8 +3,8 @@
 # Link shared custom commands into a Claude Code project.
 #
 # Usage:
-#   ./claude/link-commands.sh <project-path> [command1 command2 ...]
-#   ./claude/link-commands.sh --force <project-path> [command1 ...]
+#   ./scripts/link-claude-commands.sh <project-path> [command1 command2 ...]
+#   ./scripts/link-claude-commands.sh --force <project-path> [command1 ...]
 #
 # - No command names → link all .md files
 # - Specific names   → link only those (omit .md extension)
@@ -15,10 +15,11 @@ set -euo pipefail
 export MSYS=winsymlinks:nativestrict
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=../scripts/lib/common.sh
-source "$SCRIPT_DIR/../scripts/lib/common.sh"
+# shellcheck source-path=SCRIPTDIR
+# shellcheck source=lib/common.sh
+source "$SCRIPT_DIR/lib/common.sh"
 
-DOTFILES_COMMANDS="$(cd "$SCRIPT_DIR/../agents/commands" && pwd)"
+DOTFILES_COMMANDS="$(cd "$SCRIPT_DIR/../chezmoi/.chezmoitemplates/agent-commands" && pwd)"
 
 usage() {
   cat <<EOF
@@ -53,8 +54,8 @@ TARGET_DIR="$PROJECT_PATH/.claude/commands"
 ensure_dir "$TARGET_DIR"
 
 # --- resolve absolute paths ---
-DOTFILES_COMMANDS="$(cd "$DOTFILES_COMMANDS" && pwd -W 2>/dev/null || pwd)"
-TARGET_DIR="$(cd "$TARGET_DIR" && pwd -W 2>/dev/null || pwd)"
+DOTFILES_COMMANDS="$(cd "$DOTFILES_COMMANDS" && { pwd -W 2>/dev/null || pwd; })"
+TARGET_DIR="$(cd "$TARGET_DIR" && { pwd -W 2>/dev/null || pwd; })"
 
 # --- collect source files ---
 if [[ $# -gt 0 ]]; then

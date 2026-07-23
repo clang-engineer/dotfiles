@@ -53,8 +53,9 @@ of truth. This section lists only the scripts that run:
 |---|---|
 | `run_once_after_10-install-shell-tools.sh` | oh-my-zsh, zsh plugins, TPM, jenv |
 
-> Edit configs afterwards with `chezmoi edit --apply ~/.zshrc` (edit source + apply
-> immediately). nvim/hammerspoon/claude are symlinks, so edit them directly as usual.
+> Edit managed configs with `chezmoi edit --apply <target>` (edit source + apply
+> immediately). Only nvim and hammerspoon are whole-directory symlinks; Claude's
+> `keybindings.json`, `statusline.sh`, and public commands are managed files.
 
 ## 3. Install packages
 

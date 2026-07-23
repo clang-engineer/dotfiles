@@ -24,14 +24,9 @@ packages/Brewfile.lock.json
 # Any subdirectory here (connections/, backups, etc.) must never be committed.
 nvim/lazy/lua/user/db/*/
 
-# Claude Code source: ignore everything, allow only the public native config.
-# Runtime data now lives in ~/.claude; this remains a defense against accidentally
-# adding generated settings or private overlays during migration.
+# Legacy Claude runtime source from the old whole-directory symlink layout.
+# Keep ignored until every machine has run the one-time migration.
 claude/*
-!claude/README.md
-!claude/keybindings.json
-!claude/link-commands.sh
-!claude/statusline.sh
 
 # local tool settings
 .claude/settings.local.json

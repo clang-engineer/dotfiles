@@ -1,9 +1,9 @@
 # Claude Code Configuration Guide
 
 An overview of Claude Code's main configuration files and how to use them.
-This directory contains only Claude-specific public configuration. Reusable commands
-live in `../agents/commands/` and chezmoi links them into each supported agent's native
-command directory.
+Claude-specific public configuration lives in `chezmoi/dot_claude/`. Reusable commands
+live in `chezmoi/.chezmoitemplates/agent-commands/` and chezmoi renders them into each
+supported agent's native command directory.
 
 ---
 
@@ -210,8 +210,9 @@ Connect external tool servers to Claude Code. Location: `.claude/mcp.json`
 ## Creating Slash Commands
 
 Create a markdown file in the `.claude/commands/` directory and it becomes usable as `/command`.
-Commands that also work in Codex or OpenCode belong in `agents/commands/` instead;
-chezmoi distributes them to all three tools.
+Commands that also work in Codex or OpenCode belong in
+`chezmoi/.chezmoitemplates/agent-commands/` instead; chezmoi distributes them to all
+three tools.
 
 ```
 .claude/commands/

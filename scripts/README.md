@@ -10,6 +10,8 @@ scripts/
 ├── README.md
 ├── generate-key.sh / .ps1                    # SSH key generation + ssh-agent registration
 ├── add-workspace-user.sh / .ps1              # per-workspace git identity (includeIf)
+├── check-agent-env.sh                         # shared agent-command environment check
+├── link-claude-commands.sh                    # shared commands → project .claude/commands
 ├── setup-java-versions.sh                    # jenv-based Java version setup
 ├── lib/                                      # shared functions (common.sh)
 └── windows/
@@ -26,6 +28,8 @@ scripts/
 | Windows-only install | — | `.\scripts\windows\install-windows.ps1` |
 | SSH key generation | `./scripts/generate-key.sh <label> <email>` | `.\scripts\generate-key.ps1` |
 | Per-workspace git identity | `./scripts/add-workspace-user.sh` | `.\scripts\add-workspace-user.ps1` |
+| Agent command environment | `./scripts/check-agent-env.sh` | — |
+| Project Claude commands | `./scripts/link-claude-commands.sh <project>` | — |
 | Java versions (jenv) | `./scripts/setup-java-versions.sh` | — |
 
 > The private overlay (ssh hosts, nvim DB connections, `~/.pgpass`) lives in the
