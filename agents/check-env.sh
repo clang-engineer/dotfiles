@@ -1,5 +1,5 @@
 #!/bin/sh
-# Check the environment variables required by the /to-xxx slash commands
+# Check the environment variables required by shared agent commands.
 
 ok=0
 fail=0
@@ -21,7 +21,7 @@ check() {
   fi
 }
 
-echo "Claude /to-xxx environment variable check"
+echo "Shared agent command environment check"
 echo "─────────────────────────────"
 check "BLOG_DIR"    "$BLOG_DIR"    "/blog, /blog-improve"
 check "VAULT_DIR" "$VAULT_DIR" "/notes, /notes-cleanup"

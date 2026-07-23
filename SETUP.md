@@ -81,7 +81,7 @@ in the public scaffold — they live in the private `secrets` repo. If you have 
 clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
 sources its `env`, overlays real SSH hosts, nvim DB connections, and `~/.pgpass`, and
 generates `~/.claude/settings.json` (its own claude overlay owns the settings template
-and statusline). That repo's README documents the exact clone command.
+and private agent rules/commands). That repo's README documents the exact clone command.
 
 ## 5. Git identity
 

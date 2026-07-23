@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Link shared Claude Code custom commands into a project.
+# Link shared custom commands into a Claude Code project.
 #
 # Usage:
 #   ./claude/link-commands.sh <project-path> [command1 command2 ...]
@@ -18,13 +18,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../scripts/lib/common.sh
 source "$SCRIPT_DIR/../scripts/lib/common.sh"
 
-DOTFILES_COMMANDS="$(cd "$SCRIPT_DIR/../claude/commands" && pwd)"
+DOTFILES_COMMANDS="$(cd "$SCRIPT_DIR/../agents/commands" && pwd)"
 
 usage() {
   cat <<EOF
 Usage: $(basename "$0") [--force] <project-path> [command1 command2 ...]
 
-Link Claude Code custom commands from dotfiles into a project.
+Link shared custom commands from dotfiles into a Claude Code project.
   --force        Overwrite existing files/symlinks
   <project-path> Target project root
   [commands]     Specific command names (without .md); omit for all

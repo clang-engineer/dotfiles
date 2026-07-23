@@ -46,13 +46,14 @@ turns it into your home directory:
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
-| `symlink_dot_claude.tmpl` | `~/.claude` → `claude/` | symlink |
+| `dot_claude/symlink_*` | selected files in `~/.claude/` | per-file symlinks |
+| agent command symlinks | Claude, Codex, and OpenCode command dirs | per-file symlinks |
 | `run_once_*` | shell-tool installs (oh-my-zsh, plugins, TPM, jenv) | scripts |
 
 **Managed vs symlink:** big, live-edited config directories (`nvim/`,
-`hammerspoon/`, `claude/`) stay as their own folders and are symlinked — edit in
-place, no round-trip. Everything else is a managed file; edit with
-`chezmoi edit --apply ~/.zshrc`.
+`hammerspoon/`) stay as their own folders and are symlinked. Claude's runtime
+directory stays local while only its public config files are linked. Everything
+else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 
 ## Layout
 
@@ -61,7 +62,8 @@ place, no round-trip. Everything else is a managed file; edit with
 | `chezmoi/` | chezmoi source — managed dotfiles, OS-branched via `.chezmoiignore.tmpl` |
 | `nvim/` | Neovim (LazyVim) — symlinked to `~/.config/nvim` |
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
-| `claude/` | Claude Code config — symlinked to `~/.claude` |
+| `agents/` | public commands and utilities shared by coding agents |
+| `claude/` | Claude Code-specific config linked file-by-file into `~/.claude` |
 | `packages/` | package manifests only — Brewfile (macOS), scoop-packages.txt (Windows) |
 | `scripts/` | tooling: key gen, workspace identity, secrets/java setup, Windows installers |
 | `vim/` | legacy Vim (not linked; kept for reference) |

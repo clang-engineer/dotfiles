@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+claude_home="$HOME/.claude"
+expected_source="{{ .chezmoi.sourceDir | dir }}/claude"
+
+[[ -L "$claude_home" ]] || exit 0
+
+link_target="$(readlink "$claude_home")"
+actual_source="$(cd "$(dirname "$claude_home")" && cd "$link_target" && pwd -P)"
+expected_source="$(cd "$expected_source" && pwd -P)"
+
+if [[ "$actual_source" != "$expected_source" ]]; then
+  printf 'Refusing to replace unexpected ~/.claude symlink: %s\n' "$actual_source" >&2
+  exit 1
+fi
+
+migration_dir="$HOME/.claude.migrating"
+if [[ -e "$migration_dir" ]]; then
+  printf 'Refusing to overwrite existing migration directory: %s\n' "$migration_dir" >&2
+  exit 1
+fi
+mkdir "$migration_dir"
+
+shopt -s dotglob nullglob
+for source_path in "$expected_source"/*; do
+  name="$(basename "$source_path")"
+  case "$name" in
+    README.md|keybindings.json|link-commands.sh|statusline.sh)
+      continue
+      ;;
+  esac
+  mv "$source_path" "$migration_dir/$name"
+done
+
+rm "$claude_home"
+mv "$migration_dir" "$claude_home"
+printf 'Migrated Claude runtime data into %s\n' "$claude_home"
