@@ -37,7 +37,7 @@ A single LazyVim-based configuration. Plugins and settings are modularized under
 ## Troubleshooting
 
 - If `:checkhealth` output shows missing dependencies such as LuaRocks, node, or python3, install them via Brew/Scoop and run it again.
-- If an error occurs during plugin installation, run `rm -rf ~/.local/share/nvim` (or Windows `%LOCALAPPDATA%\nvim-data`) and re-run `nvim --headless "+Lazy sync" +qa`.
+- If an error occurs during plugin installation, remove only the plugin directory (`rm -rf ~/.local/share/nvim/lazy` or Windows `%LOCALAPPDATA%\nvim-data\lazy`) and re-run `nvim --headless "+Lazy sync" +qa`. The parent data directory also contains undo history, swap recovery files, and local state.
 
 ---
 

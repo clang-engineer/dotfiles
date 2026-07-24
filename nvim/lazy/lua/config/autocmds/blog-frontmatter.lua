@@ -6,8 +6,8 @@ local function stamp_kr()
 end
 
 local function NewTemplate()
-  local line_count = vim.api.nvim_buf_line_count(0)
-  if line_count > 1 then
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  if #lines > 1 or lines[1] ~= "" then
     return
   end
 
