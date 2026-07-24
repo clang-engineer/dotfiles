@@ -280,7 +280,7 @@ local function build_profile_items(profiles, expanded)
 
     if is_expanded then
         table.insert(items, {
-          text = string.format("  [open this profile] %s", profile),
+          text = string.format("  → open profile %s", profile),
           kind = "open_all",
           profile = profile,
         })
