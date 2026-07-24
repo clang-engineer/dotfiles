@@ -257,7 +257,7 @@ local defaults = {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
     open_profile = ">",
-    open_all = "[all]",
+    open_all = ">>",
   },
 }
 
@@ -266,7 +266,7 @@ local icon_styles = {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
     open_profile = ">",
-    open_all = "[all]",
+    open_all = ">>",
   },
   emoji = {
     folder_expanded = "📂",
@@ -278,7 +278,7 @@ local icon_styles = {
     folder_expanded = "",
     folder_collapsed = "",
     open_profile = "",
-    open_all = "",
+    open_all = "+",
   },
 }
 
