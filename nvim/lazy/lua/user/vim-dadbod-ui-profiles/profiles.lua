@@ -257,6 +257,7 @@ local defaults = {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
     open_profile = ">",
+    open_all = "[all]",
   },
 }
 
@@ -265,16 +266,19 @@ local icon_styles = {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
     open_profile = ">",
+    open_all = "[all]",
   },
   emoji = {
     folder_expanded = "📂",
     folder_collapsed = "📁",
     open_profile = "📂",
+    open_all = "🚀",
   },
   nerd = {
     folder_expanded = "",
     folder_collapsed = "",
     open_profile = "",
+    open_all = "",
   },
 }
 
@@ -288,6 +292,7 @@ local function normalize_icons(options)
     folder_expanded = combined.folder_expanded or style.folder_expanded,
     folder_collapsed = combined.folder_collapsed or style.folder_collapsed,
     open_profile = combined.open_profile or style.open_profile,
+    open_all = combined.open_all or combined.open_profile or style.open_profile,
   }
 end
 
@@ -318,7 +323,7 @@ local function build_profile_items(profiles, expanded)
     if is_expanded then
       if #(profiles[profile] or {}) > 1 then
         table.insert(items, {
-          text = string.format("  %s open profile %s", profile_icons.open_profile, profile),
+          text = string.format("  %s Open all (%d): %s", profile_icons.open_all, #(profiles[profile] or {}), profile),
           kind = "open_all",
           profile = profile,
         })
