@@ -252,7 +252,7 @@ local defaults = {
   picker_layout = "dropdown",
   prefix_by_profile = false,
   profile_labels = {},
-  icon_style = "ascii",
+  icon_style = "emoji",
   icons = {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
@@ -611,6 +611,9 @@ local function run_picker(profiles, expanded, opts)
       picker:close()
     end,
   }
+
+  -- Compatibility for stale cached keymaps that still call a global `actions` table.
+  _G.actions = actions
 
   local picker = nil
   if type(snacks) == "function" then
