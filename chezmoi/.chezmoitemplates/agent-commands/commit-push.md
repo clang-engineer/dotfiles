@@ -1,13 +1,16 @@
 Commit and push the changes in the current git repository.
 
 Behavior:
-1. Stage only the files actually created or modified in this conversation.
+1. Select only the files actually created or modified in this conversation.
    - Don't touch pre-existing changes unrelated to the session (e.g. `.claude/settings.local.json` and the like).
    - If it's unclear what to stage, check `git status`, point it out to the user, then proceed.
-2. Read the diff of the staged changes and write a message following this repo's commit convention.
+   - Don't commit changes that appear incomplete or have known errors; leave them unstaged and report them to the user.
+2. If there are many changed files, divide them into logical work units and commit each unit separately.
+   - Group changes by purpose, not just file count, and don't mix unrelated changes in one commit.
+3. For each work unit, stage only its files, read the staged diff, and write a message following this repo's commit convention.
    - Match the format by referring to recent `git log` (e.g. `feat(scope):`, `fix(scope):`, `docs(scope):`, `chore:`).
    - Subject is a one-line summary. If there are multiple changes, briefly add what/why in the body.
-3. After committing, push the current branch.
+4. After committing all work units, push the current branch.
    - If there's no upstream, `git push -u origin <current-branch>`.
 
 Notes:
