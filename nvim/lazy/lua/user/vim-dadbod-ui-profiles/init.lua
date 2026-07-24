@@ -85,7 +85,9 @@ function M.setup(opts)
     command_prefix = command_prefix,
     picker_layout = options.picker_layout,
     prefix_by_profile = options.prefix_by_profile,
+    icon_style = options.icon_style,
     profile_labels = options.profile_labels,
+    icons = options.icons,
   })
 end
 

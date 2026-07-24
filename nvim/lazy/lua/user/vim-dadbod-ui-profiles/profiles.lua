@@ -570,7 +570,7 @@ local function run_picker(profiles, expanded, opts)
         return
       end
 
-    if item.kind == "profile" then
+      if item.kind == "profile" then
         expanded[item.profile] = true
         picker:refresh()
         if #(profiles[item.profile] or {}) == 1 then
@@ -804,12 +804,42 @@ local function run_manage_picker(profile_meta, opts)
     end,
   }
 
-  local function run_manage_action(win, fn)
-    local picker = win and win.picker
-    if not picker or type(fn) ~= "function" then
+  local function find_picker_from_window_manage(win)
+    if not win or not win.win then
+      return nil
+    end
+
+    if type(win.picker) == "table" then
+      return win.picker
+    end
+
+    local picker_get = Snacks and Snacks.picker and type(Snacks.picker.get) == "function" and Snacks.picker.get or nil
+    if not picker_get then
+      return nil
+    end
+
+    for _, picker in ipairs(picker_get()) do
+      local wins = picker.layout and picker.layout.wins
+      if wins then
+        for _, picker_win in pairs(wins) do
+          if picker_win and picker_win.win == win.win then
+            return picker
+          end
+        end
+      end
+    end
+  end
+
+  local function run_manage_action(win, action_name)
+    local picker = find_picker_from_window_manage(win)
+    if not picker then
       return
     end
-    fn(picker)
+
+    local action = actions[action_name]
+    if type(action) == "function" then
+      action(picker)
+    end
   end
 
   picker({
@@ -825,37 +855,37 @@ local function run_manage_picker(profile_meta, opts)
         keys = {
           ["<CR>"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_open)
+              run_manage_action(win, "dbui_manage_open")
             end,
             mode = { "i", "n" },
           },
           ["o"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_open)
+              run_manage_action(win, "dbui_manage_open")
             end,
             mode = { "i", "n" },
           },
           ["i"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_edit_file)
+              run_manage_action(win, "dbui_manage_edit_file")
             end,
             mode = { "i", "n" },
           },
           ["a"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_add)
+              run_manage_action(win, "dbui_manage_add")
             end,
             mode = { "i", "n" },
           },
           ["e"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_edit)
+              run_manage_action(win, "dbui_manage_edit")
             end,
             mode = { "i", "n" },
           },
           ["d"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_delete)
+              run_manage_action(win, "dbui_manage_delete")
             end,
             mode = { "i", "n" },
           },
@@ -865,37 +895,37 @@ local function run_manage_picker(profile_meta, opts)
         keys = {
           ["<CR>"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_open)
+              run_manage_action(win, "dbui_manage_open")
             end,
             mode = { "n", "x" },
           },
           ["o"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_open)
+              run_manage_action(win, "dbui_manage_open")
             end,
             mode = { "n", "x" },
           },
           ["i"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_edit_file)
+              run_manage_action(win, "dbui_manage_edit_file")
             end,
             mode = { "n", "x" },
           },
           ["a"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_add)
+              run_manage_action(win, "dbui_manage_add")
             end,
             mode = { "n", "x" },
           },
           ["e"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_edit)
+              run_manage_action(win, "dbui_manage_edit")
             end,
             mode = { "n", "x" },
           },
           ["d"] = {
             function(win)
-              run_manage_action(win, actions.dbui_manage_delete)
+              run_manage_action(win, "dbui_manage_delete")
             end,
             mode = { "n", "x" },
           },

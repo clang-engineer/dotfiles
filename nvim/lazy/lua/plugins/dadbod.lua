@@ -7,6 +7,7 @@ return {
       require("user.vim-dadbod-ui-profiles").setup({
           picker_layout = "dropdown",
           prefix_by_profile = true,
+          icon_style = "emoji",
         })
 
       -- Improve query result window (dbout) readability:
