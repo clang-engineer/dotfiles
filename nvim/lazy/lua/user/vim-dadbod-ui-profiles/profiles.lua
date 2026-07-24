@@ -315,12 +315,22 @@ local function build_profile_items(profiles, expanded)
       expanded = is_expanded,
     })
 
-    if is_expanded and #(profiles[profile] or {}) > 1 then
-      table.insert(items, {
-        text = string.format("  %s open profile %s", profile_icons.open_profile, profile),
-        kind = "open_all",
-        profile = profile,
-      })
+    if is_expanded then
+      if #(profiles[profile] or {}) > 1 then
+        table.insert(items, {
+          text = string.format("  %s open profile %s", profile_icons.open_profile, profile),
+          kind = "open_all",
+          profile = profile,
+        })
+      end
+
+      if #(profiles[profile] or {}) == 0 then
+        table.insert(items, {
+          text = "  (no connections)",
+          kind = "empty_connection",
+          profile = profile,
+        })
+      end
 
       for _, conn in ipairs(profiles[profile] or {}) do
         local detail = string.format("    %s (%s)", conn.name, truncate_for_display(conn.url))
