@@ -1,4 +1,3 @@
-# mise — manages node/ruby/java runtimes (replaced rbenv/jenv/pyenv/nvm).
-if command -v mise &>/dev/null; then
-  eval "$(mise activate bash)"
+if [ -f "$HOME/.bashrc" ]; then
+  source "$HOME/.bashrc"
 fi

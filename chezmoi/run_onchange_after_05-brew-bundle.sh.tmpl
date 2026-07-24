@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 # Install Homebrew packages — absorbed from the manual `brew bundle` step.
 # run_onchange: re-runs whenever a Brewfile changes (checksums below force it).
-# Brewfile      {{ output "shasum" "-a" "256" (joinPath (.chezmoi.sourceDir | dir) "packages/Brewfile") | trim }}
-# Brewfile.cask {{ output "shasum" "-a" "256" (joinPath (.chezmoi.sourceDir | dir) "packages/Brewfile.cask") | trim }}
+# Brewfile      {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "packages/Brewfile" | trim }}
+{{ if eq .chezmoi.os "darwin" }}
+# Brewfile.cask {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "packages/Brewfile.cask" | trim }}
+{{ end }}
 set -euo pipefail
 command -v brew >/dev/null 2>&1 || { printf '→ brew not found; skipping packages\n'; exit 0; }
 
-# --no-upgrade: install missing packages only, don't bump versions
-# (a docker-desktop upgrade needs sudo, which can't prompt in a non-interactive apply).
+# --no-upgrade: install missing packages only, don't bump existing versions.
 brew bundle --no-upgrade --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile"
 
+{{ if eq .chezmoi.os "darwin" }}
 # brew 6.0 refuses casks from untrusted third-party taps; aerospace needs this.
 brew trust nikitabobko/tap
 brew bundle --no-upgrade --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile.cask"
+{{ end }}

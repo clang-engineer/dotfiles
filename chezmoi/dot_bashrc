@@ -1,7 +1,30 @@
 alias g++="g++ -std=c++17"
 alias clang++="clang++ -std=c++17"
 
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # Load secrets (tokens, credentials) from a local-only file
 if [ -f "$HOME/.secrets" ]; then
   source "$HOME/.secrets"
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init bash)"
+fi
+
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --bash)"
+fi
+
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init bash)"
+fi
+
+# mise — manages node/ruby/java runtimes (Windows Ruby comes from Scoop).
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate bash)"
 fi

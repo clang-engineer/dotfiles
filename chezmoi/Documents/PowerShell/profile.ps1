@@ -1,5 +1,5 @@
-﻿# PowerShell Profile (Windows PowerShell 5.1)
-# Linked to: $HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+﻿# PowerShell 7 profile shared by all terminal hosts.
+# Target: $HOME\Documents\PowerShell\profile.ps1 ($PROFILE.CurrentUserAllHosts)
 
 # ──────────────────────────────────────────────────────────────────
 # Encoding (UTF-8) — for both console and redirects
@@ -32,12 +32,16 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     zoxide init powershell | Out-String | Invoke-Expression
 }
 
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    mise activate pwsh | Out-String | Invoke-Expression
+}
+
 # ──────────────────────────────────────────────────────────────────
 # Completion / history — PSReadLine
 #   Interactive sessions only (avoid polluting non-interactive child process stderr)
 # ──────────────────────────────────────────────────────────────────
 if (-not [Console]::IsOutputRedirected -and -not [Console]::IsInputRedirected) {
-    # Force-load a newer version instead of the 2.0.0 bundled with 5.1 (for predictive input)
+    # Predictive input requires PSReadLine 2.2 or newer.
     Import-Module PSReadLine -MinimumVersion 2.2.0 -Force -ErrorAction SilentlyContinue
     if ((Get-Module PSReadLine).Version -ge [version]'2.2.0') {
         Set-PSReadLineOption -PredictionSource History
@@ -50,13 +54,6 @@ if (-not [Console]::IsOutputRedirected -and -not [Console]::IsInputRedirected) {
 #   Ctrl+T file select, Ctrl+R history
 # ──────────────────────────────────────────────────────────────────
 if (Get-Command fzf -ErrorAction SilentlyContinue) {
-    if (-not (Get-Module -ListAvailable PSFzf)) {
-        try {
-            Install-Module -Name PSFzf -Scope CurrentUser -Force -ErrorAction Stop
-        } catch {
-            Write-Warning "PSFzf install failed: $_"
-        }
-    }
     if (Get-Module -ListAvailable PSFzf) {
         Import-Module PSFzf
         Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
@@ -85,7 +82,7 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
 }
 
 # ──────────────────────────────────────────────────────────────────
-# Suggest similar command candidates on a typo (PS 5.1 has no "Did you mean?")
+# Suggest similar command candidates on a typo.
 #   Search for similar names among PATH executables + cmdlets/functions/aliases
 # ──────────────────────────────────────────────────────────────────
 $ExecutionContext.InvokeCommand.CommandNotFoundAction = {

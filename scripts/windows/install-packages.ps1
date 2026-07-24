@@ -11,6 +11,9 @@ if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     Write-Host "Scoop not found. Installing..." -ForegroundColor Yellow
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
     irm get.scoop.sh | iex
+    if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+        throw "Scoop installation failed"
+    }
 }
 
 # Add buckets required by packages (e.g. extras for windows-terminal, nerd-fonts for fonts)
@@ -18,6 +21,7 @@ $Buckets = @("main", "extras", "versions", "nerd-fonts")
 foreach ($b in $Buckets) {
     if (-not (scoop bucket list | Select-String -SimpleMatch $b)) {
         scoop bucket add $b | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "Failed to add Scoop bucket: $b" }
     }
 }
 
@@ -36,4 +40,5 @@ foreach ($pkg in $Packages) {
     } else {
         scoop install $pkg
     }
+    if ($LASTEXITCODE -ne 0) { throw "Failed to install Scoop package: $pkg" }
 }

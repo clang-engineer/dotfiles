@@ -2,14 +2,20 @@
 
 ## Prerequisites
 
-- macOS
-- Install Homebrew:
+- macOS or Linux: install Homebrew, then chezmoi:
 
   ```sh
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  fi
   ```
 
-- Install chezmoi: `brew install chezmoi`
+- `brew install chezmoi`
+- Windows: enable Developer Mode for symlink creation, then run
+  `winget install Git.Git twpayne.chezmoi`
 - Clone this repo: `git clone <repo> ~/dotfiles`
 
 ## 1. Link chezmoi (machine-local, once)
@@ -36,12 +42,11 @@ chezmoi diff     # preview what will change
 chezmoi apply    # link, copy, install, and generate in one pass
 ```
 
-> **Skipping the slow parts.** `chezmoi apply` also runs the one-time installs
-> (`run_once_*`: oh-my-zsh, zsh plugins, jenv) automatically. To place the configs
+> **Skipping the slow parts.** `chezmoi apply` also installs packages, TPM plugins,
+> and mise runtimes automatically. To place the configs
 > only and defer those, run `chezmoi apply --exclude=scripts`, then a plain
-> `chezmoi apply` later when you want them. Step 3 (`brew bundle`) is the heaviest —
-> skip it and `brew install` packages as you need them. Steps 6–7 are optional; run
-> them anytime.
+> `chezmoi apply` later when you want them. Package and runtime installation is the
+> slowest part. Steps 6–7 are optional; run them anytime.
 
 What `chezmoi apply` runs, in order — file placement (source→target, managed vs
 symlink) is documented in the [README](README.md#how-it-works) table as the source
@@ -51,17 +56,22 @@ of truth. This section lists only the scripts that run:
 
 | Script | Action |
 |---|---|
-| `run_once_after_10-install-shell-tools.sh` | oh-my-zsh, zsh plugins, TPM, jenv |
+| `run_once_before_00-migrate-claude-home.sh` | migrate the legacy Claude symlink (macOS/Linux) |
+| `run_onchange_after_05-brew-bundle.sh` | install Homebrew formulae and macOS-only casks |
+| `run_onchange_after_10-install-shell-tools.sh` | install TPM plugins and mise runtimes (macOS/Linux) |
+| `run_onchange_after_15-windows-install.ps1` | install Scoop packages and mise runtimes |
 
 > Edit managed configs with `chezmoi edit --apply <target>` (edit source + apply
 > immediately). Only nvim and hammerspoon are whole-directory symlinks; Claude's
 > `keybindings.json`, `statusline.sh`, and public commands are managed files.
 
-## 3. Install packages
+## 3. Packages and runtimes
 
-```sh
-brew bundle --file packages/Brewfile
-```
+`chezmoi apply` installs package manifests and the Node/Java versions declared in
+`~/.config/mise/config.toml`. mise also installs Ruby on macOS/Linux; Windows uses
+Scoop Ruby because mise's Ruby backend is Unix-only. Linux skips the macOS cask
+manifest. The Windows PowerShell installer is only the bootstrap mechanism; installed
+CLI tools are available from PowerShell, Git Bash, cmd, and IDE terminals through PATH.
 
 ## 4. Machine-local secrets (`~/.secrets`)
 
@@ -74,8 +84,10 @@ $EDITOR ~/.secrets   # add GITHUB_TOKEN, API keys, etc. as you need them
 ```
 
 The shell (`.zshrc` / `.bashrc`) sources it automatically — open a new shell to load
-edits. On Windows, PowerShell's `$PROFILE` sources `~/.secrets.ps1`, which you create
-by hand (chezmoi scaffolds only the Unix `~/.secrets`).
+edits. On Windows, the PowerShell 7 all-hosts profile sources `~/.secrets.ps1`, which
+you create by hand (chezmoi scaffolds only the Unix `~/.secrets`). The same profile is
+loaded whenever `pwsh` runs in Windows Terminal, VS Code, JetBrains, or another host;
+terminal appearance remains configured by each host.
 
 Machine paths (`WORKSPACE_DIR`, `VAULT_DIR`, …) and any synced credentials are **not**
 in the public scaffold — they live in the private `secrets` repo. If you have access,
@@ -89,8 +101,8 @@ and private agent rules/commands). That repo's README documents the exact clone 
 `dot_gitconfig` holds only shared settings plus `[include] ~/.gitconfig.local`.
 `~/.gitconfig.local` is created by `create_dot_gitconfig.local.tmpl` from the
 name/email you entered at `chezmoi init` (step 1), and chezmoi never overwrites
-it afterwards. Change them later with `chezmoi edit ~/.gitconfig.local` or by
-editing the file directly. If you skipped the prompts, the `[user]` fields are
+it afterwards. Change them later by editing `~/.gitconfig.local` directly. If you
+skipped the prompts, the `[user]` fields are
 left empty and git asks on your first commit.
 
 To add a workspace-scoped identity (a different name/email for repos under a
@@ -148,11 +160,13 @@ separate work and personal accounts.
 ### Java version management
 
 ```sh
-./scripts/setup-java-versions.sh
+mise ls java
+mise install
 ```
 
-Creates `/Library/Java/JavaVirtualMachines/` symlinks for Homebrew openjdk
-(8, 11, 17, 21) and registers them with jenv. Requires sudo.
+mise installs the Temurin versions declared in `~/.config/mise/config.toml` and makes
+Java 21 the default. Use `mise use java@temurin-17` in a project to create a
+project-local override.
 
 ### Neovim Java LSP
 

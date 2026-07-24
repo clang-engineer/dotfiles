@@ -12,12 +12,10 @@ scripts/
 ├── add-workspace-user.sh / .ps1              # per-workspace git identity (includeIf)
 ├── check-agent-env.sh                         # shared agent-command environment check
 ├── link-claude-commands.sh                    # shared commands → project .claude/commands
-├── setup-java-versions.sh                    # jenv-based Java version setup
 ├── lib/                                      # shared functions (common.sh)
 └── windows/
     ├── install-windows.ps1                   # Windows install orchestrator
-    ├── install-packages.ps1                  # Scoop package install (packages/scoop-packages.txt)
-    └── update-terminal.ps1                   # Windows Terminal font setup
+    └── install-packages.ps1                  # Scoop package install (packages/scoop-packages.txt)
 ```
 
 ## Execution summary
@@ -25,12 +23,11 @@ scripts/
 | Purpose | macOS/Linux | Windows |
 | --- | --- | --- |
 | Full environment setup | `chezmoi apply` | `chezmoi apply` |
-| Windows-only install | — | `.\scripts\windows\install-windows.ps1` |
+| Windows install (normally automatic) | — | `.\scripts\windows\install-windows.ps1` |
 | SSH key generation | `./scripts/generate-key.sh <label> <email>` | `.\scripts\generate-key.ps1` |
 | Per-workspace git identity | `./scripts/add-workspace-user.sh` | `.\scripts\add-workspace-user.ps1` |
 | Agent command environment | `./scripts/check-agent-env.sh` | — |
 | Project Claude commands | `./scripts/link-claude-commands.sh <project>` | — |
-| Java versions (jenv) | `./scripts/setup-java-versions.sh` | — |
 
 > The private overlay (ssh hosts, nvim DB connections, `~/.pgpass`) lives in the
 > `secrets` repo and is applied by that repo's own `./setup.sh` — not by any script here.

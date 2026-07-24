@@ -1,22 +1,25 @@
-{{ if ne .chezmoi.os "windows" }}
-# Windows-only — ignored on macOS/Linux
-AppData
-Documents
-15-windows-install.ps1
-{{ else }}
+{{ if eq .chezmoi.os "windows" }}
 # Unix-only — ignored on Windows
 .secrets
 .zshrc
-.bashrc
-.bash_profile
 .tmux.conf
 .aerospace.toml
 .opencode_aliases
 .hammerspoon
-.ssh
 .config/nvim
+00-migrate-claude-home.sh
 05-brew-bundle.sh
 10-install-shell-tools.sh
+{{ else }}
+# Windows-only — ignored on macOS/Linux
+AppData
+Documents
+15-windows-install.ps1
+{{ if eq .chezmoi.os "linux" }}
+# macOS-only — ignored on Linux
+.aerospace.toml
+.hammerspoon
+{{ end }}
 {{ end }}
 # SSH host configs overlaid by the private secrets repo (both OS)
 .ssh/config.d/[1-9]*

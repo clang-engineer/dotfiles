@@ -1,0 +1,8 @@
+# Windows installs (Scoop packages and mise runtimes).
+# Invokes the installer so `chezmoi apply` covers Windows too.
+# UNTESTED after the migration — verify on a real Windows machine.
+# scoop-packages {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "packages/scoop-packages.txt" | trim }}
+# mise-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_config/mise/config.toml.tmpl" | trim }}
+# install-windows {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "scripts/windows/install-windows.ps1" | trim }}
+# install-packages {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "scripts/windows/install-packages.ps1" | trim }}
+& "{{ .chezmoi.sourceDir | dir }}\scripts\windows\install-windows.ps1"

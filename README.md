@@ -2,8 +2,8 @@
 
 My personal environment, managed with [chezmoi](https://chezmoi.io). On a fresh
 machine `chezmoi apply` links every config, runs the one-time installs, generates
-machine-local bits, and (optionally) pulls the private `secrets` companion — one
-command, macOS and Windows.
+machine-local bits, and installs public packages in one command on macOS, Linux,
+and Windows. The private `secrets` companion has a separate bootstrap.
 
 > The previous shell / `bootstrap.sh` version (symlink-based) is preserved at the
 > **`pre-chezmoi`** git tag — restore with `git checkout pre-chezmoi`.
@@ -13,6 +13,12 @@ command, macOS and Windows.
 **macOS / Linux**
 
 ```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 brew install chezmoi
 git clone <repo> ~/dotfiles
 
@@ -21,16 +27,15 @@ git clone <repo> ~/dotfiles
 chezmoi init --source ~/dotfiles
 
 chezmoi apply
-brew bundle --file packages/Brewfile
 ```
 
 **Windows (PowerShell)** — _scaffolded, verify on a real machine_
 
 ```powershell
-winget install twpayne.chezmoi
+# Enable Windows Developer Mode first (required for the Neovim symlink).
+winget install Git.Git twpayne.chezmoi
 # clone, then `chezmoi init --source <path>` (prompts, writes chezmoi.toml), then:
 chezmoi apply
-.\scripts\windows\install-windows.ps1   # packages, Nerd Font, terminal
 ```
 
 - Setup walkthrough — including secret handling (SSH keys, `~/.secrets`, identity): [SETUP.md](SETUP.md)
@@ -48,7 +53,7 @@ turns it into your home directory:
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
 | `dot_claude/` | selected files in `~/.claude/` | managed files |
 | agent command templates | Claude, Codex, and OpenCode command dirs | managed files |
-| `run_once_*` | shell-tool installs (oh-my-zsh, plugins, TPM, jenv) | scripts |
+| `run_once_*` / `run_onchange_*` | packages, TPM plugins, and mise runtimes | scripts |
 
 **Managed vs symlink:** big, live-edited config directories (`nvim/`,
 `hammerspoon/`) stay as their own folders and are symlinked. Claude's runtime
@@ -63,16 +68,17 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `nvim/` | Neovim (LazyVim) — symlinked to `~/.config/nvim` |
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `docs/` | tool-specific reference guides |
-| `packages/` | package manifests only — Brewfile (macOS), scoop-packages.txt (Windows) |
-| `scripts/` | tooling: key gen, workspace identity, secrets/java setup, Windows installers |
+| `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
+| `scripts/` | tooling: key generation, workspace identity, and Windows installers |
 | `vim/` | legacy Vim (not linked; kept for reference) |
 
 ## Cross-platform
 
-`chezmoi/.chezmoiignore.tmpl` branches by OS — Unix ignores the PowerShell profile
-and Windows nvim path; Windows ignores `.zshrc`/`.tmux.conf`/etc. and the `.sh`
-run-scripts. **Windows is scaffolded but untested after the migration**: the install
-run-script is `.sh` (Unix-only); PowerShell equivalents are a TODO.
+`chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,
+Hammerspoon, and casks. Windows uses AppData for Neovim, installs shared CLI tools
+with Scoop, and manages Git Bash startup files alongside a PowerShell 7 all-hosts
+profile. Terminal appearance remains host-specific. **Windows is scaffolded and
+must still be verified on a real machine after the migration.**
 
 ## Secrets
 

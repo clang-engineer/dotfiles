@@ -3,19 +3,21 @@
 
 7zip              # General-purpose compression/extraction tool
 dark              # WiX Decompiler. For inspecting MSI installers
+delta             # Syntax-highlighting pager used by the shared Git configuration
 fd                # find replacement. Fast file search (e.g. fd -e ts)
 fzf               # General-purpose fuzzy finder. Combine with pipelines for interactive select (e.g. vim $(fzf))
 gcc               # GNU C/C++ compiler
 git-lfs           # Git Large File Storage. Manage large binaries/images (git lfs track "*.psd")
-jenv              # Java version switcher (install JDKs separately, jenv add /path/to/jdk)
 JetBrainsMono-NF  # JetBrains Mono + Nerd Font icons (terminal font)
 jq                # CLI JSON processor (e.g. curl ... | jq '.items[].name')
 lazygit           # Git TUI client. Stage/commit/rebase from the keyboard
 mingw             # GCC toolchain for Windows (build native binaries)
+mise              # Cross-shell Node/Ruby/Java version manager
 neovim            # Vim-based modern editor. Lua config, async plugins
-nvm               # Node.js version manager (e.g. nvm install 20 && nvm use 20)
+pwsh              # PowerShell 7; profile.ps1 is shared by all PowerShell hosts
 python            # Python interpreter for Windows
 ripgrep           # grep replacement. Blazing-fast text search, respects .gitignore (e.g. rg -i "todo")
+ruby34             # Native Windows Ruby 3.4; mise's Ruby backend is Unix-only
 starship          # Cross-platform prompt. Shows git status / language versions in the prompt
 tree-sitter       # Incremental parsing library. Used by Neovim for syntax highlighting/code folding
 uv                # Blazing-fast Python package manager & virtualenv tool (pip/venv replacement)

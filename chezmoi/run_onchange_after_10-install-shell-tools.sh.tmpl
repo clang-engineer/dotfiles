@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# One-time shell tool installs, absorbed from the old zsh/tmux install scripts.
-# Runs once (chezmoi tracks it); each step is idempotent and skips if present.
+# Idempotent shell tool installs; reruns when the mise config changes.
+# mise-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_config/mise/config.toml.tmpl" | trim }}
 set -euo pipefail
 
 # zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting) are installed via
@@ -27,5 +27,5 @@ fi
 # Versions live in ~/.config/mise/config.toml (chezmoi-managed). mise builds/
 # downloads each and puts them on PATH via `mise activate` in the shell rc.
 if command -v mise >/dev/null 2>&1; then
-  mise install >/dev/null 2>&1 || printf '⚠︎ mise install failed (run `mise install` manually)\n'
+  mise install
 fi
