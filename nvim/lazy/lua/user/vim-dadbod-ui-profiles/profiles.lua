@@ -253,12 +253,7 @@ local defaults = {
   prefix_by_profile = false,
   profile_labels = {},
   icon_style = "emoji",
-  icons = {
-    folder_expanded = "[-]",
-    folder_collapsed = "[+]",
-    open_profile = ">",
-    open_all = ">>",
-  },
+  icons = {},
 }
 
 local icon_styles = {
