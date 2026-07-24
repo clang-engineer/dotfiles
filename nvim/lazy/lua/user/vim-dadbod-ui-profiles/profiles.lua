@@ -252,7 +252,44 @@ local defaults = {
   picker_layout = "dropdown",
   prefix_by_profile = false,
   profile_labels = {},
+  icon_style = "ascii",
+  icons = {
+    folder_expanded = "[-]",
+    folder_collapsed = "[+]",
+    open_profile = ">",
+  },
 }
+
+local icon_styles = {
+  ascii = {
+    folder_expanded = "[-]",
+    folder_collapsed = "[+]",
+    open_profile = ">",
+  },
+  emoji = {
+    folder_expanded = "📂",
+    folder_collapsed = "📁",
+    open_profile = "📂",
+  },
+  nerd = {
+    folder_expanded = "",
+    folder_collapsed = "",
+    open_profile = "",
+  },
+}
+
+local profile_icons = {}
+
+local function normalize_icons(options)
+  local style_name = options.icon_style or "ascii"
+  local style = icon_styles[style_name] or icon_styles.ascii
+  local combined = vim.tbl_extend("force", style, options.icons or {})
+  return {
+    folder_expanded = combined.folder_expanded or style.folder_expanded,
+    folder_collapsed = combined.folder_collapsed or style.folder_collapsed,
+    open_profile = combined.open_profile or style.open_profile,
+  }
+end
 
 local function truncate_for_display(value)
   local max_len = 72
@@ -268,7 +305,7 @@ local function build_profile_items(profiles, expanded)
 
   for _, profile in ipairs(ordered) do
     local is_expanded = expanded[profile] == true
-    local glyph = is_expanded and "📂" or "📁"
+    local glyph = is_expanded and profile_icons.folder_expanded or profile_icons.folder_collapsed
     local count = #(profiles[profile] or {})
 
     table.insert(items, {
@@ -280,7 +317,7 @@ local function build_profile_items(profiles, expanded)
 
     if is_expanded then
         table.insert(items, {
-          text = string.format("  📂 open profile %s", profile),
+          text = string.format("  %s open profile %s", profile_icons.open_profile, profile),
           kind = "open_all",
           profile = profile,
         })
@@ -862,6 +899,7 @@ end
 
 function M.setup(opts)
   local options = vim.tbl_extend("force", defaults, opts or {})
+  profile_icons = normalize_icons(options)
   picker_layout = normalize_picker_layout(options.picker_layout)
   use_profile_prefix = options.prefix_by_profile == true
   profile_label_map = options.profile_labels or {}
