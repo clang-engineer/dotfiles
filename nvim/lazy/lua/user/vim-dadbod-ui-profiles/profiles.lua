@@ -516,6 +516,14 @@ local function run_picker(profiles, expanded, opts)
     end
   end
 
+  local function run_picker_action(win, fn)
+    local picker = win and win.picker
+    if not picker or type(fn) ~= "function" then
+      return
+    end
+    fn(picker)
+  end
+
   local actions = {
     dbui_toggle = function(picker)
       local item = picker:current()
@@ -596,18 +604,58 @@ local function run_picker(profiles, expanded, opts)
   local win = {
     input = {
       keys = {
-        ["<Tab>"] = { "dbui_toggle", mode = { "i", "n" } },
-        ["<CR>"] = { "dbui_open", mode = { "i", "n" } },
-        ["o"] = { "dbui_open_all", mode = { "i", "n" } },
-        ["<C-y>"] = { "dbui_copy", mode = { "i", "n" } },
+        ["<Tab>"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_toggle)
+          end,
+          mode = { "i", "n" },
+        },
+        ["<CR>"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_open)
+          end,
+          mode = { "i", "n" },
+        },
+        ["o"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_open_all)
+          end,
+          mode = { "i", "n" },
+        },
+        ["<C-y>"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_copy)
+          end,
+          mode = { "i", "n" },
+        },
       },
     },
     list = {
       keys = {
-        ["<Tab>"] = { "dbui_toggle", mode = { "n", "x" } },
-        ["<CR>"] = { "dbui_open", mode = { "n", "x" } },
-        ["o"] = { "dbui_open_all", mode = { "n", "x" } },
-        ["<C-y>"] = { "dbui_copy", mode = { "n", "x" } },
+        ["<Tab>"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_toggle)
+          end,
+          mode = { "n", "x" },
+        },
+        ["<CR>"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_open)
+          end,
+          mode = { "n", "x" },
+        },
+        ["o"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_open_all)
+          end,
+          mode = { "n", "x" },
+        },
+        ["<C-y>"] = {
+          function(win)
+            run_picker_action(win, actions.dbui_copy)
+          end,
+          mode = { "n", "x" },
+        },
       },
     },
   }
@@ -767,6 +815,14 @@ local function run_manage_picker(profile_meta, opts)
     end,
   }
 
+  local function run_manage_action(win, fn)
+    local picker = win and win.picker
+    if not picker or type(fn) ~= "function" then
+      return
+    end
+    fn(picker)
+  end
+
   picker({
     title = "DB profile manager",
     finder = items,
@@ -778,22 +834,82 @@ local function run_manage_picker(profile_meta, opts)
     win = {
       input = {
         keys = {
-          ["<CR>"] = { "dbui_manage_open", mode = { "i", "n" } },
-          ["o"] = { "dbui_manage_open", mode = { "i", "n" } },
-          ["i"] = { "dbui_manage_edit_file", mode = { "i", "n" } },
-          ["a"] = { "dbui_manage_add", mode = { "i", "n" } },
-          ["e"] = { "dbui_manage_edit", mode = { "i", "n" } },
-          ["d"] = { "dbui_manage_delete", mode = { "i", "n" } },
+          ["<CR>"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_open)
+            end,
+            mode = { "i", "n" },
+          },
+          ["o"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_open)
+            end,
+            mode = { "i", "n" },
+          },
+          ["i"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_edit_file)
+            end,
+            mode = { "i", "n" },
+          },
+          ["a"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_add)
+            end,
+            mode = { "i", "n" },
+          },
+          ["e"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_edit)
+            end,
+            mode = { "i", "n" },
+          },
+          ["d"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_delete)
+            end,
+            mode = { "i", "n" },
+          },
         },
       },
       list = {
         keys = {
-          ["<CR>"] = { "dbui_manage_open", mode = { "n", "x" } },
-          ["o"] = { "dbui_manage_open", mode = { "n", "x" } },
-          ["i"] = { "dbui_manage_edit_file", mode = { "n", "x" } },
-          ["a"] = { "dbui_manage_add", mode = { "n", "x" } },
-          ["e"] = { "dbui_manage_edit", mode = { "n", "x" } },
-          ["d"] = { "dbui_manage_delete", mode = { "n", "x" } },
+          ["<CR>"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_open)
+            end,
+            mode = { "n", "x" },
+          },
+          ["o"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_open)
+            end,
+            mode = { "n", "x" },
+          },
+          ["i"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_edit_file)
+            end,
+            mode = { "n", "x" },
+          },
+          ["a"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_add)
+            end,
+            mode = { "n", "x" },
+          },
+          ["e"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_edit)
+            end,
+            mode = { "n", "x" },
+          },
+          ["d"] = {
+            function(win)
+              run_manage_action(win, actions.dbui_manage_delete)
+            end,
+            mode = { "n", "x" },
+          },
         },
       },
     },
