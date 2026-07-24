@@ -516,14 +516,6 @@ local function run_picker(profiles, expanded, opts)
     end
   end
 
-  local function run_picker_action(win, fn)
-    local picker = win and win.picker
-    if not picker or type(fn) ~= "function" then
-      return
-    end
-    fn(picker)
-  end
-
   local actions = {
     dbui_toggle = function(picker)
       local item = picker:current()
@@ -533,6 +525,36 @@ local function run_picker(profiles, expanded, opts)
 
       expanded[item.profile] = not (expanded[item.profile] == true)
       picker:refresh()
+    end,
+    dbui_collapse = function(picker)
+      local item = picker:current()
+      if not item then
+        return
+      end
+
+      if item.kind == "profile" then
+        if expanded[item.profile] then
+          expanded[item.profile] = false
+          picker:refresh()
+        end
+        return
+      end
+
+      if item.profile and expanded[item.profile] then
+        expanded[item.profile] = false
+        picker:refresh()
+      end
+    end,
+    dbui_expand = function(picker)
+      local item = picker:current()
+      if not item or item.kind ~= "profile" then
+        return
+      end
+
+      if not expanded[item.profile] then
+        expanded[item.profile] = true
+        picker:refresh()
+      end
     end,
     dbui_open = function(picker)
       handle_select(picker, picker:current())
@@ -604,58 +626,20 @@ local function run_picker(profiles, expanded, opts)
   local win = {
     input = {
       keys = {
-        ["<Tab>"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_toggle)
-          end,
-          mode = { "i", "n" },
-        },
-        ["<CR>"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_open)
-          end,
-          mode = { "i", "n" },
-        },
-        ["o"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_open_all)
-          end,
-          mode = { "i", "n" },
-        },
-        ["<C-y>"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_copy)
-          end,
-          mode = { "i", "n" },
-        },
+        ["<Tab>"] = { "dbui_toggle", mode = { "i", "n" } },
+        ["<CR>"] = { "dbui_open", mode = { "i", "n" } },
+        ["o"] = { "dbui_open_all", mode = { "i", "n" } },
+        ["<C-y>"] = { "dbui_copy", mode = { "i", "n" } },
       },
     },
     list = {
       keys = {
-        ["<Tab>"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_toggle)
-          end,
-          mode = { "n", "x" },
-        },
-        ["<CR>"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_open)
-          end,
-          mode = { "n", "x" },
-        },
-        ["o"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_open_all)
-          end,
-          mode = { "n", "x" },
-        },
-        ["<C-y>"] = {
-          function(win)
-            run_picker_action(win, actions.dbui_copy)
-          end,
-          mode = { "n", "x" },
-        },
+        ["<Tab>"] = { "dbui_toggle", mode = { "n", "x" } },
+        ["h"] = { "dbui_collapse", mode = { "n", "x" } },
+        ["l"] = { "dbui_expand", mode = { "n", "x" } },
+        ["<CR>"] = { "dbui_open", mode = { "n", "x" } },
+        ["o"] = { "dbui_open_all", mode = { "n", "x" } },
+        ["<C-y>"] = { "dbui_copy", mode = { "n", "x" } },
       },
     },
   }
