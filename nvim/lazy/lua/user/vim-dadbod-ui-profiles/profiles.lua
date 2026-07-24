@@ -525,9 +525,18 @@ local function run_picker(profiles, expanded, opts)
         return
       end
 
-      if item.kind == "profile" then
+    if item.kind == "profile" then
         expanded[item.profile] = true
         picker:refresh()
+        if #(profiles[item.profile] or {}) == 1 then
+          local conn = profiles[item.profile][1]
+          if conn then
+            picker:close()
+            open_connection(item.profile, conn)
+            return
+          end
+        end
+
         M.open(item.profile, nil, { prefix = opts and opts.prefix })
         return
       end
