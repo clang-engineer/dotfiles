@@ -5,10 +5,10 @@ return {
     "kristijanhusak/vim-dadbod-ui",
     init = function()
       require("user.vim-dadbod-ui-profiles").setup({
-          picker_layout = "dropdown",
-          prefix_by_profile = true,
-          icon_style = "emoji",
-        })
+        picker_layout = "dropdown",
+        prefix_by_profile = true,
+        icon_style = "emoji", -- "default" | "ascii" | "emoji"
+      })
 
       -- Improve query result window (dbout) readability:
       --   1) Disable folds (maintainer's official recommendation: PR #203 comment)
