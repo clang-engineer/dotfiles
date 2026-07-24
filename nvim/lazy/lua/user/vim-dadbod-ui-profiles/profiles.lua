@@ -268,7 +268,7 @@ local function build_profile_items(profiles, expanded)
 
   for _, profile in ipairs(ordered) do
     local is_expanded = expanded[profile] == true
-    local glyph = is_expanded and "[-]" or "[+]"
+    local glyph = is_expanded and "📂" or "📁"
     local count = #(profiles[profile] or {})
 
     table.insert(items, {
