@@ -22,7 +22,9 @@ local defaults = {
   group_placeholders = {
     { name = "example", url = "postgresql://localhost:5432/db" },
   },
-  icon_style = "emoji",
+  icon_style = "ascii",
+  confirm_open = false,
+  confirm_open_group = false,
   icons = {},
 }
 
@@ -92,12 +94,24 @@ local function normalize_icons(options)
   }
 end
 
+local function picker_shortcuts_hint()
+  return "Shortcuts: / filter, <CR> open, a add connection, n add group, e edit"
+end
+
 local function truncate_for_display(value)
   local max_len = 72
   if #value <= max_len then
     return value
   end
   return value:sub(1, max_len - 3) .. "..."
+end
+
+local function confirm_open(message)
+  if not defaults.confirm_open then
+    return true
+  end
+  local choice = vim.fn.confirm(message, "&Open\n&Cancel", 1, "Question")
+  return choice == 1
 end
 
 local function resolve_group_label(group)
@@ -410,6 +424,9 @@ local function open_connection(group, conn)
   end
 
   local name = conn.name and conn.name ~= "" and conn.name or group
+  if not confirm_open(string.format("Open connection: %s", name)) then
+    return false
+  end
   return M.open({ { name = conn.name, url = conn.url } }, name)
 end
 
@@ -439,12 +456,11 @@ local function run_picker(groups, expanded, opts)
   local function items()
     return build_group_items(groups, expanded)
   end
-
-  if #items() == 0 then
-    local groups_dir = group_data.connections_dir()
-    show_warn("No DB group found. Add group files as Lua tables in: " .. groups_dir)
-    show_info("Example: " .. groups_dir .. "/office.lua -> return { { name = \"office\", url = \"postgresql://...\" } }")
-    return
+  local ordered_groups = sorted_keys(groups)
+  local total_groups = #ordered_groups
+  local total_connections = 0
+  for _, group in ipairs(ordered_groups) do
+    total_connections = total_connections + #(groups[group] or {})
   end
 
   local picker_api = resolve_snacks_picker()
@@ -453,6 +469,64 @@ local function run_picker(groups, expanded, opts)
       return opts.fallback()
     end
     show_warn("snacks.picker is not available. Please install folke/snacks.nvim.")
+    return
+  end
+
+  if #items() == 0 then
+    local groups_dir = group_data.connections_dir()
+    local no_group_win = vim.tbl_deep_extend("force", layout.win or {}, {
+      list = vim.tbl_deep_extend("force", (layout.win and layout.win.list) or {}, {
+        keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.list and layout.win.list.keys) or {}), {
+          ["n"] = {
+            function()
+              prompt_new_group_name({ default_name = "office" })
+            end,
+            mode = { "n" },
+          },
+        }),
+      }),
+      input = vim.tbl_deep_extend("force", (layout.win and layout.win.input) or {}, {
+        keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.input and layout.win.input.keys) or {}), {
+        }),
+      }),
+    })
+    picker_api({
+      title = "DB Connections (no groups)",
+      finder = function()
+        return {
+          {
+            text = "No DB groups found.",
+            kind = "hint",
+            preview = {
+              text = "No DB groups found.\nPress n to add a new group.",
+            },
+          },
+          {
+            text = "Shortcut: " .. picker_shortcuts_hint(),
+            kind = "hint",
+            preview = {
+              text = "Use the commands too: :DBConnections add <group>",
+            },
+          },
+          {
+            text = "Example: " .. groups_dir .. "/office.lua",
+            kind = "hint",
+            preview = {
+              text = groups_dir .. "/office.lua\nreturn { { name = \"office\", url = \"postgresql://...\" } }",
+            },
+          },
+        }
+      end,
+      format = "text",
+      prompt = "> ",
+      preview = "preview",
+      focus = "list",
+      layout = layout,
+      win = no_group_win,
+      confirm = function()
+        return
+      end,
+    })
     return
   end
 
@@ -473,9 +547,15 @@ local function run_picker(groups, expanded, opts)
       return
     end
 
-    if item.kind == "open_all" then
-      picker:close()
-      M.open(item.group, nil, { prefix = opts and opts.prefix })
+  if item.kind == "open_all" then
+    if defaults.confirm_open_group then
+      local ok = confirm_open(string.format("Open all %d connections in %s", #(groups[item.group] or {}), item.group))
+      if not ok then
+        return
+      end
+    end
+    picker:close()
+    M.open(item.group, nil, { prefix = opts and opts.prefix })
       return
     end
 
@@ -587,7 +667,7 @@ local function run_picker(groups, expanded, opts)
           end,
           mode = { "n" },
         },
-        ["A"] = {
+        ["n"] = {
           function()
             handle_add_group_from_picker()
           end,
@@ -609,11 +689,11 @@ local function run_picker(groups, expanded, opts)
           end,
           mode = { "n", "i" },
         },
-        ["A"] = {
+        ["n"] = {
           function()
             handle_add_group_from_picker()
           end,
-          mode = { "n", "i" },
+          mode = { "n" },
         },
       }),
     }),
@@ -621,6 +701,28 @@ local function run_picker(groups, expanded, opts)
 
   local matches_cache = build_group_match_set(groups)
   local last_pattern = nil
+  local query_pattern = ""
+  local query_has_match = true
+
+  local function has_query_match(pattern)
+    local normalized = vim.trim(pattern or "")
+    if normalized == "" then
+      return true
+    end
+    normalized = string.lower(normalized)
+    for _, group in ipairs(sorted_keys(groups)) do
+      local haystack = matches_cache[group]
+      if haystack then
+        for _, target in ipairs(haystack) do
+          if string.find(string.lower(target), normalized, 1, true) then
+            return true
+          end
+        end
+      end
+    end
+    return false
+  end
+
   local function pattern_matches_group(group, pattern)
     local haystack = matches_cache[group]
     if not haystack or #haystack == 0 then
@@ -640,12 +742,14 @@ local function run_picker(groups, expanded, opts)
   local function auto_expand_on_query(picker)
     local pattern = picker:filter().pattern or ""
     pattern = vim.trim(pattern)
+    query_pattern = pattern
+    query_has_match = has_query_match(pattern)
     if pattern == last_pattern then
       return
     end
 
     local changed = false
-    local ordered = sorted_keys(groups)
+    local ordered = ordered_groups
 
     if pattern == "" then
       if last_pattern == nil or last_pattern == "" then
@@ -681,12 +785,27 @@ local function run_picker(groups, expanded, opts)
   end
 
   picker_instance = picker_api({
-    title = "DB Connections",
+    title = string.format(
+      "DB Connections (%d group%s, %d connection%s)",
+      total_groups,
+      total_groups == 1 and "" or "s",
+      total_connections,
+      total_connections == 1 and "" or "s"
+    ),
     finder = function()
       local rows = items()
+      if query_pattern ~= "" and not query_has_match then
+        table.insert(rows, 1, {
+          text = "No match for " .. string.format("%q", query_pattern) .. ". Tip: " .. picker_shortcuts_hint() .. ".",
+          kind = "hint",
+          preview = {
+            text = "No match found. Type a different keyword, then press <CR> / open filtered group, or use n to add a group.",
+          },
+        })
+      end
       if usage_hint then
         table.insert(rows, 1, {
-          text = "↳ " .. usage_hint,
+          text = "> " .. usage_hint,
           kind = "hint",
           preview = {
             text = usage_hint,
@@ -696,7 +815,7 @@ local function run_picker(groups, expanded, opts)
       return rows
     end,
     format = "text",
-    prompt = "/ ",
+    prompt = "> ",
     preview = "preview",
     focus = "list",
     layout = layout,
@@ -749,15 +868,72 @@ local function run_manage_picker(group_meta, opts)
     end
   end
 
+  local ordered_groups = sorted_keys(group_meta)
+  local query_pattern = ""
+  local query_has_match = true
+  local query_set = {}
+  for _, group in ipairs(ordered_groups) do
+    local payload = {
+      group,
+    }
+    local data = group_meta[group]
+    if data then
+      for _, conn in ipairs(data.connections or {}) do
+        if conn.name ~= nil then
+          payload[#payload + 1] = conn.name
+        end
+        if conn.url ~= nil then
+          payload[#payload + 1] = conn.url
+        end
+      end
+    end
+    query_set[group] = payload
+  end
+
+  local function has_query_match(pattern)
+    local normalized = vim.trim(pattern or "")
+    if normalized == "" then
+      return true
+    end
+    normalized = string.lower(normalized)
+    for _, tokens in pairs(query_set) do
+      for _, token in ipairs(tokens) do
+        if string.find(string.lower(tostring(token)), normalized, 1, true) then
+          return true
+        end
+      end
+    end
+    return false
+  end
+
+  local function auto_expand_manage_on_query(picker)
+    local pattern = picker:filter().pattern or ""
+    query_pattern = vim.trim(pattern)
+    query_has_match = has_query_match(query_pattern)
+  end
+
   picker_api({
-    title = "",
-    finder = items,
+    title = "DB Connections Manager",
+    finder = function()
+      local rows = items()
+      if query_pattern ~= "" and not query_has_match then
+        table.insert(rows, 1, {
+          text = "No match for " .. string.format("%q", query_pattern) .. ". Tip: " .. picker_shortcuts_hint() .. ".",
+          kind = "hint",
+          preview = {
+            text = "No match found. Use <CR> on a connection to open it, or n to add a new group.",
+          },
+        })
+      end
+      return rows
+    end,
     format = "text",
-    prompt = "/ ",
+    prompt = "> ",
     focus = "list",
     preview = "preview",
     layout = opts and opts.layout or picker_layout,
     confirm = handle_manage_select,
+    on_change = auto_expand_manage_on_query,
   })
 end
 
@@ -929,7 +1105,7 @@ function M.setup(opts)
 
     if #args == 0 then
       M.pick_profile({
-        usage_hint = "Tips: / to filter, <CR> open, a add connection, A add group, e edit.",
+        usage_hint = picker_shortcuts_hint(),
       })
       return
     end
@@ -961,7 +1137,7 @@ function M.setup(opts)
     end
 
     if mode == "help" or mode == "?" then
-      show_info("Usage:")
+    show_info("Usage:")
       show_info(":DBConnections           Open connection picker")
       show_info(":DBConnections <group>    Open one group directly")
       show_info(":DBConnections add <group>   Create a new group file")

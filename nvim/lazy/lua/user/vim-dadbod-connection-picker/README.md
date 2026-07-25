@@ -16,15 +16,22 @@ workflow used by `vim-dadbod-ui`.
 - Show connections in a grouped picker (`:DBConnections`).
 - Press Enter on a group row to expand/collapse it.
 - Press Enter on an `Open all (...)` row or a connection row to open the connection.
-## Known limitations (by design for stable release)
-- No custom picker keymaps are registered (`h/l/o/<C-y>` are not bound).
-- Connection list actions are intentionally kept to picker confirm (`<CR>`).
+## Interaction
+- Search and action hints are shown inside the picker.
+- Shortcuts:
+  - `/` filter
+  - `<CR>` open
+  - `a` add connection to selected group
+  - `A` add group
+  - `e` edit selected group
 
 ## Setup
 
 ```lua
 require("user.vim-dadbod-connection-picker").setup({
-  icon_style = "emoji",           -- "ascii" | "emoji" | "nerd"
+  icon_style = "ascii",           -- "ascii" | "emoji" | "nerd"
+  confirm_open = false,           -- set true to confirm before opening a connection/group
+  confirm_open_group = false,     -- set true to confirm before opening all connections in a group
   group_labels = {},
   group_placeholders = {
     { name = "example", url = "postgresql://localhost:5432/db" },
@@ -58,6 +65,7 @@ private environments).
 
 Keymap in picker:
 - `a` on a selected group row: add a connection entry with prompted name/url to that group.
+- `A` in picker: add a new group (and open its file immediately).
 
 ## Requirements / Dependencies
 
