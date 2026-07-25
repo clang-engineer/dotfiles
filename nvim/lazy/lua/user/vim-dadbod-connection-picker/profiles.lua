@@ -25,6 +25,8 @@ local defaults = {
   icon_style = "ascii",
   confirm_open = false,
   confirm_open_group = false,
+  confirm_modify = false,
+  delete_to_trash = true,
   icons = {},
 }
 
@@ -95,7 +97,7 @@ local function normalize_icons(options)
 end
 
 local function picker_shortcuts_hint()
-  return "Shortcuts: / filter, <CR> open, a add connection, n add group, e edit"
+  return "Shortcuts: / filter, <CR> open, a add connection, n add group, e edit group, r rename group, d delete group"
 end
 
 local function truncate_for_display(value)
@@ -106,12 +108,48 @@ local function truncate_for_display(value)
   return value:sub(1, max_len - 3) .. "..."
 end
 
-local function confirm_open(message)
-  if not defaults.confirm_open then
+local function confirm_action(message, detail, should_confirm)
+  if should_confirm == false then
     return true
   end
-  local choice = vim.fn.confirm(message, "&Open\n&Cancel", 1, "Question")
+  if should_confirm == nil then
+    should_confirm = defaults.confirm_open
+  end
+  if not should_confirm then
+    return true
+  end
+
+  local prompt = tostring(message or "")
+  if type(detail) == "string" and detail ~= "" then
+    prompt = prompt .. "\n" .. detail
+  end
+
+  local choice = vim.fn.confirm(prompt, "&Proceed\n&Cancel", 1, "Question")
   return choice == 1
+end
+
+local function masked_url(raw_url)
+  if type(raw_url) ~= "string" then
+    return raw_url
+  end
+  local masked = raw_url:gsub("(%w+://[^:/]+:)[^@/%s]+@", "%1****@")
+  if masked ~= raw_url then
+    return masked
+  end
+  return raw_url
+end
+
+local function next_backup_path(path)
+  local timestamp = os.date("%Y%m%d%H%M%S")
+  local next_index = 1
+  local candidate = string.format("%s.%s.bak", path, timestamp)
+
+  while vim.fn.filereadable(candidate) == 1 do
+    next_index = next_index + 1
+    candidate = string.format("%s.%s.%d.bak", path, timestamp, next_index)
+  end
+
+  return candidate
 end
 
 local function resolve_group_label(group)
@@ -187,6 +225,16 @@ local function prompt_new_group_name(opts)
     local normalized = group_data.normalize_group_name(raw_name)
     if not normalized or normalized == "" then
       show_warn("Invalid group name.")
+      return
+    end
+
+    if
+      not confirm_action(
+        "Create new group?",
+        string.format("Group: %s", normalized),
+        defaults.confirm_modify
+      )
+    then
       return
     end
 
@@ -295,7 +343,7 @@ local function build_connection_preview(group, conn, extra)
   local lines = {
     string.format("Group: %s", group),
     string.format("Connection: %s", conn.name),
-    string.format("URL: %s", conn.url),
+    string.format("URL: %s", masked_url(conn.url)),
   }
   if extra then
     lines[#lines + 1] = extra
@@ -424,7 +472,13 @@ local function open_connection(group, conn)
   end
 
   local name = conn.name and conn.name ~= "" and conn.name or group
-  if not confirm_open(string.format("Open connection: %s", name)) then
+  if
+    not confirm_action(
+      "Open connection?",
+      string.format("Group: %s\nName: %s", tostring(group), tostring(name)),
+      defaults.confirm_open
+    )
+  then
     return false
   end
   return M.open({ { name = conn.name, url = conn.url } }, name)
@@ -548,8 +602,13 @@ local function run_picker(groups, expanded, opts)
     end
 
   if item.kind == "open_all" then
+    local connection_count = #(groups[item.group] or {})
     if defaults.confirm_open_group then
-      local ok = confirm_open(string.format("Open all %d connections in %s", #(groups[item.group] or {}), item.group))
+      local ok = confirm_action(
+        string.format("Open all %d connections in %s?", connection_count, item.group),
+        string.format("Group: %s\nConnections: %d", item.group, connection_count),
+        defaults.confirm_open_group
+      )
       if not ok then
         return
       end
@@ -620,6 +679,16 @@ local function run_picker(groups, expanded, opts)
     end
 
     fill_connection_with_prompt(function(conn)
+      if
+        not confirm_action(
+          "Add new connection?",
+          string.format("Group: %s\nName: %s\nURL: %s", group, conn.name or "", masked_url(conn.url)),
+          defaults.confirm_modify
+        )
+      then
+        return
+      end
+
       table.insert(existing, conn)
       group_data.write_group_file(path, existing)
       show_info("Added connection to group: " .. group)
@@ -652,6 +721,167 @@ local function run_picker(groups, expanded, opts)
     })
   end
 
+  local function handle_rename_current_group()
+    if not picker_instance then
+      return
+    end
+    if type(picker_instance.current) ~= "function" then
+      show_warn("Current picker API does not expose current selection.")
+      return
+    end
+
+    local current = picker_instance:current()
+    if not current then
+      return
+    end
+
+    if current.kind ~= "group" then
+      show_warn("Move to a group row to rename it.")
+      return
+    end
+
+    local old_group = current.group
+    if type(old_group) ~= "string" or old_group == "" then
+      return
+    end
+
+    local old_path = group_data.group_file(old_group)
+    if not old_path then
+      show_warn("Unable to resolve group path: " .. tostring(old_group))
+      return
+    end
+
+    vim.ui.input({
+      prompt = "Rename group: ",
+      default = old_group,
+    }, function(raw_name)
+      if raw_name == nil then
+        return
+      end
+
+      local normalized = group_data.normalize_group_name(raw_name)
+      if not normalized or normalized == "" then
+        show_warn("Invalid group name.")
+        return
+      end
+
+      if normalized == old_group then
+        show_info("Rename cancelled.")
+        return
+      end
+
+      if group_data.group_file_exists(normalized) then
+        show_warn("Group already exists: " .. normalized)
+        return
+      end
+
+      if
+        not confirm_action(
+          "Rename group?",
+          string.format("From: %s\nTo: %s", old_group, normalized),
+          defaults.confirm_modify
+        )
+      then
+        return
+      end
+
+      local ok, err = vim.loop.fs_rename(old_path, group_data.group_file(normalized))
+      if not ok then
+        show_error("Failed to rename group: " .. tostring(err))
+        return
+      end
+
+      picker_instance:close()
+      show_info("Renamed group: " .. old_group .. " -> " .. normalized)
+      vim.schedule(function()
+        M.pick_profile({
+          usage_hint = picker_shortcuts_hint(),
+        })
+      end)
+    end)
+  end
+
+  local function handle_delete_current_group()
+    if not picker_instance then
+      return
+    end
+    if type(picker_instance.current) ~= "function" then
+      show_warn("Current picker API does not expose current selection.")
+      return
+    end
+
+    local current = picker_instance:current()
+    if not current then
+      return
+    end
+
+    if current.kind ~= "group" then
+      show_warn("Move to a group row to delete it.")
+      return
+    end
+
+    local group = current.group
+    if type(group) ~= "string" or group == "" then
+      return
+    end
+
+    local path = group_data.group_file(group)
+    if not path then
+      show_warn("Unable to resolve group file for: " .. tostring(group))
+      return
+    end
+
+    if vim.fn.filereadable(path) ~= 1 then
+      show_warn("No group file found: " .. tostring(group))
+      return
+    end
+
+    if
+      not confirm_action(
+        "Delete group?",
+        string.format("Group: %s\nPath: %s", group, path),
+        defaults.confirm_modify
+      )
+    then
+      return
+    end
+
+    if defaults.delete_to_trash then
+      local backup_path = next_backup_path(path)
+      local ok, err = vim.loop.fs_rename(path, backup_path)
+      if not ok then
+        show_error("Failed to move group to backup: " .. tostring(err))
+        return
+      end
+      show_info("Moved group to backup: " .. backup_path)
+    else
+      local removed = vim.fn.delete(path)
+      if removed ~= 0 then
+        show_error("Failed to delete group file: " .. path)
+        return
+      end
+      show_info("Deleted group: " .. group)
+    end
+
+    if not defaults.delete_to_trash then
+      picker_instance:close()
+      show_info("Deleted group: " .. group)
+      vim.schedule(function()
+        M.pick_profile({
+          usage_hint = picker_shortcuts_hint(),
+        })
+      end)
+      return
+    end
+
+    picker_instance:close()
+    vim.schedule(function()
+      M.pick_profile({
+        usage_hint = picker_shortcuts_hint(),
+      })
+    end)
+  end
+
   local custom_win = vim.tbl_deep_extend("force", layout.win or {}, {
     list = vim.tbl_deep_extend("force", (layout.win and layout.win.list) or {}, {
       keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.list and layout.win.list.keys) or {}), {
@@ -670,6 +900,18 @@ local function run_picker(groups, expanded, opts)
         ["n"] = {
           function()
             handle_add_group_from_picker()
+          end,
+          mode = { "n" },
+        },
+        ["r"] = {
+          function()
+            handle_rename_current_group()
+          end,
+          mode = { "n" },
+        },
+        ["d"] = {
+          function()
+            handle_delete_current_group()
           end,
           mode = { "n" },
         },
@@ -692,6 +934,18 @@ local function run_picker(groups, expanded, opts)
         ["n"] = {
           function()
             handle_add_group_from_picker()
+          end,
+          mode = { "n" },
+        },
+        ["r"] = {
+          function()
+            handle_rename_current_group()
+          end,
+          mode = { "n" },
+        },
+        ["d"] = {
+          function()
+            handle_delete_current_group()
           end,
           mode = { "n" },
         },
