@@ -118,6 +118,27 @@ function M.write_group_file(path, connections)
   vim.fn.writefile(lines, path)
 end
 
+function M.connection_file_dirs()
+  local dirs = {}
+  local seen = {}
+
+  for _, path in ipairs(M.list_connection_files()) do
+    local dir = vim.fn.fnamemodify(path, ":h")
+    if dir ~= "" and not seen[dir] then
+      seen[dir] = true
+      dirs[#dirs + 1] = dir
+    end
+  end
+
+  local fallback = M.connections_dir()
+  if fallback ~= "" and not seen[fallback] then
+    seen[fallback] = true
+    dirs[#dirs + 1] = fallback
+  end
+
+  return dirs
+end
+
 function M.group_file_exists(group)
   local path = M.group_file(group)
   if not path then
