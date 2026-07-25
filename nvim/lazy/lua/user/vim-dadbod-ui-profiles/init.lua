@@ -78,13 +78,9 @@ end
 function M.setup(opts)
   local options = opts or {}
   local default_profile = options.default_profile or options.default_group or "all"
-  local command_prefix = options.command_prefix or "DBUI"
 
   vim.g.dbs = M.connections(default_profile)
   profiles.setup({
-    command_prefix = command_prefix,
-    picker_layout = options.picker_layout,
-    prefix_by_profile = options.prefix_by_profile,
     icon_style = options.icon_style,
     profile_labels = options.profile_labels,
     icons = options.icons,

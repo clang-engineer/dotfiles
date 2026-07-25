@@ -11,17 +11,33 @@ local function default_profiles_dir()
 end
 
 local function profile_file(profile)
-  if not profile or profile == "" then
+  local normalized = normalize_profile_name(profile)
+  if not normalized then
     return nil
   end
 
   for _, path in ipairs(list_connection_files()) do
-    if profile_name_from_path(path) == profile then
+    if profile_name_from_path(path) == normalized then
       return path
     end
   end
 
-  return default_profiles_dir() .. "/" .. profile .. ".lua"
+  return default_profiles_dir() .. "/" .. normalized .. ".lua"
+end
+
+local function normalize_profile_name(profile)
+  if type(profile) ~= "string" then
+    return nil
+  end
+
+  local name = vim.trim(profile)
+  if name:sub(-4) == ".lua" then
+    name = name:sub(1, -5)
+  end
+  if name == "" then
+    return nil
+  end
+  return name
 end
 
 local function profile_name_from_path(path)
@@ -86,16 +102,18 @@ end
 local function read_profile_connections(profile)
   local path = profile_file(profile)
   if not path then
-    return {}
+    return nil, nil
   end
   local file_connection = load_connections(path)
+  if not file_connection then
+    return nil, path
+  end
+
   local result = {}
-  if type(file_connection) == "table" then
-    for _, item in ipairs(file_connection) do
-      local normalized = normalize_connection(item)
-      if normalized then
-        table.insert(result, normalized)
-      end
+  for _, item in ipairs(file_connection) do
+    local normalized = normalize_connection(item)
+    if normalized then
+      table.insert(result, normalized)
     end
   end
   return result, path
@@ -149,15 +167,20 @@ local function ordered_profile_keys(profile_meta)
   return ordered_profiles(profile_meta)
 end
 
-local function normalize_picker_layout(layout)
-  if layout == "float" then
-    return { preset = "dropdown" }
-  end
-  return layout
-end
-
-local picker_layout = "dropdown"
-local use_profile_prefix = false
+local picker_layout = {
+  preset = "dropdown",
+  win = {
+    list = {
+      border = "none",
+    },
+    input = {
+      border = "none",
+    },
+    preview = {
+      border = "none",
+    },
+  },
+}
 local profile_label_map = {}
 
 local function resolve_profile_label(profile)
@@ -174,10 +197,6 @@ local function resolve_profile_label(profile)
 end
 
 local function apply_profile_prefix(profile, conn)
-  if not use_profile_prefix then
-    return conn
-  end
-
   if type(conn) ~= "table" then
     return conn
   end
@@ -207,10 +226,6 @@ function M.connections(target, opts)
   local force_prefix = opts and opts.prefix
 
   local function with_prefix(profile, conn)
-    if force_prefix == nil then
-      return apply_profile_prefix(profile, conn)
-    end
-
     if not force_prefix then
       return conn
     end
@@ -248,9 +263,6 @@ local function contains_profile(profiles, name)
 end
 
 local defaults = {
-  command_prefix = "DBUI",
-  picker_layout = "dropdown",
-  prefix_by_profile = false,
   profile_labels = {},
   icon_style = "emoji",
   icons = {},
@@ -299,6 +311,39 @@ local function truncate_for_display(value)
   return value:sub(1, max_len - 3) .. "..."
 end
 
+local function build_profile_preview(profile, connections)
+  local count = #(connections or {})
+  local lines = {
+    string.format("Profile: %s", profile),
+    string.format("Total connections: %d", count),
+    "",
+  }
+
+  if count == 0 then
+    lines[#lines + 1] = "No connections configured."
+    return table.concat(lines, "\n")
+  end
+
+  for idx, conn in ipairs(connections or {}) do
+    lines[#lines + 1] = string.format("%d) %s", idx, conn.name)
+    lines[#lines + 1] = string.format("   %s", truncate_for_display(conn.url))
+  end
+
+  return table.concat(lines, "\n")
+end
+
+local function build_connection_preview(profile, conn, extra)
+  local lines = {
+    string.format("Profile: %s", profile),
+    string.format("Connection: %s", conn.name),
+    string.format("URL: %s", conn.url),
+  }
+  if extra then
+    lines[#lines + 1] = extra
+  end
+  return table.concat(lines, "\n")
+end
+
 local function build_profile_items(profiles, expanded)
   local items = {}
   local ordered = ordered_profiles(profiles)
@@ -313,6 +358,9 @@ local function build_profile_items(profiles, expanded)
       kind = "profile",
       profile = profile,
       expanded = is_expanded,
+      preview = {
+        text = build_profile_preview(profile, profiles[profile]),
+      },
     })
 
     if is_expanded then
@@ -321,6 +369,9 @@ local function build_profile_items(profiles, expanded)
           text = string.format("  %s Open all (%d): %s", profile_icons.open_all, #(profiles[profile] or {}), profile),
           kind = "open_all",
           profile = profile,
+          preview = {
+            text = string.format("Profile: %s\nOpen all %d connections at once.", profile, #(profiles[profile] or {})),
+          },
         })
       end
 
@@ -329,6 +380,9 @@ local function build_profile_items(profiles, expanded)
           text = "  (no connections)",
           kind = "empty_connection",
           profile = profile,
+          preview = {
+            text = string.format("Profile: %s\nNo connections configured.\nTip: use :DBUIProfile editor %s", profile, profile),
+          },
         })
       end
 
@@ -339,6 +393,9 @@ local function build_profile_items(profiles, expanded)
           kind = "connection",
           profile = profile,
           connection = conn,
+          preview = {
+            text = build_connection_preview(profile, conn),
+          },
         })
       end
     end
@@ -347,12 +404,30 @@ local function build_profile_items(profiles, expanded)
   return items
 end
 
+local function build_profile_match_set(profiles)
+  local set = {}
+  for _, profile in ipairs(ordered_profiles(profiles)) do
+    local haystack = {}
+    haystack[1] = profile
+    for _, conn in ipairs(profiles[profile] or {}) do
+      if conn.name then
+        haystack[#haystack + 1] = conn.name
+      end
+      if conn.url then
+        haystack[#haystack + 1] = conn.url
+      end
+    end
+    set[profile] = haystack
+  end
+  return set
+end
+
 local function format_menu_prompt()
-  return ""
+  return "/ "
 end
 
 local function format_manage_prompt()
-  return ""
+  return "/ "
 end
 
 local function safe_input(title, default_value)
@@ -433,6 +508,9 @@ local function manage_items(profile_meta)
       kind = "profile_manage",
       profile = profile,
       path = data.path,
+      preview = {
+        text = build_profile_preview(profile, data.connections),
+      },
     })
 
     for index, conn in ipairs(data.connections or {}) do
@@ -443,6 +521,9 @@ local function manage_items(profile_meta)
         path = data.path,
         connection = conn,
         connection_index = index,
+        preview = {
+          text = build_connection_preview(profile, conn, "Path: " .. data.path),
+        },
       })
     end
   end
@@ -516,99 +597,65 @@ local function run_picker(profiles, expanded, opts)
     end
   end
 
-  local actions = {
-    dbui_toggle = function(picker)
-      local item = picker:current()
-      if not item or item.kind ~= "profile" then
+  local matches_cache = build_profile_match_set(profiles)
+  local last_pattern = nil
+  local function pattern_matches_profile(profile, pattern)
+    local haystack = matches_cache[profile]
+    if not haystack or #haystack == 0 then
+      return false
+    end
+
+    local lower = string.lower(pattern)
+    for _, target in ipairs(haystack) do
+      if string.find(string.lower(target), lower, 1, true) then
+        return true
+      end
+    end
+
+    return false
+  end
+
+  local function auto_expand_on_query(picker)
+    local pattern = picker:filter().pattern or ""
+    pattern = vim.trim(pattern)
+    if pattern == last_pattern then
+      return
+    end
+    local changed = false
+    local ordered = ordered_profiles(profiles)
+
+    if pattern == "" then
+      if last_pattern == nil or last_pattern == "" then
+        last_pattern = pattern
         return
       end
+      for _, profile in ipairs(ordered) do
+        if expanded[profile] then
+          expanded[profile] = false
+          changed = true
+        end
+      end
+      if changed then
+        picker:refresh()
+      end
+      last_pattern = pattern
+      return
+    end
 
-      expanded[item.profile] = not (expanded[item.profile] == true)
+    for _, profile in ipairs(ordered) do
+      local should_expand = pattern_matches_profile(profile, pattern)
+      if should_expand ~= expanded[profile] then
+        expanded[profile] = should_expand
+        changed = true
+      end
+    end
+
+    if changed then
       picker:refresh()
-    end,
-    dbui_collapse = function(picker)
-      local item = picker:current()
-      if not item then
-        return
-      end
-
-      if item.kind == "profile" then
-        if expanded[item.profile] then
-          expanded[item.profile] = false
-          picker:refresh()
-        end
-        return
-      end
-
-      if item.profile and expanded[item.profile] then
-        expanded[item.profile] = false
-        picker:refresh()
-      end
-    end,
-    dbui_expand = function(picker)
-      local item = picker:current()
-      if not item or item.kind ~= "profile" then
-        return
-      end
-
-      if not expanded[item.profile] then
-        expanded[item.profile] = true
-        picker:refresh()
-      end
-    end,
-    dbui_open = function(picker)
-      handle_select(picker, picker:current())
-    end,
-    dbui_open_all = function(picker)
-      local item = picker:current()
-      if not item then
-        return
-      end
-
-      if item.kind == "profile" then
-        expanded[item.profile] = true
-        picker:refresh()
-        if #(profiles[item.profile] or {}) == 1 then
-          local conn = profiles[item.profile][1]
-          if conn then
-            picker:close()
-            open_connection(item.profile, conn)
-            return
-          end
-        end
-
-        M.open(item.profile, nil, { prefix = opts and opts.prefix })
-        return
-      end
-
-      if item.kind ~= "open_all" then
-        return
-      end
-
-      picker:close()
-      M.open(item.profile, nil, { prefix = opts and opts.prefix })
-    end,
-    dbui_preview = function(picker)
-      local item = picker:current()
-      if not item or item.kind ~= "connection" then
-        return
-      end
-
-      copy_or_preview(item.profile, item.connection)
-    end,
-    dbui_copy = function(picker)
-      local item = picker:current()
-      if not item or item.kind ~= "connection" then
-        return
-      end
-
-      copy_or_preview(item.profile, item.connection)
-      picker:close()
-    end,
-  }
-
-  -- Compatibility for stale cached keymaps that still call a global `actions` table.
-  _G.actions = actions
+    end
+    last_pattern = pattern
+    return
+  end
 
   local picker = nil
   if type(snacks) == "function" then
@@ -626,39 +673,17 @@ local function run_picker(profiles, expanded, opts)
     return
   end
 
-  local win = {
-    input = {
-      keys = {
-        ["<Tab>"] = { "dbui_toggle", mode = { "i", "n" } },
-        ["<CR>"] = { "dbui_open", mode = { "i", "n" } },
-        ["o"] = { "dbui_open_all", mode = { "i", "n" } },
-        ["<C-y>"] = { "dbui_copy", mode = { "i", "n" } },
-      },
-    },
-    list = {
-      keys = {
-        ["<Tab>"] = { "dbui_toggle", mode = { "n", "x" } },
-        ["h"] = { "dbui_collapse", mode = { "n", "x" } },
-        ["l"] = { "dbui_expand", mode = { "n", "x" } },
-        ["<CR>"] = { "dbui_open", mode = { "n", "x" } },
-        ["o"] = { "dbui_open_all", mode = { "n", "x" } },
-        ["<C-y>"] = { "dbui_copy", mode = { "n", "x" } },
-      },
-    },
-  }
-  -- Keep Enter as toggle for profile/open-all and open DBUI for connection.
-  -- Reopen the picker when a non-terminal action happens.
+  -- Keep default key behavior and profile/connection logic in confirm callback.
   picker({
-    title = "DB profiles",
+    title = "",
     finder = items,
     format = "text",
     prompt = format_menu_prompt(),
-    preview = "",
-    actions = actions,
+    preview = "preview",
     focus = "list",
     layout = opts and opts.layout or picker_layout,
-    win = win,
     confirm = handle_select,
+    on_change = auto_expand_on_query,
   })
 end
 
@@ -698,38 +723,6 @@ local function run_manage_picker(profile_meta, opts)
     return
   end
 
-  local function refresh()
-    local refreshed = build_profile_metadata()
-    for profile, data in pairs(refreshed) do
-      profile_meta[profile] = profile_meta[profile] or data
-      profile_meta[profile].path = data.path
-      profile_meta[profile].connections = data.connections
-    end
-    for profile, data in pairs(profile_meta) do
-      if not refreshed[profile] then
-        profile_meta[profile] = nil
-      end
-    end
-    run_manage_picker(profile_meta, opts)
-  end
-
-  local function close_and_refresh(picker, action_name, action)
-    picker:close()
-    vim.schedule(function()
-      local ok, result = xpcall(action, function(message)
-        return debug.traceback(("DBUIProfile action '%s' failed: %s"):format(action_name, tostring(message)), 2)
-      end)
-      if not ok then
-        vim.notify(result, vim.log.levels.ERROR)
-        return
-      end
-
-      if result then
-        refresh()
-      end
-    end)
-  end
-
   local function open_profile_file(path)
     if not path then
       return
@@ -737,199 +730,32 @@ local function run_manage_picker(profile_meta, opts)
     vim.cmd("edit " .. vim.fn.fnameescape(path))
   end
 
-  local actions = {
-    dbui_manage_open = function(current_picker)
-      local item = current_picker:current()
-      if not item then
-        return
-      end
-
-      if item.kind == "connection_manage" then
-        current_picker:close()
-        open_connection(item.profile, item.connection)
-        return
-      end
-
-      if item.path then
-        current_picker:close()
-        open_profile_file(item.path)
-      end
-    end,
-    dbui_manage_add = function(current_picker)
-      local item = current_picker:current()
-      if not item or item.kind ~= "profile_manage" then
-        return
-      end
-
-      local _, saved_path = read_profile_connections(item.profile)
-      local target = item.path or saved_path
-      if not target then
-        return
-      end
-
-      close_and_refresh(current_picker, "dbui_manage_add", function()
-        return add_connection(item.profile, target)
-      end)
-    end,
-    dbui_manage_edit = function(current_picker)
-      local item = current_picker:current()
-      if not item or item.kind ~= "connection_manage" then
-        return
-      end
-
-      close_and_refresh(current_picker, "dbui_manage_edit", function()
-        return update_connection(item.profile, item.path, item.connection_index, item.connection)
-      end)
-    end,
-    dbui_manage_delete = function(current_picker)
-      local item = current_picker:current()
-      if not item or item.kind ~= "connection_manage" then
-        return
-      end
-
-      close_and_refresh(current_picker, "dbui_manage_delete", function()
-        return delete_connection(item.profile, item.path, item.connection_index)
-      end)
-    end,
-    dbui_manage_edit_file = function(current_picker)
-      local item = current_picker:current()
-      if not item or not item.path then
-        return
-      end
-
-      current_picker:close()
-      open_profile_file(item.path)
-    end,
-  }
-
-  local function find_picker_from_window_manage(win)
-    if not win or not win.win then
-      return nil
-    end
-
-    if type(win.picker) == "table" then
-      return win.picker
-    end
-
-    local picker_get = Snacks and Snacks.picker and type(Snacks.picker.get) == "function" and Snacks.picker.get or nil
-    if not picker_get then
-      return nil
-    end
-
-    for _, picker in ipairs(picker_get()) do
-      local wins = picker.layout and picker.layout.wins
-      if wins then
-        for _, picker_win in pairs(wins) do
-          if picker_win and picker_win.win == win.win then
-            return picker
-          end
-        end
-      end
-    end
-  end
-
-  local function run_manage_action(win, action_name)
-    local picker = find_picker_from_window_manage(win)
-    if not picker then
+  local function handle_manage_select(picker, item)
+    if not item then
       return
     end
 
-    local action = actions[action_name]
-    if type(action) == "function" then
-      action(picker)
+    if item.kind == "connection_manage" then
+      picker:close()
+      open_connection(item.profile, item.connection)
+      return
+    end
+
+    if item.path then
+      picker:close()
+      open_profile_file(item.path)
     end
   end
 
   picker({
-    title = "DB profile manager",
+    title = "",
     finder = items,
     format = "text",
     prompt = format_manage_prompt(),
-    preview = "",
-    actions = actions,
+    focus = "list",
+    preview = "preview",
     layout = opts and opts.layout or picker_layout,
-    win = {
-      input = {
-        keys = {
-          ["<CR>"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_open")
-            end,
-            mode = { "i", "n" },
-          },
-          ["o"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_open")
-            end,
-            mode = { "i", "n" },
-          },
-          ["i"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_edit_file")
-            end,
-            mode = { "i", "n" },
-          },
-          ["a"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_add")
-            end,
-            mode = { "i", "n" },
-          },
-          ["e"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_edit")
-            end,
-            mode = { "i", "n" },
-          },
-          ["d"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_delete")
-            end,
-            mode = { "i", "n" },
-          },
-        },
-      },
-      list = {
-        keys = {
-          ["<CR>"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_open")
-            end,
-            mode = { "n", "x" },
-          },
-          ["o"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_open")
-            end,
-            mode = { "n", "x" },
-          },
-          ["i"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_edit_file")
-            end,
-            mode = { "n", "x" },
-          },
-          ["a"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_add")
-            end,
-            mode = { "n", "x" },
-          },
-          ["e"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_edit")
-            end,
-            mode = { "n", "x" },
-          },
-          ["d"] = {
-            function(win)
-              run_manage_action(win, "dbui_manage_delete")
-            end,
-            mode = { "n", "x" },
-          },
-        },
-      },
-    },
+    confirm = handle_manage_select,
   })
 end
 
@@ -1052,10 +878,8 @@ end
 function M.setup(opts)
   local options = vim.tbl_extend("force", defaults, opts or {})
   profile_icons = normalize_icons(options)
-  picker_layout = normalize_picker_layout(options.picker_layout)
-  use_profile_prefix = options.prefix_by_profile == true
   profile_label_map = options.profile_labels or {}
-  local prefix = options.command_prefix
+  local prefix = "DBUI"
   local command_profile = prefix .. "Profile"
 
   local function run_open(cmd)
@@ -1069,7 +893,7 @@ function M.setup(opts)
 
     local mode = args[1]
     if mode == "all" then
-      M.open("all", nil, { prefix = use_profile_prefix })
+      M.open("all", nil, { prefix = false })
       return
     end
 
@@ -1139,15 +963,6 @@ function M.setup(opts)
     complete = profile_command_complete,
     desc = "Open DBUI with profile, manage, or edit profile file",
   })
-
-  if prefix ~= "DBUI" then
-    vim.api.nvim_create_user_command("DBUIGroup", run_open, {
-      nargs = "?",
-      complete = profile_command_complete,
-      desc = "Backward-compatible alias for DBUIProfile",
-    })
-  end
-
 end
 
 return M
