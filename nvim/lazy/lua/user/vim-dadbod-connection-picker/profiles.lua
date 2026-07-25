@@ -360,16 +360,8 @@ local function next_backup_path(path)
   return candidate
 end
 
-local RESTORE_KEY_GUARD_MS = 1200
 local GUARD_PREFIX = "vim_dbcp_restore_"
 local BACKUP_HISTORY_LIMIT = 20
-local function restore_guard_now()
-  if vim.loop and vim.loop.now then
-    return vim.loop.now()
-  end
-  return vim.loop and (vim.loop.hrtime() and math.floor(vim.loop.hrtime() / 1000000)) or 0
-end
-
 local function restore_guard_clear()
   vim.g[GUARD_PREFIX .. "busy"] = false
 end
@@ -424,6 +416,29 @@ local function mark_backup_consumed(path)
   for i = #next_state + 1, #consumed do
     consumed[i] = nil
   end
+end
+
+local function consume_backup_entry(backup_path)
+  if type(backup_path) ~= "string" or backup_path == "" then
+    return
+  end
+
+  local journal = restore_journal()
+  local next_journal = {}
+  for _, path in ipairs(journal) do
+    if path ~= backup_path then
+      next_journal[#next_journal + 1] = path
+    end
+  end
+
+  for i = 1, math.min(BACKUP_HISTORY_LIMIT, #next_journal) do
+    journal[i] = next_journal[i]
+  end
+  for i = #next_journal + 1, #journal do
+    journal[i] = nil
+  end
+
+  mark_backup_consumed(backup_path)
 end
 
 local function record_backup_path(backup_path)
@@ -1962,14 +1977,11 @@ end
 
 function M.restore_group(group, opts)
   opts = opts or {}
-  local now = restore_guard_now()
   local global_busy = vim.g[GUARD_PREFIX .. "busy"]
-  local last_guard = vim.g[GUARD_PREFIX .. "last_at"] or 0
-  if global_busy or (now - last_guard) < RESTORE_KEY_GUARD_MS then
+  if global_busy then
     return
   end
   vim.g[GUARD_PREFIX .. "busy"] = true
-  vim.g[GUARD_PREFIX .. "last_at"] = now
 
   local requested_group = nil
   if group and group ~= "" then
@@ -2068,7 +2080,7 @@ function M.restore_group(group, opts)
   if safe_backup then
     vim.fn.delete(safe_backup)
   end
-  mark_backup_consumed(backup_path)
+  consume_backup_entry(backup_path)
 
   restore_guard_clear()
   show_info("Restored group from backup: " .. restore_group)

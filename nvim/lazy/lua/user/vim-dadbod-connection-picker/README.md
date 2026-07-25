@@ -33,6 +33,8 @@ workflow used by `vim-dadbod-ui`.
 ```lua
 require("user.vim-dadbod-connection-picker").setup({
   icon_style = "ascii",           -- "ascii" | "emoji" | "nerd"
+  -- Backup directory for delete-to-trash; defaults to stdpath("data").."/vim-dadbod-connection-picker/connections-backup"
+  -- backup_dir = vim.fn.stdpath("data") .. "/vim-dadbod-connection-picker/connections-backup",
   confirm_open = false,           -- set true to confirm before opening a connection/group
   confirm_open_group = false,     -- set true to confirm before opening all connections in a group
   confirm_modify = false,         -- set true to confirm before adding/renaming
