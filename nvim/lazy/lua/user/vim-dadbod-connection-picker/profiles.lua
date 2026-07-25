@@ -54,6 +54,7 @@ local icon_styles = {
 
 local group_icons = {}
 local group_label_map = {}
+local latest_group_backup = nil
 
 local function filter_starts_with(values, needle)
   if needle == nil or needle == "" then
@@ -770,14 +771,29 @@ local function run_picker(groups, expanded, opts)
     end
   end
 
-  local function close_and_reload_picker()
+  local function move_picker_up()
+    local up = vim.api.nvim_replace_termcodes("<Up>", true, false, true)
+    vim.schedule(function()
+      if picker_instance then
+        vim.api.nvim_feedkeys(up, "n", false)
+      end
+    end)
+  end
+
+  local function close_and_reload_picker(opts)
+    opts = opts or {}
     if not picker_instance then
       return
     end
-    picker_instance:close()
-    vim.schedule(function()
-      M.pick_profile({})
-    end)
+
+    groups = group_data.build_group_connections()
+    if type(picker_instance.refresh) == "function" then
+      picker_instance:refresh()
+    end
+
+    if opts.move_up then
+      move_picker_up()
+    end
   end
 
   local function pick_current_row()
@@ -968,7 +984,7 @@ local function run_picker(groups, expanded, opts)
       end
 
       show_info("Renamed group: " .. old_group .. " -> " .. normalized)
-      close_and_reload_picker()
+      close_and_reload_picker({ move_up = true })
     end)
   end
 
@@ -1024,8 +1040,43 @@ local function run_picker(groups, expanded, opts)
         return
       end
 
+      local backup_path
+      local has_backup = false
+      if defaults.delete_to_trash then
+        backup_path = next_backup_path(path)
+        local ok, err = vim.loop.fs_rename(path, backup_path)
+        if not ok then
+          show_error("Failed to move group to backup: " .. tostring(err))
+          return
+        end
+        has_backup = true
+      end
+
       table.remove(connections, connection_index)
-      group_data.write_group_file(path, connections)
+
+      local wrote_ok, write_err = pcall(group_data.write_group_file, path, connections)
+      if not wrote_ok then
+        if has_backup then
+          local restore_ok, restore_err = vim.loop.fs_rename(backup_path, path)
+          if not restore_ok then
+            show_error(
+              "Failed to restore backup after write failure: "
+                .. tostring(restore_err)
+                .. ". Backup exists: "
+                .. tostring(backup_path)
+            )
+          else
+            show_error("Failed to delete connection: " .. tostring(write_err))
+          end
+        else
+          show_error("Failed to delete connection: " .. tostring(write_err))
+        end
+        return
+      end
+
+      if has_backup then
+        show_info("Backed up group before delete: " .. backup_path)
+      end
       show_info("Deleted connection from " .. group .. ": " .. tostring(target.name or "unnamed"))
       close_and_reload_picker()
       return
@@ -1084,54 +1135,37 @@ local function run_picker(groups, expanded, opts)
       show_info("Deleted group: " .. group)
     end
 
-    close_and_reload_picker()
+    close_and_reload_picker({ move_up = true })
   end
 
   local function handle_restore_current_group()
-    local group = normalize_group_name_from_current_row("restore it", nil)
-    if not group then
+    local current = pick_current_row()
+    if current and type(current.group) == "string" and current.group ~= "" then
+      M.restore_group(current.group, {
+        on_success = function()
+          close_and_reload_picker()
+        end,
+      })
       return
     end
 
-    local path = group_data.group_file(group)
-    if not path then
-      show_warn("Unable to resolve group path: " .. tostring(group))
-      return
-    end
-
-    local backup_path, err = latest_group_backup(group)
-    if not backup_path then
-      show_warn(err)
-      return
-    end
-
-    if
-      not confirm_action(
-        "Restore group from backup?",
-        string.format("Group: %s\nTarget: %s\nBackup: %s", group, path, backup_path),
-        defaults.confirm_modify
-      )
-    then
-      return
-    end
-
-    if vim.fn.filereadable(path) == 1 then
-      local safe_backup = next_backup_path(path)
-      local ok, backup_err = vim.loop.fs_rename(path, safe_backup)
-      if not ok then
-        show_error("Failed to backup current group file before restore: " .. tostring(backup_err))
+    vim.ui.input({
+      prompt = "Restore group: ",
+    }, function(raw_group)
+      if raw_group == nil then
         return
       end
-    end
-
-    local ok, restore_err = vim.loop.fs_rename(backup_path, path)
-    if not ok then
-      show_error("Failed to restore group from backup: " .. tostring(restore_err))
-      return
-    end
-
-    show_info("Restored group from backup: " .. group)
-    close_and_reload_picker()
+      local normalized = group_data.normalize_group_name(raw_group)
+      if not normalized then
+        show_warn("Invalid group name.")
+        return
+      end
+      M.restore_group(normalized, {
+        on_success = function()
+          close_and_reload_picker()
+        end,
+      })
+    end)
   end
 
   local custom_win = vim.tbl_deep_extend("force", layout.win or {}, {
@@ -1491,7 +1525,7 @@ local function group_candidates()
   return groups
 end
 
-local function latest_group_backup(group)
+latest_group_backup = function(group)
   local path = group_data.group_file(group)
   if not path then
     return nil, "Unable to resolve group path: " .. tostring(group)
@@ -1504,6 +1538,7 @@ local function latest_group_backup(group)
     if stat and stat.mtime and stat.mtime.sec then
       candidates[#candidates + 1] = {
         path = backup,
+        group = group,
         mtime = stat.mtime.sec,
       }
     end
@@ -1517,7 +1552,52 @@ local function latest_group_backup(group)
     return nil, "No backup found for group: " .. tostring(group)
   end
 
-  return candidates[1].path, nil
+  return candidates[1].path, nil, candidates[1].group, false
+end
+
+local function backup_group_from_path(path)
+  if type(path) ~= "string" then
+    return nil
+  end
+
+  local base = vim.fn.fnamemodify(path, ":t")
+  if base == "" then
+    return nil
+  end
+
+  local without_suffix = base:gsub("%.bak$", "")
+  while without_suffix:match("%.%d+$") do
+    without_suffix = without_suffix:gsub("%.%d+$", "")
+  end
+  without_suffix = without_suffix:gsub("%.lua$", "")
+  return without_suffix ~= "" and without_suffix or nil
+end
+
+local function latest_any_group_backup()
+  local pattern = group_data.connections_dir() .. "/*.lua.*.bak"
+  local backup_matches = vim.fn.glob(pattern, false, true)
+  local candidates = {}
+  for _, backup in ipairs(backup_matches) do
+    local stat = vim.loop.fs_stat(backup)
+    if stat and stat.mtime and stat.mtime.sec then
+      local group = backup_group_from_path(backup)
+      candidates[#candidates + 1] = {
+        path = backup,
+        group = group,
+        mtime = stat.mtime.sec,
+      }
+    end
+  end
+
+  table.sort(candidates, function(lhs, rhs)
+    return lhs.mtime > rhs.mtime
+  end)
+
+  if #candidates == 0 then
+    return nil, nil, "No backup history found."
+  end
+
+  return candidates[1].path, candidates[1].group, nil
 end
 
 function M.edit_profile(profile)
@@ -1640,57 +1720,86 @@ function M.create_group(group)
   open_file(path)
 end
 
-function M.restore_group(group)
-  local normalized = group_data.normalize_group_name(group)
-  if not normalized then
-    show_warn("Invalid group name: " .. tostring(group))
-    return
+function M.restore_group(group, opts)
+  opts = opts or {}
+  local requested_group = group_data.normalize_group_name(group)
+  if group and group ~= "" and not requested_group then
+    show_warn("Invalid group name (ignored): " .. tostring(group))
+  elseif requested_group then
+    show_info("Restoring latest backup (group filter is ignored).")
   end
 
-  if normalized == "all" then
-    show_warn("Cannot restore group `all`.")
-    return
-  end
-
-  local path = group_data.group_file(normalized)
-  if not path then
-    show_warn("Unable to resolve group path.")
-    return
-  end
-
-  local backup_path, err = latest_group_backup(normalized)
+  local backup_path, backup_group, err = latest_any_group_backup()
   if not backup_path then
-    show_warn(err)
+    show_warn(err or "삭제 기록이 없습니다.")
     return
   end
 
+  if not backup_group then
+    show_warn("Failed to identify group from latest backup.")
+    return
+  end
+
+  local restore_group = group_data.normalize_group_name(backup_group)
+  if not restore_group then
+    show_warn("Failed to identify group from latest backup.")
+    return
+  end
+
+  local path = group_data.group_file(restore_group)
+  if not path then
+    show_warn("Unable to resolve restore target group: " .. tostring(restore_group))
+    return
+  end
+
+  if requested_group and requested_group ~= restore_group then
+    local proceed = confirm_action(
+      "Requested group has no backup.",
+      string.format("Restore latest backup anyway?\nGroup: %s\nBackup: %s", restore_group, backup_path),
+      defaults.confirm_modify,
+      {
+        confirm_label = "&Restore",
+        cancel_label = "&Cancel",
+        default = 2,
+      }
+    )
+    if not proceed then
+      return
+    end
+  end
+
+  local restore_path = path
   if
     not confirm_action(
-      "Restore group from backup?",
-      string.format("Group: %s\nTarget: %s\nBackup: %s", normalized, path, backup_path),
+      "Restore latest backup?",
+      string.format("Group: %s\nTarget: %s\nBackup: %s", restore_group, restore_path, backup_path),
       defaults.confirm_modify
     )
   then
     return
   end
 
-  if vim.fn.filereadable(path) == 1 then
-    local safe_backup = next_backup_path(path)
-    local ok, backup_err = vim.loop.fs_rename(path, safe_backup)
+  if vim.fn.filereadable(restore_path) == 1 then
+    local safe_backup = next_backup_path(restore_path)
+    local ok, backup_err = vim.loop.fs_rename(restore_path, safe_backup)
     if not ok then
       show_error("Failed to backup current group file before restore: " .. tostring(backup_err))
       return
     end
   end
 
-  local ok, restore_err = vim.loop.fs_rename(backup_path, path)
+  local ok, restore_err = vim.loop.fs_rename(backup_path, restore_path)
   if not ok then
     show_error("Failed to restore group from backup: " .. tostring(restore_err))
     return
   end
 
-  show_info("Restored group from backup: " .. normalized)
-  open_file(path)
+  show_info("Restored group from backup: " .. restore_group)
+  if type(opts.on_success) == "function" then
+    opts.on_success()
+    return
+  end
+  open_file(restore_path)
 end
 
 function M.open_connection_group(group)
@@ -1735,12 +1844,7 @@ function M.setup(opts)
     end
 
     if mode == "restore" or mode == "recover" then
-      local group = args[2]
-      if not group then
-        show_warn("Specify group name: :" .. command_profile .. " " .. mode .. " <group>")
-        return
-      end
-      M.restore_group(group)
+      M.restore_group(args[2])
       return
     end
 
@@ -1759,7 +1863,8 @@ function M.setup(opts)
       show_info(":DBConnections           Open connection picker")
       show_info(":DBConnections <group>    Open one group directly")
       show_info(":DBConnections add <group>   Create a new group file")
-      show_info(":DBConnections restore <group> Restore latest backup from trash")
+      show_info(":DBConnections restore      Restore latest backup from trash (latest first)")
+      show_info(":DBConnections recover      Same as restore")
       show_info(":DBConnections all        Open all groups")
       show_info(":DBConnections edit <group> Edit group file")
       show_info("Available groups: " .. table.concat(group_candidates(), ", "))
@@ -1792,7 +1897,7 @@ function M.setup(opts)
     end
 
     if parts[2] == "restore" or parts[2] == "recover" then
-      return filter_starts_with(group_command_candidates(), arg_lead)
+      return {}
     end
 
     return filter_starts_with(group_command_candidates(), arg_lead)
@@ -1801,7 +1906,7 @@ function M.setup(opts)
   vim.api.nvim_create_user_command(command_profile, run_open, {
     nargs = "*",
     complete = connection_command_complete,
-    desc = "Open DB connection picker (`:DBConnections [all|<group>|add|edit <group>|restore <group>|help`)",
+    desc = "Open DB connection picker (`:DBConnections [all|<group>|add|edit <group>|restore|help`)",
   })
 end
 
