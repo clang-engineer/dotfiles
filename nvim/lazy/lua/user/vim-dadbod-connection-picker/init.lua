@@ -8,15 +8,13 @@
 --        vim.g.dbs = require("user.vim-dadbod-connection-picker").pick("group-a", "group-b")
 --   3) On first run, register trust for that .nvim.lua with the :trust command.
 
--- Keep connection helpers in the same namespace so `user.vim-dadbod-connection-picker` can be used
--- as one setup unit.
-local profiles = require("user.vim-dadbod-connection-picker.profiles")
+local connection_groups = require("user.vim-dadbod-connection-picker.profiles")
+local command_name = "DBPicker"
 
 local M = {}
 
--- Keep backward-compatible API used by older settings.
 function M.all()
-  return profiles.connections("all")
+  return connection_groups.connections("all")
 end
 
 function M.pick(...)
@@ -27,7 +25,7 @@ function M.pick(...)
 
   local result = {}
   for _, name in ipairs(targets) do
-    local group_conns = profiles.connections(name)
+    local group_conns = connection_groups.connections(name)
     if type(group_conns) == "table" then
       vim.list_extend(result, group_conns)
     end
@@ -38,68 +36,60 @@ end
 -- Returns group-based DB connection list by group name.
 -- `target="all"` or nil returns all connections.
 function M.connections(target)
-  return profiles.connections(target)
-end
-
-function M.pick_profile()
-  profiles.pick_profile()
-end
-
-function M.pick_connection_group(...)
-  return M.pick(...)
-end
-
-function M.finder()
-  profiles.pick_profile()
+  return connection_groups.connections(target)
 end
 
 function M.pick_group()
-  profiles.pick_group()
+  connection_groups.pick_group()
 end
 
-function M.editor(profile)
-  if profile == nil then
-    vim.notify("Specify group name: :DBConnections edit <group>", vim.log.levels.WARN)
+function M.finder()
+  connection_groups.pick_group()
+end
+
+function M.editor(group)
+  if group == nil then
+    vim.notify("Specify group name: :" .. command_name .. " edit <group>", vim.log.levels.WARN)
     return
   end
-  profiles.edit_profile(profile)
-end
-
-function M.edit_profile(name)
-  profiles.edit_profile(name)
+  connection_groups.edit_group(group)
 end
 
 function M.open_group(name)
-  profiles.open(name)
+  connection_groups.open_group(name)
 end
 
-function M.edit_connection_group(name)
-  profiles.edit_group(name)
+function M.edit_group(name)
+  connection_groups.edit_group(name)
 end
 
 function M.create_group(name)
-  profiles.create_group(name)
+  connection_groups.create_group(name)
 end
 
-function M.create_profile(name)
-  profiles.create_group(name)
-end
-
-function M.open_profile(name)
-  profiles.open_profile(name)
+function M.manage_groups()
+  connection_groups.manage_groups()
 end
 
 -- Plugin-like entrypoint: initialize DBUI connection list + commands.
 function M.setup(opts)
   local options = opts or {}
-  local default_group = options.default_group or options.default_profile or "all"
+  local default_group = options.default_group or "all"
+  command_name = options.command_name or command_name
 
   vim.g.dbs = M.connections(default_group)
-  profiles.setup({
+  connection_groups.setup({
+    command_name = command_name,
     icon_style = options.icon_style,
-    group_labels = options.group_labels or options.profile_labels,
+    group_labels = options.group_labels,
     group_placeholders = options.group_placeholders,
     icons = options.icons,
+    backup_dir = options.backup_dir,
+    confirm_open = options.confirm_open,
+    confirm_open_group = options.confirm_open_group,
+    confirm_modify = options.confirm_modify,
+    confirm_delete = options.confirm_delete,
+    delete_to_trash = options.delete_to_trash,
   })
 end
 

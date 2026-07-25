@@ -1,99 +1,86 @@
 local M = {}
 
-local group_data = require("user.vim-dadbod-connection-picker.group_data")
-local restore = require("user.vim-dadbod-connection-picker.restore")
-local commands = require("user.vim-dadbod-connection-picker.commands")
-local ui = require("user.vim-dadbod-connection-picker.ui")
-local query = require("user.vim-dadbod-connection-picker.query")
 local util = require("user.vim-dadbod-connection-picker.util")
+local query = require("user.vim-dadbod-connection-picker.query")
 
-local picker_layout = {
-  preset = "dropdown",
-  win = {
-    list = {
-      border = "none",
-    },
-    input = {
-      border = "none",
-    },
-    preview = {
-      border = "none",
-    },
-  },
-}
+local ctx = {}
 
-local defaults = {
-  group_labels = {},
-  group_placeholders = {
-    { name = "example", url = "postgresql://localhost:5432/db" },
-  },
-  icon_style = "ascii",
-  backup_dir = nil,
-  confirm_open = false,
-  confirm_open_group = false,
-  confirm_modify = false,
-  confirm_delete = true,
-  delete_to_trash = true,
-  icons = {},
-}
-local command_name = "DBPicker"
+function M.setup(options)
+  ctx = options or {}
+end
 
-local next_backup_path = restore.next_backup_path
-local copy_file = restore.copy_file
-local record_backup_path = restore.record_backup_path
-local icon_styles = {
-  ascii = {
+local function get_defaults()
+  if type(ctx.get_defaults) == "function" then
+    local values = ctx.get_defaults()
+    if type(values) == "table" then
+      return values
+    end
+  end
+  return {}
+end
+
+local function get_group_icons()
+  if type(ctx.get_group_icons) == "function" then
+    local icons = ctx.get_group_icons()
+    if type(icons) == "table" then
+      return icons
+    end
+  end
+  return {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
     open_group = ">",
     open_all = ">>",
-  },
-  emoji = {
-    folder_expanded = "📂",
-    folder_collapsed = "📁",
-    open_group = "📂",
-    open_all = "🚀",
-  },
-  nerd = {
-    folder_expanded = "",
-    folder_collapsed = "",
-    open_group = "",
-    open_all = "+",
-  },
-}
-
-local group_icons = {}
-local group_label_map = {}
-
-local function show_info(message)
-  vim.notify(message, vim.log.levels.INFO)
-end
-
-local function show_warn(message)
-  vim.notify(message, vim.log.levels.WARN)
-end
-
-local function show_error(message)
-  vim.notify(message, vim.log.levels.ERROR)
-end
-
-local function normalize_icons(options)
-  local style_name = options.icon_style or "ascii"
-  local style = icon_styles[style_name] or icon_styles.ascii
-  local merged = vim.tbl_extend("force", style, options.icons or {})
-  return {
-    folder_expanded = merged.folder_expanded or style.folder_expanded,
-    folder_collapsed = merged.folder_collapsed or style.folder_collapsed,
-    open_group = merged.open_group or style.open_group,
-    open_all = merged.open_all or merged.open_group or style.open_group,
   }
 end
 
-local picker_shortcuts_hint = ui.picker_shortcuts_hint
-local picker_shortcuts_hint_full = ui.picker_shortcuts_hint_full
-local add_hint_rows = ui.add_hint_rows
-local truncate_for_display = ui.truncate_for_display
-local confirm_action = ui.confirm_action
+local function get_command_name()
+  if type(ctx.command_name) == "function" then
+    return tostring(ctx.command_name() or "DBPicker")
+  end
+  if type(ctx.command_name) == "string" then
+    return ctx.command_name
+  end
+  return "DBPicker"
+end
+
+local function call_notify(level, message)
+  if level == "info" and type(ctx.show_info) == "function" then
+    ctx.show_info(message)
+    return
+  end
+  if level == "warn" and type(ctx.show_warn) == "function" then
+    ctx.show_warn(message)
+    return
+  end
+  if level == "error" and type(ctx.show_error) == "function" then
+    ctx.show_error(message)
+    return
+  end
+
+  local level_map = {
+    info = vim.log.levels.INFO,
+    warn = vim.log.levels.WARN,
+    error = vim.log.levels.ERROR,
+  }
+  vim.notify(message, level_map[level] or vim.log.levels.INFO)
+end
+
+local function show_info(message)
+  call_notify("info", message)
+end
+
+local function show_warn(message)
+  call_notify("warn", message)
+end
+
+local function show_error(message)
+  call_notify("error", message)
+end
+
+local function get_fn(name)
+  return ctx[name]
+end
 
 local function masked_url(raw_url)
   if type(raw_url) ~= "string" then
@@ -106,180 +93,96 @@ local function masked_url(raw_url)
   return raw_url
 end
 
-local function resolve_group_label(group)
-  if type(group) ~= "string" or group == "" then
-    return group
+local function truncate_for_display(value)
+  local max_len = 72
+  if type(value) ~= "string" then
+    return ""
   end
-
-  local mapped = group_label_map[group]
-  if type(mapped) == "string" and mapped ~= "" then
-    return mapped
+  if #value <= max_len then
+    return value
   end
-  return group
+  return value:sub(1, max_len - 3) .. "..."
 end
 
-local function next_placeholder()
-  local source = defaults.group_placeholders
-  if type(source) ~= "table" or #source == 0 then
-    return {
-      name = "example",
-      url = "postgresql://localhost:5432/db",
-    }
+local function confirm_action(message, detail, should_confirm, opts)
+  if type(ctx.confirm_action) == "function" then
+    return ctx.confirm_action(message, detail, should_confirm, opts)
   end
 
-  local raw = source[1]
-  return {
-    name = raw.name or "example",
-    url = raw.url or "postgresql://localhost:5432/db",
-  }
-end
+  if should_confirm == false then
+    return true
+  end
+  if should_confirm == nil then
+    should_confirm = get_defaults().confirm_open
+  end
+  if not should_confirm then
+    return true
+  end
 
-local function fill_connection_with_prompt(on_done)
-  local next_conn = next_placeholder()
-  vim.ui.input({
-    prompt = "Connection name: ",
-    default = next_conn.name,
-  }, function(name)
-    if name == nil then
-      return
-    end
-    if name == "" then
-      name = next_conn.name
-    end
-
-    vim.ui.input({
-      prompt = "Connection URL: ",
-      default = next_conn.url,
-    }, function(url)
-      if url == nil then
-        return
+  local title = tostring(message or "Confirm")
+  local detail_lines = {}
+  if type(detail) == "string" then
+    detail_lines = vim.split(detail, "\n", { plain = true, trimempty = true })
+  elseif type(detail) == "table" then
+    for _, line in ipairs(detail) do
+      if type(line) == "string" and vim.trim(line) ~= "" then
+        detail_lines[#detail_lines + 1] = line
       end
-      if url == "" then
-        url = next_conn.url
-      end
-      on_done({
-        name = name,
-        url = url,
-      })
-    end)
-  end)
-end
-
-local function prompt_new_group_name(opts)
-  opts = opts or {}
-  local default_name = opts.default_name or ""
-
-  vim.ui.input({
-    prompt = "New group name: ",
-    default = default_name,
-  }, function(raw_name)
-    if raw_name == nil then
-      return
-    end
-    local normalized = group_data.normalize_group_name(raw_name)
-    if not normalized or normalized == "" then
-      show_warn("Invalid group name.")
-      return
-    end
-
-    if
-      not confirm_action(
-        "Create new group?",
-        string.format("Group: %s", normalized),
-        defaults.confirm_modify
-      )
-    then
-      return
-    end
-
-    M.create_group(normalized)
-  end)
-end
-
-local function open_file(path)
-  local escaped = vim.fn.fnameescape(path)
-  local cmd = vim.bo.modifiable == false and ("edit! " .. escaped) or ("edit " .. escaped)
-  local ok, err = pcall(vim.cmd, cmd)
-  if not ok then
-    show_error("Failed to open file: " .. path .. "\n" .. tostring(err))
-  end
-end
-
-local function open_file_for_edit(path)
-  vim.schedule(function()
-    open_file(path)
-    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-    local line_count = #lines
-    local cursor_line = line_count > 1 and (line_count - 1) or line_count
-    if cursor_line < 1 then
-      cursor_line = 1
-    end
-    pcall(vim.api.nvim_win_set_cursor, 0, { cursor_line, 0 })
-    show_info("Edit newly added connection on the current line if needed.")
-  end)
-end
-
-
-local function apply_group_prefix(group, conn)
-  if type(conn) ~= "table" then
-    return conn
-  end
-
-  if type(conn.name) ~= "string" or conn.url == nil then
-    return conn
-  end
-
-  if conn.name == "" or conn.name:match("^%[[^%]]+%] ") then
-    return conn
-  end
-
-  local label = resolve_group_label(group)
-  if type(label) ~= "string" or label == "" then
-    return conn
-  end
-
-  return vim.tbl_extend("force", conn, {
-    name = string.format("[%s] %s", label, conn.name),
-  })
-end
-
-function M.connections(target, opts)
-  local groups = group_data.build_group_connections()
-  local result = {}
-  local force_prefix = opts and opts.prefix
-
-  local function with_prefix(group, conn)
-    if not force_prefix then
-      return conn
-    end
-    return apply_group_prefix(group, conn)
-  end
-
-  local selected_group = target
-  if selected_group and selected_group ~= "all" then
-    selected_group = group_data.normalize_group_name(selected_group)
-    if not selected_group then
-      return nil
-    end
-
-    local selected = groups[selected_group]
-    if type(selected) ~= "table" then
-      return nil
-    end
-
-    for _, conn in ipairs(selected) do
-      table.insert(result, with_prefix(selected_group, conn))
-    end
-    return result
-  end
-
-  for _, name in ipairs(util.sorted_keys(groups)) do
-    for _, conn in ipairs(groups[name] or {}) do
-      table.insert(result, with_prefix(name, conn))
     end
   end
 
-  return result
+  local normalized = {}
+  for _, line in ipairs(detail_lines) do
+    local t = truncate_for_display(vim.trim(line))
+    if t ~= "" then
+      normalized[#normalized + 1] = t
+    end
+  end
+
+  local confirm_label = "&Proceed"
+  local cancel_label = "&Cancel"
+  local default = 1
+  if type(opts) == "table" then
+    confirm_label = opts.confirm_label or confirm_label
+    cancel_label = opts.cancel_label or cancel_label
+    default = opts.default or default
+  end
+
+  confirm_label = tostring(confirm_label):gsub("&", "")
+  cancel_label = tostring(cancel_label):gsub("&", "")
+  if confirm_label == "" then
+    confirm_label = "Proceed"
+  end
+  if cancel_label == "" then
+    cancel_label = "Cancel"
+  end
+
+  local prompt_lines = { title }
+  for _, line in ipairs(normalized) do
+    prompt_lines[#prompt_lines + 1] = "  " .. line
+  end
+  local default_is_yes = default == 1
+  local default_hint = default_is_yes and "[Y/n]" or "[y/N]"
+  prompt_lines[#prompt_lines + 1] = string.format("%s / %s %s:", confirm_label, cancel_label, default_hint)
+  local prompt = table.concat(prompt_lines, "\n")
+
+  while true do
+    local answer = vim.fn.input({ prompt = prompt .. " " })
+    if answer == nil then
+      return false
+    end
+    answer = vim.trim(answer):lower()
+    if answer == "" then
+      return default_is_yes
+    end
+    if answer == "y" or answer == "yes" then
+      return true
+    end
+    if answer == "n" or answer == "no" then
+      return false
+    end
+    show_warn("Please type y or n.")
+  end
 end
 
 local function build_group_preview(group, connections)
@@ -289,7 +192,6 @@ local function build_group_preview(group, connections)
     string.format("Total connections: %d", count),
     "",
   }
-
   if count == 0 then
     lines[#lines + 1] = "No connections configured."
     return table.concat(lines, "\n")
@@ -315,13 +217,15 @@ local function build_connection_preview(group, conn, extra)
   return table.concat(lines, "\n")
 end
 
-local function build_group_items(groups, expanded)
+local function build_group_items(groups, expanded, options)
   local items = {}
   local ordered = util.sorted_keys(groups)
+  local group_icons = options.group_icons or {}
+  local command_name = options.command_name
 
   for _, group in ipairs(ordered) do
     local is_expanded = expanded[group] == true
-    local glyph = is_expanded and group_icons.folder_expanded or group_icons.folder_collapsed
+    local glyph = is_expanded and (group_icons.folder_expanded or "[-]") or (group_icons.folder_collapsed or "[+]")
     local count = #(groups[group] or {})
 
     table.insert(items, {
@@ -337,7 +241,7 @@ local function build_group_items(groups, expanded)
     if is_expanded then
       if count > 1 then
         table.insert(items, {
-          text = string.format("  %s Open all (%d): %s", group_icons.open_all, count, group),
+          text = string.format("  %s Open all (%d): %s", group_icons.open_all or ">>", count, group),
           kind = "open_all",
           group = group,
           preview = {
@@ -436,24 +340,6 @@ local function build_manage_items(group_meta)
   return items
 end
 
-local function open_connection(group, conn)
-  if type(conn) ~= "table" or type(conn.url) ~= "string" then
-    return false
-  end
-
-  local name = conn.name and conn.name ~= "" and conn.name or group
-  if
-    not confirm_action(
-      "Open connection?",
-      string.format("Group: %s\nName: %s", tostring(group), tostring(name)),
-      defaults.confirm_open
-    )
-  then
-    return false
-  end
-  return M.open({ { name = conn.name, url = conn.url } }, name)
-end
-
 local function resolve_snacks_picker()
   local ok_snacks, snacks = pcall(require, "snacks.picker")
   if not ok_snacks then
@@ -469,28 +355,61 @@ local function resolve_snacks_picker()
   if type(snacks) == "table" and type(snacks.picker) == "table" and type(snacks.picker.pick) == "function" then
     return snacks.picker.pick
   end
-
   return nil
 end
 
-local function run_picker(groups, expanded, opts)
-  local layout = opts and opts.layout or picker_layout
-  local usage_hint = type(opts) == "table" and opts.usage_hint or nil
+local function open_connection(group, conn)
+  if type(conn) ~= "table" or type(conn.url) ~= "string" then
+    return false
+  end
+  local defaults = get_defaults()
+  local name = conn.name and conn.name ~= "" and conn.name or group
+  if
+    not confirm_action(
+      "Open connection?",
+      string.format("Group: %s\nName: %s", tostring(group), tostring(name)),
+      defaults.confirm_open
+    )
+  then
+    return false
+  end
+  if type(ctx.open_connection) == "function" then
+    return ctx.open_connection({ { name = conn.name, url = conn.url } }, name)
+  end
+  return false
+end
+
+function M.open_groups(groups, expanded, opts)
+  local defaults = get_defaults()
+  local layout = (opts and opts.layout) or ctx.picker_layout
+  local usage_hint = opts and opts.usage_hint or nil
   local show_detailed_shortcuts = false
+  local group_data = ctx.group_data
+  local command_name = get_command_name()
+  local group_icons = get_group_icons()
 
   local function get_shortcuts_hint()
     if usage_hint ~= nil then
       return usage_hint
     end
-    if show_detailed_shortcuts then
-      return picker_shortcuts_hint_full()
+    if show_detailed_shortcuts and type(ctx.picker_shortcuts_hint_full) == "function" then
+      return ctx.picker_shortcuts_hint_full()
     end
-    return picker_shortcuts_hint()
+    if type(ctx.picker_shortcuts_hint) == "function" then
+      return ctx.picker_shortcuts_hint()
+    end
+    return {
+      "/:filter, <CR>:open, a:add connection, n:add group, ? :shortcuts",
+    }
   end
 
   local function items()
-    return build_group_items(groups, expanded)
+    return build_group_items(groups, expanded, {
+      group_icons = group_icons,
+      command_name = command_name,
+    })
   end
+
   local ordered_groups = util.sorted_keys(groups)
   local total_groups = #ordered_groups
   local total_connections = 0
@@ -500,7 +419,7 @@ local function run_picker(groups, expanded, opts)
 
   local picker_api = resolve_snacks_picker()
   if not picker_api then
-    if opts and opts.fallback and type(opts.fallback) == "function" then
+    if opts and type(opts.fallback) == "function" then
       return opts.fallback()
     end
     show_warn("snacks.picker is not available. Please install folke/snacks.nvim.")
@@ -508,23 +427,25 @@ local function run_picker(groups, expanded, opts)
   end
 
   if #items() == 0 then
-    local groups_dir = group_data.connections_dir()
+    local groups_dir = group_data and group_data.connections_dir and group_data.connections_dir() or ""
     local no_group_win = vim.tbl_deep_extend("force", layout.win or {}, {
       list = vim.tbl_deep_extend("force", (layout.win and layout.win.list) or {}, {
         keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.list and layout.win.list.keys) or {}), {
           ["n"] = {
             function()
-              prompt_new_group_name({ default_name = "office" })
+              if type(ctx.prompt_new_group_name) == "function" then
+                ctx.prompt_new_group_name({ default_name = "office" })
+              end
             end,
             mode = { "n" },
           },
         }),
       }),
       input = vim.tbl_deep_extend("force", (layout.win and layout.win.input) or {}, {
-        keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.input and layout.win.input.keys) or {}), {
-        }),
+        keys = vim.tbl_deepenforce((layout.win and layout.win.input and layout.win.input.keys) or {}, {}),
       }),
     })
+
     picker_api({
       title = "DB Connections (no groups)",
       finder = function()
@@ -571,11 +492,13 @@ local function run_picker(groups, expanded, opts)
             },
           },
         }
-        add_hint_rows(rows, get_shortcuts_hint(), {
-          mode = "append",
-          first_prefix = "  ",
-          rest_prefix = "  ",
-        })
+        if type(ctx.add_hint_rows) == "function" then
+          ctx.add_hint_rows(rows, get_shortcuts_hint(), {
+            mode = "append",
+            first_prefix = "  ",
+            rest_prefix = "  ",
+          })
+        end
         return rows
       end,
       format = "text",
@@ -609,18 +532,20 @@ local function run_picker(groups, expanded, opts)
     end)
   end
 
-  local function close_and_reload_picker(opts)
-    opts = opts or {}
+  local function close_and_reload_picker(options)
+    options = options or {}
     if not picker_instance then
       return
     end
 
-    groups = group_data.build_group_connections()
+    if group_data and type(group_data.build_group_connections) == "function" then
+      groups = group_data.build_group_connections()
+    end
     if type(picker_instance.refresh) == "function" then
       picker_instance:refresh()
     end
 
-    if opts.move_up then
+    if options.move_up then
       move_picker_up()
     end
   end
@@ -661,7 +586,6 @@ local function run_picker(groups, expanded, opts)
     if not item then
       return
     end
-
     if item.kind == "hint" then
       return
     end
@@ -685,7 +609,9 @@ local function run_picker(groups, expanded, opts)
         end
       end
       picker:close()
-      M.open(item.group, nil, { prefix = opts and opts.prefix })
+      if type(ctx.open) == "function" then
+        ctx.open(item.group, nil, { prefix = opts and opts.prefix })
+      end
       return
     end
 
@@ -702,19 +628,32 @@ local function run_picker(groups, expanded, opts)
       return
     end
 
-    picker_instance:close()
-    M.edit_group(group)
+    if type(picker_instance.close) == "function" then
+      picker_instance:close()
+    end
+    if type(ctx.edit_group) == "function" then
+      ctx.edit_group(group)
+    end
   end
 
   local function handle_add_connection_to_current_group()
     local group = normalize_group_name_from_current_row(nil, nil)
     if not group then
-      if vim.tbl_isempty(group_data.build_group_connections()) then
-        handle_add_group_from_picker()
+      if not group_data or vim.tbl_isempty(group_data.build_group_connections()) then
+        if type(picker_instance.filter) == "function" and false then
+          return
+        end
+        if type(ctx.prompt_new_group_name) == "function" then
+          handle_add_group_from_picker()
+        end
         return
       end
-
       show_warn("Move to a group row to add a connection.")
+      return
+    end
+
+    if not group_data or type(group_data.load_group_connections) ~= "function" then
+      show_warn("Missing group data dependency.")
       return
     end
 
@@ -729,7 +668,12 @@ local function run_picker(groups, expanded, opts)
       existing = {}
     end
 
-    fill_connection_with_prompt(function(conn)
+    if type(ctx.fill_connection_with_prompt) ~= "function" then
+      show_warn("Missing input helper dependency.")
+      return
+    end
+
+    ctx.fill_connection_with_prompt(function(conn)
       if
         not confirm_action(
           "Add new connection?",
@@ -743,7 +687,9 @@ local function run_picker(groups, expanded, opts)
       table.insert(existing, conn)
       group_data.write_group_file(path, existing)
       show_info("Added connection to group: " .. group)
-      open_file_for_edit(path)
+      if type(ctx.open_file_for_edit) == "function" then
+        ctx.open_file_for_edit(path)
+      end
     end)
   end
 
@@ -761,14 +707,20 @@ local function run_picker(groups, expanded, opts)
       end
     end
 
-    prompt_new_group_name({
-      default_name = default_name,
-    })
+    if type(ctx.prompt_new_group_name) == "function" then
+      ctx.prompt_new_group_name({
+        default_name = default_name,
+      })
+    end
   end
 
   local function handle_rename_current_group()
     local old_group = normalize_group_name_from_current_row("rename it", nil)
     if not old_group then
+      return
+    end
+    if not group_data then
+      show_warn("Missing group data dependency.")
       return
     end
 
@@ -829,6 +781,10 @@ local function run_picker(groups, expanded, opts)
       return
     end
 
+    local next_backup_path = ctx.next_backup_path
+    local copy_file = ctx.copy_file
+    local record_backup_path = ctx.record_backup_path
+
     if current.kind == "connection" then
       local group = current.group
       if type(group) ~= "string" or group == "" then
@@ -878,6 +834,11 @@ local function run_picker(groups, expanded, opts)
       local backup_path
       local has_backup = false
       if defaults.delete_to_trash then
+        if type(next_backup_path) ~= "function" then
+          show_error("Missing backup path helper.")
+          return
+        end
+
         backup_path = next_backup_path(path)
         if not backup_path then
           show_error("Failed to resolve backup path.")
@@ -888,12 +849,13 @@ local function run_picker(groups, expanded, opts)
           show_error("Failed to backup group: " .. tostring(err))
           return
         end
-        record_backup_path(backup_path)
+        if type(record_backup_path) == "function" then
+          record_backup_path(backup_path)
+        end
         has_backup = true
       end
 
       table.remove(connections, connection_index)
-
       local wrote_ok, write_err = pcall(group_data.write_group_file, path, connections)
       if not wrote_ok then
         if has_backup then
@@ -937,45 +899,52 @@ local function run_picker(groups, expanded, opts)
       show_warn("Unable to resolve group file for: " .. tostring(group))
       return
     end
-
     if vim.fn.filereadable(path) ~= 1 then
       show_warn("No group file found: " .. tostring(group))
       return
     end
 
-      if
-        not confirm_action(
-          "Delete group?",
-          string.format("Group: %s\nPath: %s", group, path),
-          defaults.confirm_delete,
-          {
-            confirm_label = "&Delete",
-            cancel_label = "&Keep",
-            default = 2,
-          }
-        )
-      then
+    if
+      not confirm_action(
+        "Delete group?",
+        string.format("Group: %s\nPath: %s", group, path),
+        defaults.confirm_delete,
+        {
+          confirm_label = "&Delete",
+          cancel_label = "&Keep",
+          default = 2,
+        }
+      )
+    then
+      return
+    end
+
+    local next_backup = ctx.next_backup_path
+    if defaults.delete_to_trash then
+      local next_backup_path_for_group
+      if type(next_backup) ~= "function" then
+        show_error("Missing backup path helper.")
         return
       end
-
-    if defaults.delete_to_trash then
-      local backup_path = next_backup_path(path)
-      if not backup_path then
+      next_backup_path_for_group = next_backup(path)
+      if not next_backup_path_for_group then
         show_error("Failed to resolve backup path.")
         return
       end
-      local ok, err = copy_file(path, backup_path)
+      local ok, err = copy_file(path, next_backup_path_for_group)
       if not ok then
         show_error("Failed to backup group: " .. tostring(err))
         return
       end
-      record_backup_path(backup_path)
+      if type(record_backup_path) == "function" then
+        record_backup_path(next_backup_path_for_group)
+      end
       local removed = vim.fn.delete(path)
       if removed ~= 0 then
         show_error("Failed to delete group file: " .. path)
         return
       end
-      show_info("Moved group to backup: " .. backup_path)
+      show_info("Moved group to backup: " .. next_backup_path_for_group)
     else
       local removed = vim.fn.delete(path)
       if removed ~= 0 then
@@ -989,21 +958,25 @@ local function run_picker(groups, expanded, opts)
   end
 
   local function handle_restore_current_group()
-    M.restore_group(nil, {
-      mode = "undo",
-      on_success = function()
-        close_and_reload_picker()
-      end,
-    })
+    if type(ctx.restore_group) == "function" then
+      ctx.restore_group(nil, {
+        mode = "undo",
+        on_success = function()
+          close_and_reload_picker()
+        end,
+      })
+    end
   end
 
   local function handle_redo_current_group()
-    M.restore_group(nil, {
-      mode = "redo",
-      on_success = function()
-        close_and_reload_picker()
-      end,
-    })
+    if type(ctx.restore_group) == "function" then
+      ctx.restore_group(nil, {
+        mode = "redo",
+        on_success = function()
+          close_and_reload_picker()
+        end,
+      })
+    end
   end
 
   local custom_win = vim.tbl_deep_extend("force", layout.win or {}, {
@@ -1174,21 +1147,25 @@ local function run_picker(groups, expanded, opts)
     finder = function()
       local rows = items()
       if query_pattern ~= "" and not query_has_match then
-        add_hint_rows(rows, {
-          "No match for " .. string.format("%q", query_pattern) .. ".",
-          "Tip: / filter",
-          "Press <CR> to open.",
-        }, {
+        if type(ctx.add_hint_rows) == "function" then
+          ctx.add_hint_rows(rows, {
+            "No match for " .. string.format("%q", query_pattern) .. ".",
+            "Tip: / filter",
+            "Press <CR> to open.",
+          }, {
+            mode = "prepend",
+            first_prefix = "> ",
+            rest_prefix = "  ",
+          })
+        end
+      end
+      if type(ctx.add_hint_rows) == "function" then
+        ctx.add_hint_rows(rows, get_shortcuts_hint(), {
           mode = "prepend",
           first_prefix = "> ",
           rest_prefix = "  ",
         })
       end
-      add_hint_rows(rows, get_shortcuts_hint(), {
-        mode = "prepend",
-        first_prefix = "> ",
-        rest_prefix = "  ",
-      })
       return rows
     end,
     format = "text",
@@ -1202,7 +1179,11 @@ local function run_picker(groups, expanded, opts)
   })
 end
 
-local function run_manage_picker(group_meta, opts)
+function M.open_manage_picker(group_meta, opts)
+  local defaults = get_defaults()
+  local layout = (opts and opts.layout) or ctx.picker_layout
+  local group_data = ctx.group_data
+
   local function handle_add_group_from_manage(query_pattern)
     local default_name = ""
     local trimmed_filter = vim.trim(query_pattern or "")
@@ -1210,9 +1191,11 @@ local function run_manage_picker(group_meta, opts)
       default_name = trimmed_filter
     end
 
-    prompt_new_group_name({
-      default_name = default_name,
-    })
+    if type(ctx.prompt_new_group_name) == "function" then
+      ctx.prompt_new_group_name({
+        default_name = default_name,
+      })
+    end
   end
 
   local function items()
@@ -1226,7 +1209,7 @@ local function run_manage_picker(group_meta, opts)
 
   local picker_api = resolve_snacks_picker()
   if not picker_api then
-    if opts and opts.fallback and type(opts.fallback) == "function" then
+    if opts and type(opts.fallback) == "function" then
       return opts.fallback()
     end
     show_warn("snacks.picker is not available. Please install folke/snacks.nvim.")
@@ -1237,7 +1220,9 @@ local function run_manage_picker(group_meta, opts)
     if not path then
       return
     end
-    open_file(path)
+    if type(ctx.open_file) == "function" then
+      ctx.open_file(path)
+    end
   end
 
   local function handle_manage_select(picker, item)
@@ -1289,7 +1274,6 @@ local function run_manage_picker(group_meta, opts)
     query_has_match = has_query_match(query_pattern)
   end
 
-  local layout = opts and opts.layout or picker_layout
   local manage_win = vim.tbl_deep_extend("force", layout.win or {}, {
     list = vim.tbl_deep_extend("force", (layout.win and layout.win.list) or {}, {
       keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.list and layout.win.list.keys) or {}), {
@@ -1336,206 +1320,6 @@ local function run_manage_picker(group_meta, opts)
     win = manage_win,
     confirm = handle_manage_select,
     on_change = auto_expand_manage_on_query,
-  })
-end
-
-local function close_dbui()
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.bo[bufnr].filetype == "dbui" then
-      pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
-    end
-  end
-
-  if vim.fn.exists(":DBUIClose") == 2 then
-    pcall(vim.cmd, "silent! DBUIClose")
-  end
-end
-
-local function reset_dbui_state()
-  if vim.fn.exists("*db_ui#reset_state") == 1 then
-    pcall(vim.fn["db_ui#reset_state"])
-  end
-end
-
-local function build_group_candidates()
-  local groups = util.sorted_keys(group_data.build_group_connections())
-  if not util.has_value(groups, "all") then
-    table.insert(groups, "all")
-  end
-  return groups
-end
-
-function M.pick_group(opts)
-  local groups = group_data.build_group_connections()
-  local expanded = {}
-  for _, group in ipairs(util.sorted_keys(groups)) do
-    expanded[group] = false
-  end
-
-  run_picker(groups, expanded, {
-    layout = picker_layout,
-    prefix = false,
-    usage_hint = opts and opts.usage_hint or nil,
-    fallback = function()
-      show_info("No group preview available")
-    end,
-  })
-end
-
-function M.manage_groups()
-  local group_meta = group_data.build_group_metadata()
-  run_manage_picker(group_meta, {
-    layout = picker_layout,
-    fallback = function()
-      show_warn("Unable to open connection manager with snacks picker")
-    end,
-  })
-end
-
-function M.open(group, label_override, opts)
-  local list
-  local label
-  local connection_opts = {
-    prefix = opts and opts.prefix,
-  }
-
-  if type(group) == "table" then
-    list = group
-    label = label_override or "selected"
-  else
-    list = M.connections(group, connection_opts)
-    if not list then
-      show_warn("No connections found for group: " .. tostring(group))
-      return
-    end
-    label = group == "all" and "all" or (group or "all")
-  end
-
-  if not list or vim.tbl_isempty(list) then
-    show_warn("No DB connections found to open")
-    return
-  end
-
-  M.current_group = label
-
-  if vim.fn.exists(":DBUI") ~= 2 then
-    show_warn("vim-dadbod-ui is not available. Run :Lazy load vim-dadbod-ui first.")
-    return
-  end
-
-  vim.g.dbs = list
-  vim.schedule(function()
-    close_dbui()
-    reset_dbui_state()
-    vim.cmd("DBUI")
-  end)
-end
-
-function M.edit_group(group)
-  local _, path = group_data.load_group_connections(group)
-  if not path then
-    show_warn("No group file found: " .. tostring(group))
-    return
-  end
-  open_file(path)
-end
-
-function M.editor(group)
-  if not group then
-    show_warn("Specify group name: :" .. command_name .. " edit <group>")
-    return
-  end
-  M.edit_group(group)
-end
-
-function M.open_group(name)
-  M.open(name)
-end
-
-function M.open_connection_group(group)
-  M.open(group)
-end
-
-function M.create_group(group)
-  local normalized = group_data.normalize_group_name(group)
-  if not normalized then
-    show_warn("Invalid group name: " .. tostring(group))
-    return
-  end
-
-  if normalized == "all" then
-    show_warn("Group name cannot be `all`.")
-    return
-  end
-
-  local path = group_data.group_file(normalized)
-  if not path then
-    show_warn("Unable to resolve group file path.")
-    return
-  end
-
-  if group_data.group_file_exists(normalized) then
-    show_warn("Group already exists: " .. normalized .. " (opening existing file)")
-    open_file(path)
-    return
-  end
-
-  group_data.write_group_file(path, defaults.group_placeholders)
-  show_info("Created group file: " .. path)
-  open_file(path)
-end
-
-function M.restore_group(group, opts)
-  return restore.restore_group(group, opts)
-end
-
-function M.setup(opts)
-  local options = vim.tbl_extend("force", defaults, opts or {})
-  options.backup_dir = restore.resolve_backup_dir(options.backup_dir)
-  defaults = options
-  command_name = options.command_name or command_name
-  group_icons = normalize_icons(options)
-  group_label_map = options.group_labels or {}
-  ui.setup({
-    get_defaults = function()
-      return defaults
-    end,
-    show_warn = show_warn,
-  })
-  restore.setup({
-    get_defaults = function()
-      return defaults
-    end,
-    group_data = group_data,
-    show_info = show_info,
-    show_warn = show_warn,
-    show_error = show_error,
-    confirm_action = confirm_action,
-    open_file = open_file,
-  })
-
-  commands.setup({
-    command_name = command_name,
-    open_group_picker = function()
-      M.pick_group({})
-    end,
-    open = function(group, options, opts)
-      M.open(group, options, opts)
-    end,
-    edit_group = function(group)
-      M.edit_group(group)
-    end,
-    create_group = function(group)
-      M.create_group(group)
-    end,
-    restore_group = function(group)
-      M.restore_group(group)
-    end,
-    show_info = show_info,
-    show_warn = show_warn,
-    group_candidates = function()
-      return build_group_candidates()
-    end,
   })
 end
 

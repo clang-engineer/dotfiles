@@ -13,7 +13,7 @@ workflow used by `vim-dadbod-ui`.
 ## Current features (stable)
 
 - Load DB connections from group files under `connections/`.
-- Show connections in a grouped picker (`:DBConnections`).
+- Show connections in a grouped picker (`:DBPicker`).
 - Press Enter on a group row to expand/collapse it.
 - Press Enter on an `Open all (...)` row or a connection row to open the connection.
 ## Interaction
@@ -26,7 +26,8 @@ workflow used by `vim-dadbod-ui`.
 - `e` edit selected group file
 - `r` rename selected group file
 - `d` delete selected row (group or connection)
-- `u` restore selected group from latest backup when available
+- `u` undo (restore previous version) from latest available backup
+- `<C-r>` redo (restore the latest undone state)
 
 ## Setup
 
@@ -62,14 +63,13 @@ private environments).
 
 ## Commands
 
-- `:DBConnections` : open grouped connection picker
-- `:DBConnections add <group>` : create a new group file and open it
-- `:DBConnections new <group>` : alias of `add`
-- `:DBConnections edit <group>` : open group file directly
-- `:DBConnections <group>` : open all connections in a single group
-- `:DBConnections all` : open all configured connection groups
-- `:DBConnections restore <group>` : restore selected group from latest backup file
-- `:DBConnections help` or `:DBConnections ?` : show usage
+- `:DBPicker` : open grouped connection picker
+- `:DBPicker add <group>` : create a new group file and open it
+- `:DBPicker edit <group>` : open group file directly
+- `:DBPicker <group>` : open all connections in a single group
+- `:DBPicker all` : open all configured connection groups
+- `:DBPicker restore <group>` : restore selected group from latest backup file
+- `:DBPicker help` or `:DBPicker ?` : show usage
 
 Keymap in picker:
 - `a` on a selected group row: add a connection entry with prompted name/url to that group.
