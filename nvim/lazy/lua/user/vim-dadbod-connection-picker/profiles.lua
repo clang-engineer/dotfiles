@@ -26,6 +26,7 @@ local defaults = {
   confirm_open = false,
   confirm_open_group = false,
   confirm_modify = false,
+  confirm_delete = true,
   delete_to_trash = true,
   icons = {},
 }
@@ -53,6 +54,20 @@ local icon_styles = {
 
 local group_icons = {}
 local group_label_map = {}
+
+local function filter_starts_with(values, needle)
+  if needle == nil or needle == "" then
+    return values
+  end
+
+  local result = {}
+  for _, value in ipairs(values) do
+    if vim.startswith(value, needle) then
+      result[#result + 1] = value
+    end
+  end
+  return result
+end
 
 local function sorted_keys(values)
   local keys = {}
@@ -97,7 +112,84 @@ local function normalize_icons(options)
 end
 
 local function picker_shortcuts_hint()
-  return "Shortcuts: / filter, <CR> open, a add connection, n add group, e edit group, r rename group, d delete group"
+  return {
+    "/:filter, <CR>:open, a:add conn, n:add group, ? :shortcuts",
+  }
+end
+
+local function picker_shortcuts_hint_full()
+  return {
+    "/:filter, <CR>:open",
+    "a:add conn",
+    "n:add group",
+    "e:edit",
+    "r:rename",
+    "d:delete",
+    "u:restore",
+    "?:compact",
+  }
+end
+
+local function normalize_hint_lines(raw)
+  local lines = {}
+  if type(raw) == "string" then
+    if raw ~= "" then
+      lines[#lines + 1] = raw
+    end
+    return lines
+  end
+  if type(raw) ~= "table" then
+    return lines
+  end
+  for _, line in ipairs(raw) do
+    if type(line) == "string" then
+      local normalized = vim.trim(line)
+      if normalized ~= "" then
+        lines[#lines + 1] = normalized
+      end
+    end
+  end
+  return lines
+end
+
+local function add_hint_rows(rows, raw_lines, opts)
+  local lines = normalize_hint_lines(raw_lines)
+  if #lines == 0 then
+    return
+  end
+
+  local mode = opts and opts.mode or "append"
+  local first_prefix = opts and opts.first_prefix or "> "
+  local rest_prefix = opts and opts.rest_prefix or "  "
+
+  local function make_row(prefix, text)
+    rows[#rows + 1] = {
+      text = prefix .. text,
+      kind = "hint",
+      preview = {
+        text = text,
+      },
+    }
+  end
+
+  if mode == "prepend" then
+    for idx = #lines, 1, -1 do
+      local prefix = idx == #lines and first_prefix or rest_prefix
+      table.insert(rows, 1, {
+        text = prefix .. lines[idx],
+        kind = "hint",
+        preview = {
+          text = lines[idx],
+        },
+      })
+    end
+    return
+  end
+
+  for idx, line in ipairs(lines) do
+    local prefix = idx == 1 and first_prefix or rest_prefix
+    make_row(prefix, line)
+  end
 end
 
 local function truncate_for_display(value)
@@ -108,7 +200,7 @@ local function truncate_for_display(value)
   return value:sub(1, max_len - 3) .. "..."
 end
 
-local function confirm_action(message, detail, should_confirm)
+local function confirm_action(message, detail, should_confirm, opts)
   if should_confirm == false then
     return true
   end
@@ -119,13 +211,82 @@ local function confirm_action(message, detail, should_confirm)
     return true
   end
 
-  local prompt = tostring(message or "")
-  if type(detail) == "string" and detail ~= "" then
-    prompt = prompt .. "\n" .. detail
+  local title = tostring(message or "")
+  if title == "" then
+    title = "Confirm"
   end
 
-  local choice = vim.fn.confirm(prompt, "&Proceed\n&Cancel", 1, "Question")
-  return choice == 1
+  local detail_lines = {}
+  if type(detail) == "string" then
+    detail_lines = vim.split(detail, "\n", { plain = true, trimempty = true })
+  elseif type(detail) == "table" then
+    for _, line in ipairs(detail) do
+      if type(line) == "string" and vim.trim(line) ~= "" then
+        detail_lines[#detail_lines + 1] = line
+      end
+    end
+  end
+
+  local summary = {}
+  if #detail_lines > 0 then
+    for _, line in ipairs(detail_lines) do
+      local normalized = truncate_for_display(vim.trim(line))
+      if normalized ~= "" then
+        summary[#summary + 1] = normalized
+      end
+    end
+  end
+
+  local options = {
+    confirm_label = opts and opts.confirm_label or "&Proceed",
+    cancel_label = opts and opts.cancel_label or "&Cancel",
+    default = opts and opts.default or 1,
+  }
+  local function strip_hotkey(label)
+    if type(label) ~= "string" then
+      return ""
+    end
+    return label:gsub("&", "")
+  end
+
+  local confirm_label = strip_hotkey(options.confirm_label)
+  local cancel_label = strip_hotkey(options.cancel_label)
+  if confirm_label == "" then
+    confirm_label = "Proceed"
+  end
+  if cancel_label == "" then
+    cancel_label = "Cancel"
+  end
+
+  local prompt_lines = { title }
+  if #summary > 0 then
+    for _, line in ipairs(summary) do
+      prompt_lines[#prompt_lines + 1] = "  " .. line
+    end
+  end
+
+  local default_is_yes = options.default == 1
+  local default_hint = default_is_yes and "[Y/n]" or "[y/N]"
+  prompt_lines[#prompt_lines + 1] = string.format("%s / %s %s:", confirm_label, cancel_label, default_hint)
+
+  local prompt = table.concat(prompt_lines, "\n")
+  while true do
+    local answer = vim.fn.input({ prompt = prompt .. " " })
+    if answer == nil then
+      return false
+    end
+    answer = vim.trim(answer):lower()
+    if answer == "" then
+      return default_is_yes
+    end
+    if answer == "y" or answer == "yes" then
+      return true
+    end
+    if answer == "n" or answer == "no" then
+      return false
+    end
+    show_warn("Please type y or n.")
+  end
 end
 
 local function masked_url(raw_url)
@@ -164,7 +325,7 @@ local function resolve_group_label(group)
   return group
 end
 
-local function next_placeholder(values)
+local function next_placeholder()
   local source = defaults.group_placeholders
   if type(source) ~= "table" or #source == 0 then
     return {
@@ -242,9 +403,13 @@ local function prompt_new_group_name(opts)
   end)
 end
 
-local function open_group_file_for_edit(path)
+local function open_file(path)
+  vim.cmd("edit " .. vim.fn.fnameescape(path))
+end
+
+local function open_file_for_edit(path)
   vim.schedule(function()
-    vim.cmd("edit " .. vim.fn.fnameescape(path))
+    open_file(path)
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
     local line_count = #lines
     local cursor_line = line_count > 1 and (line_count - 1) or line_count
@@ -255,6 +420,7 @@ local function open_group_file_for_edit(path)
     show_info("Edit newly added connection on the current line if needed.")
   end)
 end
+
 
 local function apply_group_prefix(group, conn)
   if type(conn) ~= "table" then
@@ -371,18 +537,18 @@ local function build_group_items(groups, expanded)
     })
 
     if is_expanded then
-      if #(groups[group] or {}) > 1 then
+      if count > 1 then
         table.insert(items, {
-          text = string.format("  %s Open all (%d): %s", group_icons.open_all, #(groups[group] or {}), group),
+          text = string.format("  %s Open all (%d): %s", group_icons.open_all, count, group),
           kind = "open_all",
           group = group,
           preview = {
-            text = string.format("Group: %s\nOpen all %d connections at once.", group, #(groups[group] or {})),
+            text = string.format("Group: %s\nOpen all %d connections at once.", group, count),
           },
         })
       end
 
-      if #(groups[group] or {}) == 0 then
+      if count == 0 then
         table.insert(items, {
           text = "  (no connections)",
           kind = "empty_connection",
@@ -393,13 +559,14 @@ local function build_group_items(groups, expanded)
         })
       end
 
-      for _, conn in ipairs(groups[group] or {}) do
+      for index, conn in ipairs(groups[group] or {}) do
         local detail = string.format("    %s (%s)", conn.name, truncate_for_display(conn.url))
         table.insert(items, {
           text = detail,
           kind = "connection",
           group = group,
           connection = conn,
+          connection_index = index,
           preview = {
             text = build_connection_preview(group, conn),
           },
@@ -506,6 +673,17 @@ end
 local function run_picker(groups, expanded, opts)
   local layout = opts and opts.layout or picker_layout
   local usage_hint = type(opts) == "table" and opts.usage_hint or nil
+  local show_detailed_shortcuts = false
+
+  local function get_shortcuts_hint()
+    if usage_hint ~= nil then
+      return usage_hint
+    end
+    if show_detailed_shortcuts then
+      return picker_shortcuts_hint_full()
+    end
+    return picker_shortcuts_hint()
+  end
 
   local function items()
     return build_group_items(groups, expanded)
@@ -547,19 +725,12 @@ local function run_picker(groups, expanded, opts)
     picker_api({
       title = "DB Connections (no groups)",
       finder = function()
-        return {
+        local rows = {
           {
             text = "No DB groups found.",
             kind = "hint",
             preview = {
               text = "No DB groups found.\nPress n to add a new group.",
-            },
-          },
-          {
-            text = "Shortcut: " .. picker_shortcuts_hint(),
-            kind = "hint",
-            preview = {
-              text = "Use the commands too: :DBConnections add <group>",
             },
           },
           {
@@ -570,6 +741,12 @@ local function run_picker(groups, expanded, opts)
             },
           },
         }
+        add_hint_rows(rows, get_shortcuts_hint(), {
+          mode = "append",
+          first_prefix = "  ",
+          rest_prefix = "  ",
+        })
+        return rows
       end,
       format = "text",
       prompt = "> ",
@@ -586,6 +763,55 @@ local function run_picker(groups, expanded, opts)
 
   local picker_instance = nil
 
+  local function toggle_shortcuts()
+    show_detailed_shortcuts = not show_detailed_shortcuts
+    if picker_instance and type(picker_instance.refresh) == "function" then
+      picker_instance:refresh()
+    end
+  end
+
+  local function close_and_reload_picker()
+    if not picker_instance then
+      return
+    end
+    picker_instance:close()
+    vim.schedule(function()
+      M.pick_profile({})
+    end)
+  end
+
+  local function pick_current_row()
+    if not picker_instance then
+      return nil
+    end
+    if type(picker_instance.current) ~= "function" then
+      show_warn("Current picker API does not expose current selection.")
+      return nil
+    end
+    return picker_instance:current()
+  end
+
+  local function normalize_group_name_from_current_row(action_label, current)
+    if not current then
+      current = pick_current_row()
+    end
+    if not current then
+      return nil
+    end
+
+    local group = current.group
+    if type(group) ~= "string" or group == "" then
+      return nil
+    end
+
+    if action_label and current.kind ~= "group" then
+      show_warn("Move to a group row to " .. action_label .. ".")
+      return nil
+    end
+
+    return group
+  end
+
   local function handle_select(picker, item)
     if not item then
       return
@@ -601,20 +827,20 @@ local function run_picker(groups, expanded, opts)
       return
     end
 
-  if item.kind == "open_all" then
-    local connection_count = #(groups[item.group] or {})
-    if defaults.confirm_open_group then
-      local ok = confirm_action(
-        string.format("Open all %d connections in %s?", connection_count, item.group),
-        string.format("Group: %s\nConnections: %d", item.group, connection_count),
-        defaults.confirm_open_group
-      )
-      if not ok then
-        return
+    if item.kind == "open_all" then
+      local connection_count = #(groups[item.group] or {})
+      if defaults.confirm_open_group then
+        local ok = confirm_action(
+          string.format("Open all %d connections in %s?", connection_count, item.group),
+          string.format("Group: %s\nConnections: %d", item.group, connection_count),
+          defaults.confirm_open_group
+        )
+        if not ok then
+          return
+        end
       end
-    end
-    picker:close()
-    M.open(item.group, nil, { prefix = opts and opts.prefix })
+      picker:close()
+      M.open(item.group, nil, { prefix = opts and opts.prefix })
       return
     end
 
@@ -626,21 +852,8 @@ local function run_picker(groups, expanded, opts)
   end
 
   local function handle_edit_current_group()
-    if not picker_instance then
-      return
-    end
-    if type(picker_instance.current) ~= "function" then
-      show_warn("Current picker API does not expose current selection.")
-      return
-    end
-
-    local current = picker_instance:current()
-    if not current then
-      return
-    end
-
-    local group = current.group
-    if type(group) ~= "string" or group == "" then
+    local group = normalize_group_name_from_current_row(nil, nil)
+    if not group then
       return
     end
 
@@ -649,21 +862,8 @@ local function run_picker(groups, expanded, opts)
   end
 
   local function handle_add_connection_to_current_group()
-    if not picker_instance then
-      return
-    end
-    if type(picker_instance.current) ~= "function" then
-      show_warn("Current picker API does not expose current selection.")
-      return
-    end
-
-    local current = picker_instance:current()
-    if not current then
-      return
-    end
-
-    local group = current.group
-    if type(group) ~= "string" or group == "" then
+    local group = normalize_group_name_from_current_row(nil, nil)
+    if not group then
       return
     end
 
@@ -692,21 +892,15 @@ local function run_picker(groups, expanded, opts)
       table.insert(existing, conn)
       group_data.write_group_file(path, existing)
       show_info("Added connection to group: " .. group)
-      open_group_file_for_edit(path)
+      open_file_for_edit(path)
     end)
   end
 
   local function handle_add_group_from_picker()
-    if not picker_instance then
-      return
-    end
-
     local default_name = ""
-    if type(picker_instance.current) == "function" then
-      local current = picker_instance:current()
-      if current and type(current.group) == "string" and current.group ~= "" and current.group ~= "all" then
-        default_name = current.group
-      end
+    local current = pick_current_row()
+    if current and type(current.group) == "string" and current.group ~= "" and current.group ~= "all" then
+      default_name = current.group
     end
 
     if default_name == "" and type(picker_instance.filter) == "function" then
@@ -722,26 +916,8 @@ local function run_picker(groups, expanded, opts)
   end
 
   local function handle_rename_current_group()
-    if not picker_instance then
-      return
-    end
-    if type(picker_instance.current) ~= "function" then
-      show_warn("Current picker API does not expose current selection.")
-      return
-    end
-
-    local current = picker_instance:current()
-    if not current then
-      return
-    end
-
-    if current.kind ~= "group" then
-      show_warn("Move to a group row to rename it.")
-      return
-    end
-
-    local old_group = current.group
-    if type(old_group) ~= "string" or old_group == "" then
+    local old_group = normalize_group_name_from_current_row("rename it", nil)
+    if not old_group then
       return
     end
 
@@ -791,27 +967,67 @@ local function run_picker(groups, expanded, opts)
         return
       end
 
-      picker_instance:close()
       show_info("Renamed group: " .. old_group .. " -> " .. normalized)
-      vim.schedule(function()
-        M.pick_profile({
-          usage_hint = picker_shortcuts_hint(),
-        })
-      end)
+      close_and_reload_picker()
     end)
   end
 
   local function handle_delete_current_group()
-    if not picker_instance then
-      return
-    end
-    if type(picker_instance.current) ~= "function" then
-      show_warn("Current picker API does not expose current selection.")
+    local current = pick_current_row()
+    if not current then
       return
     end
 
-    local current = picker_instance:current()
-    if not current then
+    if current.kind == "connection" then
+      local group = current.group
+      if type(group) ~= "string" or group == "" then
+        return
+      end
+      local connection_index = current.connection_index
+      if type(connection_index) ~= "number" then
+        show_warn("No stable connection row index. Move to a connection line and try again.")
+        return
+      end
+
+      local connections, path = group_data.load_group_connections(group)
+      if not path then
+        show_warn("No group file found: " .. group)
+        return
+      end
+      if type(connections) ~= "table" then
+        connections = {}
+      end
+
+      local target = connections[connection_index]
+      if not target then
+        show_warn("No matching connection found in group: " .. group)
+        return
+      end
+
+      if
+        not confirm_action(
+          "Delete connection?",
+          string.format(
+            "Group: %s\nName: %s\nURL: %s",
+            group,
+            tostring(target.name or ""),
+            masked_url(target.url or "")
+          ),
+          defaults.confirm_delete,
+          {
+            confirm_label = "&Delete",
+            cancel_label = "&Keep",
+            default = 2,
+          }
+        )
+      then
+        return
+      end
+
+      table.remove(connections, connection_index)
+      group_data.write_group_file(path, connections)
+      show_info("Deleted connection from " .. group .. ": " .. tostring(target.name or "unnamed"))
+      close_and_reload_picker()
       return
     end
 
@@ -836,15 +1052,20 @@ local function run_picker(groups, expanded, opts)
       return
     end
 
-    if
-      not confirm_action(
-        "Delete group?",
-        string.format("Group: %s\nPath: %s", group, path),
-        defaults.confirm_modify
-      )
-    then
-      return
-    end
+      if
+        not confirm_action(
+          "Delete group?",
+          string.format("Group: %s\nPath: %s", group, path),
+          defaults.confirm_delete,
+          {
+            confirm_label = "&Delete",
+            cancel_label = "&Keep",
+            default = 2,
+          }
+        )
+      then
+        return
+      end
 
     if defaults.delete_to_trash then
       local backup_path = next_backup_path(path)
@@ -863,23 +1084,54 @@ local function run_picker(groups, expanded, opts)
       show_info("Deleted group: " .. group)
     end
 
-    if not defaults.delete_to_trash then
-      picker_instance:close()
-      show_info("Deleted group: " .. group)
-      vim.schedule(function()
-        M.pick_profile({
-          usage_hint = picker_shortcuts_hint(),
-        })
-      end)
+    close_and_reload_picker()
+  end
+
+  local function handle_restore_current_group()
+    local group = normalize_group_name_from_current_row("restore it", nil)
+    if not group then
       return
     end
 
-    picker_instance:close()
-    vim.schedule(function()
-      M.pick_profile({
-        usage_hint = picker_shortcuts_hint(),
-      })
-    end)
+    local path = group_data.group_file(group)
+    if not path then
+      show_warn("Unable to resolve group path: " .. tostring(group))
+      return
+    end
+
+    local backup_path, err = latest_group_backup(group)
+    if not backup_path then
+      show_warn(err)
+      return
+    end
+
+    if
+      not confirm_action(
+        "Restore group from backup?",
+        string.format("Group: %s\nTarget: %s\nBackup: %s", group, path, backup_path),
+        defaults.confirm_modify
+      )
+    then
+      return
+    end
+
+    if vim.fn.filereadable(path) == 1 then
+      local safe_backup = next_backup_path(path)
+      local ok, backup_err = vim.loop.fs_rename(path, safe_backup)
+      if not ok then
+        show_error("Failed to backup current group file before restore: " .. tostring(backup_err))
+        return
+      end
+    end
+
+    local ok, restore_err = vim.loop.fs_rename(backup_path, path)
+    if not ok then
+      show_error("Failed to restore group from backup: " .. tostring(restore_err))
+      return
+    end
+
+    show_info("Restored group from backup: " .. group)
+    close_and_reload_picker()
   end
 
   local custom_win = vim.tbl_deep_extend("force", layout.win or {}, {
@@ -912,6 +1164,18 @@ local function run_picker(groups, expanded, opts)
         ["d"] = {
           function()
             handle_delete_current_group()
+          end,
+          mode = { "n" },
+        },
+        ["u"] = {
+          function()
+            handle_restore_current_group()
+          end,
+          mode = { "n" },
+        },
+        ["?"] = {
+          function()
+            toggle_shortcuts()
           end,
           mode = { "n" },
         },
@@ -948,6 +1212,18 @@ local function run_picker(groups, expanded, opts)
             handle_delete_current_group()
           end,
           mode = { "n" },
+        },
+        ["u"] = {
+          function()
+            handle_restore_current_group()
+          end,
+          mode = { "n" },
+        },
+        ["?"] = {
+          function()
+            toggle_shortcuts()
+          end,
+          mode = { "n", "i" },
         },
       }),
     }),
@@ -1049,23 +1325,21 @@ local function run_picker(groups, expanded, opts)
     finder = function()
       local rows = items()
       if query_pattern ~= "" and not query_has_match then
-        table.insert(rows, 1, {
-          text = "No match for " .. string.format("%q", query_pattern) .. ". Tip: " .. picker_shortcuts_hint() .. ".",
-          kind = "hint",
-          preview = {
-            text = "No match found. Type a different keyword, then press <CR> / open filtered group, or use n to add a group.",
-          },
+        add_hint_rows(rows, {
+          "No match for " .. string.format("%q", query_pattern) .. ".",
+          "Tip: / filter",
+          "Press <CR> to open.",
+        }, {
+          mode = "prepend",
+          first_prefix = "> ",
+          rest_prefix = "  ",
         })
       end
-      if usage_hint then
-        table.insert(rows, 1, {
-          text = "> " .. usage_hint,
-          kind = "hint",
-          preview = {
-            text = usage_hint,
-          },
-        })
-      end
+      add_hint_rows(rows, get_shortcuts_hint(), {
+        mode = "prepend",
+        first_prefix = "> ",
+        rest_prefix = "  ",
+      })
       return rows
     end,
     format = "text",
@@ -1172,7 +1446,7 @@ local function run_manage_picker(group_meta, opts)
       local rows = items()
       if query_pattern ~= "" and not query_has_match then
         table.insert(rows, 1, {
-          text = "No match for " .. string.format("%q", query_pattern) .. ". Tip: " .. picker_shortcuts_hint() .. ".",
+          text = "No match for " .. string.format("%q", query_pattern) .. ". Tip: / filter, <CR> open.",
           kind = "hint",
           preview = {
             text = "No match found. Use <CR> on a connection to open it, or n to add a new group.",
@@ -1215,6 +1489,35 @@ local function group_candidates()
     table.insert(groups, "all")
   end
   return groups
+end
+
+local function latest_group_backup(group)
+  local path = group_data.group_file(group)
+  if not path then
+    return nil, "Unable to resolve group path: " .. tostring(group)
+  end
+
+  local backup_matches = vim.fn.glob(path .. ".*.bak", false, true)
+  local candidates = {}
+  for _, backup in ipairs(backup_matches) do
+    local stat = vim.loop.fs_stat(backup)
+    if stat and stat.mtime and stat.mtime.sec then
+      candidates[#candidates + 1] = {
+        path = backup,
+        mtime = stat.mtime.sec,
+      }
+    end
+  end
+
+  table.sort(candidates, function(lhs, rhs)
+    return lhs.mtime > rhs.mtime
+  end)
+
+  if #candidates == 0 then
+    return nil, "No backup found for group: " .. tostring(group)
+  end
+
+  return candidates[1].path, nil
 end
 
 function M.edit_profile(profile)
@@ -1297,7 +1600,7 @@ function M.edit_group(group)
     show_warn("No group file found: " .. tostring(group))
     return
   end
-  vim.cmd("edit " .. vim.fn.fnameescape(path))
+  open_file(path)
 end
 
 function M.editor(group)
@@ -1328,13 +1631,66 @@ function M.create_group(group)
 
   if group_data.group_file_exists(normalized) then
     show_warn("Group already exists: " .. normalized .. " (opening existing file)")
-    vim.cmd("edit " .. vim.fn.fnameescape(path))
+    open_file(path)
     return
   end
 
   group_data.write_group_file(path, defaults.group_placeholders)
   show_info("Created group file: " .. path)
-  vim.cmd("edit " .. vim.fn.fnameescape(path))
+  open_file(path)
+end
+
+function M.restore_group(group)
+  local normalized = group_data.normalize_group_name(group)
+  if not normalized then
+    show_warn("Invalid group name: " .. tostring(group))
+    return
+  end
+
+  if normalized == "all" then
+    show_warn("Cannot restore group `all`.")
+    return
+  end
+
+  local path = group_data.group_file(normalized)
+  if not path then
+    show_warn("Unable to resolve group path.")
+    return
+  end
+
+  local backup_path, err = latest_group_backup(normalized)
+  if not backup_path then
+    show_warn(err)
+    return
+  end
+
+  if
+    not confirm_action(
+      "Restore group from backup?",
+      string.format("Group: %s\nTarget: %s\nBackup: %s", normalized, path, backup_path),
+      defaults.confirm_modify
+    )
+  then
+    return
+  end
+
+  if vim.fn.filereadable(path) == 1 then
+    local safe_backup = next_backup_path(path)
+    local ok, backup_err = vim.loop.fs_rename(path, safe_backup)
+    if not ok then
+      show_error("Failed to backup current group file before restore: " .. tostring(backup_err))
+      return
+    end
+  end
+
+  local ok, restore_err = vim.loop.fs_rename(backup_path, path)
+  if not ok then
+    show_error("Failed to restore group from backup: " .. tostring(restore_err))
+    return
+  end
+
+  show_info("Restored group from backup: " .. normalized)
+  open_file(path)
 end
 
 function M.open_connection_group(group)
@@ -1358,9 +1714,7 @@ function M.setup(opts)
     local args = vim.split(raw, "%s+", { trimempty = true })
 
     if #args == 0 then
-      M.pick_profile({
-        usage_hint = picker_shortcuts_hint(),
-      })
+      M.pick_profile({})
       return
     end
 
@@ -1380,6 +1734,16 @@ function M.setup(opts)
       return
     end
 
+    if mode == "restore" or mode == "recover" then
+      local group = args[2]
+      if not group then
+        show_warn("Specify group name: :" .. command_profile .. " " .. mode .. " <group>")
+        return
+      end
+      M.restore_group(group)
+      return
+    end
+
     if mode == "add" or mode == "new" then
       local group = args[2]
       if not group then
@@ -1391,10 +1755,11 @@ function M.setup(opts)
     end
 
     if mode == "help" or mode == "?" then
-    show_info("Usage:")
+      show_info("Usage:")
       show_info(":DBConnections           Open connection picker")
       show_info(":DBConnections <group>    Open one group directly")
       show_info(":DBConnections add <group>   Create a new group file")
+      show_info(":DBConnections restore <group> Restore latest backup from trash")
       show_info(":DBConnections all        Open all groups")
       show_info(":DBConnections edit <group> Edit group file")
       show_info("Available groups: " .. table.concat(group_candidates(), ", "))
@@ -1414,31 +1779,29 @@ function M.setup(opts)
 
     if #parts <= 1 then
       local candidates = vim.deepcopy(groups)
-      vim.list_extend(candidates, { "all", "add", "new", "edit", "help", "?" })
-      return vim.tbl_filter(function(item)
-        return vim.startswith(item, arg_lead)
-      end, candidates)
+      vim.list_extend(candidates, { "all", "add", "new", "edit", "restore", "recover", "help", "?" })
+      return filter_starts_with(candidates, arg_lead)
     end
 
     if parts[2] == "edit" then
-      return vim.tbl_filter(function(item)
-        return vim.startswith(item, arg_lead)
-      end, group_command_candidates())
+      return filter_starts_with(group_command_candidates(), arg_lead)
     end
 
     if parts[2] == "add" or parts[2] == "new" then
       return {}
     end
 
-    return vim.tbl_filter(function(item)
-      return vim.startswith(item, arg_lead)
-    end, group_command_candidates())
+    if parts[2] == "restore" or parts[2] == "recover" then
+      return filter_starts_with(group_command_candidates(), arg_lead)
+    end
+
+    return filter_starts_with(group_command_candidates(), arg_lead)
   end
 
   vim.api.nvim_create_user_command(command_profile, run_open, {
     nargs = "*",
     complete = connection_command_complete,
-    desc = "Open DB connection picker (`:DBConnections [all|<group>|add|edit <group>|help`)",
+    desc = "Open DB connection picker (`:DBConnections [all|<group>|add|edit <group>|restore <group>|help`)",
   })
 end
 

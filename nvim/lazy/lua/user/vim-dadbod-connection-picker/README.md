@@ -25,7 +25,8 @@ workflow used by `vim-dadbod-ui`.
 - `n` add group
 - `e` edit selected group file
 - `r` rename selected group file
-- `d` delete selected group file
+- `d` delete selected row (group or connection)
+- `u` restore selected group from latest backup when available
 
 ## Setup
 
@@ -34,7 +35,8 @@ require("user.vim-dadbod-connection-picker").setup({
   icon_style = "ascii",           -- "ascii" | "emoji" | "nerd"
   confirm_open = false,           -- set true to confirm before opening a connection/group
   confirm_open_group = false,     -- set true to confirm before opening all connections in a group
-  confirm_modify = false,         -- set true to confirm before adding/renaming/deleting groups or connections
+  confirm_modify = false,         -- set true to confirm before adding/renaming
+  confirm_delete = true,          -- set false to skip confirm for delete (group/connection)
   group_labels = {},
   group_placeholders = {
     { name = "example", url = "postgresql://localhost:5432/db" },
@@ -64,13 +66,14 @@ private environments).
 - `:DBConnections edit <group>` : open group file directly
 - `:DBConnections <group>` : open all connections in a single group
 - `:DBConnections all` : open all configured connection groups
+- `:DBConnections restore <group>` : restore selected group from latest backup file
 - `:DBConnections help` or `:DBConnections ?` : show usage
 
 Keymap in picker:
 - `a` on a selected group row: add a connection entry with prompted name/url to that group.
 - `n` in picker: add a new group (and open its file immediately).
 - `r` in picker: rename the selected group file.
-- `d` in picker: delete the selected group file.
+- `d` in picker: delete the selected group file or connection row.
 
 ## Requirements / Dependencies
 
