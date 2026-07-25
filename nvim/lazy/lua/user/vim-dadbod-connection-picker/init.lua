@@ -27,12 +27,15 @@ function M.pick(...)
 
   local result = {}
   for _, name in ipairs(targets) do
-    vim.list_extend(result, require("user.vim-dadbod-connection-picker.connections." .. name))
+    local group_conns = profiles.connections(name)
+    if type(group_conns) == "table" then
+      vim.list_extend(result, group_conns)
+    end
   end
   return result
 end
 
--- Returns profile-based DB connection list by filename.
+-- Returns group-based DB connection list by group name.
 -- `target="all"` or nil returns all connections.
 function M.connections(target)
   return profiles.connections(target)
@@ -40,6 +43,10 @@ end
 
 function M.pick_profile()
   profiles.pick_profile()
+end
+
+function M.pick_connection_group(...)
+  return M.pick(...)
 end
 
 function M.finder()
@@ -66,6 +73,18 @@ function M.open_group(name)
   profiles.open(name)
 end
 
+function M.edit_connection_group(name)
+  profiles.edit_group(name)
+end
+
+function M.create_group(name)
+  profiles.create_group(name)
+end
+
+function M.create_profile(name)
+  profiles.create_group(name)
+end
+
 function M.open_profile(name)
   profiles.open_profile(name)
 end
@@ -73,12 +92,13 @@ end
 -- Plugin-like entrypoint: initialize DBUI connection list + commands.
 function M.setup(opts)
   local options = opts or {}
-  local default_profile = options.default_profile or options.default_group or "all"
+  local default_group = options.default_group or options.default_profile or "all"
 
-  vim.g.dbs = M.connections(default_profile)
+  vim.g.dbs = M.connections(default_group)
   profiles.setup({
     icon_style = options.icon_style,
-    profile_labels = options.profile_labels,
+    group_labels = options.group_labels or options.profile_labels,
+    group_placeholders = options.group_placeholders,
     icons = options.icons,
   })
 end

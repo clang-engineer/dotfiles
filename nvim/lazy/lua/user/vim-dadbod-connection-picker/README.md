@@ -12,9 +12,9 @@ workflow used by `vim-dadbod-ui`.
 
 ## Current features (stable)
 
-- Load DB connections from profile files under `connections/`.
+- Load DB connections from group files under `connections/`.
 - Show connections in a grouped picker (`:DBConnections`).
-- Press Enter on a profile row to expand/collapse it.
+- Press Enter on a group row to expand/collapse it.
 - Press Enter on an `Open all (...)` row or a connection row to open the connection.
 ## Known limitations (by design for stable release)
 - No custom picker keymaps are registered (`h/l/o/<C-y>` are not bound).
@@ -25,13 +25,16 @@ workflow used by `vim-dadbod-ui`.
 ```lua
 require("user.vim-dadbod-connection-picker").setup({
   icon_style = "emoji",           -- "ascii" | "emoji" | "nerd"
-  profile_labels = {},
+  group_labels = {},
+  group_placeholders = {
+    { name = "example", url = "postgresql://localhost:5432/db" },
+  },
 })
 ```
 
-## Profile file format
+## Group file format
 
-Create `connections/<profile>.lua`:
+Create `connections/<group>.lua`:
 
 ```lua
 return {
@@ -46,7 +49,15 @@ private environments).
 ## Commands
 
 - `:DBConnections` : open grouped connection picker
+- `:DBConnections add <group>` : create a new group file and open it
+- `:DBConnections new <group>` : alias of `add`
 - `:DBConnections edit <group>` : open group file directly
+- `:DBConnections <group>` : open all connections in a single group
+- `:DBConnections all` : open all configured connection groups
+- `:DBConnections help` or `:DBConnections ?` : show usage
+
+Keymap in picker:
+- `a` on a selected group row: add a connection entry with prompted name/url to that group.
 
 ## Requirements / Dependencies
 
