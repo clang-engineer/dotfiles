@@ -51,15 +51,27 @@ local function ensure_directory(path)
   return true
 end
 
+local function normalize_backup_path(path)
+  if type(path) ~= "string" then
+    return nil
+  end
+  local normalized = vim.fn.fnamemodify(vim.trim(path), ":p")
+  if normalized == "" then
+    return nil
+  end
+  normalized = normalized:gsub("/+$", "")
+  return normalized
+end
+
 local function resolve_backup_dir(raw_dir)
   local preferred = normalize_backup_dir(raw_dir)
   if ensure_directory(preferred) then
-    return preferred
+    return normalize_backup_path(preferred)
   end
 
   local fallback = normalize_backup_dir(nil)
   if ensure_directory(fallback) then
-    return fallback
+    return normalize_backup_path(fallback)
   end
 
   return nil
@@ -362,35 +374,43 @@ end
 
 local GUARD_PREFIX = "vim_dbcp_restore_"
 local BACKUP_HISTORY_LIMIT = 20
+local restore_state = {
+  busy = false,
+  journal = nil,
+  consumed = nil,
+}
+
 local function restore_guard_clear()
-  vim.g[GUARD_PREFIX .. "busy"] = false
+  restore_state.busy = false
 end
 
 local function restore_journal()
-  local journal = vim.g[GUARD_PREFIX .. "journal"]
+  local journal = restore_state.journal
   if type(journal) ~= "table" then
     journal = {}
-    vim.g[GUARD_PREFIX .. "journal"] = journal
+    restore_state.journal = journal
   end
   return journal
 end
 
 local function restore_consumed()
-  local consumed = vim.g[GUARD_PREFIX .. "consumed"]
+  local consumed = restore_state.consumed
   if type(consumed) ~= "table" then
     consumed = {}
-    vim.g[GUARD_PREFIX .. "consumed"] = consumed
+    restore_state.consumed = consumed
   end
   return consumed
 end
 
 local function is_consumed_backup(path)
-  if type(path) ~= "string" then
+  local normalized = normalize_backup_path(path)
+  if not normalized then
     return false
   end
   local consumed = restore_consumed()
   for _, saved in ipairs(consumed) do
-    if saved == path then
+    local normalized_saved = normalize_backup_path(saved)
+    if normalized_saved == normalized then
       return true
     end
   end
@@ -398,15 +418,17 @@ local function is_consumed_backup(path)
 end
 
 local function mark_backup_consumed(path)
-  if type(path) ~= "string" or path == "" then
+  local normalized = normalize_backup_path(path)
+  if not normalized then
     return
   end
 
   local consumed = restore_consumed()
-  local next_state = { path }
+  local next_state = { normalized }
   for _, saved in ipairs(consumed) do
-    if saved ~= path then
-      next_state[#next_state + 1] = saved
+    local normalized_saved = normalize_backup_path(saved)
+    if normalized_saved ~= normalized then
+      next_state[#next_state + 1] = normalized_saved
     end
   end
 
@@ -419,15 +441,17 @@ local function mark_backup_consumed(path)
 end
 
 local function consume_backup_entry(backup_path)
-  if type(backup_path) ~= "string" or backup_path == "" then
+  local normalized = normalize_backup_path(backup_path)
+  if not normalized then
     return
   end
 
   local journal = restore_journal()
   local next_journal = {}
   for _, path in ipairs(journal) do
-    if path ~= backup_path then
-      next_journal[#next_journal + 1] = path
+    local normalized_path = normalize_backup_path(path)
+    if normalized_path ~= normalized then
+      next_journal[#next_journal + 1] = normalized_path
     end
   end
 
@@ -442,16 +466,18 @@ local function consume_backup_entry(backup_path)
 end
 
 local function record_backup_path(backup_path)
-  if type(backup_path) ~= "string" or backup_path == "" then
+  local normalized = normalize_backup_path(backup_path)
+  if not normalized then
     return
   end
 
   local journal = restore_journal()
   local deduped = {}
-  table.insert(deduped, backup_path)
+  table.insert(deduped, normalized)
   for _, path in ipairs(journal) do
-    if path ~= backup_path then
-      deduped[#deduped + 1] = path
+    local normalized_path = normalize_backup_path(path)
+    if normalized_path and normalized_path ~= normalized then
+      deduped[#deduped + 1] = normalized_path
     end
   end
 
@@ -465,8 +491,9 @@ local function record_backup_path(backup_path)
   local consumed = restore_consumed()
   local next_consumed = {}
   for _, saved in ipairs(consumed) do
-    if saved ~= backup_path then
-      next_consumed[#next_consumed + 1] = saved
+    local normalized_saved = normalize_backup_path(saved)
+    if normalized_saved and normalized_saved ~= normalized then
+      next_consumed[#next_consumed + 1] = normalized_saved
     end
   end
   for i = 1, #next_consumed do
@@ -496,7 +523,8 @@ local function backup_group_from_path(path)
 end
 
 local function is_existing_backup_path(path)
-  return type(path) == "string" and vim.fn.filereadable(path) == 1
+  local normalized = normalize_backup_path(path)
+  return type(normalized) == "string" and vim.fn.filereadable(normalized) == 1
 end
 
 local function latest_backup_from_journal(target_group)
@@ -1824,10 +1852,10 @@ local function latest_any_group_backup(target_group)
       local stat = vim.loop.fs_stat(backup)
       if stat and stat.mtime and stat.mtime.sec then
         local group = backup_group_from_path(backup)
-        local is_eligible = true
-        if not group then
-          is_eligible = false
-        end
+      local is_eligible = true
+      if not group then
+        is_eligible = false
+      end
         if is_consumed_backup(backup) then
           is_eligible = false
         elseif target_group and group ~= target_group then
@@ -1977,11 +2005,11 @@ end
 
 function M.restore_group(group, opts)
   opts = opts or {}
-  local global_busy = vim.g[GUARD_PREFIX .. "busy"]
+  local global_busy = restore_state.busy
   if global_busy then
     return
   end
-  vim.g[GUARD_PREFIX .. "busy"] = true
+  restore_state.busy = true
 
   local requested_group = nil
   if group and group ~= "" then
@@ -2021,19 +2049,14 @@ function M.restore_group(group, opts)
     return
   end
 
-  local restore_dir = vim.fn.fnamemodify(backup_path, ":h")
-  local restore_path_from_backup = restore_dir .. "/" .. restore_group .. ".lua"
-  local path = group_data.group_file(restore_group)
-  if path ~= restore_path_from_backup and vim.fn.filereadable(restore_path_from_backup) == 1 then
-    path = restore_path_from_backup
-  end
-  if not path then
+  local restore_path = group_data.group_file(restore_group)
+  if not restore_path then
     restore_guard_clear()
     show_warn("Unable to resolve restore target group: " .. tostring(restore_group))
     return
   end
 
-  local restore_path = path
+  restore_path = normalize_backup_path(restore_path)
   local safe_backup
   if
     not confirm_action(
