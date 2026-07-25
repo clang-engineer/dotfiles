@@ -10,21 +10,6 @@ local function default_profiles_dir()
   return vim.fn.stdpath("config") .. "/lua/user/vim-dadbod-connection-picker/connections"
 end
 
-local function profile_file(profile)
-  local normalized = normalize_profile_name(profile)
-  if not normalized then
-    return nil
-  end
-
-  for _, path in ipairs(list_connection_files()) do
-    if profile_name_from_path(path) == normalized then
-      return path
-    end
-  end
-
-  return default_profiles_dir() .. "/" .. normalized .. ".lua"
-end
-
 local function normalize_profile_name(profile)
   if type(profile) ~= "string" then
     return nil
@@ -42,6 +27,21 @@ end
 
 local function profile_name_from_path(path)
   return vim.fn.fnamemodify(path, ":t:r")
+end
+
+local function profile_file(profile)
+  local normalized = normalize_profile_name(profile)
+  if not normalized then
+    return nil
+  end
+
+  for _, path in ipairs(list_connection_files()) do
+    if profile_name_from_path(path) == normalized then
+      return path
+    end
+  end
+
+  return default_profiles_dir() .. "/" .. normalized .. ".lua"
 end
 
 local function load_connections(path)
