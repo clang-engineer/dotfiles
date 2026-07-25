@@ -1,25 +1,29 @@
-# vim-dadbod-ui-profiles
+# vim-dadbod-connection-picker
 
-DB connection profile picker for `vim-dadbod-ui` with grouped profile list from Lua files.
+A small helper plugin for `vim-dadbod-ui` that organizes connection files into
+connection groups and provides a grouped picker to search, open, and edit DB
+connections.
+
+## Why this plugin
+
+This plugin is intentionally kept minimal: it does not replace DB adapters or UI
+behavior, it only improves the “pick a connection group / pick a connection”
+workflow used by `vim-dadbod-ui`.
 
 ## Current features (stable)
 
 - Load DB connections from profile files under `connections/`.
-- Show profiles in a grouped picker (`:DBUIProfile`).
+- Show connections in a grouped picker (`:DBConnections`).
 - Press Enter on a profile row to expand/collapse it.
 - Press Enter on an `Open all (...)` row or a connection row to open the connection.
-- Open a connection file from the manager with `:DBUIProfile manage`.
-
 ## Known limitations (by design for stable release)
-
-- `manage` mode only provides open behavior (no add/edit/delete shortcuts in this minimal release).
 - No custom picker keymaps are registered (`h/l/o/<C-y>` are not bound).
 - Connection list actions are intentionally kept to picker confirm (`<CR>`).
 
 ## Setup
 
 ```lua
-require("user.vim-dadbod-ui-profiles").setup({
+require("user.vim-dadbod-connection-picker").setup({
   icon_style = "emoji",           -- "ascii" | "emoji" | "nerd"
   profile_labels = {},
 })
@@ -41,9 +45,17 @@ private environments).
 
 ## Commands
 
-- `:DBUIProfile` : open grouped profile picker
-- `:DBUIProfile manage` : open manager list
-- `:DBUIProfile edit <profile>` : open profile file directly
+- `:DBConnections` : open grouped connection picker
+- `:DBConnections edit <group>` : open group file directly
+
+## Requirements / Dependencies
+
+- `kristijanhusak/vim-dadbod-ui`
+- `tpope/vim-dadbod` (required by `vim-dadbod-ui`)
+- `folke/snacks.nvim`
+
+`vim-dadbod-ui` provides the DB drawer and connection runner; this plugin is just
+the connection-group picker workflow on top of it.
 
 ## Notes
 

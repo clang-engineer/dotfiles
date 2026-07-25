@@ -1,13 +1,13 @@
 local M = {}
 
 local function list_connection_files()
-  local files = vim.api.nvim_get_runtime_file("lua/user/vim-dadbod-ui-profiles/connections/*.lua", true)
+  local files = vim.api.nvim_get_runtime_file("lua/user/vim-dadbod-connection-picker/connections/*.lua", true)
   table.sort(files)
   return files
 end
 
 local function default_profiles_dir()
-  return vim.fn.stdpath("config") .. "/lua/user/vim-dadbod-ui-profiles/connections"
+  return vim.fn.stdpath("config") .. "/lua/user/vim-dadbod-connection-picker/connections"
 end
 
 local function profile_file(profile)
@@ -381,7 +381,7 @@ local function build_profile_items(profiles, expanded)
           kind = "empty_connection",
           profile = profile,
           preview = {
-            text = string.format("Profile: %s\nNo connections configured.\nTip: use :DBUIProfile editor %s", profile, profile),
+            text = string.format("Profile: %s\nNo connections configured.\nTip: use :DBConnections edit %s", profile, profile),
           },
         })
       end
@@ -879,8 +879,7 @@ function M.setup(opts)
   local options = vim.tbl_extend("force", defaults, opts or {})
   profile_icons = normalize_icons(options)
   profile_label_map = options.profile_labels or {}
-  local prefix = "DBUI"
-  local command_profile = prefix .. "Profile"
+  local command_profile = "DBConnections"
 
   local function run_open(cmd)
     local raw = vim.trim(cmd.args)
@@ -897,16 +896,11 @@ function M.setup(opts)
       return
     end
 
-    if mode == "manage" or mode == "editor" or mode == "edit" then
+    if mode == "edit" then
       local profile = args[2]
-      if mode == "manage" then
-        M.manage_profiles()
-        return
-      end
-
       if not profile then
         local command_name = command_profile
-        vim.notify("Specify profile name: :" .. command_name .. " " .. mode .. " <profile>", vim.log.levels.WARN)
+        vim.notify("Specify group name: :" .. command_name .. " " .. mode .. " <group>", vim.log.levels.WARN)
         return
       end
 
@@ -927,9 +921,7 @@ function M.setup(opts)
 
   local function profile_or_mode_candidates()
     local candidates = profile_candidates()
-    table.insert(candidates, "manage")
     table.insert(candidates, "edit")
-    table.insert(candidates, "editor")
     return candidates
   end
 
@@ -939,18 +931,14 @@ function M.setup(opts)
     if #parts <= 1 then
       return vim.tbl_filter(function(item)
         return vim.startswith(item, arg_lead)
-      end, { "manage", "edit", "editor" })
+      end, { "edit" })
     end
 
     local first = parts[2]
-    if first == "edit" or first == "editor" then
+    if first == "edit" then
       return vim.tbl_filter(function(item)
         return vim.startswith(item, arg_lead)
       end, profile_candidates())
-    end
-
-    if first == "manage" then
-      return {}
     end
 
     return vim.tbl_filter(function(item)
@@ -961,7 +949,7 @@ function M.setup(opts)
   vim.api.nvim_create_user_command(command_profile, run_open, {
     nargs = "*",
     complete = profile_command_complete,
-    desc = "Open DBUI with profile, manage, or edit profile file",
+    desc = "Open connection groups or edit group files",
   })
 end
 

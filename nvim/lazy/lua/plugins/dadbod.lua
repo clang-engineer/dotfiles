@@ -4,7 +4,7 @@ return {
   {
     "kristijanhusak/vim-dadbod-ui",
     init = function()
-      require("user.vim-dadbod-ui-profiles").setup({
+      require("user.vim-dadbod-connection-picker").setup({
         picker_layout = "dropdown",
         prefix_by_profile = true,
         icon_style = "emoji", -- "default" | "ascii" | "emoji"

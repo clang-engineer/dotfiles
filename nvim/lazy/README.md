@@ -38,10 +38,10 @@ Modules that LazyVim and lazy.nvim know nothing about, living **purely off the r
 | --- | --- |
 | `config/options/*.lua` | required directly by `config/options.lua` |
 | `config/autocmds/*.lua` | required directly by `config/autocmds.lua` |
-| `user/vim-dadbod-ui-profiles/` (init + connections) | `init` in `plugins/dadbod.lua` calls `require("user.vim-dadbod-ui-profiles")` |
+| `user/vim-dadbod-connection-picker/` (init + connections) | `init` in `plugins/dadbod.lua` calls `require("user.vim-dadbod-connection-picker")` |
 | `user/docs/` | `init.lua` calls `require("user.docs").setup()` |
 
-Adding a file to `user/vim-dadbod-ui-profiles/connections/` gets picked up automatically not because of a LazyVim folder scan, but because the module runs a runtime glob itself.
+Adding a file to `user/vim-dadbod-connection-picker/connections/` gets picked up automatically not because of a LazyVim folder scan, but because the module runs a runtime glob itself.
 
 ### Pitfalls
 

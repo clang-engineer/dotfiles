@@ -1,16 +1,16 @@
 -- DB connection info loader.
--- Add a new profile: create vim-dadbod-ui-profiles/connections/<profile>.lua and it's auto-included in .all().
+-- Add a new connection group: create vim-dadbod-connection-picker/connections/<group>.lua and it's auto-included in .all().
 -- Disable: rename the file to .lua.disabled or delete it.
 --
 -- To see only a subset per project (using exrc):
 --   1) Add `vim.o.exrc = true` to an init file like ~/.config/nvim (once).
 --   2) Create .nvim.lua at the project root and override:
---        vim.g.dbs = require("user.vim-dadbod-ui-profiles").pick("profile-a", "profile-b")
+--        vim.g.dbs = require("user.vim-dadbod-connection-picker").pick("group-a", "group-b")
 --   3) On first run, register trust for that .nvim.lua with the :trust command.
 
--- Keep profile helpers in the same namespace so `user.vim-dadbod-ui-profiles` can be used
+-- Keep connection helpers in the same namespace so `user.vim-dadbod-connection-picker` can be used
 -- as one setup unit.
-local profiles = require("user.vim-dadbod-ui-profiles.profiles")
+local profiles = require("user.vim-dadbod-connection-picker.profiles")
 
 local M = {}
 
@@ -27,7 +27,7 @@ function M.pick(...)
 
   local result = {}
   for _, name in ipairs(targets) do
-    vim.list_extend(result, require("user.vim-dadbod-ui-profiles.connections." .. name))
+    vim.list_extend(result, require("user.vim-dadbod-connection-picker.connections." .. name))
   end
   return result
 end
@@ -50,13 +50,9 @@ function M.pick_group()
   profiles.pick_group()
 end
 
-function M.manage_profiles()
-  profiles.manage_profiles()
-end
-
 function M.editor(profile)
   if profile == nil then
-    profiles.manage_profiles()
+    vim.notify("Specify group name: :DBConnections edit <group>", vim.log.levels.WARN)
     return
   end
   profiles.edit_profile(profile)
