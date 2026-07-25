@@ -171,7 +171,8 @@ local function picker_shortcuts_hint_full()
     "e:edit",
     "r:rename",
     "d:delete",
-    "u:restore",
+    "u:undo",
+    "<C-r>:redo",
     "?:compact",
   }
 end
@@ -378,6 +379,7 @@ local restore_state = {
   busy = false,
   journal = nil,
   consumed = nil,
+  redo = nil,
 }
 
 local function restore_guard_clear()
@@ -402,6 +404,96 @@ local function restore_consumed()
   return consumed
 end
 
+local function mark_backup_consumed(path)
+  local normalized = normalize_backup_path(path)
+  if not normalized then
+    return
+  end
+
+  local consumed = restore_consumed()
+  local next_state = { normalized }
+  for _, saved in ipairs(consumed) do
+    local normalized_saved = normalize_backup_path(saved)
+    if normalized_saved and normalized_saved ~= normalized then
+      next_state[#next_state + 1] = normalized_saved
+    end
+  end
+
+  for i = 1, math.min(BACKUP_HISTORY_LIMIT, #next_state) do
+    consumed[i] = next_state[i]
+  end
+  for i = #next_state + 1, #consumed do
+    consumed[i] = nil
+  end
+end
+
+local function restore_redo()
+  local redo = restore_state.redo
+  if type(redo) ~= "table" then
+    redo = {}
+    restore_state.redo = redo
+  end
+  return redo
+end
+
+local function restore_redo_clear()
+  restore_state.redo = {}
+end
+
+local function restore_redo_push(entry)
+  local raw_entry = entry or {}
+  local undo_path = normalize_backup_path(raw_entry.undo_path)
+  local redo_path = normalize_backup_path(raw_entry.redo_path)
+  if not undo_path and not redo_path then
+    return
+  end
+
+  local entry_group = raw_entry.group
+  if type(entry_group) == "string" then
+    entry_group = group_data.normalize_group_name(entry_group)
+  end
+
+  local next_stack = {
+    {
+      undo_path = undo_path,
+      redo_path = redo_path,
+      group = entry_group,
+    },
+  }
+
+  local existing = restore_redo()
+  for _, item in ipairs(existing) do
+    if type(item) == "table" then
+      local item_undo = normalize_backup_path(item.undo_path)
+      local item_redo = normalize_backup_path(item.redo_path)
+      if item_undo ~= undo_path or item_redo ~= redo_path then
+        next_stack[#next_stack + 1] = item
+      end
+    end
+  end
+
+  for i = 1, math.min(BACKUP_HISTORY_LIMIT, #next_stack) do
+    existing[i] = next_stack[i]
+  end
+  for i = #next_stack + 1, #existing do
+    existing[i] = nil
+  end
+
+  if redo_path then
+    mark_backup_consumed(redo_path)
+  end
+end
+
+local function restore_redo_pop()
+  local redo = restore_redo()
+  local top = redo[1]
+  if not top then
+    return nil
+  end
+  table.remove(redo, 1)
+  return top
+end
+
 local function is_consumed_backup(path)
   local normalized = normalize_backup_path(path)
   if not normalized then
@@ -415,29 +507,6 @@ local function is_consumed_backup(path)
     end
   end
   return false
-end
-
-local function mark_backup_consumed(path)
-  local normalized = normalize_backup_path(path)
-  if not normalized then
-    return
-  end
-
-  local consumed = restore_consumed()
-  local next_state = { normalized }
-  for _, saved in ipairs(consumed) do
-    local normalized_saved = normalize_backup_path(saved)
-    if normalized_saved ~= normalized then
-      next_state[#next_state + 1] = normalized_saved
-    end
-  end
-
-  for i = 1, math.min(BACKUP_HISTORY_LIMIT, #next_state) do
-    consumed[i] = next_state[i]
-  end
-  for i = #next_state + 1, #consumed do
-    consumed[i] = nil
-  end
 end
 
 local function consume_backup_entry(backup_path)
@@ -465,7 +534,8 @@ local function consume_backup_entry(backup_path)
   mark_backup_consumed(backup_path)
 end
 
-local function record_backup_path(backup_path)
+local function record_backup_path(backup_path, opts)
+  opts = opts or {}
   local normalized = normalize_backup_path(backup_path)
   if not normalized then
     return
@@ -501,6 +571,10 @@ local function record_backup_path(backup_path)
   end
   for i = #next_consumed + 1, #consumed do
     consumed[i] = nil
+  end
+
+  if opts.clear_redo ~= false then
+    restore_redo_clear()
   end
 end
 
@@ -1452,6 +1526,16 @@ local function run_picker(groups, expanded, opts)
 
   local function handle_restore_current_group()
     M.restore_group(nil, {
+      mode = "undo",
+      on_success = function()
+        close_and_reload_picker()
+      end,
+    })
+  end
+
+  local function handle_redo_current_group()
+    M.restore_group(nil, {
+      mode = "redo",
       on_success = function()
         close_and_reload_picker()
       end,
@@ -1494,6 +1578,12 @@ local function run_picker(groups, expanded, opts)
         ["u"] = {
           function()
             handle_restore_current_group()
+          end,
+          mode = { "n" },
+        },
+        ["<C-r>"] = {
+          function()
+            handle_redo_current_group()
           end,
           mode = { "n" },
         },
@@ -1549,6 +1639,7 @@ local function run_picker(groups, expanded, opts)
 
   if type(custom_win.input) == "table" and type(custom_win.input.keys) == "table" then
     custom_win.input.keys["u"] = nil
+    custom_win.input.keys["<C-r>"] = nil
   end
 
   local matches_cache = build_group_match_set(groups)
@@ -2005,11 +2096,18 @@ end
 
 function M.restore_group(group, opts)
   opts = opts or {}
+  local mode = opts.mode or "manual"
   local global_busy = restore_state.busy
   if global_busy then
     return
   end
   restore_state.busy = true
+
+  if mode == "undo" then
+    -- keep redo stack while working through undo/redo.
+  else
+    restore_redo_clear()
+  end
 
   local requested_group = nil
   if group and group ~= "" then
@@ -2021,9 +2119,32 @@ function M.restore_group(group, opts)
     end
   end
 
-  local backup_path, backup_group, err = latest_backup_from_journal(requested_group)
-  if not backup_path then
-    backup_path, backup_group, err = latest_any_group_backup(requested_group)
+  local backup_path
+  local backup_group
+  local err
+  local entry
+  local undo_backup_path
+
+  if mode == "undo" then
+    backup_path, backup_group, err = latest_backup_from_journal(requested_group)
+    if not backup_path then
+      backup_path, backup_group, err = latest_any_group_backup(requested_group)
+    end
+  elseif mode == "redo" then
+    entry = restore_redo_pop()
+    if not entry then
+      restore_guard_clear()
+      show_warn("No redo history.")
+      return
+    end
+    backup_path = entry.redo_path
+    backup_group = entry.group or backup_group_from_path(backup_path)
+    undo_backup_path = entry.undo_path
+  else
+    backup_path, backup_group, err = latest_backup_from_journal(requested_group)
+    if not backup_path then
+      backup_path, backup_group, err = latest_any_group_backup(requested_group)
+    end
   end
 
   if not backup_path then
@@ -2033,6 +2154,12 @@ function M.restore_group(group, opts)
       no_record_msg = "No restore history for group: " .. requested_group
     end
     show_warn(err or no_record_msg)
+    return
+  end
+
+  if not is_existing_backup_path(backup_path) then
+    restore_guard_clear()
+    show_warn("Selected backup no longer exists: " .. tostring(backup_path))
     return
   end
 
@@ -2057,14 +2184,45 @@ function M.restore_group(group, opts)
   end
 
   restore_path = normalize_backup_path(restore_path)
+  if type(restore_path) ~= "string" or restore_path == "" then
+    restore_guard_clear()
+    show_error("Unable to resolve restore target path.")
+    return
+  end
+
+  local redo_snapshot
+  if mode == "undo" and vim.fn.filereadable(restore_path) == 1 then
+    redo_snapshot = next_backup_path(restore_path)
+    if not redo_snapshot then
+      restore_guard_clear()
+      show_error("Failed to resolve redo snapshot path.")
+      return
+    end
+    local snapshot_ok, snapshot_err = copy_file(restore_path, redo_snapshot)
+    if not snapshot_ok then
+      restore_guard_clear()
+      show_error("Failed to snapshot current file for redo: " .. tostring(snapshot_err))
+      return
+    end
+  end
+
+  local title = "Restore latest backup?"
+  if mode == "undo" then
+    title = "Undo (restore previous backup)?"
+  elseif mode == "redo" then
+    title = "Redo (restore latest undone state)?"
+  end
   local safe_backup
   if
     not confirm_action(
-      "Restore latest backup?",
+      title,
       string.format("Group: %s\nTarget: %s\nBackup: %s", restore_group, restore_path, backup_path),
       defaults.confirm_modify
   )
   then
+    if redo_snapshot then
+      vim.fn.delete(redo_snapshot)
+    end
     restore_guard_clear()
     return
   end
@@ -2076,6 +2234,9 @@ function M.restore_group(group, opts)
     end
     local ok, backup_err = vim.loop.fs_rename(restore_path, safe_backup)
     if not ok then
+      if redo_snapshot then
+        vim.fn.delete(redo_snapshot)
+      end
       restore_guard_clear()
       show_error("Failed to backup current group file before restore: " .. tostring(backup_err))
       return
@@ -2095,6 +2256,9 @@ function M.restore_group(group, opts)
         )
       end
     end
+    if redo_snapshot then
+      vim.fn.delete(redo_snapshot)
+    end
     restore_guard_clear()
     show_error("Failed to restore group from backup: " .. tostring(restore_err))
     return
@@ -2103,10 +2267,29 @@ function M.restore_group(group, opts)
   if safe_backup then
     vim.fn.delete(safe_backup)
   end
-  consume_backup_entry(backup_path)
+
+  if mode == "undo" then
+    consume_backup_entry(backup_path)
+    restore_redo_push({
+      undo_path = backup_path,
+      redo_path = redo_snapshot,
+      group = restore_group,
+    })
+  elseif mode == "redo" then
+    if undo_backup_path then
+      record_backup_path(undo_backup_path, { clear_redo = false })
+    end
+  end
 
   restore_guard_clear()
-  show_info("Restored group from backup: " .. restore_group)
+  if mode == "undo" then
+    show_info("Undid restore for: " .. restore_group)
+  elseif mode == "redo" then
+    show_info("Redid restore for: " .. restore_group)
+  else
+    show_info("Restored group from backup: " .. restore_group)
+  end
+
   if type(opts.on_success) == "function" then
     opts.on_success()
     return
