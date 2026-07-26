@@ -6,6 +6,15 @@ end
 local show_warn_fn = function(message)
   vim.notify(message, vim.log.levels.WARN)
 end
+local sensitive_url_keys = {
+  access_token = true,
+  api_key = true,
+  password = true,
+  passwd = true,
+  pwd = true,
+  secret = true,
+  token = true,
+}
 
 function M.setup(opts)
   opts = opts or {}
@@ -119,20 +128,27 @@ function M.mask_url(raw_url)
     return raw_url
   end
 
-  local scheme_start, scheme_end = raw_url:find("[%w][%w+.-]*://")
+  local masked = raw_url:gsub("([?&;])([^=?&;]+)=([^&#;]*)", function(separator, key, value)
+    if sensitive_url_keys[key:lower()] then
+      value = "****"
+    end
+    return separator .. key .. "=" .. value
+  end)
+
+  local scheme_start, scheme_end = masked:find("[%w][%w+.-]*://")
   if not scheme_start then
-    return raw_url
+    return masked
   end
 
-  local authority_and_path = raw_url:sub(scheme_end + 1)
+  local authority_and_path = masked:sub(scheme_end + 1)
   local authority, suffix = authority_and_path:match("^([^/%?#]*)(.*)$")
   local userinfo, host = authority:match("^(.*)@(.*)$")
   local username = userinfo and userinfo:match("^([^:]*):")
   if not username then
-    return raw_url
+    return masked
   end
 
-  return raw_url:sub(1, scheme_end) .. username .. ":****@" .. host .. suffix
+  return masked:sub(1, scheme_end) .. username .. ":****@" .. host .. suffix
 end
 
 function M.confirm_action(message, detail, should_confirm, opts)

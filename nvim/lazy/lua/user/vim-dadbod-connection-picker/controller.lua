@@ -27,19 +27,16 @@ local icon_styles = {
   ascii = {
     folder_expanded = "[-]",
     folder_collapsed = "[+]",
-    open_group = ">",
     open_all = ">>",
   },
   emoji = {
     folder_expanded = "📂",
     folder_collapsed = "📁",
-    open_group = "📂",
     open_all = "🚀",
   },
   nerd = {
     folder_expanded = "",
     folder_collapsed = "",
-    open_group = "",
     open_all = "+",
   },
 }
@@ -66,8 +63,7 @@ local function normalize_icons(options)
   return {
     folder_expanded = merged.folder_expanded or style.folder_expanded,
     folder_collapsed = merged.folder_collapsed or style.folder_collapsed,
-    open_group = merged.open_group or style.open_group,
-    open_all = merged.open_all or merged.open_group or style.open_group,
+    open_all = merged.open_all or style.open_all,
   }
 end
 
@@ -277,7 +273,7 @@ function M.open_connection(group, conn)
   then
     return false
   end
-  M.open({ { name = conn.name, url = conn.url } }, name)
+  M.open({ { name = conn.name, url = conn.url } })
   return true
 end
 
@@ -497,30 +493,22 @@ function M.pick_group(opts)
   require("user.vim-dadbod-connection-picker.picker").pick_group(opts or {})
 end
 
-function M.manage_groups()
-  require("user.vim-dadbod-connection-picker.picker").manage_groups()
-end
-
-function M.open(group, label_override, opts)
+function M.open(group, _, opts)
   local list
-  local label
   if type(group) == "table" then
     list = group
-    label = label_override or "selected"
   else
     list = M.connections(group, { prefix = opts and opts.prefix })
     if not list then
       M.show_warn("No connections found for group: " .. tostring(group))
       return
     end
-    label = group == "all" and "all" or (group or "all")
   end
 
   if not list or vim.tbl_isempty(list) then
     M.show_warn("No DB connections found to open")
     return
   end
-  M.current_group = label
   dbui.open(list, M.show_warn)
 end
 

@@ -172,32 +172,4 @@ function M.build_group_connections()
   return groups
 end
 
-function M.build_group_metadata()
-  local groups = {}
-  local seen = {}
-
-  for _, path in ipairs(M.list_connection_files()) do
-    local group = M.group_name_from_path(path)
-    if not seen[group] then
-      seen[group] = true
-      groups[group] = {
-        path = path,
-        connections = {},
-      }
-    end
-
-    local raw = load_file(path)
-    if type(raw) == "table" then
-      for _, item in ipairs(raw) do
-        local normalized = normalize_connection(item)
-        if normalized then
-          table.insert(groups[group].connections, normalized)
-        end
-      end
-    end
-  end
-
-  return groups
-end
-
 return M

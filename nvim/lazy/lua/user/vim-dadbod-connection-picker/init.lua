@@ -9,7 +9,6 @@
 --   3) On first run, register trust for that .nvim.lua with the :trust command.
 
 local connection_groups = require("user.vim-dadbod-connection-picker.controller")
-local command_name = "DBPicker"
 
 local M = {}
 
@@ -39,43 +38,11 @@ function M.connections(target)
   return connection_groups.connections(target)
 end
 
-function M.pick_group()
-  connection_groups.pick_group()
-end
-
-function M.finder()
-  connection_groups.pick_group()
-end
-
-function M.editor(group)
-  if group == nil then
-    vim.notify("Specify group name: :" .. command_name .. " edit <group>", vim.log.levels.WARN)
-    return
-  end
-  connection_groups.edit_group(group)
-end
-
-function M.open_group(name)
-  connection_groups.open(name)
-end
-
-function M.edit_group(name)
-  connection_groups.edit_group(name)
-end
-
-function M.create_group(name)
-  connection_groups.create_group(name)
-end
-
-function M.manage_groups()
-  connection_groups.manage_groups()
-end
-
 -- Plugin-like entrypoint: initialize DBUI connection list + commands.
 function M.setup(opts)
   local options = opts or {}
   local default_group = options.default_group or "all"
-  command_name = options.command_name or command_name
+  local command_name = options.command_name or "DBPicker"
 
   vim.g.dbs = M.connections(default_group)
   connection_groups.setup({

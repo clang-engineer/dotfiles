@@ -120,33 +120,6 @@ local function build_group_match_set(groups)
   return set
 end
 
-local function build_manage_items(group_meta)
-  local items = {}
-  for _, group in ipairs(util.sorted_keys(group_meta)) do
-    local data = group_meta[group]
-    local count = #(data.connections or {})
-    items[#items + 1] = {
-      text = string.format("[%s] (%d)", group, count),
-      kind = "group_manage",
-      group = group,
-      path = data.path,
-      preview = { text = build_group_preview(group, data.connections) },
-    }
-    for index, conn in ipairs(data.connections or {}) do
-      items[#items + 1] = {
-        text = string.format("  %s (%s)", conn.name, display_url(conn.url)),
-        kind = "connection_manage",
-        group = group,
-        path = data.path,
-        connection = conn,
-        connection_index = index,
-        preview = { text = build_connection_preview(group, conn, "Path: " .. data.path) },
-      }
-    end
-  end
-  return items
-end
-
 local function resolve_snacks_picker()
   local ok, snacks = pcall(require, "snacks.picker")
   if not ok then
@@ -501,89 +474,6 @@ function M.pick_group(opts)
     layout = picker_layout,
     prefix = false,
     usage_hint = opts and opts.usage_hint or nil,
-  })
-end
-
-function M.manage_groups()
-  local group_meta = group_data.build_group_metadata()
-  local items = build_manage_items(group_meta)
-  if #items == 0 then
-    controller.show_warn("No DB groups found")
-    return
-  end
-
-  local picker_api = resolve_snacks_picker()
-  if not picker_api then
-    controller.show_warn("Unable to open connection manager with snacks picker")
-    return
-  end
-
-  local ordered_groups = util.sorted_keys(group_meta)
-  local query_set = {}
-  for _, group in ipairs(ordered_groups) do
-    local values = { group }
-    for _, conn in ipairs(group_meta[group].connections or {}) do
-      if conn.name ~= nil then
-        values[#values + 1] = conn.name
-      end
-      if conn.url ~= nil then
-        values[#values + 1] = conn.url
-      end
-    end
-    query_set[group] = values
-  end
-
-  local query_pattern = ""
-  local query_has_match = true
-  local function add_group()
-    controller.prompt_new_group_name(vim.trim(query_pattern))
-  end
-  local keys = picker_keys({ n = add_group })
-  local manage_win = vim.tbl_deep_extend("force", picker_layout.win or {}, {
-    list = vim.tbl_deep_extend("force", picker_layout.win.list or {}, {
-      keys = vim.tbl_deep_extend("force", (picker_layout.win.list and picker_layout.win.list.keys) or {}, keys),
-    }),
-    input = vim.tbl_deep_extend("force", picker_layout.win.input or {}, {
-      keys = vim.tbl_deep_extend("force", (picker_layout.win.input and picker_layout.win.input.keys) or {}, keys),
-    }),
-  })
-
-  picker_api({
-    title = "DB Connections Manager",
-    finder = function()
-      local rows = build_manage_items(group_meta)
-      if query_pattern ~= "" and not query_has_match then
-        table.insert(rows, 1, {
-          text = "No match for " .. string.format("%q", query_pattern) .. ". Tip: / filter, <CR> open.",
-          kind = "hint",
-          preview = { text = "No match found. Use <CR> on a connection to open it, or n to add a new group." },
-        })
-      end
-      return rows
-    end,
-    format = "text",
-    prompt = "> ",
-    focus = "list",
-    preview = "preview",
-    layout = picker_layout,
-    win = manage_win,
-    confirm = function(picker, item)
-      if not item then
-        return
-      end
-      if item.kind == "connection_manage" then
-        picker:close()
-        controller.open_connection(item.group, item.connection)
-      elseif item.path then
-        picker:close()
-        controller.open_file(item.path)
-      end
-    end,
-    on_change = function(picker)
-      local pattern = picker:filter().pattern or ""
-      query_pattern = query.normalize_filter_pattern(pattern)
-      query_has_match = not vim.tbl_isempty(query.find_matches(query_set, query_pattern, ordered_groups))
-    end,
   })
 end
 
