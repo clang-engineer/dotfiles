@@ -62,6 +62,14 @@ return {
 Files can be omitted from tracking via `connections/.gitignore` (symlinked secrets are expected in
 private environments).
 
+## Structure
+
+- `groups/`: connection file storage and group mutations
+- `picker/`: picker lifecycle and row rendering
+- `restore/`: backup storage and undo/redo transactions
+- `controller.lua`: command wiring, connection selection, and DBUI handoff
+- `config.lua`: setup options, labels, and icons
+
 ## Commands
 
 - `:DBPicker` : open grouped connection picker
