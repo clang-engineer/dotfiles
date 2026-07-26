@@ -8,7 +8,7 @@
 --        vim.g.dbs = require("user.vim-dadbod-connection-picker").pick("group-a", "group-b")
 --   3) On first run, register trust for that .nvim.lua with the :trust command.
 
-local connection_groups = require("user.vim-dadbod-connection-picker.profiles")
+local connection_groups = require("user.vim-dadbod-connection-picker.controller")
 local command_name = "DBPicker"
 
 local M = {}
@@ -56,7 +56,7 @@ function M.editor(group)
 end
 
 function M.open_group(name)
-  connection_groups.open_group(name)
+  connection_groups.open(name)
 end
 
 function M.edit_group(name)

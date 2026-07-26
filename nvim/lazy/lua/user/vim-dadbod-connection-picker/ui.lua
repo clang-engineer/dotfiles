@@ -114,6 +114,27 @@ function M.truncate_for_display(value)
   return value:sub(1, max_len - 3) .. "..."
 end
 
+function M.mask_url(raw_url)
+  if type(raw_url) ~= "string" then
+    return raw_url
+  end
+
+  local scheme_start, scheme_end = raw_url:find("[%w][%w+.-]*://")
+  if not scheme_start then
+    return raw_url
+  end
+
+  local authority_and_path = raw_url:sub(scheme_end + 1)
+  local authority, suffix = authority_and_path:match("^([^/%?#]*)(.*)$")
+  local userinfo, host = authority:match("^(.*)@(.*)$")
+  local username = userinfo and userinfo:match("^([^:]*):")
+  if not username then
+    return raw_url
+  end
+
+  return raw_url:sub(1, scheme_end) .. username .. ":****@" .. host .. suffix
+end
+
 function M.confirm_action(message, detail, should_confirm, opts)
   if should_confirm == false then
     return true
