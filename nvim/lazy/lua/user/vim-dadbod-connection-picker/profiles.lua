@@ -165,6 +165,42 @@ local function fill_connection_with_prompt(on_done)
   end)
 end
 
+local function prompt_first_connection()
+  vim.ui.input({
+    prompt = "Group name: ",
+    default = "local",
+  }, function(raw_group)
+    if raw_group == nil then
+      return
+    end
+
+    local group = group_data.normalize_group_name(raw_group)
+    if not group or group == "all" then
+      show_warn("Invalid group name.")
+      return
+    end
+
+    fill_connection_with_prompt(function(conn)
+      if
+        not confirm_action(
+          "Create first connection?",
+          string.format("Group: %s\nName: %s\nURL: %s", group, conn.name, masked_url(conn.url)),
+          defaults.confirm_modify
+        )
+      then
+        return
+      end
+
+      local path = group_data.group_file(group)
+      group_data.write_group_file(path, { conn })
+      show_info("Created first DB connection: " .. conn.name)
+      vim.schedule(function()
+        M.pick_group({})
+      end)
+    end)
+  end)
+end
+
 local function prompt_new_group_name(opts)
   opts = opts or {}
   local default_name = opts.default_name or ""
@@ -509,13 +545,18 @@ local function run_picker(groups, expanded, opts)
 
   if #items() == 0 then
     local groups_dir = group_data.connections_dir()
+    local function start_first_connection_setup(picker)
+      if picker and type(picker.close) == "function" then
+        picker:close()
+      end
+      prompt_first_connection()
+    end
+
     local no_group_win = vim.tbl_deep_extend("force", layout.win or {}, {
       list = vim.tbl_deep_extend("force", (layout.win and layout.win.list) or {}, {
         keys = vim.tbl_deep_extend("force", ((layout.win and layout.win.list and layout.win.list.keys) or {}), {
           ["n"] = {
-            function()
-              prompt_new_group_name({ default_name = "office" })
-            end,
+            start_first_connection_setup,
             mode = { "n" },
           },
         }),
@@ -550,10 +591,10 @@ local function run_picker(groups, expanded, opts)
 
         local rows = {
           {
-            text = "No DB groups found.",
-            kind = "hint",
+            text = "+ Add first connection",
+            kind = "setup",
             preview = {
-              text = "No DB groups found.\nPress n to add a new group.",
+              text = "No DB connections found.\nPress <CR> to enter a group name, connection name, and URL.",
             },
           },
           {
@@ -584,9 +625,7 @@ local function run_picker(groups, expanded, opts)
       focus = "list",
       layout = layout,
       win = no_group_win,
-      confirm = function()
-        return
-      end,
+      confirm = start_first_connection_setup,
     })
     return
   end

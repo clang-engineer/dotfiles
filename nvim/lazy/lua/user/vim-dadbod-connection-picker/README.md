@@ -18,6 +18,7 @@ workflow used by `vim-dadbod-ui`.
 - Press Enter on an `Open all (...)` row or a connection row to open the connection.
 ## Interaction
 - Search and action hints are shown inside the picker.
+- When no groups exist, press `<CR>` to create the first connection with three prompts: group, name, and URL.
 - Shortcuts:
   - `/` filter
   - `<CR>` open
