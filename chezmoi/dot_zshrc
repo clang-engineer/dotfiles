@@ -81,3 +81,13 @@ if [[ -n "$BREW_PREFIX" ]]; then
   source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+
+# Quick toggle for OpenCode token profile
+opencode-profile() {
+  sh "$HOME/.local/bin/opencode-profile" "$@"
+}
+
+alias opc='opencode-profile'
+
+# Quick token burn check (last 7 days by default)
+alias ccb='sh "$HOME/.local/bin/ccusage-budget"'

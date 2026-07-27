@@ -1,0 +1,53 @@
+#!/bin/sh
+
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage:
+  opencode-profile [eco|pro]
+  opencode-profile --list
+
+  eco: low-cost profile
+  pro: high-quality profile
+  --list: show available profiles
+EOF
+}
+
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 1
+fi
+
+if [ "$1" = "--list" ]; then
+  printf "eco: low-cost\n"
+  printf "pro: high-quality\n"
+  exit 0
+fi
+
+case "$1" in
+  eco|pro)
+    PROFILE="$1"
+    ;;
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "opencode-profile: unknown profile '$1'" >&2
+    usage
+    exit 1
+    ;;
+esac
+
+BASE_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+SRC="$BASE_DIR/opencode-${PROFILE}.jsonc"
+TARGET="$BASE_DIR/opencode.jsonc"
+
+if [ ! -f "$SRC" ]; then
+  echo "opencode-profile: profile file not found: $SRC" >&2
+  exit 1
+fi
+
+cp "$SRC" "$TARGET"
+echo "Applied opencode profile '$PROFILE'"
