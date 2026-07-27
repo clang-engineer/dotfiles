@@ -12,9 +12,6 @@ if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" !=
   tmux attach || tmux new -s default
 fi
 
-# Locale
-export LANG=ko_KR.UTF-8
-
 # Local helper binaries (module scripts)
 if [ -d "$HOME/.local/bin" ]; then
   case ":$PATH:" in
