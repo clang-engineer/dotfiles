@@ -19,9 +19,27 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
+BASE_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+TARGET="$BASE_DIR/opencode.jsonc"
+
 if [ "$1" = "--list" ]; then
-  printf "eco: low-cost\n"
-  printf "pro: high-quality\n"
+  if cmp -s "$TARGET" "$BASE_DIR/opencode-eco.jsonc"; then
+    printf "* eco: low-cost (active)\n"
+  else
+    printf "  eco: low-cost\n"
+  fi
+
+  if cmp -s "$TARGET" "$BASE_DIR/opencode-pro.jsonc"; then
+    printf "* pro: high-quality (active)\n"
+  else
+    printf "  pro: high-quality\n"
+  fi
+
+  if [ ! -f "$TARGET" ] || {
+    ! cmp -s "$TARGET" "$BASE_DIR/opencode-eco.jsonc" && ! cmp -s "$TARGET" "$BASE_DIR/opencode-pro.jsonc"
+  }; then
+    printf "  custom: current config differs from eco/pro\n"
+  fi
   exit 0
 fi
 
@@ -40,9 +58,7 @@ case "$1" in
     ;;
 esac
 
-BASE_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
 SRC="$BASE_DIR/opencode-${PROFILE}.jsonc"
-TARGET="$BASE_DIR/opencode.jsonc"
 
 if [ ! -f "$SRC" ]; then
   echo "opencode-profile: profile file not found: $SRC" >&2
