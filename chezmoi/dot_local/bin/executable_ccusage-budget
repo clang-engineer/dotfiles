@@ -1,0 +1,270 @@
+#!/bin/sh
+
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ccusage-budget [--days N] [--warn COST] [--critical COST] [--service opencode]
+  ccusage-budget [--period day|week|month]
+  ccusage-budget [--budget COST] [--token-price PRICE]
+  ccusage-budget --remaining PCT --period day|week|month
+
+  --days: Days to look back (default: 7)
+  --period: Quick period preset (day/week/month)
+  --warn: Warning threshold for totalCost (default: 100)
+  --critical: Critical threshold for totalCost (default: 200)
+  --service: Service name for ccusage (default: opencode)
+  --budget: Optional absolute cost budget for the selected period
+  --token-price: Optional cost per token for remaining-token estimate
+  --remaining: Infer budget from dashboard percentage (0-100) and current cost usage
+  Budget can also be supplied via CCUSAGE_BUDGET, CCUSAGE_BUDGET_DAY,
+  CCUSAGE_BUDGET_WEEK, CCUSAGE_BUDGET_MONTH environment variables.
+EOF
+}
+
+DAYS=7
+WARN=100
+CRITICAL=200
+SERVICE="opencode"
+BUDGET=""
+TOKEN_PRICE=""
+PERIOD=""
+REMAINING_HINT=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --days)
+      DAYS="$2"
+      PERIOD="custom"
+      shift 2
+      ;;
+    --period)
+      PERIOD="$2"
+      shift 2
+      ;;
+    --warn)
+      WARN="$2"
+      shift 2
+      ;;
+    --critical)
+      CRITICAL="$2"
+      shift 2
+      ;;
+    --service)
+      SERVICE="$2"
+      shift 2
+      ;;
+    --budget)
+      BUDGET="$2"
+      shift 2
+      ;;
+    --token-price)
+      TOKEN_PRICE="$2"
+      shift 2
+      ;;
+    --remaining)
+      REMAINING_HINT="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "ccusage-budget: unknown option '$1'" >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if ! command -v ccusage >/dev/null 2>&1; then
+  echo "ccusage not found. Install ccusage first." >&2
+  exit 1
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "jq not found. Install jq for JSON parsing." >&2
+  exit 1
+fi
+
+SCOPE_LABEL="last ${DAYS}d"
+
+case "$PERIOD" in
+  "")
+    SINCE="$(date -v -"$DAYS"d +%Y-%m-%d)"
+    ;;
+  custom)
+    SINCE="$(date -v -"$DAYS"d +%Y-%m-%d)"
+    ;;
+  day)
+    SINCE="$(date +%Y-%m-%d)"
+    SCOPE_LABEL="today"
+    ;;
+  week)
+    DAYOFWEEK="$(date +%u)"
+    SINCE="$(date -v -"$((DAYOFWEEK - 1))"d +%Y-%m-%d)"
+    SCOPE_LABEL="this week"
+    ;;
+  month)
+    SINCE="$(date +%Y-%m-01)"
+    SCOPE_LABEL="this month"
+    ;;
+  *)
+    echo "ccusage-budget: unknown period '$PERIOD'" >&2
+    usage
+    exit 1
+    ;;
+esac
+
+CCJSON="$(ccusage "$SERVICE" daily --json --since "$SINCE" --compact)"
+
+if [ -z "$CCJSON" ]; then
+  echo "No usage data for $SERVICE since $SINCE" >&2
+  exit 1
+fi
+
+TOTAL_COST="$(printf '%s\n' "$CCJSON" | jq -r '.totals.totalCost // 0')"
+INPUT_TOKENS="$(printf '%s\n' "$CCJSON" | jq -r '.totals.inputTokens // 0')"
+OUTPUT_TOKENS="$(printf '%s\n' "$CCJSON" | jq -r '.totals.outputTokens // 0')"
+TOTAL_TOKENS="$(printf '%s\n' "$CCJSON" | jq -r '.totals.totalTokens // 0')"
+
+printf "%s: %s totalCost=%s, inputTokens=%s, outputTokens=%s, totalTokens=%s\n" \
+  "$SERVICE" "$SCOPE_LABEL" "$TOTAL_COST" "$INPUT_TOKENS" "$OUTPUT_TOKENS" "$TOTAL_TOKENS"
+
+if [ -z "$BUDGET" ]; then
+  case "$PERIOD" in
+    day)
+      if [ -n "${CCUSAGE_BUDGET_DAY-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET_DAY"
+      elif [ -n "${CCUSAGE_BUDGET-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET"
+      fi
+      ;;
+    week)
+      if [ -n "${CCUSAGE_BUDGET_WEEK-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET_WEEK"
+      elif [ -n "${CCUSAGE_BUDGET-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET"
+      fi
+      ;;
+    month)
+      if [ -n "${CCUSAGE_BUDGET_MONTH-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET_MONTH"
+      elif [ -n "${CCUSAGE_BUDGET-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET"
+      fi
+      ;;
+    *)
+      if [ -n "${CCUSAGE_BUDGET-}" ]; then
+        BUDGET="$CCUSAGE_BUDGET"
+      fi
+      ;;
+  esac
+fi
+
+if [ -n "$REMAINING_HINT" ]; then
+  if [ -n "$BUDGET" ]; then
+    echo "ccusage-budget: --budget and --remaining are mutually exclusive. remove one of them." >&2
+    exit 1
+  fi
+
+  IMPLIED_BUDGET="$(awk -v spent="$TOTAL_COST" -v remain="$REMAINING_HINT" 'BEGIN {
+    if (remain <= 0 || remain >= 100) {
+      exit 1
+    }
+    budget = spent / (1 - remain / 100)
+    if (budget < 0) {
+      budget = 0
+    }
+    printf "%.6f", budget
+  }')" || true
+
+  if [ -z "$IMPLIED_BUDGET" ] || [ "$IMPLIED_BUDGET" = "0.000000" ]; then
+    echo "Could not infer budget from remaining '${REMAINING_HINT}%'. Use 0 < remaining < 100." >&2
+    exit 1
+  fi
+
+  BUDGET="$IMPLIED_BUDGET"
+  REMAINING_PERCENT_HINT="$(awk "BEGIN { printf \"%.2f\", $REMAINING_HINT }")"
+  printf "Budget (inferred): %s (from dashboard remaining %s%%)\n" "$BUDGET" "$REMAINING_PERCENT_HINT"
+fi
+
+if [ -n "$BUDGET" ]; then
+  REMAINING_COST="$(awk "BEGIN { r = $BUDGET - $TOTAL_COST; if (r < 0) r = 0; printf \"%.6f\", r }")"
+
+  if [ -n "$REMAINING_HINT" ]; then
+    USED_RATIO="$(awk "BEGIN { if ($BUDGET == 0) { printf \"0\" } else { printf \"%.2f\", 100 - $REMAINING_HINT } }")"
+    REMAINING_PERCENT="$(awk "BEGIN { printf \"%.2f\", $REMAINING_HINT }")"
+  else
+    USED_RATIO="$(awk "BEGIN { if ($BUDGET == 0) { printf \"0\" } else { printf \"%.2f\", ($TOTAL_COST / $BUDGET) * 100 } }")"
+    REMAINING_PERCENT="$(awk "BEGIN { if ($BUDGET == 0) { printf \"0\" } else { r = 100 - (($TOTAL_COST / $BUDGET) * 100); if (r < 0) r = 0; printf \"%.2f\", r } }")"
+  fi
+
+  printf "Budget: %s, usage=%.2f%%, remaining=%.2f%% (remainingCost=%s)\n" "$BUDGET" "$USED_RATIO" "$REMAINING_PERCENT" "$REMAINING_COST"
+
+  if [ -n "$TOKEN_PRICE" ]; then
+    EST_TOKEN_PRICE="$TOKEN_PRICE"
+  else
+    EST_TOKEN_PRICE="$(awk -v cost="$TOTAL_COST" -v tokens="$TOTAL_TOKENS" 'BEGIN { if (tokens <= 0) { print "0" } else { printf "%.12f", cost / tokens } }')"
+  fi
+
+  if awk "BEGIN { if ($EST_TOKEN_PRICE > 0 && $REMAINING_COST > 0) exit 0; exit 1 }"; then
+    EST_REMAIN_TOKENS="$(awk -v budget="$REMAINING_COST" -v price="$EST_TOKEN_PRICE" 'BEGIN { printf "%.0f", budget / price }')"
+    printf "Estimated remaining tokens (weighted avg): %s\n" "$EST_REMAIN_TOKENS"
+  else
+    echo "Estimated remaining tokens: unavailable (token usage or pricing unknown)"
+  fi
+
+elif [ -n "$PERIOD" ] && [ "$PERIOD" != custom ]; then
+  case "$PERIOD" in
+    day)
+      ENV_KEY="DAY"
+      ;;
+    week)
+      ENV_KEY="WEEK"
+      ;;
+    month)
+      ENV_KEY="MONTH"
+      ;;
+    *)
+      ENV_KEY=""
+      ;;
+  esac
+
+  if [ -n "$ENV_KEY" ]; then
+    echo "Budget: not set. export CCUSAGE_BUDGET_${ENV_KEY} to show remaining percent for this period."
+  else
+    echo "Budget: not set. export CCUSAGE_BUDGET to show remaining percent."
+  fi
+fi
+
+printf "Top models by estimated cost:\n"
+printf '%s\n' "$CCJSON" |
+  jq -r '.daily[].modelBreakdowns[] | "\(.modelName)\t\(.cost // 0)"' |
+  awk '
+    {
+      if ($1 != "") {
+        cost[$1] += $2;
+      }
+    }
+    END {
+      for (m in cost) {
+        printf "%s\t%.6f\n", m, cost[m];
+      }
+    }
+  ' |
+  sort -t$'\t' -k2,2nr
+
+if awk "BEGIN { if ($TOTAL_COST >= $CRITICAL) exit 0; exit 1 }"; then
+  echo "[CRITICAL] cost >= $CRITICAL"
+  exit 2
+fi
+
+if awk "BEGIN { if ($TOTAL_COST >= $WARN) exit 0; exit 1 }"; then
+  echo "[WARN] cost >= $WARN"
+  exit 1
+fi
+
+echo "[OK] under warn $WARN"
