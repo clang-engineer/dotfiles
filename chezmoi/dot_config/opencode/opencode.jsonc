@@ -62,7 +62,7 @@
       "description": "DeepSeek V4 Flash — 경량/빠른 작업",
       "mode": "primary",
       "model": "deepseek/deepseek-v4-flash",
-      "variant": "low",
+      "variant": "max",
       "steps": 64
     }
   },
