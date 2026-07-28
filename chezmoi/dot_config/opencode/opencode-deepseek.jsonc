@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "openrouter/deepseek/deepseek-v4-flash",
+  "small_model": "openrouter/deepseek/deepseek-v4-flash",
+  "default_agent": "build",
+  "agent": {
+    "build": {
+      "description": "DeepSeek V4 Flash: 경량/빠른 작업",
+      "mode": "primary",
+      "model": "openrouter/deepseek/deepseek-v4-flash",
+      "variant": "max",
+      "steps": 64
+    }
+  }
+}

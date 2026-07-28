@@ -48,6 +48,7 @@ fi
 # Modern CLI aliases
 if command -v bat &>/dev/null; then alias cat="bat"; fi
 if command -v eza &>/dev/null; then alias ls="eza"; fi
+alias opc="opencode-profile"
 
 # c++ alias
 alias g++="g++ -std=c++17"

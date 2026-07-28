@@ -1,0 +1,63 @@
+#!/bin/sh
+
+set -eu
+
+usage() {
+  printf '%s\n' \
+    'Usage:' \
+    '  opencode-profile [spark|sol|openrouter|deepseek] [opencode arguments...]' \
+    '  opencode-profile --list'
+}
+
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 1
+fi
+
+case "$1" in
+  --list)
+    printf '%s\n' \
+      'spark: OpenAI GPT-5.3 Codex Spark' \
+      'sol: OpenAI GPT-5.6 Sol' \
+      'deepseek: DeepSeek V4 Flash through OpenRouter' \
+      'openrouter: free coding models' \
+      '  1. Poolside Laguna S 2.1' \
+      '  2. Cohere North Mini Code' \
+      '  3. Poolside Laguna XS 2.1' \
+      '  4. NVIDIA Nemotron 3 Ultra'
+    exit 0
+    ;;
+  spark)
+    PROFILE='spark'
+    ;;
+  sol)
+    PROFILE='sol'
+    ;;
+  openrouter)
+    PROFILE='openrouter'
+    ;;
+  deepseek)
+    PROFILE='deepseek'
+    ;;
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  *)
+    printf "opencode-profile: unknown profile '%s'\n" "$1" >&2
+    usage >&2
+    exit 1
+    ;;
+esac
+
+shift
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+CONFIG="$CONFIG_DIR/opencode-$PROFILE.jsonc"
+
+if [ ! -f "$CONFIG" ]; then
+  printf 'opencode-profile: profile file not found: %s\n' "$CONFIG" >&2
+  exit 1
+fi
+
+OPENCODE_CONFIG="$CONFIG" exec opencode "$@"

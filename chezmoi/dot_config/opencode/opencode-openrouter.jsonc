@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "openrouter/poolside/laguna-s-2.1:free",
+  "small_model": "openrouter/poolside/laguna-xs-2.1:free",
+  "default_agent": "openrouter-1-laguna-s",
+  "agent": {
+    "openrouter-1-laguna-s": {
+      "description": "무료 1순위: 코딩 성능 우선",
+      "mode": "primary",
+      "model": "openrouter/poolside/laguna-s-2.1:free",
+      "steps": 64
+    },
+    "openrouter-2-north-mini": {
+      "description": "무료 2순위: OpenCode와 터미널 작업 최적화",
+      "mode": "primary",
+      "model": "openrouter/cohere/north-mini-code:free",
+      "steps": 64
+    },
+    "openrouter-3-laguna-xs": {
+      "description": "무료 3순위: 빠르고 가벼운 코딩 작업",
+      "mode": "primary",
+      "model": "openrouter/poolside/laguna-xs-2.1:free",
+      "steps": 64
+    },
+    "openrouter-4-nemotron-ultra": {
+      "description": "무료 4순위: 장문 컨텍스트와 복잡한 계획",
+      "mode": "primary",
+      "model": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+      "steps": 64
+    }
+  }
+}
