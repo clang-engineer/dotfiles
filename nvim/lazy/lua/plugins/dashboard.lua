@@ -8,55 +8,7 @@
 -- → 아래에서 모든 줄을 최대 폭으로 오른쪽 패딩해 폭을 통일 = 오프셋 동일 = 정렬 유지.
 local CAT = "magic"
 
-local cats = {
-  -- two cats on a fence under a magic cloud — Joan Stark (jgs), asciiart.website/art/7598
-  duo = [[
-           *     ,MMM8&&&.            *
-                MMMM88&&&&&    .
-               MMMM88&&&&&&&           C
-   *           MMM88&&&&&&&&
-               MMM88&&&&&&&&        .
-               'MMM88&&&&&&'
-                 'MMM8&&&'      *    _
-        |\___/|                      \\
-       =) ^Y^ (=   |\_/|              ||    '
-        \  ^  /    )a a '._.-""""-.  //
-         )=*=(    =\T_= /    ~  ~  \//
-        /     \     `"`\   ~   / ~  /
-        |     |         |~   \ |  ~/
-       /| | | |\         \  ~/- \ ~\
-       \| | |_|/|        || |  // /`
-_/\_//_// __//\_/\_/\_((_|\((_//\_/\_/\_
-|  |  |  | \_) |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-clang.engineer |  |  |  |  |  |  |  |  |  |]],
-
-  -- single cat on a fence under a magic cloud — Joan Stark (jgs), asciiart.website/art/7597
-  magic = [[
-           *     ,MMM8&&&.            *
-                MMMM88&&&&&    .
-               MMMM88&&&&&&&        C
-   *           MMM88&&&&&&&&
-               MMM88&&&&&&&&          .
-               'MMM88&&&&&&'
-                 'MMM8&&&'      *
-        |\___/|                  +
-        )     (             .              '
-       =\     /=        *
-         )===(       *
-        /     \            .
-        |     |
-       /       \
-       \       /
-_/\_/\_/\__  _/_/\_/\_/\_/\_/\_/\_/\_/\_/\_
-|  |  |  |( (  |  |  |  |  |  |  |  |  |  |
-|  |  |  | ) ) |  |  |  |  |  |  |  |  |  |
-|  |  |  |(_(  |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-clang.engineer |  |  |  |  |  |  |  |  |  |]],
-}
+local cats = require("user.dashboard.cats")
 
 return {
   "folke/snacks.nvim",
