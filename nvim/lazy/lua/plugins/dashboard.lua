@@ -2,11 +2,12 @@
 -- 순수 텍스트라 폰트에서 100% 선명 — 의존성 0, 크로스플랫폼
 -- 고양이 둘 다 Joan Stark(jgs) 작품 (asciiart.website/art/7597, 7598)
 --
--- CAT 한 단어로 전환: "duo"(고양이 두 마리) | "magic"(한 마리)
+-- Neovim을 열 때마다 "duo"(고양이 두 마리)와 "magic"(한 마리) 중 하나를 선택.
 -- 주의: snacks는 header를 줄 단위로 center 정렬한다(D:block/align). 줄마다 폭이 다르면
 -- center 오프셋이 달라져 왼쪽 시작점이 어긋나며 아트가 깨진다.
 -- → 아래에서 모든 줄을 최대 폭으로 오른쪽 패딩해 폭을 통일 = 오프셋 동일 = 정렬 유지.
-local CAT = "magic"
+local cat_names = { "duo", "magic" }
+local CAT = cat_names[(vim.fn.rand() % #cat_names) + 1]
 
 local cats = require("user.dashboard.cats")
 
@@ -82,6 +83,15 @@ return {
           local c = line:sub(i, i)
           if c == "(" or c == ")" or c == "|" then
             cat[i] = true
+          end
+        end
+        -- duo의 두 고양이 다리와 레일 연결부
+        for _, signature in ipairs({ "// __//", "((_|\\((_//" }) do
+          local s, e = line:find(signature, 1, true)
+          if s then
+            for i = s, e do
+              cat[i] = true
+            end
           end
         end
         -- 고양이 밑면: \…/ 사이의 _/공백 런 중 연속 2칸 공백(가랑이 갭)을 낀 구간 (magic 전용 시그니처)
