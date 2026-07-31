@@ -41,8 +41,8 @@ return {
       table.insert(cmd, java_home .. "/bin/java")
 
       -- Gradle runtime (separate from jdtls when provided).
+      opts.cmd = cmd
       opts.jdtls = vim.tbl_deep_extend("force", opts.jdtls or {}, {
-        cmd = cmd,
         cmd_env = present(gradle_java_home) and {
           JAVA_HOME = gradle_java_home,
           GRADLE_OPTS = "-Dorg.gradle.java.home=" .. gradle_java_home,
