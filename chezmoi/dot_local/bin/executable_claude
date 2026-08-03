@@ -1,0 +1,66 @@
+#!/bin/sh
+
+set -eu
+
+resolve_real_command() {
+  local_name="claude"
+  wrapper_path="$0"
+  case "$wrapper_path" in
+    */*) ;;
+    *) wrapper_path="$(command -v "$0" 2>/dev/null || printf '%s' "$0")" ;;
+  esac
+
+  case "$wrapper_path" in
+    /*) wrapper_dir="${wrapper_path%/*}" ;;
+    *) wrapper_dir="$(pwd)" ;;
+  esac
+
+  IFS=':'
+  for path_entry in $PATH; do
+    [ -z "$path_entry" ] && path_entry='.'
+
+    candidate="$path_entry/$local_name"
+    if [ "$candidate" = "$wrapper_path" ] || [ "$candidate" = "$wrapper_dir/$local_name" ]; then
+      continue
+    fi
+
+    if [ -x "$candidate" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+REAL_BIN="$(resolve_real_command || true)"
+if [ -z "$REAL_BIN" ]; then
+  echo "claude: unable to locate underlying binary" >&2
+  exit 1
+fi
+
+has_system_prompt=0
+next_is_system_prompt=0
+
+for arg in "$@"; do
+  if [ "$next_is_system_prompt" -eq 1 ]; then
+    has_system_prompt=1
+    next_is_system_prompt=0
+    continue
+  fi
+
+  case "$arg" in
+    --system-prompt)
+      next_is_system_prompt=1
+      ;;
+    --system-prompt=*)
+      has_system_prompt=1
+      ;;
+  esac
+done
+
+if [ "$has_system_prompt" -eq 0 ]; then
+  set -- --system-prompt "항상 한국어로만 응답한다" "$@"
+fi
+
+exec "$REAL_BIN" "$@"
