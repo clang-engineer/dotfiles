@@ -6,6 +6,7 @@
   "agent": {
     "build": {
       "description": "DeepSeek V4 Flash: 경량/빠른 작업",
+      "prompt": "항상 한국어로만 응답한다",
       "mode": "primary",
       "model": "openrouter/deepseek/deepseek-v4-flash",
       "variant": "max",

@@ -52,12 +52,27 @@ esac
 
 shift
 
+KOREAN_PROMPT='항상 한국어로만 응답한다'
+
+HAS_PROFILE_PROMPT=0
+for arg in "$@"; do
+  case "$arg" in
+    --prompt|--prompt=*)
+      HAS_PROFILE_PROMPT=1
+      ;;
+  esac
+done
+
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
 CONFIG="$CONFIG_DIR/opencode-$PROFILE.jsonc"
 
 if [ ! -f "$CONFIG" ]; then
   printf 'opencode-profile: profile file not found: %s\n' "$CONFIG" >&2
   exit 1
+fi
+
+if [ "$HAS_PROFILE_PROMPT" -eq 0 ]; then
+  set -- --prompt "$KOREAN_PROMPT" "$@"
 fi
 
 OPENCODE_CONFIG="$CONFIG" exec opencode "$@"
