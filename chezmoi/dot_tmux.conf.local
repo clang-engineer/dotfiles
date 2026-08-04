@@ -85,7 +85,7 @@ tmux_conf_24b_colour=auto
 #   - tmux_conf_theme_synchronized
 tmux_conf_theme=enabled
 
-# stock default theme (hex) — omt 순정 팔레트 사용 중
+# default theme
 tmux_conf_theme_colour_1="#080808"    # dark gray
 tmux_conf_theme_colour_2="#303030"    # gray
 tmux_conf_theme_colour_3="#8a8a8a"    # light gray
@@ -133,6 +133,7 @@ tmux_conf_theme_window_bg="default"
 tmux_conf_theme_highlight_focused_pane=false
 
 # focused pane colours:
+tmux_conf_theme_focused_pane_fg="default"
 tmux_conf_theme_focused_pane_bg="$tmux_conf_theme_colour_2"
 
 # pane border style, possible values are:
@@ -147,7 +148,7 @@ tmux_conf_theme_pane_active_border="$tmux_conf_theme_colour_4"
 tmux_conf_theme_pane_active_border="#{?pane_in_mode,$tmux_conf_theme_colour_9,#{?synchronize-panes,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_4}}"
 %endif
 
-# pane indicator colours (when you hit <prefix> + q)
+# pane indicator colours (when you hit <prefix> q)
 tmux_conf_theme_pane_indicator="$tmux_conf_theme_colour_4"
 tmux_conf_theme_pane_active_indicator="$tmux_conf_theme_colour_4"
 
@@ -179,6 +180,7 @@ tmux_conf_theme_status_attr="none"
 #     - #{hostname_ssh}
 #     - #{hostname_full}
 #     - #{hostname_full_ssh}
+#     - #{pretty_pane_current_path}
 #     - #{username}
 #     - #{username_ssh}
 tmux_conf_theme_terminal_title="#h ❐ #S ● #I #W"
@@ -191,6 +193,7 @@ tmux_conf_theme_terminal_title="#h ❐ #S ● #I #W"
 #     - #{hostname_ssh}
 #     - #{hostname_full}
 #     - #{hostname_full_ssh}
+#     - #{pretty_pane_current_path}
 #     - #{username}
 #     - #{username_ssh}
 tmux_conf_theme_window_status_fg="$tmux_conf_theme_colour_3"
@@ -208,6 +211,7 @@ tmux_conf_theme_window_status_format="#I #W#{?#{||:#{window_bell_flag},#{window_
 #     - #{hostname_ssh}
 #     - #{hostname_full}
 #     - #{hostname_full_ssh}
+#     - #{pretty_pane_current_path}
 #     - #{username}
 #     - #{username_ssh}
 tmux_conf_theme_window_status_current_fg="$tmux_conf_theme_colour_1"
@@ -260,6 +264,7 @@ tmux_conf_theme_right_separator_sub="|"
 #     - #{mouse}
 #     - #{pairing}
 #     - #{prefix}
+#     - #{pretty_pane_current_path}
 #     - #{root}
 #     - #{synchronized}
 #     - #{uptime_y}
@@ -271,7 +276,7 @@ tmux_conf_theme_right_separator_sub="|"
 #     - #{username_ssh}
 tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
 #tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} | #{pretty_pane_current_path} "
-tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
+tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status, #{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
 
 # status left style
 tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
@@ -342,6 +347,10 @@ tmux_conf_battery_hbar_palette="gradient"
 #tmux_conf_battery_hbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
 #tmux_conf_battery_hbar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
+# battery hbar symbols
+tmux_conf_battery_hbar_symbols="▏ ▎ ▍ ▌ ▋ ▊ ▉ █"
+#tmux_conf_battery_hbar_symbols="    "           # (from Nerd Fonts)
+
 # battery vbar palette, possible values are:
 #   - gradient (default)
 #   - heat
@@ -351,13 +360,20 @@ tmux_conf_battery_vbar_palette="gradient"
 #tmux_conf_battery_vbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
 #tmux_conf_battery_vbar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
+# battery vbar symbols
+tmux_conf_battery_vbar_symbols="▁ ▂ ▃ ▄ ▅ ▆ ▇ █"
+#tmux_conf_battery_vbar_symbols="󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹" # (from Nerd Fonts)
+
+# battery vbar symbols, when battery is charging (optional)
+#tmux_conf_battery_vbar_symbols_charging="󰢜 󰂆 󰂇 󰂈 󰢝 󰂉 󰢞 󰂊 󰂋 󰂅" # (from Nerd Fonts)
+
 # symbols used to indicate whether battery is charging or discharging
 tmux_conf_battery_status_charging="↑"       # U+2191
 tmux_conf_battery_status_discharging="↓"    # U+2193
 #tmux_conf_battery_status_charging="🔌"     # U+1F50C
 #tmux_conf_battery_status_discharging="🔋"  # U+1F50B
 
-# clock style (when you hit <prefix> + t)
+# clock style (when you hit <prefix> t)
 # you may want to use %I:%M %p in place of %R in tmux_conf_theme_status_right
 tmux_conf_theme_clock_colour="$tmux_conf_theme_colour_4"
 tmux_conf_theme_clock_style="24"
@@ -404,44 +420,6 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # if you don't want Oh my tmux! to alter a binding or a setting, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
-# (removed custom mouse toggle override; rely on upstream Oh My Tmux behavior)
-
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (keymaps) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-# disable OMT's prefix+e (edit .tmux.conf.local) — unused
-unbind e
-
-# avoid raw CSI-u sequences (e.g. '9;5u') leaking into zsh when pressing Ctrl keys
-set -s extended-keys off
-set -g xterm-keys on
-
-# force vi copy-mode. OMT ships the copy-mode-vi bindings (v/y) but leaves
-# mode-keys to tmux's auto-detect, which lands on emacs here: the server starts
-# at the top of .zshrc before `export EDITOR=nvim` runs, so detection sees no "vi".
-set -g mode-keys vi
-
-# (disabled) paste selection into the marked pane (agent); no focus/Enter.
-# to re-enable: mark the target pane (right-click > Mark; prefix+m is mouse toggle), then Y in copy-mode
-#bind -T copy-mode-vi Y send -X copy-pipe-and-cancel "tmux load-buffer -b agent -; if [ $(tmux display-message -p '#{pane_marked_set}') = 1 ]; then tmux paste-buffer -t '{marked}' -b agent -p -d; else tmux display-message 'no marked pane — right-click the agent pane > Mark'; fi"
-
-# sesh session picker (fzf+zoxide) — prefix+T; in picker: ^a all ^t tmux ^g configs ^x zoxide ^f dirs, ^d kill
-bind-key T run-shell "sesh connect \"$(
-  sesh list --icons | fzf-tmux -p 80%,70% \
-    --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
-    --header '  ^a all ^t tmux ^g configs ^x zoxide ^d kill ^f find' \
-    --bind 'tab:down,btab:up' \
-    --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
-    --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
-    --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
-    --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
-    --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
-    --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
-    --preview-window 'right:55%' \
-    --preview 'sesh preview {}'
-)\""
-
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end MY-OVERRIDE (keymaps) <<<<<<<<<<<<<<<<<<<<<<<<
-
 # move status line to top
 #set -g status-position top
 
@@ -467,14 +445,14 @@ tmux_conf_update_plugins_on_reload=true
 
 # by default, reloading the configuration will uninstall tpm and plugins when no
 # plugins are enabled
-#   - true (default)
-#   - false
-tmux_conf_uninstall_plugins_on_reload=true
+#   - true
+#   - false (default)
+tmux_conf_uninstall_plugins_on_reload=false
 
 # /!\ the tpm bindings differ slightly from upstream:
-#   - installing plugins: <prefix> + I
-#   - uninstalling plugins: <prefix> + Alt + u
-#   - updating plugins: <prefix> + u
+#   - installing plugins: <prefix> I
+#   - uninstalling plugins: <prefix> M-u
+#   - updating plugins: <prefix> u
 
 # /!\ do not add set -g @plugin 'tmux-plugins/tpm'
 # /!\ do not add run '~/.tmux/plugins/tpm/tpm'
@@ -482,35 +460,11 @@ tmux_conf_uninstall_plugins_on_reload=true
 # /!\ the 'set -g @tpm_plugins' syntax is not supported
 # to enable a plugin, use the 'set -g @plugin' syntax:
 # visit https://github.com/tmux-plugins for available plugins
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MY-OVERRIDE (plugins) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# don't re-add: tmux-sensible / tmux-themepack / tpm (OMT already covers these)
-set -g @plugin 'christoomey/vim-tmux-navigator'   # bare Ctrl-hjkl across tmux panes & nvim splits
-set -g @plugin 'tmux-plugins/tmux-resurrect'      # persist/restore sessions
-set -g @plugin 'tmux-plugins/tmux-continuum'      # auto-save (+ restore on start)
-set -g @plugin 'hiroppy/tmux-agent-sidebar'       # AI agent status sidebar
-set -g @plugin 'accessd/tmux-agent-indicator'     # agent state on pane border
-
-# vim-tmux-navigator rebinds prefix+C-l to "clear screen" (restoring what its
-# bare Ctrl-l nav steals). Empty it so OMT's prefix+C-l (next-window) survives;
-# bare Ctrl-hjkl pane nav is a separate mapping and stays intact.
-set -g @vim_navigator_prefix_mapping_clear_screen ''
-
-# OMT also binds bare C-l to clear-history. Keep navigator's right movement
-# authoritative after OMT and its asynchronous plugin loading finish.
-bind-key -n C-l if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" "send-keys 'C-l'" "select-pane -R" #!important
-
-set -g @resurrect-capture-pane-contents 'on'
-set -g @continuum-restore 'on'
-
-# sidebar toggle → a/A (OMT uses e for "edit config")
-set -g @sidebar_key 'a'
-set -g @sidebar_key_all 'A'
-set -g @sidebar_auto_create 'off'                 # manual open (prefix+a), not auto
-
-# indicator: border-only (no bg fill, no status icons)
-set -g @agent-indicator-background-enabled 'off'
-set -g @agent-indicator-indicator-enabled 'off'
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end MY-OVERRIDE (plugins) <<<<<<<<<<<<<<<<<<<<<<<<
+#set -g @plugin 'tmux-plugins/tmux-copycat'
+#set -g @plugin 'tmux-plugins/tmux-cpu'
+#set -g @plugin 'tmux-plugins/tmux-resurrect'
+#set -g @plugin 'tmux-plugins/tmux-continuum'
+#set -g @continuum-restore 'on'
 
 
 # -- custom variables ----------------------------------------------------------
