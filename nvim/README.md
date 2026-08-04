@@ -2,7 +2,7 @@
 
 A single LazyVim-based configuration. Plugins and settings are modularized under `nvim/lazy/lua/`.
 
-> The old Vimscript-based configuration has been split out into the top-level [`vim/`](../vim/README.md) (legacy, manually linked).
+> Legacy Vim configurations are kept under `vim/` for reference only.
 
 ## Installation
 
@@ -38,6 +38,34 @@ A single LazyVim-based configuration. Plugins and settings are modularized under
 
 - If `:checkhealth` output shows missing dependencies such as LuaRocks, node, or python3, install them via Brew/Scoop and run it again.
 - If an error occurs during plugin installation, remove only the plugin directory (`rm -rf ~/.local/share/nvim/lazy` or Windows `%LOCALAPPDATA%\nvim-data\lazy`) and re-run `nvim --headless "+Lazy sync" +qa`. The parent data directory also contains undo history, swap recovery files, and local state.
+
+## Database UI (vim-dadbod)
+
+`lang.sql` installs `vim-dadbod`, `vim-dadbod-ui`, and completion helpers automatically.
+
+1. Edit `vim.g.dbs` in `nvim/lazy/lua/config/options/dbui.lua`.
+2. Open the UI with `:DBUIToggle`.
+3. Use `<CR>` to expand schema/table entries; `:DBUIFindBuffer` opens SQL buffers by connection.
+
+Common setup patterns:
+
+- Use `postgres://` or `postgresql://` URLs (drop `jdbc:`).
+- Keep credentials in `~/.pgpass` (never hardcode in URLs).
+- Add `?connect_timeout=5` for unstable VPN/network links.
+
+Useful commands: `:DBUI`, `:DBUIAddConnection`, `:DBUIToggle`.
+
+## Debugging (DAP)
+
+`lang.java` and `lang.kotlin` expose debug support. `:Dap*` commands activate once a Java/Kotlin buffer is open.
+
+- Java/Kotlin launch debug flow: set a breakpoint (`<leader>db`), then `:lua require("dap").continue()` or `<leader>dc`.
+- For attach workflows: run JVM with `--debug-jvm` (for example `./gradlew test --debug-jvm`), then attach from nvim.
+- Java DAP output uses `integratedTerminal`, so results remain in nvim after the debug session ends.
+
+## Neovim 0.11 compatibility
+
+`nvim-treesitter` tracks `main`, which requires newer Neovim APIs. On older 0.11.x setups, a newer lockfile commit can cause query errors; verify the pinned commit in `lazy-lock.json` before forcing updates.
 
 ---
 
@@ -191,4 +219,4 @@ sourceSets {
 - [`clang-engineer/jvm-env.nvim`](https://github.com/clang-engineer/jvm-env.nvim) — external plugin for JDK detection/environment variable injection (source · README · vimdoc)
 - `nvim/lazy/lua/plugins/jvm-env.lua` — lazy spec for the external plugin
 - `nvim/lazy/lua/plugins/java.lua` — connects nvim-jdtls with jvm-env environment variables
-- `:JvmEnvInit [jdtls] [gradle]` — command to generate `.nvim.lua` in the project root (provided by jvm-env.nvim). Details: `nvim/docs/java-lsp.md`
+- `:JvmEnvInit [jdtls] [gradle]` — command to generate `.nvim.lua` in the project root (provided by jvm-env.nvim)

@@ -67,10 +67,9 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `chezmoi/` | chezmoi source — managed dotfiles, OS-branched via `.chezmoiignore.tmpl` |
 | `nvim/` | Neovim (LazyVim) — symlinked to `~/.config/nvim` |
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
-| `docs/` | tool-specific reference guides |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
-| `vim/` | legacy Vim (not linked; kept for reference) |
+| `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
 ## Cross-platform
 
