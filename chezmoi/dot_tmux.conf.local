@@ -420,9 +420,8 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # if you don't want Oh my tmux! to alter a binding or a setting, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
-# keep vim-tmux-navigator-like bare Ctrl+L pane movement (right)
-# for shells, let C-l stay as clear-screen.
-bind-key -n C-l if-shell "[ '#{pane_current_command}' = 'nvim' ] || [ '#{pane_current_command}' = 'vim' ] || [ '#{pane_current_command}' = 'view' ] || [ '#{pane_current_command}' = 'bash' ] || [ '#{pane_current_command}' = 'zsh' ] || [ '#{pane_current_command}' = 'fish' ] || [ '#{pane_current_command}' = 'sh' ] || [ '#{pane_current_command}' = 'ksh' ] || [ '#{pane_current_command}' = 'dash' ] || [ '#{pane_current_command}' = 'csh' ] || [ '#{pane_current_command}' = 'tcsh' ] || [ '#{pane_current_command}' = 'pwsh' ] || [ '#{pane_current_command}' = 'nu' ] || [ '#{pane_current_command}' = 'elvish' ]" "send-keys C-l" "select-pane -R" #!important
+# always use Ctrl+l for pane navigation to the right, regardless of pane content.
+bind-key -n C-l select-pane -R #!important
 
 # move status line to top
 #set -g status-position top

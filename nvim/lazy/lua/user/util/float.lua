@@ -1,8 +1,15 @@
 -- floating window viewer + tmux refocus (used by user.docs)
 local M = {}
 
+local function in_tmux()
+  return vim.env.TMUX ~= nil and vim.env.TMUX ~= ""
+end
+
 local function tmux_move(direction)
   return function()
+    if not in_tmux() then
+      return
+    end
     vim.fn.system("tmux select-pane -" .. direction)
   end
 end
