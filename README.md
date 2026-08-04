@@ -89,3 +89,46 @@ command. Public clones simply skip it. See [SETUP.md](SETUP.md#8-security).
 
 > Comments inside the config files are in Korean, but the configs themselves are
 > language-agnostic — the setup works the same regardless.
+
+## Verify tmux local changes against upstream
+
+- Use this when you want to check whether `dot_tmux.conf.local` has drifted from
+  upstream OMT defaults.
+
+```sh
+cd "$(git rev-parse --show-toplevel)"
+
+upstream_url='https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local'
+tmp_upstream="$(mktemp)"
+
+curl -fsSL "$upstream_url" > "$tmp_upstream"
+diff -u "$tmp_upstream" "chezmoi/dot_tmux.conf.local"
+rm -f "$tmp_upstream"
+```
+
+- If you only want to compare the currently applied file with upstream:
+
+```sh
+cd "$(git rev-parse --show-toplevel)"
+
+tmp_upstream="$(mktemp)"
+curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local' > "$tmp_upstream"
+diff -u "$tmp_upstream" "$HOME/.tmux.conf.local"
+rm -f "$tmp_upstream"
+```
+
+- If you want a plain change summary only:
+
+```python
+import urllib.request
+import difflib
+
+upstream_url = 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local'
+up = urllib.request.urlopen(upstream_url).read().decode().splitlines()
+with open('chezmoi/dot_tmux.conf.local', 'r', encoding='utf-8') as f:
+    local = f.read().splitlines()
+
+diff_lines = list(difflib.unified_diff(up, local, lineterm=''))
+print('added', sum(1 for l in diff_lines if l.startswith('+') and not l.startswith('+++')))
+print('removed', sum(1 for l in diff_lines if l.startswith('-') and not l.startswith('---')))
+```
