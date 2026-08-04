@@ -421,7 +421,7 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # bind c new-window -c '#{pane_current_path}' #!important
 
 # keep vim-tmux-navigator-like bare Ctrl+L pane movement (right)
-bind-key -n C-l if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" "send-keys 'C-l'" "select-pane -R" #!important
+bind-key -n C-l if-shell "[ '#{pane_current_command}' = 'nvim' ] || [ '#{pane_current_command}' = 'vim' ] || [ '#{pane_current_command}' = 'view' ]" "send-keys C-l" "select-pane -R" #!important
 
 # move status line to top
 #set -g status-position top
