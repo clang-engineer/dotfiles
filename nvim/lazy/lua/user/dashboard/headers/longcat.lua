@@ -40,17 +40,21 @@ _
 
 local common = require("user.dashboard.renderers.common")
 local hl = common.hl
-local face_details = { ["4"] = true, ["5"] = true, C = true, O = true, y = true }
+local face_details = { O = true, y = true }
+local spots = { ["4"] = true, ["5"] = true, C = true, ["`"] = true }
+local shadows = { ['"'] = true, ["'"] = true, ["."] = true, [","] = true }
 
 local function render(lines)
   return common.render(lines, function(line_number, col, char, line)
-    local signature_col = line_number == 37 and line:find("mozz", 1, true)
+    local signature_col = line_number == 37 and line:find("clang.engineer", 1, true)
     if signature_col and col >= signature_col then
       return hl.signature
-    elseif char == "`" then
-      return hl.purple
     elseif face_details[char] then
       return hl.yellow
+    elseif spots[char] then
+      return hl.purple
+    elseif shadows[char] then
+      return hl.grey
     end
     return hl.cyan
   end)
