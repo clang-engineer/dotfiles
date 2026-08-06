@@ -420,6 +420,9 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # if you don't want Oh my tmux! to alter a binding or a setting, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
+# Work around snacks.nvim#2790 while preserving application-requested extended keys.
+set -g extended-keys on
+
 # always use Ctrl+l for pane navigation to the right, regardless of pane content.
 bind-key -n C-l select-pane -R #!important
 
