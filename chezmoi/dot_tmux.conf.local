@@ -423,8 +423,8 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # Work around snacks.nvim#2790 while preserving application-requested extended keys.
 set -g extended-keys on
 
-# always use Ctrl+l for pane navigation to the right, regardless of pane content.
-bind-key -n C-l select-pane -R #!important
+# Let Neovim handle internal windows first; otherwise move to the tmux pane.
+bind-key -n C-l if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" "send-keys 'C-l'" "select-pane -R" #!important
 
 # move status line to top
 #set -g status-position top
