@@ -94,27 +94,22 @@ command. Public clones simply skip it. See [SETUP.md](SETUP.md#8-security).
 - Use this when you want to check whether `dot_tmux.conf.local` has drifted from
   upstream OMT defaults.
 
-```sh
-cd "$(git rev-parse --show-toplevel)"
-
-upstream_url='https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local'
-tmp_upstream="$(mktemp)"
-
-curl -fsSL "$upstream_url" > "$tmp_upstream"
-diff -u "$tmp_upstream" "chezmoi/dot_tmux.conf.local"
-rm -f "$tmp_upstream"
+```zsh
+diff -u \
+  <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
+  chezmoi/dot_tmux.conf.local
 ```
 
 - If you only want to compare the currently applied file with upstream:
 
-```sh
-cd "$(git rev-parse --show-toplevel)"
-
-tmp_upstream="$(mktemp)"
-curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local' > "$tmp_upstream"
-diff -u "$tmp_upstream" "$HOME/.tmux.conf.local"
-rm -f "$tmp_upstream"
+```zsh
+diff -u \
+  <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
+  ~/.tmux.conf.local
 ```
+
+- No output means the files match. `diff` exits with status 1 when differences
+  are found; this is expected and does not indicate a command failure.
 
 - If you want a plain change summary only:
 
