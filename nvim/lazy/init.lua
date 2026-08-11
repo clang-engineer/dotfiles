@@ -12,3 +12,5 @@ require("user.docs").setup({
     -- { name = "wiki", dir = "~/personal-wiki" },
   },
 })
+
+require("user.refactor_candidates").setup()
