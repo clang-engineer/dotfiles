@@ -10,6 +10,7 @@
     "max_lines": 140,
     "max_bytes": 4000
   },
+  "lsp": true,
   "mcp": {
     "serena": {
       "type": "local",
@@ -20,13 +21,13 @@
         "--project-from-cwd",
         "--mode=no-memories"
       ],
-      "enabled": false,
+      "enabled": true,
       "timeout": 30000
     },
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
-      "enabled": false
+      "enabled": true
     }
   }
 }
