@@ -1,5 +1,6 @@
 {{ if eq .chezmoi.os "windows" }}
 # Unix-only — ignored on Windows
+Library
 .secrets
 .zshrc
 .tmux.conf
@@ -17,6 +18,7 @@ Documents
 15-windows-install.ps1
 {{ if eq .chezmoi.os "linux" }}
 # macOS-only — ignored on Linux
+Library
 .aerospace.toml
 .hammerspoon
 {{ end }}
