@@ -1,4 +1,10 @@
 git:
   diffRenderers:
-    - command: delta --dark --paging=never
+    - name: delta
+      command: delta --dark --paging=never
       colorArg: always
+    - name: side-by-side
+      command: delta --dark --paging=never --side-by-side
+      colorArg: always
+    - name: default
+      type: rawGit
