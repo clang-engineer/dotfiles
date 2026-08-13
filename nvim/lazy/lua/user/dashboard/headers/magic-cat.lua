@@ -55,4 +55,4 @@ local function render(lines)
   end)
 end
 
-return { text = text, render = render }
+return { text = text, render = render, layout = "landscape" }
