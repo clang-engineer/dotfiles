@@ -1,6 +1,6 @@
 -- Michael Lazar (mozz), asciiart.website/art/6419
 local text = [[
-_
+                      _
             __       / |
             \ "-..--'_4|_
  _._____     \ _  _(C "._'._
