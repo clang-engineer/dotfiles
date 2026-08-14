@@ -7,6 +7,16 @@
 -- → 아래에서 모든 줄을 최대 폭으로 오른쪽 패딩해 폭을 통일 = 오프셋 동일 = 정렬 유지.
 local headers = require("user.dashboard.headers")
 local selected_header
+local selected_index
+
+local function find_header_index(headers_list, header)
+  for index, candidate in ipairs(headers_list) do
+    if candidate == header then
+      return index
+    end
+  end
+  return nil
+end
 
 local function available_headers(dashboard)
   local size = dashboard:size()
@@ -20,9 +30,28 @@ end
 
 local function cycle_header(dashboard, offset)
   local available = available_headers(dashboard)
-  local selected_index = vim.list_contains(available, selected_header) and vim.fn.index(available, selected_header) + 1
-    or 1
-  selected_header = available[(selected_index + offset - 1) % #available + 1]
+  if #available == 0 then
+    return
+  end
+
+  if not selected_header then
+    selected_index = nil
+  else
+    local current_index = find_header_index(available, selected_header)
+    if current_index then
+      selected_index = current_index
+    else
+      selected_index = nil
+    end
+  end
+
+  if not selected_index then
+    selected_index = vim.fn.rand() % #available + 1
+  else
+    selected_index = (selected_index + offset - 1) % #available + 1
+  end
+
+  selected_header = available[selected_index]
   dashboard:update()
 end
 
@@ -35,9 +64,18 @@ local function header_section(dashboard)
   end, { buffer = dashboard.buf, silent = true, desc = "Next dashboard header" })
 
   local available = available_headers(dashboard)
-  if not vim.list_contains(available, selected_header) then
-    selected_header = available[(vim.fn.rand() % #available) + 1]
+  if #available == 0 then
+    return { text = {}, align = "center", padding = 1 }
   end
+
+  local current_index = selected_header and find_header_index(available, selected_header)
+  if not current_index then
+    selected_index = (vim.fn.rand() % #available) + 1
+    selected_header = available[selected_index]
+  else
+    selected_index = current_index
+  end
+
   local lines = vim.split(selected_header.text, "\n", { plain = true })
   local width = 0
   for _, line in ipairs(lines) do
