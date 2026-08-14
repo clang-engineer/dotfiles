@@ -36,13 +36,49 @@ snd|  ,     |  /\ \ \__    |       \_
 local common = require("user.dashboard.renderers.common")
 local hl = common.hl
 
-local face = { ["("] = true, [")"] = true, ["O"] = true, ["o"] = true, ["@"] = true }
+local face = {
+  ["O"] = true,
+  ["o"] = true,
+  ["@"] = true,
+}
+
+local shadows = {
+  ["'"] = true,
+  ["`"] = true,
+  ["("] = true,
+  [")"] = true,
+  ["/"] = true,
+  ["\\"] = true,
+  ["_"] = true,
+  ["-"] = true,
+  ["|"] = true,
+  [">"] = true,
+}
+
+local accents = {
+  ["M"] = true,
+  ["V"] = true,
+}
 
 local function render(lines)
-  return common.render(lines, function(_, _, char)
+  return common.render(lines, function(_, col, char, line)
+    local signature_col = line:find("oh bugger!", 1, true)
+    if signature_col and col >= signature_col and col < signature_col + #"oh bugger!" then
+      return hl.signature
+    end
+
     if face[char] then
       return hl.yellow
     end
+
+    if accents[char] then
+      return hl.purple
+    end
+
+    if shadows[char] then
+      return hl.grey
+    end
+
     return hl.cyan
   end)
 end
