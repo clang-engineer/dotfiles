@@ -420,7 +420,7 @@ set -g mode-keys vi
 # if you don't want Oh my tmux! to alter a binding or a setting, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
-# Work around snacks.nvim#2790 while preserving application-requested extended keys.
+# Keep modifier-aware key parsing for option-modified arrows.
 set -g extended-keys on
 
 # move status line to top

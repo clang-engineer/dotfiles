@@ -95,7 +95,7 @@ command. Public clones simply skip it. See [SETUP.md](SETUP.md#8-security).
   upstream OMT defaults.
 
 ```zsh
-diff -u \
+git diff --no-index --color=always \
   <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
   chezmoi/dot_tmux.conf.local
 ```
@@ -103,13 +103,24 @@ diff -u \
 - If you only want to compare the currently applied file with upstream:
 
 ```zsh
-diff -u \
+git diff --no-index --color=always \
   <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
   ~/.tmux.conf.local
 ```
 
-- No output means the files match. `diff` exits with status 1 when differences
-  are found; this is expected and does not indicate a command failure.
+- No output means the files match.
+- `git diff --no-index` exits with status `1` when differences are found, which is
+  expected and does not indicate command failure.
+
+- If you want to force `delta` even when your shell decides to suppress pager
+  output (eg. inside pipes), use:
+
+```zsh
+git diff --no-index --color=always \
+  <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
+  chezmoi/dot_tmux.conf.local \
+  | delta
+```
 
 - If you want a plain change summary only:
 
