@@ -11,7 +11,6 @@ scripts/
 ├── generate-key.sh / .ps1                    # SSH key generation + ssh-agent registration
 ├── add-workspace-user.sh / .ps1              # per-workspace git identity (includeIf)
 ├── check-agent-env.sh                         # shared agent-command environment check
-├── link-claude-commands.sh                    # shared commands → project .claude/commands
 ├── lib/                                      # shared functions (common.sh)
 └── windows/
     ├── install-windows.ps1                   # Windows install orchestrator
@@ -27,7 +26,6 @@ scripts/
 | SSH key generation | `./scripts/generate-key.sh <label> <email>` | `.\scripts\generate-key.ps1` |
 | Per-workspace git identity | `./scripts/add-workspace-user.sh` | `.\scripts\add-workspace-user.ps1` |
 | Agent command environment | `./scripts/check-agent-env.sh` | — |
-| Project Claude commands | `./scripts/link-claude-commands.sh <project>` | — |
 
 > The private overlay (ssh hosts, nvim DB connections, `~/.pgpass`) lives in the
 > `secrets` repo and is applied by that repo's own `./setup.sh` — not by any script here.

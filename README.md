@@ -53,7 +53,6 @@ turns it into your home directory:
 | `dot_config/symlink_astronvim.tmpl` | `~/.config/astronvim` → `nvim/astro` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
 | `dot_claude/` | selected files in `~/.claude/` | managed files |
-| agent command templates | Claude, Codex, and OpenCode command dirs | managed files |
 | `run_once_*` / `run_onchange_*` | packages, TPM plugins, and mise runtimes | scripts |
 
 **Managed vs symlink:** big, live-edited config directories (`nvim/`,

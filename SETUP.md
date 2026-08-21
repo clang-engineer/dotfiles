@@ -63,7 +63,7 @@ of truth. This section lists only the scripts that run:
 
 > Edit managed configs with `chezmoi edit --apply <target>` (edit source + apply
 > immediately). Only nvim and hammerspoon are whole-directory symlinks; Claude's
-> `keybindings.json`, `statusline.sh`, and public commands are managed files.
+> `keybindings.json` and `statusline.sh` are managed files.
 
 ## 3. Packages and runtimes
 
@@ -94,7 +94,7 @@ in the public scaffold — they live in the private `secrets` repo. If you have 
 clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
 sources its `env`, overlays real SSH hosts, nvim DB connections, and `~/.pgpass`, and
 generates `~/.claude/settings.json` (its own claude overlay owns the settings template
-and private agent rules/commands). That repo's README documents the exact clone command.
+and private agent rules/skills). That repo's README documents the exact clone command.
 
 ## 5. Git identity
 
