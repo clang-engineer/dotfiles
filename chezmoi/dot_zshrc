@@ -7,6 +7,10 @@ fi
 # Load secrets before tmux so the server and directly launched commands inherit project paths.
 [ -f ~/.secrets ] && source ~/.secrets
 
+# Enable oh-my-opencode-slim background agents and web search.
+export OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS=true
+export OPENCODE_ENABLE_EXA=1
+
 # Auto-start tmux (only when not already inside tmux, excluding IDE built-in terminals)
 if command -v tmux &>/dev/null && [[ -z "$TMUX" ]] && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
   tmux attach || tmux new -s default
@@ -33,22 +37,6 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive match
 zstyle ':completion:*' menu select                      # arrow-key menu selection
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
-_opencode_profile() {
-  local context state line
-  local -a profiles=(
-    'spark:OpenAI GPT-5.3 Codex Spark'
-    'sol:OpenAI GPT-5.6 Sol'
-    'deepseek:DeepSeek V4 Flash through OpenRouter'
-    'openrouter:Free coding models through OpenRouter'
-  )
-
-  _arguments '1:profile:->profile' '*::OpenCode argument:_default'
-  if [[ $state == profile ]]; then
-    _describe 'profile' profiles
-  fi
-}
-compdef _opencode_profile opencode-profile opc
-
 # Command typo correction: 'gti status' → "correct 'gti' to 'git' [nyae]?" prompt
 setopt CORRECT
 
@@ -64,7 +52,6 @@ fi
 # Modern CLI aliases
 if command -v bat &>/dev/null; then alias cat="bat"; fi
 if command -v eza &>/dev/null; then alias ls="eza"; fi
-alias opc="opencode-profile"
 
 # c++ alias
 alias g++="g++ -std=c++17"
