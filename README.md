@@ -39,6 +39,7 @@ chezmoi apply
 ```
 
 - Setup walkthrough — including secret handling (SSH keys, `~/.secrets`, identity): [SETUP.md](SETUP.md)
+- Tool and plugin review: [RECOMMENDATIONS.md](RECOMMENDATIONS.md)
 
 ## How it works
 
