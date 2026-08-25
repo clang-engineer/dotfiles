@@ -22,6 +22,47 @@ The best additions are therefore tools that fill a missing layer. More pickers,
 shell frameworks, editor explorers, Git UIs, or AI frontends would mostly create
 overlap.
 
+## Terminal navigation and fuzzy selection
+
+The terminal workflow is easier to reason about when each tool has a distinct
+role instead of treating fzf as a general-purpose file finder.
+
+- **fzf** is the low-level fuzzy picker. Its shell integration currently provides
+  `Ctrl-R` for history, `Ctrl-T` for inserting a selected path into the command
+  line, and `Alt-C` for choosing a directory and changing into it. Custom helpers
+  such as `gco` also use fzf as a generic selector.
+- **zoxide** is the preferred fast directory jumper for known or frequently used
+  locations. This overlaps with fzf's `Alt-C`, so `Alt-C` is mainly useful when a
+  directory must be discovered from a list rather than recalled by name.
+- **Neovim/LazyVim pickers** are best when the search is part of an editing task.
+  In particular, grep/search actions such as `<leader>sg` find text inside the
+  project and lead directly into editing. Opening Neovim only to discover a file
+  or path is unnecessary when no editing context is needed.
+- **Atuin**, if adopted, should own `Ctrl-R` and structured shell-history search.
+  fzf remains installed as a generic selection primitive rather than being
+  removed.
+- **Yazi**, if adopted, should cover visual filesystem exploration, preview,
+  file operations, and shell-directory handoff. It complements rather than
+  replaces fzf: Yazi is a file manager, while fzf selects an item from a list.
+
+A likely end state is therefore:
+
+| Need | Preferred tool |
+|---|---|
+| Shell history | Atuin (`Ctrl-R`) |
+| Jump to a familiar directory | zoxide (`z`, `zi`) |
+| Browse/manage the filesystem | Yazi |
+| Search while editing | LazyVim/Snacks pickers |
+| Select from arbitrary CLI output | fzf |
+| Select a Git branch with `gco` | fzf |
+
+`Ctrl-T` and `Alt-C` can remain available even if they are rarely used. They are
+cheap fallback bindings, and keeping them does not require fzf to be a primary
+user-facing workflow. The more important distinction is that fzf remains
+infrastructure: commands such as `fd | fzf`, `rg ... | fzf`, `git branch | fzf`,
+or `ps ... | fzf` can reuse the same picker whenever an ad-hoc selection is
+useful.
+
 ## Recommended first
 
 ### 1. ShellCheck, shfmt, and PSScriptAnalyzer
