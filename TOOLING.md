@@ -75,77 +75,63 @@ y
 
 `yazi` 명령 자체는 그대로 남아 있어 cwd handoff 없이 실행할 수도 있다.
 
-## ShellCheck + shfmt + typos + prek
+## Global Git quality hook + prek
 
 ### 설치
 
-`packages/Brewfile`:
+`packages/Brewfile`에서 공통 검사 도구를 설치한다.
 
 ```ruby
 brew "shellcheck"
 brew "shfmt"
 brew "typos-cli"
+brew "stylua"
 brew "prek"
 ```
 
-### hook 설정
+### 전역 hook
 
-저장소 루트의 `.pre-commit-config.yaml`에서 system-installed binary를 사용하는
-local hooks로 구성한다.
+`chezmoi/dot_gitconfig`에서 Git의 전역 hook 경로를 지정한다.
 
-```text
-ShellCheck -> shell static analysis
-shfmt      -> shell formatting check (`-d`, 수정하지 않고 diff/실패)
-typos      -> text file typo check
+```ini
+[core]
+    hooksPath = ~/.config/git/hooks
 ```
 
-`shfmt`는 commit 시 파일을 자동 수정하지 않는다. 포맷이 맞지 않으면 diff를
-보여주고 commit을 막아 명시적으로 수정하게 한다.
+chezmoi가 `~/.config/git/hooks/pre-commit`을 관리하므로 **이 머신의 모든 Git
+repository**에서 commit 전에 같은 가벼운 검사가 실행된다.
 
-수동으로 전체 hook을 실행하려면:
+```text
+staged shell files -> ShellCheck + shfmt --diff
+staged Lua files   -> Stylua --check
+staged text files  -> typos
+```
+
+검사 도구가 설치되지 않은 머신에서는 해당 검사만 건너뛴다. 전역 hook은 staged
+파일만 대상으로 하므로 unrelated 파일 때문에 commit이 막히는 범위를 줄인다.
+
+### repository별 확장
+
+전역 hook은 공통 최소 검사만 담당한다. repository 루트에
+`.pre-commit-config.yaml`이 있으면 같은 전역 hook이 추가로:
 
 ```bash
-prek run --all-files
+prek run
 ```
 
-### Git hook 설치 자동화
-
-prek binary와 config만 있어서는 commit 때 자동 실행되지 않는다. Git hook shim을
-설치해야 한다.
-
-`chezmoi/run_onchange_after_15-prek-install.sh.tmpl`이
-`.pre-commit-config.yaml`의 hash를 포함하고 있어 config가 바뀌면 `chezmoi apply`
-시 다시 실행된다.
+을 실행한다. 따라서 Java/Node/Python 등 프로젝트별 lint/test는 각 repository의
+prek config에 두고, 별도로 `prek install`을 실행할 필요는 없다.
 
 ```text
-chezmoi apply
--> Brewfile 변경 시 brew bundle --no-upgrade
--> prek 설치 확인
--> prek install
--> .git/hooks/pre-commit shim 설치
+git commit
+  -> ~/.config/git/hooks/pre-commit
+       -> 공통 staged-file 검사
+       -> .pre-commit-config.yaml 있음?
+            -> prek run
 ```
 
-즉 새 머신에서도 별도로 `prek install`을 기억할 필요가 없도록 dotfiles 적용
-과정에 포함했다.
-
-## LazyVim chezmoi extra
-
-### 활성화
-
-`nvim/lazy/lazyvim.json`에 다음 extra를 활성화한다.
-
-```text
-lazyvim.plugins.extras.util.chezmoi
-```
-
-### 추가 셋업
-
-이 저장소는 chezmoi source가 기본 `~/.local/share/chezmoi`가 아니라
-`~/dotfiles/chezmoi`에 있으므로 `nvim/lazy/lua/plugins/chezmoi.lua`에서 source
-path를 override한다.
-
-주 사용 목적은 chezmoi source/template 파일을 Neovim에서 더 자연스럽게 다루는
-것이다.
+기존 `chezmoi/run_onchange_after_15-prek-install.sh.tmpl` 방식은 dotfiles repository
+하나에만 `.git/hooks/pre-commit`을 설치했으므로 제거했다.
 
 ## chezmoi apply와 Homebrew
 
