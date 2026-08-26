@@ -4,6 +4,8 @@ cask "claude"
 cask "claude-code"
 cask "orbstack"        # Docker Desktop 대체 — Mac에서 훨씬 빠른 FS·가벼운 RAM. 개인/소규모 무료(상업용은 유료)
 cask "font-hack-nerd-font"
+cask "font-jetbrains-mono"
+cask "font-juliamono"
 cask "font-symbols-only-nerd-font"
 cask "ghostty"
 cask "google-chrome"
