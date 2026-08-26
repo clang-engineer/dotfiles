@@ -5,6 +5,20 @@ machine `chezmoi apply` links every config, runs the one-time installs, generate
 machine-local bits, and installs public packages in one command on macOS, Linux,
 and Windows. The private `secrets` companion has a separate bootstrap.
 
+## Design principle
+
+**Do not add personal customization when a default or widely adopted standard
+already solves the problem.** Prefer, in order:
+
+1. built-in/default behavior
+2. official or widely adopted integration/plugin
+3. minimal configuration
+4. custom scripts/keymaps only when the above are insufficient
+
+Custom configuration should have a concrete reason to exist. Avoid duplicating a
+tool's defaults, introducing new keybindings without a clear benefit, or keeping
+integration layers that are no longer used.
+
 > The previous shell / `bootstrap.sh` version (symlink-based) is preserved at the
 > **`pre-chezmoi`** git tag — restore with `git checkout pre-chezmoi`.
 
