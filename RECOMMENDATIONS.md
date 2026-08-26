@@ -165,8 +165,6 @@ terminal UI similar to lazygit.
 
 ## Existing gaps to fix before adding plugins
 
-- AstroNvim remains tracked but is close to a stock starter, while LazyVim is the
-  actively customized editor. Decide whether AstroNvim is still a useful fallback.
 - `kotlin-debug-adapter` and `~/bin/vsql` are referenced by LazyVim but are not
   provisioned by the public package manifests.
 - OpenCode and Codex have managed configuration or wrappers but are not declared
