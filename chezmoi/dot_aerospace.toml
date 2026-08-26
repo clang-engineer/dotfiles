@@ -3,8 +3,9 @@
 start-at-login = true
 
 # Start focused-window border indicator with AeroSpace.
+# Use the Homebrew absolute path because GUI apps may not inherit the shell PATH.
 after-startup-command = [
-  'exec-and-forget borders'
+  'exec-and-forget /opt/homebrew/bin/borders'
 ]
 
 # Notify Hammerspoon on workspace change
