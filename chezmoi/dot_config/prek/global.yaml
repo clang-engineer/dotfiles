@@ -1,0 +1,26 @@
+repos:
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: ShellCheck
+        language: system
+        entry: shellcheck -x
+        types: [shell]
+
+      - id: shfmt
+        name: shfmt
+        language: system
+        entry: shfmt -d -i 2 -ci
+        types: [shell]
+
+      - id: stylua
+        name: Stylua
+        language: system
+        entry: stylua --check
+        types: [lua]
+
+      - id: typos
+        name: typos
+        language: system
+        entry: typos
+        types: [text]
