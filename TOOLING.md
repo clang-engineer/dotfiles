@@ -75,6 +75,50 @@ y
 
 `yazi` 명령 자체는 그대로 남아 있어 cwd handoff 없이 실행할 수도 있다.
 
+## AeroSpace + JankyBorders
+
+### 운영 원칙
+
+AeroSpace는 주력 앱만 workspace에 자동 배치하고, 이 앱들은 AeroSpace 기본 tiling
+동작을 그대로 사용한다. 그 외 미지정 앱은 catch-all 규칙으로 floating 처리한다.
+
+```text
+1: Browser   -> Chrome / Safari / Claude / ChatGPT : tiling
+2: Terminal  -> Ghostty                            : tiling
+3: Company   -> Teams / Outlook                    : tiling
+4: JetBrains -> IntelliJ / DataGrip                : tiling
+그 외 앱                                              : floating
+```
+
+`Alt-H/J/K/L`의 `focus`는 tiled 창 안에서만 이동하는 키가 아니라 현재 workspace의
+창 포커스를 방향 기준으로 이동하며, tiled와 floating 창 사이도 이동할 수 있다.
+
+Chrome DevTools를 별도 창으로 분리한 경우에는 일반 Chrome과 같은 app-id를 사용하므로
+window title에 `DevTools`가 포함된 창만 floating 예외로 둔다. 일반 Chrome 창은 계속
+tiling을 유지한다.
+
+### JankyBorders
+
+AeroSpace tiling에서 현재 focus 창을 더 쉽게 식별하기 위해 JankyBorders를 사용한다.
+`packages/Brewfile`에서 `FelixKratz/formulae`의 `borders` formula를 설치하고,
+Homebrew의 third-party tap trust 정책 때문에 해당 formula만 명시적으로 trust한다.
+
+AeroSpace의 `after-startup-command`에서 GUI PATH 문제를 피하기 위해 Homebrew 절대
+경로로 실행한다. 현재 스타일은 JankyBorders 공식 README 예시값을 그대로 사용한다.
+
+```text
+active_color   = 0xffe1e3e4
+inactive_color = 0xff494d64
+width          = 5.0
+```
+
+`after-startup-command`는 `aerospace reload-config` 시 다시 실행되지 않고 AeroSpace
+프로세스가 실제로 시작될 때만 실행된다. 실행 여부는 다음처럼 확인할 수 있다.
+
+```bash
+ps aux | grep -i '[b]orders'
+```
+
 ## Global Git quality hook + prek
 
 ### 설치
