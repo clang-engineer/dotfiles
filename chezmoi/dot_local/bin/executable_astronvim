@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Launch Neovim with the AstroNvim config, isolated from LazyVim via NVIM_APPNAME.
-# Config: ~/.config/astronvim -> nvim/astro (chezmoi symlink)
-# Plugins/state: ~/.local/share/astronvim, ~/.local/state/astronvim
-
-exec env NVIM_APPNAME=astronvim nvim "$@"
