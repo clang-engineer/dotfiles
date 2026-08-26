@@ -12,7 +12,7 @@ repos:
       - id: check-yaml
         name: Check YAML syntax
         language: system
-        entry: ruby -ryaml -e 'ARGV.each { |f| YAML.safe_load_file(f, aliases: true) }' --
+        entry: "ruby -ryaml -e 'ARGV.each { |f| YAML.safe_load_file(f, aliases: true) }' --"
         types: [yaml]
 
       - id: trailing-whitespace
