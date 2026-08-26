@@ -5,7 +5,7 @@ start-at-login = true
 # Start focused-window border indicator with AeroSpace.
 # Use the Homebrew absolute path because GUI apps may not inherit the shell PATH.
 after-startup-command = [
-  'exec-and-forget /opt/homebrew/bin/borders'
+  'exec-and-forget /opt/homebrew/bin/borders active_color=0xffe1e3e4 inactive_color=0x00000000 width=5.0'
 ]
 
 # Notify Hammerspoon on workspace change
@@ -61,6 +61,12 @@ alt-shift-l = ['join-with right', 'mode main']
 # ╔══════════════════════════════════════════╗
 # ║  Workspace 1: Browser & AI               ║
 # ╚══════════════════════════════════════════╝
+# Keep detached Chrome DevTools floating while regular Chrome windows tile.
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+if.window-title-regex-substring = 'DevTools'
+run = ['move-node-to-workspace 1:Browser', 'layout floating']
+
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'              # Chrome
 run = ['move-node-to-workspace 1:Browser']
