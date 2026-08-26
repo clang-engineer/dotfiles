@@ -4,18 +4,28 @@
 local menu = hs.menubar.new()
 if not menu then return end
 
-menu:setTitle("⌨")
+menu:setTitle("⌘?")
 menu:setTooltip("Window keymaps")
 
 local help = [[
-AeroSpace
+AeroSpace · Main
 ⌥ H/J/K/L          Focus
 ⌥⇧ H/J/K/L         Move
 ⌥ 1/2/3/4          Workspace
 ⌥⇧ 1/2/3/4         Move to workspace
 ⌥ Tab              Previous workspace
+⌥ /                Tile layout
+⌥ ,                Accordion layout
 ⌥ - / =            Resize
+⌥⇧ 0               Reflow windows
 ⌥⇧ ;               Service mode
+
+AeroSpace · Service
+Esc                 Reload config
+R                   Flatten/reset layout
+F                   Floating / tiling
+Backspace           Close others
+⌥⇧ H/J/K/L         Join with direction
 
 Rectangle
 ⌃⌥ ←/→/↑/↓         Halves
@@ -35,7 +45,7 @@ menu:setClickCallback(function()
     textSize = 15,
     radius = 8,
     padding = 18,
-  }, hs.screen.mainScreen(), 8)
+  }, hs.screen.mainScreen(), 10)
 end)
 
 return menu
