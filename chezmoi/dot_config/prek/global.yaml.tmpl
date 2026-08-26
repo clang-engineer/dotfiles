@@ -22,5 +22,5 @@ repos:
       - id: typos
         name: typos
         language: system
-        entry: typos
+        entry: typos --config "{{ .chezmoi.homeDir }}/.config/typos/typos.toml"
         types: [text]
