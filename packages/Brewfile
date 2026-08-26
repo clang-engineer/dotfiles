@@ -1,3 +1,5 @@
+tap "FelixKratz/formulae"
+
 # Core tools
 brew "git"
 brew "neovim"
@@ -18,6 +20,7 @@ brew "tree"             # Print directory tree
 brew "eza"              # ls replacement (color, git status, icons)
 brew "gh"               # GitHub CLI (PR/issue/Actions)
 brew "tldr"             # Condensed man pages — just the key examples
+brew "borders"          # JankyBorders: highlight the focused macOS window; started by AeroSpace
 
 # Shell/config quality — global Git hook delegates common checks to prek
 brew "shellcheck"       # Shell static analysis
@@ -47,7 +50,6 @@ brew "wget"              # File downloader. curl is built in by default
 
 # Future candidates — uncomment/configure only when the workflow is needed
 # brew "mergiraf"        # Syntax-aware Git merge; register as a Git merge driver after install
-# JankyBorders            # macOS focus border; install/configure only if AeroSpace focus needs more visibility
 # Neotest                 # LazyVim test.core extra, not a Homebrew package; add language adapters as needed
 # PSScriptAnalyzer        # Windows/PowerShell only; manage from the Windows setup rather than this Brewfile
 
