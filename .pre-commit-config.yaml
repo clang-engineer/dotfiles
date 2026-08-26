@@ -1,6 +1,7 @@
 repos:
   - repo: local
     hooks:
+      # Shell: lint and verify deterministic formatting.
       - id: shellcheck
         name: ShellCheck
         language: system
@@ -12,6 +13,39 @@ repos:
         language: system
         entry: shfmt -d -i 2 -ci
         types: [shell]
+
+      # Lua: keep Neovim/Hammerspoon config formatted without rewriting at commit time.
+      - id: stylua
+        name: Stylua
+        language: system
+        entry: stylua --check
+        types: [lua]
+
+      # Structured config: reject malformed JSON/YAML using Ruby/Python already available on the machine.
+      - id: check-json
+        name: Check JSON syntax
+        language: system
+        entry: ruby -rjson -e 'ARGV.each { |f| JSON.parse(File.read(f)) }' --
+        types: [json]
+
+      - id: check-yaml
+        name: Check YAML syntax
+        language: system
+        entry: ruby -ryaml -e 'ARGV.each { |f| YAML.safe_load_file(f, aliases: true) }' --
+        types: [yaml]
+
+      # Repository-wide lightweight hygiene.
+      - id: trailing-whitespace
+        name: Trailing whitespace
+        language: system
+        entry: python3 -c 'import pathlib,sys; bad=[p for p in map(pathlib.Path,sys.argv[1:]) if any(line.rstrip(b"\r\n").endswith((b" ",b"\t")) for line in p.read_bytes().splitlines(keepends=True))]; print("\n".join(map(str,bad))); raise SystemExit(bool(bad))'
+        types: [text]
+
+      - id: end-of-file
+        name: End of file newline
+        language: system
+        entry: python3 -c 'import pathlib,sys; bad=[p for p in map(pathlib.Path,sys.argv[1:]) if p.stat().st_size and not p.read_bytes().endswith(b"\n")]; print("\n".join(map(str,bad))); raise SystemExit(bool(bad))'
+        types: [text]
 
       - id: typos
         name: typos
