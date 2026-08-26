@@ -2,6 +2,11 @@
 
 start-at-login = true
 
+# Start focused-window border indicator with AeroSpace.
+after-startup-command = [
+  'exec-and-forget borders'
+]
+
 # Notify Hammerspoon on workspace change
 exec-on-workspace-change = ['open', '-g', 'hammerspoon://aerospace-workspace-changed']
 
