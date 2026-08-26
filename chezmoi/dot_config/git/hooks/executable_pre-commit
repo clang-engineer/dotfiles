@@ -1,82 +1,10 @@
 #!/usr/bin/env bash
-# Global lightweight quality gate for staged files.
-# Installed via Git core.hooksPath; project-specific prek hooks can still be run
-# by defining .pre-commit-config.yaml in the repository.
 set -euo pipefail
 
-mapfile_compat() {
-  while IFS= read -r line; do
-    STAGED+=("$line")
-  done
-}
+command -v prek >/dev/null 2>&1 || exit 0
 
-STAGED=()
-mapfile_compat < <(git diff --cached --name-only --diff-filter=ACMR)
-((${#STAGED[@]})) || exit 0
+prek run --config "$HOME/.config/prek/global.yaml"
 
-failed=0
-
-run_files() {
-  local label="$1" command="$2"
-  shift 2
-  local files=("$@")
-  ((${#files[@]})) || return 0
-  printf '→ %s\n' "$label"
-  if ! "$command" "${files[@]}"; then
-    failed=1
-  fi
-}
-
-shell_files=()
-lua_files=()
-text_files=()
-
-for file in "${STAGED[@]}"; do
-  [[ -f "$file" ]] || continue
-
-  case "$file" in
-    *.sh|*.bash|*.zsh|*/dot_zshrc|*/dot_bashrc|*/dot_bash_profile)
-      shell_files+=("$file")
-      ;;
-  esac
-
-  case "$file" in
-    *.lua) lua_files+=("$file") ;;
-  esac
-
-  # Git's textconv/attributes are intentionally not required here; NUL bytes are
-  # a cheap and reliable way to avoid passing obvious binary files to typos.
-  if ! LC_ALL=C grep -Iq . "$file" 2>/dev/null; then
-    continue
-  fi
-  text_files+=("$file")
-done
-
-if command -v shellcheck >/dev/null 2>&1 && ((${#shell_files[@]})); then
-  printf '→ ShellCheck\n'
-  shellcheck -x "${shell_files[@]}" || failed=1
+if [[ -f .pre-commit-config.yaml ]]; then
+  prek run
 fi
-
-if command -v shfmt >/dev/null 2>&1 && ((${#shell_files[@]})); then
-  printf '→ shfmt\n'
-  shfmt -d -i 2 -ci "${shell_files[@]}" || failed=1
-fi
-
-if command -v stylua >/dev/null 2>&1 && ((${#lua_files[@]})); then
-  printf '→ Stylua\n'
-  stylua --check "${lua_files[@]}" || failed=1
-fi
-
-if command -v typos >/dev/null 2>&1 && ((${#text_files[@]})); then
-  printf '→ typos\n'
-  typos "${text_files[@]}" || failed=1
-fi
-
-# A repository can opt into richer/language-specific checks with prek without
-# requiring a per-repository Git hook installation.
-if command -v prek >/dev/null 2>&1 && [[ -f .pre-commit-config.yaml ]]; then
-  printf '→ repo prek hooks\n'
-  prek run || failed=1
-fi
-
-exit "$failed"
