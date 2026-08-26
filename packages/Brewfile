@@ -10,6 +10,7 @@ brew "yazi"             # Terminal file manager; `y` wrapper hands final cwd bac
 brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
 brew "fd"               # fd: intuitive file search (find replacement). Used by neovim file navigation
 brew "lazygit"          # Git TUI client
+brew "lazydocker"       # Docker/Compose TUI; useful when managing containers from tmux
 brew "git-delta"        # delta: syntax-highlighting pager for git diff. Used by .gitconfig core.pager
 brew "jq"               # CLI JSON filter/transform. Used for JSON parsing in scripts
 brew "bat"              # cat replacement (syntax highlight, line numbers). Used by fzf preview
@@ -17,6 +18,16 @@ brew "tree"             # Print directory tree
 brew "eza"              # ls replacement (color, git status, icons)
 brew "gh"               # GitHub CLI (PR/issue/Actions)
 brew "tldr"             # Condensed man pages — just the key examples
+
+# Shell/config quality — prek hooks wire these together at repository level
+brew "shellcheck"       # Shell static analysis
+brew "shfmt"            # Deterministic shell formatting
+brew "typos-cli"        # Fast source/config/document typo checker (`typos` command)
+brew "prek"             # Fast pre-commit-compatible hook runner
+
+# General-purpose development utilities
+brew "watchexec"        # Re-run arbitrary commands when files change
+brew "hyperfine"        # Reproducible command/CLI benchmarks
 
 # zsh plugins (sourced directly in .zshrc — no framework)
 brew "zsh-autosuggestions"       # fish-style suggestions from history
@@ -32,3 +43,10 @@ brew "git-lfs"           # Not needed if you have no projects with large files
 brew "libpq"             # Includes the psql CLI. Not needed if you don't use PostgreSQL
 brew "uv"                # Fast Python package/venv manager — owns Python (mise handles node/ruby/java)
 brew "wget"              # File downloader. curl is built in by default
+
+# Future candidates — uncomment/configure only when the workflow is needed
+# brew "mergiraf"        # Syntax-aware Git merge; register as a Git merge driver after install
+# JankyBorders            # macOS focus border; install/configure only if AeroSpace focus needs more visibility
+# Neotest                 # LazyVim test.core extra, not a Homebrew package; add language adapters as needed
+# LazyVim chezmoi extra   # util.chezmoi extra, not a Homebrew package; override the custom chezmoi source path
+# PSScriptAnalyzer        # Windows/PowerShell only; manage from the Windows setup rather than this Brewfile
