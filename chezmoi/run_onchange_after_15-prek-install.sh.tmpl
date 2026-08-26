@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Install the repository-local prek Git hook when hook configuration changes.
+# .pre-commit-config.yaml {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" ".pre-commit-config.yaml" | trim }}
+set -euo pipefail
+
+repo="{{ .chezmoi.sourceDir | dir }}"
+
+command -v prek >/dev/null 2>&1 || {
+  printf '→ prek not found; skipping Git hook installation\n'
+  exit 0
+}
+
+if [[ ! -d "$repo/.git" ]]; then
+  printf '→ %s is not a Git worktree; skipping prek install\n' "$repo"
+  exit 0
+fi
+
+printf '→ installing prek pre-commit hook in %s\n' "$repo"
+cd "$repo"
+prek install
