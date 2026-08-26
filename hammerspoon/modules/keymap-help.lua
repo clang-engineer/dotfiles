@@ -9,8 +9,8 @@ menu:setTooltip("Window keymaps")
 
 local help = [[
 AeroSpace · Main
-⌥ H/J/K/L          Focus
-⌥⇧ H/J/K/L         Move
+⌥ H/J/K/L          Focus window (tiled/floating)
+⌥⇧ H/J/K/L         Move tiled window
 ⌥ 1/2/3/4          Workspace
 ⌥⇧ 1/2/3/4         Move to workspace
 ⌥ Tab              Previous workspace
