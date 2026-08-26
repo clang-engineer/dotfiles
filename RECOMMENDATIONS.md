@@ -138,6 +138,18 @@ It does not compete with AeroSpace layout management or Hammerspoon automation.
 Prefer it over a full SketchyBar setup unless a desktop status bar is genuinely
 needed.
 
+### SketchyBar (macOS) — currently not used
+
+SketchyBar can expose AeroSpace workspaces and other system state persistently in
+the macOS menu bar. It appears to have been tried and removed previously, and the
+current setup does not need it: the native menu bar remains intact, Hammerspoon
+provides workspace feedback, and JankyBorders makes window focus visible.
+
+Do not reintroduce SketchyBar just for aesthetics or workspace labels. It adds a
+separate configuration, event/plugin scripts, icons/fonts, and another UI layer
+to maintain. Reconsider it only if persistent workspace visibility becomes a
+concrete problem that the existing AeroSpace/Hammerspoon feedback does not solve.
+
 ### lazydocker
 
 OrbStack already provides the container runtime and GUI. lazydocker is worthwhile
