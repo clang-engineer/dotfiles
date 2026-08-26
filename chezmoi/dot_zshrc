@@ -63,7 +63,7 @@ if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
 
-# fzf (Ctrl+T file select, Ctrl+R history, Alt+C directory jump)
+# fzf (Ctrl+T file select, Alt+C directory jump; Ctrl+R is replaced by Atuin below)
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
 
@@ -73,9 +73,28 @@ if command -v fzf &>/dev/null; then
   }
 fi
 
+# Atuin — structured shell history; initialized after fzf so it owns Ctrl+R.
+if command -v atuin &>/dev/null; then
+  eval "$(atuin init zsh)"
+fi
+
 # zoxide (autojump replacement, z/zi commands)
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
+fi
+
+# Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
+if command -v yazi &>/dev/null; then
+  y() {
+    local tmp cwd
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < <(printf '%s\0' "$(cat -- "$tmp")")
+    if [[ -n "$cwd" && "$cwd" != "$PWD" ]]; then
+      builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+  }
 fi
 
 # starship (cross-shell prompt; replaced the old powerlevel10k theme)
