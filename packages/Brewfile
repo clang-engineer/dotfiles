@@ -23,6 +23,7 @@ brew "tldr"             # Condensed man pages — just the key examples
 brew "shellcheck"       # Shell static analysis
 brew "shfmt"            # Deterministic shell formatting
 brew "typos-cli"        # Fast source/config/document typo checker (`typos` command)
+brew "stylua"           # Lua formatter/checker for Neovim/Hammerspoon configuration
 brew "prek"             # Fast pre-commit-compatible hook runner
 
 # General-purpose development utilities
