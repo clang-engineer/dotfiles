@@ -50,3 +50,11 @@ brew "wget"              # File downloader. curl is built in by default
 # Neotest                 # LazyVim test.core extra, not a Homebrew package; add language adapters as needed
 # LazyVim chezmoi extra   # util.chezmoi extra, not a Homebrew package; override the custom chezmoi source path
 # PSScriptAnalyzer        # Windows/PowerShell only; manage from the Windows setup rather than this Brewfile
+
+# Future terminal TUI candidates — see devkit/cheatsheets/terminal-tooling.md
+# lazyjournal             # Logs TUI: journald plus container/Kubernetes logs; useful for server operations
+# brew "k9s"             # Kubernetes TUI; add when Kubernetes becomes part of the regular workflow
+# brew "rainfrog"        # Database TUI for browsing/querying SQL databases from the terminal
+# brew "btop"            # Interactive CPU/memory/process monitor
+# gh-dash                 # GitHub PR/issue dashboard TUI; add if `gh` alone becomes cumbersome
+# Posting / ATAC          # HTTP API TUI clients; choose one only if terminal API testing becomes frequent
