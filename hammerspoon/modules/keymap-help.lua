@@ -1,4 +1,4 @@
--- Display-only cheat sheet for existing AeroSpace and Rectangle bindings.
+-- Menu-bar access to existing window keymaps and Hammerspoon window hints.
 -- No additional keyboard shortcut: click the Hammerspoon menu-bar item.
 
 local menu = hs.menubar.new()
@@ -34,18 +34,20 @@ Rectangle
 ⌃⌥ E/T             Two thirds
 ⌃⌥ Return          Maximize / restore
 ⌃⌥ C               Center
-
-Hammerspoon
-⇧ F1                Window hints
 ]]
 
-menu:setClickCallback(function()
+local function showHelp()
   hs.alert.show(help, {
     textFont = "Menlo",
     textSize = 15,
     radius = 8,
     padding = 18,
   }, hs.screen.mainScreen(), 10)
-end)
+end
+
+menu:setMenu({
+  { title = "Keymap Help", fn = showHelp },
+  { title = "Window Hints", fn = hs.hints.windowHints },
+})
 
 return menu
