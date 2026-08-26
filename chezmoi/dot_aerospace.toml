@@ -4,8 +4,9 @@ start-at-login = true
 
 # Start focused-window border indicator with AeroSpace.
 # Use the Homebrew absolute path because GUI apps may not inherit the shell PATH.
+# JankyBorders official README example values.
 after-startup-command = [
-  'exec-and-forget /opt/homebrew/bin/borders active_color=0xffe1e3e4 inactive_color=0x00000000 width=5.0'
+  'exec-and-forget /opt/homebrew/bin/borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
 ]
 
 # Notify Hammerspoon on workspace change
