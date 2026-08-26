@@ -1,4 +1,4 @@
-tap "FelixKratz/formulae"
+tap "FelixKratz/formulae", trusted: { formula: "borders" }
 
 # Core tools
 brew "git"
