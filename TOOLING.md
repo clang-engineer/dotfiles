@@ -98,40 +98,45 @@ brew "prek"
     hooksPath = ~/.config/git/hooks
 ```
 
-chezmoi가 `~/.config/git/hooks/pre-commit`을 관리하므로 **이 머신의 모든 Git
-repository**에서 commit 전에 같은 가벼운 검사가 실행된다.
+chezmoi가 `~/.config/git/hooks/pre-commit`을 관리한다. 이 hook 자체에는 검사 로직을
+넣지 않고, 공통 prek config를 호출하는 얇은 진입점으로 유지한다.
 
-```text
-staged shell files -> ShellCheck + shfmt --diff
-staged Lua files   -> Stylua --check
-staged text files  -> typos
+```bash
+prek run --config "$HOME/.config/prek/global.yaml"
 ```
 
-검사 도구가 설치되지 않은 머신에서는 해당 검사만 건너뛴다. 전역 hook은 staged
-파일만 대상으로 하므로 unrelated 파일 때문에 commit이 막히는 범위를 줄인다.
+공통 검사 정의는 `chezmoi/dot_config/prek/global.yaml`에 둔다.
+
+```text
+Shell -> ShellCheck + shfmt --diff
+Lua   -> Stylua --check
+Text  -> typos
+```
+
+즉 검사 종류나 옵션을 바꿀 때는 hook shell script가 아니라 global prek config만
+수정하면 된다.
 
 ### repository별 확장
 
 전역 hook은 공통 최소 검사만 담당한다. repository 루트에
-`.pre-commit-config.yaml`이 있으면 같은 전역 hook이 추가로:
+`.pre-commit-config.yaml`이 있으면 같은 hook이 이어서:
 
 ```bash
 prek run
 ```
 
-을 실행한다. 따라서 Java/Node/Python 등 프로젝트별 lint/test는 각 repository의
-prek config에 두고, 별도로 `prek install`을 실행할 필요는 없다.
+을 실행한다. Java/Node/Python 등 프로젝트별 lint/test는 각 repository의 config에
+두고, 전역 검사와 중복되는 hook은 넣지 않는 것을 원칙으로 한다.
 
 ```text
 git commit
   -> ~/.config/git/hooks/pre-commit
-       -> 공통 staged-file 검사
+       -> ~/.config/prek/global.yaml
        -> .pre-commit-config.yaml 있음?
-            -> prek run
+            -> repo 전용 prek run
 ```
 
-기존 `chezmoi/run_onchange_after_15-prek-install.sh.tmpl` 방식은 dotfiles repository
-하나에만 `.git/hooks/pre-commit`을 설치했으므로 제거했다.
+별도로 각 repository에서 `prek install`을 할 필요는 없다.
 
 ## chezmoi apply와 Homebrew
 
