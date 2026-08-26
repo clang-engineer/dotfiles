@@ -19,7 +19,7 @@ brew "eza"              # ls replacement (color, git status, icons)
 brew "gh"               # GitHub CLI (PR/issue/Actions)
 brew "tldr"             # Condensed man pages — just the key examples
 
-# Shell/config quality — prek hooks wire these together at repository level
+# Shell/config quality — global Git hook delegates common checks to prek
 brew "shellcheck"       # Shell static analysis
 brew "shfmt"            # Deterministic shell formatting
 brew "typos-cli"        # Fast source/config/document typo checker (`typos` command)
@@ -49,7 +49,6 @@ brew "wget"              # File downloader. curl is built in by default
 # brew "mergiraf"        # Syntax-aware Git merge; register as a Git merge driver after install
 # JankyBorders            # macOS focus border; install/configure only if AeroSpace focus needs more visibility
 # Neotest                 # LazyVim test.core extra, not a Homebrew package; add language adapters as needed
-# LazyVim chezmoi extra   # util.chezmoi extra, not a Homebrew package; override the custom chezmoi source path
 # PSScriptAnalyzer        # Windows/PowerShell only; manage from the Windows setup rather than this Brewfile
 
 # Future terminal TUI candidates — see devkit/cheatsheets/terminal-tooling.md
