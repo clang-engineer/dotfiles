@@ -4,7 +4,9 @@ brew "neovim"
 brew "tmux"
 brew "sesh"            # tmux 스마트 세션 매니저 — fzf+zoxide 피커로 디렉토리/git repo 세션 점프 (tmux prefix+T)
 brew "starship"        # Cross-shell prompt (replaces powerlevel10k); init in .zshrc
-brew "fzf"              # Fuzzy finder (Ctrl+R history, Ctrl+T files). Used by zsh/neovim telescope
+brew "fzf"              # Generic fuzzy picker (Ctrl+T files, Alt+C directories; Ctrl+R is owned by Atuin)
+brew "atuin"            # Structured shell history; replaces fzf Ctrl+R history search
+brew "yazi"             # Terminal file manager; `y` wrapper hands final cwd back to the shell
 brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
 brew "fd"               # fd: intuitive file search (find replacement). Used by neovim file navigation
 brew "lazygit"          # Git TUI client
