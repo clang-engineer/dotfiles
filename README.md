@@ -51,7 +51,6 @@ turns it into your home directory:
 | `dot_zshrc`, `dot_gitconfig`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.gitconfig`, … | **managed file** (copy) |
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
-| `dot_config/symlink_astronvim.tmpl` | `~/.config/astronvim` → `nvim/astro` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
 | `dot_claude/` | selected files in `~/.claude/` | managed files |
 | `run_once_*` / `run_onchange_*` | packages, TPM plugins, and mise runtimes | scripts |
@@ -66,7 +65,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | Folder | What |
 |---|---|
 | `chezmoi/` | chezmoi source — managed dotfiles, OS-branched via `.chezmoiignore.tmpl` |
-| `nvim/` | Neovim — `lazy/` LazyVim → `~/.config/nvim`; `astro/` AstroNvim → `~/.config/astronvim` |
+| `nvim/` | Neovim — `lazy/` LazyVim → `~/.config/nvim` |
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
