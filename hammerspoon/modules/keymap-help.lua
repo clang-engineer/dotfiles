@@ -36,17 +36,46 @@ Rectangle
 ⌃⌥ C               Center
 ]]
 
-local function showHelp()
-  hs.alert.show(help, {
+local helpCanvas
+
+local function toggleHelp()
+  if helpCanvas then
+    helpCanvas:delete()
+    helpCanvas = nil
+    return
+  end
+
+  local screenFrame = hs.screen.mainScreen():frame()
+  local width, height = 560, 520
+
+  helpCanvas = hs.canvas.new({
+    x = screenFrame.x + (screenFrame.w - width) / 2,
+    y = screenFrame.y + (screenFrame.h - height) / 2,
+    w = width,
+    h = height,
+  })
+
+  helpCanvas[1] = {
+    type = "rectangle",
+    action = "fill",
+    fillColor = { white = 0.12, alpha = 0.96 },
+    roundedRectRadii = { xRadius = 8, yRadius = 8 },
+  }
+
+  helpCanvas[2] = {
+    type = "text",
+    text = help,
     textFont = "Menlo",
     textSize = 15,
-    radius = 8,
-    padding = 18,
-  }, hs.screen.mainScreen(), 10)
+    textColor = { white = 0.95 },
+    frame = { x = 18, y = 18, w = width - 36, h = height - 36 },
+  }
+
+  helpCanvas:show()
 end
 
 menu:setMenu({
-  { title = "Keymap Help", fn = showHelp },
+  { title = "Keymap Help", fn = toggleHelp },
   { title = "Window Hints", fn = hs.hints.windowHints },
 })
 
