@@ -29,3 +29,11 @@ action = "results_viewer.cursor_up"
 [[keymaps.vim-tmux]]
 keys = "l"
 action = "results_viewer.cursor_right"
+
+[[keymaps.vim-tmux]]
+keys = "ctrl+d"
+action = "results_viewer.cursor_page_down"
+
+[[keymaps.vim-tmux]]
+keys = "ctrl+u"
+action = "results_viewer.cursor_page_up"
