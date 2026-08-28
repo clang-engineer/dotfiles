@@ -1,34 +1,18 @@
-default_profile = "vim-tmux"
-
-[profiles.vim-tmux]
-keymap_name = ["vscode", "vim-tmux"]
-
-# Keep Ctrl+H/J/K/L available to vim-tmux-navigator.
 [[keymaps.vim-tmux]]
-keys = "alt+h"
-action = "focus_data_catalog"
+keys = "h"
+action = "data_catalog.previous_tab"
 
 [[keymaps.vim-tmux]]
-keys = "alt+j"
-action = "focus_results_viewer"
+keys = "j"
+action = "data_catalog.cursor_down"
 
 [[keymaps.vim-tmux]]
-keys = "alt+k,alt+l"
-action = "focus_query_editor"
+keys = "k"
+action = "data_catalog.cursor_up"
 
 [[keymaps.vim-tmux]]
-keys = "ctrl+tab"
-action = "code_editor.next_buffer"
-key_display = "^Tab"
-
-# Harlequin moves a full page rather than Vim's half-page motion.
-[[keymaps.vim-tmux]]
-keys = "ctrl+d"
-action = "code_editor.cursor_page_down"
-
-[[keymaps.vim-tmux]]
-keys = "ctrl+u"
-action = "code_editor.cursor_page_up"
+keys = "l"
+action = "data_catalog.next_tab"
 
 [[keymaps.vim-tmux]]
 keys = "h"
@@ -45,11 +29,3 @@ action = "results_viewer.cursor_up"
 [[keymaps.vim-tmux]]
 keys = "l"
 action = "results_viewer.cursor_right"
-
-[[keymaps.vim-tmux]]
-keys = "ctrl+d"
-action = "results_viewer.cursor_page_down"
-
-[[keymaps.vim-tmux]]
-keys = "ctrl+u"
-action = "results_viewer.cursor_page_up"
