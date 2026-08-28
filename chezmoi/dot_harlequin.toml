@@ -1,3 +1,5 @@
+# Data Catalog: 탐색과 노드 열기/닫기
+
 [[keymaps.vim-tmux]]
 keys = "j"
 action = "data_catalog.cursor_down"
@@ -13,6 +15,8 @@ action = "data_catalog.toggle_node"
 [[keymaps.vim-tmux]]
 keys = "l"
 action = "data_catalog.toggle_node"
+
+# Results Viewer: 셀 이동
 
 [[keymaps.vim-tmux]]
 keys = "h"
@@ -30,6 +34,8 @@ action = "results_viewer.cursor_up"
 keys = "l"
 action = "results_viewer.cursor_right"
 
+# Results Viewer: 페이지 이동
+
 [[keymaps.vim-tmux]]
 keys = "ctrl+d"
 action = "results_viewer.cursor_page_down"
@@ -37,6 +43,8 @@ action = "results_viewer.cursor_page_down"
 [[keymaps.vim-tmux]]
 keys = "ctrl+u"
 action = "results_viewer.cursor_page_up"
+
+# Results Viewer: 테이블과 행의 경계로 이동
 
 [[keymaps.vim-tmux]]
 keys = "g"
@@ -53,6 +61,8 @@ action = "results_viewer.cursor_row_start"
 [[keymaps.vim-tmux]]
 keys = "dollar_sign"
 action = "results_viewer.cursor_row_end"
+
+# Results Viewer: 결과 탭 이동
 
 [[keymaps.vim-tmux]]
 keys = "H"
