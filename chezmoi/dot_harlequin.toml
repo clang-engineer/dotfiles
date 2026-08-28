@@ -1,8 +1,4 @@
 [[keymaps.vim-tmux]]
-keys = "h"
-action = "data_catalog.previous_tab"
-
-[[keymaps.vim-tmux]]
 keys = "j"
 action = "data_catalog.cursor_down"
 
@@ -11,8 +7,12 @@ keys = "k"
 action = "data_catalog.cursor_up"
 
 [[keymaps.vim-tmux]]
+keys = "h"
+action = "data_catalog.toggle_node"
+
+[[keymaps.vim-tmux]]
 keys = "l"
-action = "data_catalog.next_tab"
+action = "data_catalog.toggle_node"
 
 [[keymaps.vim-tmux]]
 keys = "h"
