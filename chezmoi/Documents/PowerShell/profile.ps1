@@ -19,13 +19,6 @@ if (-not ($env:PATH -split ';' | Where-Object { $_ -eq $shim })) {
 }
 
 # ──────────────────────────────────────────────────────────────────
-# Prompt — starship
-# ──────────────────────────────────────────────────────────────────
-if (Get-Command starship -ErrorAction SilentlyContinue) {
-    Invoke-Expression (&starship init powershell)
-}
-
-# ──────────────────────────────────────────────────────────────────
 # Directory jump — zoxide (z / zi)
 # ──────────────────────────────────────────────────────────────────
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {

@@ -36,7 +36,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive match
 zstyle ':completion:*' menu select                      # arrow-key menu selection
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
-# Command typo correction: 'gti status' → "correct 'gti' to 'git' [nyae]?" prompt
+# Command typo correction: correct misspelled commands → "correct 'xyz' to 'abc' [nyae]?" prompt
 setopt CORRECT
 
 # Project directory vars come from the private secrets repo, loaded via ~/.secrets
@@ -95,11 +95,6 @@ if command -v yazi &>/dev/null; then
     fi
     rm -f -- "$tmp"
   }
-fi
-
-# starship (cross-shell prompt; replaced the old powerlevel10k theme)
-if command -v starship &>/dev/null; then
-  eval "$(starship init zsh)"
 fi
 
 # zsh plugins (installed via brew; replaced oh-my-zsh's plugin loader).
