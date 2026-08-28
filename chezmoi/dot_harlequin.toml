@@ -48,11 +48,11 @@ action = "results_viewer.cursor_page_up"
 
 [[keymaps.vim-tmux]]
 keys = "g"
-action = "results_viewer.cursor_table_start"
+action = "results_viewer.cursor_column_start"
 
 [[keymaps.vim-tmux]]
 keys = "G"
-action = "results_viewer.cursor_table_end"
+action = "results_viewer.cursor_column_end"
 
 [[keymaps.vim-tmux]]
 keys = "0,circumflex_accent"
