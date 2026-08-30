@@ -18,9 +18,3 @@ repos:
         language: system
         entry: stylua --check
         types: [lua]
-
-      - id: typos
-        name: typos
-        language: system
-        entry: typos --config "{{ .chezmoi.homeDir }}/.config/typos/typos.toml"
-        types: [text]
