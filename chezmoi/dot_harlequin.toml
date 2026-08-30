@@ -1,3 +1,26 @@
+# Vim-ish keymap
+#
+# 현재는 Data Catalog와 Results Viewer의 탐색만 Vim 스타일로 보강한다.
+#
+# - Data Catalog
+#   - j/k: 위/아래 이동
+#   - h/l: 노드 열기/닫기(toggle)
+# - Results Viewer
+#   - h/j/k/l: 셀 이동
+#   - Ctrl+d/u: 페이지 이동
+#   - g/G: 컬럼 시작/끝
+#   - 0/$: 행 시작/끝
+#   - H/L: 결과 탭 이동
+#
+# 현재 한계 (Harlequin 2.9.0)
+#
+# Vim식 tree navigation은 제공되는 keymap action만으로 구현하기 어렵다.
+#
+# - h: 열린 노드는 collapse, 닫힌 노드는 parent로 이동
+# - l: 닫힌 노드는 expand, 열린 노드는 child로 이동
+#
+# 공식 Vim mode가 추가되면 위 동작의 지원 여부를 재검토한다.
+
 # Data Catalog: 탐색과 노드 열기/닫기
 
 [[keymaps.vim-tmux]]
