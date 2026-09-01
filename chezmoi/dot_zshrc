@@ -36,6 +36,11 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive match
 zstyle ':completion:*' menu select                      # arrow-key menu selection
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
+# db command completion
+if command -v db &>/dev/null; then
+  eval "$(db init zsh)"
+fi
+
 # Command typo correction: correct misspelled commands → "correct 'xyz' to 'abc' [nyae]?" prompt
 setopt CORRECT
 

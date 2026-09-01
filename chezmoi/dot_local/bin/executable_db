@@ -1,0 +1,391 @@
+#!/usr/bin/env python3.11
+"""Interactively select and launch a database client."""
+
+from __future__ import annotations
+
+import json
+import os
+from pathlib import Path
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+import tomllib
+from typing import Any
+from urllib.parse import quote, urlencode
+
+
+TOOLS = ("harlequin", "rainfrog")
+
+
+class LauncherError(Exception):
+    pass
+
+
+def usage() -> None:
+    print("usage: db [--select | --set-default | --help | init zsh]")
+    print()
+    print("Launch the default database or select one interactively.")
+    print()
+    print("  --select       ignore the default and select a database")
+    print("  --set-default  select and save the default database")
+    print("  init zsh       output zsh completion script")
+
+
+def default_config_path() -> Path:
+    config_home = os.environ.get("XDG_CONFIG_HOME")
+    base = Path(config_home).expanduser() if config_home else Path.home() / ".config"
+    return base / "db" / "config.toml"
+
+
+def load_default(
+    connections: dict[str, dict[str, Any]],
+) -> tuple[str, str] | None:
+    path = default_config_path()
+    try:
+        with path.open("rb") as file:
+            data = tomllib.load(file)
+    except FileNotFoundError:
+        return None
+    except tomllib.TOMLDecodeError as error:
+        raise LauncherError(f"invalid default config: {error}") from error
+
+    tool = data.get("tool")
+    connection_id = data.get("connection")
+    if tool not in TOOLS or not isinstance(connection_id, str):
+        raise LauncherError(f"invalid default config: {path}")
+
+    connection = connections.get(connection_id)
+    if not connection:
+        raise LauncherError(f"default connection not found: {connection_id}")
+    if tool not in connection.get("tools", []):
+        raise LauncherError(
+            f"default connection is not available for {tool}: {connection_id}"
+        )
+    return tool, connection_id
+
+
+def save_default(tool: str, connection_id: str) -> Path:
+    path = default_config_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    content = (
+        f"tool = {json.dumps(tool)}\n"
+        f"connection = {json.dumps(connection_id)}\n"
+    )
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=".config.",
+            delete=False,
+        ) as file:
+            temporary_path = Path(file.name)
+            file.write(content)
+        temporary_path.chmod(0o600)
+        temporary_path.replace(path)
+    finally:
+        if temporary_path:
+            temporary_path.unlink(missing_ok=True)
+    return path
+
+
+def load_connections() -> tuple[Path, dict[str, dict[str, Any]]]:
+    secret_dir = os.environ.get("SECRET_DIR")
+    if not secret_dir:
+        raise LauncherError("SECRET_DIR is not set")
+
+    path = Path(secret_dir) / "databases" / "connections.toml"
+    try:
+        with path.open("rb") as file:
+            data = tomllib.load(file)
+    except FileNotFoundError as error:
+        raise LauncherError(f"connections file not found: {path}") from error
+    except tomllib.TOMLDecodeError as error:
+        raise LauncherError(f"invalid connections file: {error}") from error
+    return path, data
+
+
+def available_connections(
+    connections: dict[str, dict[str, Any]], tool: str, project: str | None = None
+) -> dict[str, dict[str, Any]]:
+    return {
+        connection_id: connection
+        for connection_id, connection in connections.items()
+        if tool in connection.get("tools", [])
+        and (project is None or connection.get("project") == project)
+    }
+
+
+def preview_tool(connections: dict[str, dict[str, Any]], tool: str) -> None:
+    entries = available_connections(connections, tool)
+    projects = sorted({entry["project"] for entry in entries.values()})
+    drivers = sorted({entry["driver"] for entry in entries.values()})
+    print(f"Tool: {tool}")
+    print(f"Projects: {len(projects)}")
+    print(f"Connections: {len(entries)}")
+    print(f"Drivers: {', '.join(drivers)}")
+
+
+def preview_project(
+    connections: dict[str, dict[str, Any]], tool: str, project: str
+) -> None:
+    entries = available_connections(connections, tool, project)
+    print(f"Project: {project}")
+    print(f"Tool: {tool}")
+    print()
+    print("Connections:")
+    for connection_id, connection in entries.items():
+        print(f"  {connection_id}  {connection['label']}")
+
+
+def preview_connection(
+    connections: dict[str, dict[str, Any]], tool: str, connection_id: str
+) -> None:
+    connection = connections.get(connection_id)
+    if not connection or tool not in connection.get("tools", []):
+        raise LauncherError(f"connection is not available for {tool}: {connection_id}")
+    print(f"ID: {connection_id}")
+    print(f"Label: {connection['label']}")
+    print(f"Driver: {connection['driver']}")
+    if connection["driver"] == "h2":
+        print(f"URL: {connection['url']}")
+    else:
+        print(f"Host: {connection['host']}:{connection['port']}")
+        print(f"Database: {connection['database']}")
+    print(f"Username: {connection['username']}")
+
+
+def pick(
+    items: list[str],
+    prompt: str,
+    preview_arguments: list[str],
+    db_rows: bool = False,
+    escape_action: str = "back",
+) -> str | None:
+    if not shutil.which("fzf"):
+        raise LauncherError("fzf is required for interactive selection")
+
+    script = str(Path(__file__).resolve())
+    preview = " ".join(
+        [shlex.quote(script), *(shlex.quote(argument) for argument in preview_arguments)]
+    )
+    preview += " {1}" if db_rows else " {}"
+    command = [
+        "fzf",
+        "--height=40%",
+        "--layout=reverse",
+        "--border",
+        f"--prompt={prompt}> ",
+        f"--preview={preview}",
+        "--preview-window=right:45%",
+        f"--header=Esc: {escape_action}",
+    ]
+    if db_rows:
+        command.extend(["--delimiter=\t", "--with-nth=1,2"])
+
+    result = subprocess.run(
+        command,
+        input="\n".join(items) + "\n",
+        text=True,
+        stdout=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode == 130:
+        return None
+    if result.returncode != 0:
+        raise LauncherError(f"fzf failed with exit status {result.returncode}")
+    selection = result.stdout.rstrip("\n")
+    if not selection:
+        raise LauncherError("fzf returned an empty selection")
+    return selection.split("\t", 1)[0] if db_rows else selection
+
+
+def launch_harlequin(connection_id: str, secret_dir: Path) -> int:
+    executable = shutil.which("harlequin")
+    if not executable:
+        raise LauncherError("harlequin is not installed")
+    config = secret_dir / "databases" / "generated" / "harlequin" / "config.toml"
+    if not config.is_file():
+        raise LauncherError(f"harlequin config not found: {config}")
+    profile = connection_id.replace("-", "_")
+    os.execv(
+        executable,
+        [
+            executable,
+            "--config-path",
+            str(config),
+            "-P",
+            profile,
+            "--keymap-name",
+            "vim-tmux",
+            "--keymap-name",
+            "vscode",
+        ],
+    )
+    return 1
+
+
+def postgres_url(connection: dict[str, Any]) -> str:
+    username = quote(str(connection["username"]), safe="")
+    password = str(connection.get("password", ""))
+    credentials = username
+    if password:
+        credentials += ":" + quote(password, safe="")
+    query = urlencode(connection.get("params", {}))
+    url = (
+        f"postgresql://{credentials}@{connection['host']}:{connection['port']}"
+        f"/{quote(str(connection['database']), safe='')}"
+    )
+    return f"{url}?{query}" if query else url
+
+
+def rainfrog_config(connection_id: str, connection: dict[str, Any]) -> str:
+    key = json.dumps(connection_id, ensure_ascii=False)
+    password = str(connection.get("password", ""))
+    if password and not connection.get("params"):
+        fields = ("host", "port", "database", "username", "driver")
+        values = []
+        for field in fields:
+            value = connection[field]
+            rendered = str(value) if isinstance(value, int) else json.dumps(value, ensure_ascii=False)
+            values.append(f"{field} = {rendered}")
+        values.append("default = true")
+        profile = ", ".join(values)
+    else:
+        url = json.dumps(postgres_url(connection), ensure_ascii=False)
+        driver = json.dumps(connection["driver"], ensure_ascii=False)
+        profile = f"connection_string = {url}, driver = {driver}, default = true"
+    return f"[db]\n{key} = {{ {profile} }}\n"
+
+
+def launch_rainfrog(connection_id: str, connection: dict[str, Any]) -> int:
+    executable = shutil.which("rainfrog")
+    if not executable:
+        raise LauncherError("rainfrog is not installed")
+
+    with tempfile.TemporaryDirectory(prefix="db-rainfrog-") as directory:
+        config = Path(directory) / "rainfrog_config.toml"
+        descriptor = os.open(config, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "w", encoding="utf-8") as file:
+            file.write(rainfrog_config(connection_id, connection))
+        environment = os.environ.copy()
+        environment["RAINFROG_CONFIG"] = directory
+        environment["DATABASE_URL"] = ""
+        try:
+            result = subprocess.run([executable], env=environment, check=False)
+        except KeyboardInterrupt:
+            return 130
+    return 128 - result.returncode if result.returncode < 0 else result.returncode
+
+
+def select_connection(
+    connections: dict[str, dict[str, Any]],
+) -> tuple[str, str] | None:
+    while True:
+        tool = pick(
+            list(TOOLS), "tool", ["--preview-tool"], escape_action="exit"
+        )
+        if tool is None:
+            return None
+
+        while True:
+            entries = available_connections(connections, tool)
+            projects = sorted({entry["project"] for entry in entries.values()})
+            project = pick(projects, "project", ["--preview-project", tool])
+            if project is None:
+                break
+
+            while True:
+                project_entries = available_connections(connections, tool, project)
+                rows = [
+                    f"{connection_id}\t{connection['label']}"
+                    for connection_id, connection in project_entries.items()
+                ]
+                connection_id = pick(
+                    rows, "database", ["--preview-connection", tool], db_rows=True
+                )
+                if connection_id is None:
+                    break
+                return tool, connection_id
+
+
+def launch_connection(
+    connections: dict[str, dict[str, Any]],
+    secret_dir: Path,
+    tool: str,
+    connection_id: str,
+) -> int:
+    if tool == "harlequin":
+        return launch_harlequin(connection_id, secret_dir)
+    return launch_rainfrog(connection_id, connections[connection_id])
+
+
+def run_interactive(connections: dict[str, dict[str, Any]], secret_dir: Path) -> int:
+    selection = select_connection(connections)
+    if selection is None:
+        return 130
+    return launch_connection(connections, secret_dir, *selection)
+
+
+def init_zsh() -> str:
+    return """#compdef db
+
+_db() {
+  if [[ CURRENT -eq 3 && "${words[2]}" == "init" ]]; then
+    compadd zsh
+  else
+    compadd -- --select --set-default
+  fi
+}
+
+compdef _db db
+"""
+
+
+def main(arguments: list[str]) -> int:
+    if arguments in (["-h"], ["--help"]):
+        usage()
+        return 0
+    if arguments == ["init", "zsh"]:
+        print(init_zsh(), end="")
+        return 0
+    _, connections = load_connections()
+    secret_dir = Path(os.environ["SECRET_DIR"])
+    if not arguments:
+        selection = load_default(connections)
+        if selection is None:
+            return run_interactive(connections, secret_dir)
+        return launch_connection(connections, secret_dir, *selection)
+    if arguments == ["--select"]:
+        return run_interactive(connections, secret_dir)
+    if arguments == ["--set-default"]:
+        selection = select_connection(connections)
+        if selection is None:
+            return 130
+        path = save_default(*selection)
+        print(f"Default database saved: {selection[0]} / {selection[1]}")
+        print(f"Config: {path}")
+        return 0
+
+    if len(arguments) == 2 and arguments[0] == "--preview-tool":
+        preview_tool(connections, arguments[1])
+        return 0
+    if len(arguments) == 3 and arguments[0] == "--preview-project":
+        preview_project(connections, arguments[1], arguments[2])
+        return 0
+    if len(arguments) == 3 and arguments[0] == "--preview-connection":
+        preview_connection(connections, arguments[1], arguments[2])
+        return 0
+    usage()
+    return 2
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main(sys.argv[1:]))
+    except LauncherError as error:
+        print(f"db: {error}", file=sys.stderr)
+        raise SystemExit(1) from None
