@@ -17,6 +17,7 @@ from urllib.parse import quote, urlencode
 
 
 TOOLS = ("harlequin", "rainfrog")
+connections: dict[str, dict[str, Any]] = {}
 
 
 class LauncherError(Exception):
@@ -39,9 +40,7 @@ def default_config_path() -> Path:
     return base / "db" / "config.toml"
 
 
-def load_default(
-    connections: dict[str, dict[str, Any]],
-) -> tuple[str, str] | None:
+def load_default() -> tuple[str, str] | None:
     path = default_config_path()
     try:
         with path.open("rb") as file:
@@ -92,30 +91,25 @@ def save_default(tool: str, connection_id: str) -> Path:
     return path
 
 
+def index_path() -> Path:
+    config_home = os.environ.get("XDG_CONFIG_HOME")
+    base = Path(config_home).expanduser() if config_home else Path.home() / ".config"
+    return base / "db" / "index.toml"
+
+
 def load_connections() -> tuple[Path, dict[str, dict[str, Any]]]:
-    secret_dir = os.environ.get("SECRET_DIR")
-    if not secret_dir:
-        raise LauncherError("SECRET_DIR is not set")
-
-    connections_dir = Path(secret_dir) / "databases" / "connections"
-    if not connections_dir.is_dir():
-        raise LauncherError(f"connections directory not found: {connections_dir}")
-
-    catalog: dict[str, dict[str, Any]] = {}
+    path = index_path()
     try:
-        for path in sorted(connections_dir.glob("*.toml")):
-            project = path.stem
-            with path.open("rb") as file:
-                config = tomllib.load(file)
-            for connection_id, entry in config.items():
-                if isinstance(entry, dict):
-                    catalog[connection_id] = {**entry, "project": project}
+        with path.open("rb") as file:
+            data = tomllib.load(file)
+    except FileNotFoundError as error:
+        raise LauncherError(
+            f"connection index not found: {path}\n"
+            f"Run: python3 secrets/databases/generate.py"
+        ) from error
     except tomllib.TOMLDecodeError as error:
-        raise LauncherError(f"invalid connections file: {error}") from error
-
-    if not catalog:
-        raise LauncherError(f"no connections found in {connections_dir}")
-    return connections_dir, catalog
+        raise LauncherError(f"invalid connections index: {error}") from error
+    return path, data
 
 
 def available_connections(
@@ -213,11 +207,11 @@ def pick(
     return selection.split("\t", 1)[0] if db_rows else selection
 
 
-def launch_harlequin(connection_id: str, secret_dir: Path) -> int:
+def launch_harlequin(connection_id: str, config_dir: Path) -> int:
     executable = shutil.which("harlequin")
     if not executable:
         raise LauncherError("harlequin is not installed")
-    config = secret_dir / "databases" / "generated" / "harlequin" / "config.toml"
+    config = config_dir / "harlequin.toml"
     if not config.is_file():
         raise LauncherError(f"harlequin config not found: {config}")
     profile = connection_id.replace("-", "_")
@@ -271,29 +265,24 @@ def rainfrog_config(connection_id: str, connection: dict[str, Any]) -> str:
     return f"[db]\n{key} = {{ {profile} }}\n"
 
 
-def launch_rainfrog(connection_id: str, connection: dict[str, Any]) -> int:
+def launch_rainfrog(connection_id: str, config_dir: Path) -> int:
     executable = shutil.which("rainfrog")
     if not executable:
         raise LauncherError("rainfrog is not installed")
-
-    with tempfile.TemporaryDirectory(prefix="db-rainfrog-") as directory:
-        config = Path(directory) / "rainfrog_config.toml"
-        descriptor = os.open(config, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-        with os.fdopen(descriptor, "w", encoding="utf-8") as file:
-            file.write(rainfrog_config(connection_id, connection))
-        environment = os.environ.copy()
-        environment["RAINFROG_CONFIG"] = directory
-        environment["DATABASE_URL"] = ""
-        try:
-            result = subprocess.run([executable], env=environment, check=False)
-        except KeyboardInterrupt:
-            return 130
+    config = config_dir / "rainfrog.toml"
+    if not config.is_file():
+        raise LauncherError(f"rainfrog config not found: {config}")
+    environment = os.environ.copy()
+    environment["RAINFROG_CONFIG"] = str(config_dir)
+    environment["DATABASE_URL"] = ""
+    try:
+        result = subprocess.run([executable], env=environment, check=False)
+    except KeyboardInterrupt:
+        return 130
     return 128 - result.returncode if result.returncode < 0 else result.returncode
 
 
-def select_connection(
-    connections: dict[str, dict[str, Any]],
-) -> tuple[str, str] | None:
+def select_connection() -> tuple[str, str] | None:
     while True:
         tool = pick(
             list(TOOLS), "tool", ["--preview-tool"], escape_action="exit"
@@ -323,21 +312,20 @@ def select_connection(
 
 
 def launch_connection(
-    connections: dict[str, dict[str, Any]],
-    secret_dir: Path,
+    config_dir: Path,
     tool: str,
     connection_id: str,
 ) -> int:
     if tool == "harlequin":
-        return launch_harlequin(connection_id, secret_dir)
-    return launch_rainfrog(connection_id, connections[connection_id])
+        return launch_harlequin(connection_id, config_dir)
+    return launch_rainfrog(connection_id, config_dir)
 
 
-def run_interactive(connections: dict[str, dict[str, Any]], secret_dir: Path) -> int:
-    selection = select_connection(connections)
+def run_interactive(config_dir: Path) -> int:
+    selection = select_connection()
     if selection is None:
         return 130
-    return launch_connection(connections, secret_dir, *selection)
+    return launch_connection(config_dir, *selection)
 
 
 def init_zsh() -> str:
@@ -356,6 +344,7 @@ compdef _db db
 
 
 def main(arguments: list[str]) -> int:
+    global connections
     if arguments in (["-h"], ["--help"]):
         usage()
         return 0
@@ -363,16 +352,16 @@ def main(arguments: list[str]) -> int:
         print(init_zsh(), end="")
         return 0
     _, connections = load_connections()
-    secret_dir = Path(os.environ["SECRET_DIR"])
+    config_dir = index_path().parent
     if not arguments:
-        selection = load_default(connections)
+        selection = load_default()
         if selection is None:
-            return run_interactive(connections, secret_dir)
-        return launch_connection(connections, secret_dir, *selection)
+            return run_interactive(config_dir)
+        return launch_connection(config_dir, *selection)
     if arguments == ["--select"]:
-        return run_interactive(connections, secret_dir)
+        return run_interactive(config_dir)
     if arguments == ["--set-default"]:
-        selection = select_connection(connections)
+        selection = select_connection()
         if selection is None:
             return 130
         path = save_default(*selection)
