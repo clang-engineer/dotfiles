@@ -269,7 +269,7 @@ def launch_rainfrog(connection_id: str, config_dir: Path) -> int:
     executable = shutil.which("rainfrog")
     if not executable:
         raise LauncherError("rainfrog is not installed")
-    config = config_dir / "rainfrog.toml"
+    config = config_dir / "rainfrog_config.toml"
     if not config.is_file():
         raise LauncherError(f"rainfrog config not found: {config}")
     environment = os.environ.copy()
