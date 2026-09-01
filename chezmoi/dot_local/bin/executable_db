@@ -97,15 +97,25 @@ def load_connections() -> tuple[Path, dict[str, dict[str, Any]]]:
     if not secret_dir:
         raise LauncherError("SECRET_DIR is not set")
 
-    path = Path(secret_dir) / "databases" / "connections.toml"
+    connections_dir = Path(secret_dir) / "databases" / "connections"
+    if not connections_dir.is_dir():
+        raise LauncherError(f"connections directory not found: {connections_dir}")
+
+    catalog: dict[str, dict[str, Any]] = {}
     try:
-        with path.open("rb") as file:
-            data = tomllib.load(file)
-    except FileNotFoundError as error:
-        raise LauncherError(f"connections file not found: {path}") from error
+        for path in sorted(connections_dir.glob("*.toml")):
+            project = path.stem
+            with path.open("rb") as file:
+                config = tomllib.load(file)
+            for connection_id, entry in config.items():
+                if isinstance(entry, dict):
+                    catalog[connection_id] = {**entry, "project": project}
     except tomllib.TOMLDecodeError as error:
         raise LauncherError(f"invalid connections file: {error}") from error
-    return path, data
+
+    if not catalog:
+        raise LauncherError(f"no connections found in {connections_dir}")
+    return connections_dir, catalog
 
 
 def available_connections(
