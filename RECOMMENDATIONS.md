@@ -163,6 +163,31 @@ terminal UI similar to lazygit.
 - `hyperfine` is useful for reproducible command and build benchmarks, but is not
   a daily necessity.
 
+## AI agent and MCP usage
+
+Keep the MCP set deliberately small. MCP tools add their tool definitions and
+results to the model context, so enabling more servers is not free even when a
+given tool is never called.
+
+- **Serena** is for repository-aware code exploration: symbols, references, and
+  structure. Its MCP overhead can be worthwhile because it can avoid reading
+  large numbers of unrelated source files.
+- **Context7** is for targeted external library and API documentation. Prefer it
+  when implementation depends on current framework or library behavior instead
+  of making the model infer APIs from memory.
+- Judge MCP efficiency by **total task context**, not by the tool-schema overhead
+  alone. A small up-front cost is acceptable when it materially reduces repeated
+  grep, file reads, or documentation retrieval.
+- Keep high-value tools such as Serena and Context7 available when they are used
+  regularly; enable narrower GitHub, database, browser, or other MCP integrations
+  only when the task actually needs them.
+- Do not collect MCP servers simply because they are available. More tools mean
+  more context pressure, more overlapping capabilities, and more choices for the
+  agent to navigate.
+
+The practical rule is: **prefer a small set of MCP tools that reduce exploration
+work over a large general-purpose tool catalog.**
+
 ## Do not add without a concrete need
 
 - Zellij: replaces the established tmux, Oh My Tmux, and sesh workflow.
