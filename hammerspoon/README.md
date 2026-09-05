@@ -66,6 +66,23 @@ domains out of this public repository.
 For a simple shortcut, call `hs.caffeinate.toggle("displayIdle")` directly.
 Use `Caffeine.spoon` only when a persistent menu-bar indicator is useful.
 
+For terminal-driven long-running work, keep the distinction explicit:
+
+- `caffeinate -i` prevents system idle sleep while allowing the display to sleep.
+- `caffeinate -d` prevents display sleep; it does not imply the `-i` assertion.
+- `caffeinate -di` prevents both system idle sleep and display sleep.
+- `pmset displaysleepnow` turns the display off immediately without requesting
+  system sleep.
+
+A useful pattern for unattended CLI agents, builds, or downloads is:
+
+```sh
+caffeinate -i &
+pmset displaysleepnow
+```
+
+This keeps the Mac awake for the background work while turning the display off.
+
 ### Wi-Fi automation
 
 Use `hs.wifi.watcher` only for a concrete work/home action such as selecting an
