@@ -79,7 +79,7 @@ local function cat_preview_text(cat)
 end
 
 function M.finder(opts, ctx)
-  local data = require("user.cmdtreemap.data")
+  local data = require("cmdtreemap.data")
   local items = {}
 
   for ci, cat in ipairs(data.categories) do
@@ -274,7 +274,7 @@ function M.collapse(picker)
 end
 
 function M.expand_all()
-  local data = require("user.cmdtreemap.data")
+  local data = require("cmdtreemap.data")
   for _, cat in ipairs(data.categories) do
     M._open[cat.name] = true
     for _, rel in ipairs(cat.relations) do
@@ -284,7 +284,7 @@ function M.expand_all()
 end
 
 function M.collapse_all()
-  local data = require("user.cmdtreemap.data")
+  local data = require("cmdtreemap.data")
   for _, cat in ipairs(data.categories) do
     M._open[cat.name] = false
     for _, rel in ipairs(cat.relations) do
