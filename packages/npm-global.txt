@@ -1,0 +1,2 @@
+# npm global CLI packages installed by chezmoi/run_onchange_after_12-install-npm-global.sh.tmpl
+@earendil-works/pi-coding-agent

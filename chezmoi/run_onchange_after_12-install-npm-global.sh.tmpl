@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Install global npm CLIs declared in packages/npm-global.txt.
+# Reruns whenever the package list changes.
+# npm-global {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "packages/npm-global.txt" | trim }}
+set -euo pipefail
+
+pkg_file="{{ .chezmoi.sourceDir | dir }}/packages/npm-global.txt"
+[ -f "$pkg_file" ] || exit 0
+
+packages=()
+while IFS= read -r line || [ -n "$line" ]; do
+  # trim comments and surrounding whitespace
+  line="${line%%#*}"
+  line="$(printf '%s' "$line" | xargs)"
+  [ -n "$line" ] && packages+=("$line")
+done < "$pkg_file"
+
+[ "${#packages[@]}" -gt 0 ] || exit 0
+
+if command -v mise >/dev/null 2>&1; then
+  printf '→ Installing global npm CLIs with mise node@24: %s\n' "${packages[*]}"
+  mise exec node@24 -- npm install -g --ignore-scripts "${packages[@]}"
+elif command -v npm >/dev/null 2>&1; then
+  printf '→ Installing global npm CLIs: %s\n' "${packages[*]}"
+  npm install -g --ignore-scripts "${packages[@]}"
+else
+  printf '→ npm not found; skipping global npm CLIs\n'
+fi
