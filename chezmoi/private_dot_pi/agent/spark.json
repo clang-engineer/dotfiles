@@ -1,0 +1,11 @@
+{
+  "editor": {
+    "spinner": "pulse",
+    "thinkingLevelIndicator": "model"
+  },
+  "footer": {
+    "statusPosition": "inline"
+  },
+  "recap": false,
+  "title": false
+}

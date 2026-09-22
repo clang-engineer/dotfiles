@@ -1,8 +1,16 @@
 {
-  "lastChangelogVersion": "0.86.1",
+  "lastChangelogVersion": "0.87.0",
   "theme": "dark",
+  "quietStartup": true,
+  "defaultThinkingLevel": "minimal",
+  "hideThinkingBlock": true,
+  "cacheWarming": "off",
+  "tuiMode": "fullscreen",
   "packages": [
     "npm:pi-jev",
-    "npm:@henryqw/pi-add-dir"
+    "npm:@henryqw/pi-add-dir",
+    "npm:pi-spark",
+    "npm:@zigai/pi-response-renderer",
+    "npm:@eko24ive/pi-ask"
   ]
 }
