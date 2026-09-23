@@ -11,7 +11,7 @@ vim.opt.conceallevel = 0
 vim.opt.exrc = true
 vim.opt.secure = true
 
--- set dianostic virtual text
+-- set diagnostic virtual text
 -- vim.diagnostic.enable(false)
 vim.diagnostic.config({
   severity_sort = true,

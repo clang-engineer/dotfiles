@@ -105,6 +105,8 @@ fi
 # zsh plugins (installed via brew; replaced oh-my-zsh's plugin loader).
 # syntax-highlighting must be sourced last, after all other zle setup.
 if [[ -n "$BREW_PREFIX" ]]; then
-  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
+    && source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] \
+    && source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi

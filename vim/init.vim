@@ -1,7 +1,7 @@
 call plug#begin('~/.vim/plugged') " 플러그인 시작
 
 " === Language === "
-Plug 'tpope/vim-surround'  " surrouding parentheses, brackets, quotes, XML tags, and more. ys, ds, cs
+Plug 'tpope/vim-surround'  " surrounding parentheses, brackets, quotes, XML tags, and more. ys, ds, cs
 Plug 'instant-markdown/vim-instant-markdown' " preview markdown instantly
 Plug 'sheerun/vim-polyglot'
 
@@ -36,7 +36,7 @@ Plug 'terryma/vim-multiple-cursors' " multiple word selecting
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vimwiki/vimwiki' " vim wiki plug
 Plug 'scrooloose/nerdcommenter'
-Plug 'rafi/awesome-vim-colorschemes' " 각종 색상 팔레트 
+Plug 'rafi/awesome-vim-colorschemes' " 각종 색상 팔레트
 Plug 'xolox/vim-misc' " 랜덤 컬러 선택기 의존 모듈
 Plug 'xolox/vim-colorscheme-switcher' " 랜덤 컬러 선택기
 
@@ -54,4 +54,4 @@ endfor
 " Theme
 syntax enable " syntax highlighting. enable vs on
 " colorscheme industry
-filetype plugin indent on " enable 
+filetype plugin indent on " enable
