@@ -8,6 +8,7 @@ brew "sesh"            # tmux 스마트 세션 매니저 — fzf+zoxide 피커�
 brew "fzf"              # Generic fuzzy picker (Ctrl+T files, Alt+C directories; Ctrl+R is owned by Atuin)
 brew "atuin"            # Structured shell history; replaces fzf Ctrl+R history search
 brew "yazi"             # Terminal file manager; `y` wrapper hands final cwd back to the shell
+brew "resvg"            # SVG renderer used by yazi previews
 brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
 brew "fd"               # fd: intuitive file search (find replacement). Used by neovim file navigation
 brew "lazygit"          # Git TUI client
