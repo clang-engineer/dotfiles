@@ -4,23 +4,20 @@
 
 ## Installed
 
+- `npm:@plannotator/pi-extension` — ⭐9083 — Plan/code review에 주석을 달고 피드백하는 리뷰 워크플로우. 기존 로컬 `plan-mode`와 `--plan` 플래그가 충돌하므로 둘 중 하나만 사용.
+- `npm:pi-mcp-adapter` — ⭐1570 — MCP 서버를 Pi에 연결. MCP를 적극적으로 쓸 때 사용.
+- `npm:pi-web-access` — ⭐1565 — 웹 검색, URL fetch, GitHub repo, PDF, YouTube/영상 분석. 외부 문서 확인용.
+- `npm:billion-context` — ⭐421 — 컨텍스트 압축/장기 세션 보조.
+- `npm:pi-memory` — ⭐178 — semantic memory/daily log/long-term memory 검색.
 - `npm:pi-jev` — ⭐59 — Jev 판단/분류 보조 도구. `jev_find_tools`, `jev_evaluate` 등.
 - `npm:@eko24ive/pi-ask` — ⭐52 — 모델이 TUI에서 single/multi/preview 선택지를 구조화해서 물어볼 수 있게 하는 `ask_user` 도구.
 - `npm:@zigai/pi-response-renderer` — ⭐14 — 응답 렌더링/표시 개선.
 - `npm:@henryqw/pi-add-dir` — ⭐9 — 작업 디렉토리 밖 폴더를 세션에 추가해 읽기/작업 가능하게 함.
 - `npm:pi-spark` — ⭐5 — Pi 사용성/UX 보정용 패키지.
 
-## High-star candidates
-
-- `npm:@plannotator/pi-extension` — ⭐9083 — Plan/code review에 주석을 달고 피드백하는 리뷰 워크플로우. Auto mode 대체는 아님.
-- `npm:pi-mcp-adapter` — ⭐1570 — MCP 서버를 Pi에 연결. MCP를 적극적으로 쓸 때만 설치 후보.
-- `npm:pi-web-access` — ⭐1565 — 웹 검색, URL fetch, GitHub repo, PDF, YouTube/영상 분석. 외부 문서 확인이 필요하면 가장 체감이 큰 후보.
-- `npm:billion-context` — ⭐421 — 컨텍스트 압축/장기 세션 보조. 관심 후보지만 신뢰도 기준상 보류.
-
 ## Other candidates found on npm
 
 - `npm:@cortexkit/aft-pi` — ⭐314 — tree-sitter/LSP 기반 코드 분석 도구.
-- `npm:pi-memory` — ⭐178 — semantic memory/daily log/long-term memory 검색.
 - `npm:pi-claude-cli` — ⭐105 — LLM 호출을 Claude Code CLI로 라우팅.
 - `npm:@demigodmode/pi-web-agent` — ⭐91 — 검색/fetch/headless 경계가 명확한 웹 접근 패키지.
 - `npm:pi-cmux` — ⭐44 — cmux 기반 터미널 통합.
