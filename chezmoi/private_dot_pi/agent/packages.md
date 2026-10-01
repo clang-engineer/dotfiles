@@ -11,9 +11,7 @@
 - `npm:pi-memory` — ⭐178 — semantic memory/daily log/long-term memory 검색.
 - `npm:pi-jev` — ⭐59 — Jev 판단/분류 보조 도구. `jev_find_tools`, `jev_evaluate` 등.
 - `npm:@eko24ive/pi-ask` — ⭐52 — 모델이 TUI에서 single/multi/preview 선택지를 구조화해서 물어볼 수 있게 하는 `ask_user` 도구.
-- `npm:@zigai/pi-response-renderer` — ⭐14 — 응답 렌더링/표시 개선.
 - `npm:@henryqw/pi-add-dir` — ⭐9 — 작업 디렉토리 밖 폴더를 세션에 추가해 읽기/작업 가능하게 함.
-- `npm:pi-spark` — ⭐5 — Pi 사용성/UX 보정용 패키지.
 
 ## Other candidates found on npm
 
@@ -29,6 +27,8 @@
 - `npm:@zigai/pi-ui-tweaks` — ⭐14 — UI tweak 모음.
 - `npm:@zigai/pi-mention-project` — ⭐14 — 프로젝트 디렉토리 fuzzy mention.
 - `npm:@zigai/pi-mention-skill` — ⭐14 — skill discovery를 `$` mention으로 이동.
+- `npm:@zigai/pi-response-renderer` — ⭐14 — 응답 렌더링/표시 개선. UI 취향 패키지라 제거함.
+- `npm:pi-spark` — ⭐5 — Pi 사용성/UX 보정용 패키지. 낮은 star/체감 불확실로 제거함.
 
 ## Notes
 

@@ -14,8 +14,6 @@
     "npm:pi-memory",
     "npm:pi-jev",
     "npm:@eko24ive/pi-ask",
-    "npm:@zigai/pi-response-renderer",
-    "npm:@henryqw/pi-add-dir",
-    "npm:pi-spark"
+    "npm:@henryqw/pi-add-dir"
   ]
 }
