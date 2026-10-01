@@ -8,9 +8,9 @@
   "tuiMode": "fullscreen",
   "packages": [
     "npm:pi-jev",
-    "npm:@henryqw/pi-add-dir",
-    "npm:pi-spark",
+    "npm:@eko24ive/pi-ask",
     "npm:@zigai/pi-response-renderer",
-    "npm:@eko24ive/pi-ask"
+    "npm:@henryqw/pi-add-dir",
+    "npm:pi-spark"
   ]
 }
