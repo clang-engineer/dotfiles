@@ -4,20 +4,39 @@
 
 ## Installed
 
-- `npm:@plannotator/pi-extension` — ⭐9083 — Plan/code review에 주석을 달고 피드백하는 리뷰 워크플로우. 기존 로컬 `plan-mode`와 `--plan` 플래그가 충돌하므로 둘 중 하나만 사용.
-- `npm:pi-mcp-adapter` — ⭐1570 — MCP 서버를 Pi에 연결. MCP를 적극적으로 쓸 때 사용.
-- `npm:pi-web-access` — ⭐1565 — 웹 검색, URL fetch, GitHub repo, PDF, YouTube/영상 분석. 외부 문서 확인용.
-- `npm:billion-context` — ⭐421 — 컨텍스트 압축/장기 세션 보조.
+- `npm:@plannotator/pi-extension` — ⭐9096 — Plan/code review에 주석을 달고 피드백하는 리뷰 워크플로우. 기존 로컬 `plan-mode`와 `--plan` 플래그가 충돌하므로 둘 중 하나만 사용.
+- `npm:pi-mcp-adapter` — ⭐1573 — MCP 서버를 Pi에 연결. MCP를 적극적으로 쓸 때 사용.
+- `npm:pi-web-access` — ⭐1568 — 웹 검색, URL fetch, GitHub repo, PDF, YouTube/영상 분석. 외부 문서 확인용.
+- `npm:billion-context` — ⭐451 — 컨텍스트 압축/장기 세션 보조.
 - `npm:pi-memory` — ⭐178 — semantic memory/daily log/long-term memory 검색.
-- `npm:pi-jev` — ⭐59 — Jev 판단/분류 보조 도구. `jev_find_tools`, `jev_evaluate` 등.
+- `npm:pi-jev` — ⭐60 — Jev 판단/분류 보조 도구. `jev_find_tools`, `jev_evaluate` 등.
 - `npm:@eko24ive/pi-ask` — ⭐52 — 모델이 TUI에서 single/multi/preview 선택지를 구조화해서 물어볼 수 있게 하는 `ask_user` 도구.
-- `npm:@henryqw/pi-add-dir` — ⭐9 — 작업 디렉토리 밖 폴더를 세션에 추가해 읽기/작업 가능하게 함.
+- `npm:@henryqw/pi-add-dir` — ⭐10 — 작업 디렉토리 밖 폴더를 세션에 추가해 읽기/작업 가능하게 함.
 
 ## Other candidates found on npm
 
-- `npm:@cortexkit/aft-pi` — ⭐314 — tree-sitter/LSP 기반 코드 분석 도구.
+### Popular extensions by npm downloads
+
+- `npm:pi-acp` — 379k/mo — ACP adapter for Pi coding agent.
+- `npm:@langfuse/pi-observability-plugin` — 269k/mo — Langfuse observability/tracing.
+- `npm:pi-mcp-extension` — 145k/mo — MCP client extension. 현재 `pi-mcp-adapter`와 역할 중복 가능.
+- `npm:pi-powerline-footer` — 87k/mo — Powerline-style TUI footer/status bar.
+- `npm:@langchain/langsmith-pi-extension` — 75k/mo — LangSmith tracing/observability.
+- `npm:billion-context-pi` — 64k/mo — context management. 현재 `billion-context`와 중복 가능.
+- `npm:@gotgenes/pi-permission-system` — 53k/mo — permission enforcement.
+- `npm:@raindrop-ai/pi-agent` — 41k/mo — Raindrop observability.
+- `npm:pi-prompt-template-model` — 24k/mo — prompt template model selector.
+- `npm:@agegr/pi-web` — 23k/mo — Web UI for Pi.
+- `npm:pi-interview` — 19k/mo — interactive interview form tool.
+- `npm:pi-antigravity` — 15k/mo — Antigravity / Cloud Code Assist provider.
+- `npm:pi-lmstudio` — 9k/mo — LM Studio model provider.
+- `npm:@remnic/plugin-pi` — 6k/mo — Remnic memory extension.
+
+### Star-checked candidates
+
+- `npm:@cortexkit/aft-pi` — ⭐315 — tree-sitter/LSP 기반 코드 분석 도구.
 - `npm:pi-claude-cli` — ⭐105 — LLM 호출을 Claude Code CLI로 라우팅.
-- `npm:@demigodmode/pi-web-agent` — ⭐91 — 검색/fetch/headless 경계가 명확한 웹 접근 패키지.
+- `npm:@demigodmode/pi-web-agent` — ⭐92 — 검색/fetch/headless 경계가 명확한 웹 접근 패키지.
 - `npm:pi-cmux` — ⭐44 — cmux 기반 터미널 통합.
 - `npm:pi-docparser` — ⭐36 — 로컬 문서 parse/search/screenshot 도구.
 - `npm:pi-skillful` — ⭐28 — skill 호출/가시성 개선.
@@ -33,6 +52,7 @@
 ## Notes
 
 - Star 수는 대략적인 GitHub repository 기준이며 시점에 따라 변할 수 있음.
-- Pi 생태계는 아직 작아서, stars가 낮아도 실용적인 단일 기능 패키지가 많음.
+- npm download 수는 `npm downloads last-month` 기준으로 반올림한 대략값이며 시점에 따라 변할 수 있음.
+- Pi 생태계는 아직 작아서, stars/downloads가 낮아도 실용적인 단일 기능 패키지가 많음.
 - `settings.json`의 `packages`는 npm/git/local package 로드용.
 - 로컬 `.ts` extension은 `~/.pi/agent/extensions/` 또는 package 디렉토리로 둘 수 있음.
