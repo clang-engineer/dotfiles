@@ -7,7 +7,6 @@
 - `npm:@plannotator/pi-extension` — ⭐9096 — Plan/code review에 주석을 달고 피드백하는 리뷰 워크플로우. 기존 로컬 `plan-mode`와 `--plan` 플래그가 충돌하므로 둘 중 하나만 사용.
 - `npm:pi-mcp-adapter` — ⭐1573 — MCP 서버를 Pi에 연결. MCP를 적극적으로 쓸 때 사용.
 - `npm:pi-web-access` — ⭐1568 — 웹 검색, URL fetch, GitHub repo, PDF, YouTube/영상 분석. 외부 문서 확인용.
-- `npm:billion-context` — ⭐451 — 컨텍스트 압축/장기 세션 보조.
 - `npm:pi-memory` — ⭐178 — semantic memory/daily log/long-term memory 검색.
 - `npm:pi-jev` — ⭐60 — Jev 판단/분류 보조 도구. `jev_find_tools`, `jev_evaluate` 등.
 - `npm:@eko24ive/pi-ask` — ⭐52 — 모델이 TUI에서 single/multi/preview 선택지를 구조화해서 물어볼 수 있게 하는 `ask_user` 도구.
@@ -22,7 +21,7 @@
 - `npm:pi-mcp-extension` — 145k/mo — MCP client extension. 현재 `pi-mcp-adapter`와 역할 중복 가능.
 - `npm:pi-powerline-footer` — 87k/mo — Powerline-style TUI footer/status bar.
 - `npm:@langchain/langsmith-pi-extension` — 75k/mo — LangSmith tracing/observability.
-- `npm:billion-context-pi` — 64k/mo — context management. 현재 `billion-context`와 중복 가능.
+- `npm:billion-context-pi` — 64k/mo — context management. 저성숙/UX 리스크가 있을 수 있어 기본 장착은 보류.
 - `npm:@gotgenes/pi-permission-system` — 53k/mo — permission enforcement.
 - `npm:@raindrop-ai/pi-agent` — 41k/mo — Raindrop observability.
 - `npm:pi-prompt-template-model` — 24k/mo — prompt template model selector.
@@ -53,6 +52,6 @@
 
 - Star 수는 대략적인 GitHub repository 기준이며 시점에 따라 변할 수 있음.
 - npm download 수는 `npm downloads last-month` 기준으로 반올림한 대략값이며 시점에 따라 변할 수 있음.
-- Pi 생태계는 아직 작아서, stars/downloads가 낮아도 실용적인 단일 기능 패키지가 많음.
+- Pi 생태계는 아직 작아서, stars/downloads가 낮아도 실용적인 단일 기능 패키지가 많지만, K 단위 stars가 아닌 패키지는 기본 장착을 보수적으로 판단함.
 - `settings.json`의 `packages`는 npm/git/local package 로드용.
 - 로컬 `.ts` extension은 `~/.pi/agent/extensions/` 또는 package 디렉토리로 둘 수 있음.

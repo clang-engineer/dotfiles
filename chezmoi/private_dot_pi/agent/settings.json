@@ -10,7 +10,6 @@
     "npm:@plannotator/pi-extension",
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",
-    "npm:billion-context",
     "npm:pi-memory",
     "npm:pi-jev",
     "npm:@eko24ive/pi-ask",
