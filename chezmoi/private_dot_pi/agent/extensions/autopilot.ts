@@ -38,12 +38,12 @@ export default function (pi: ExtensionAPI) {
 
   pi.on("agent_before_settle", (event) => {
     if (!enabled) return;
-    if (!event.context.canContinue) return;
 
     if (continuationCount >= maxContinuations) {
       enabled = false;
       return {
         entries: [
+          ...event.entries,
           {
             type: "custom_message",
             customType: "autopilot",
@@ -58,6 +58,7 @@ export default function (pi: ExtensionAPI) {
 
     return {
       entries: [
+        ...event.entries,
         {
           type: "custom_message",
           customType: "autopilot",
