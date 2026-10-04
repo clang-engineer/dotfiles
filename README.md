@@ -96,6 +96,9 @@ must still be verified on a real machine after the migration.**
 ## Secrets
 
 Nothing private lives in this repo. `chezmoi apply` installs only the public config.
+Personal agent instructions and skills belong to the private companion; its
+`setup.sh` links shared instructions and supplemental docs into Pi's agent directory.
+Pi settings and package declarations remain managed here.
 The private `secrets` companion (real SSH hosts, nvim DB connections, `~/.pgpass`) owns
 its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
 command. Public clones simply skip it. See [SETUP.md](SETUP.md#8-security).
