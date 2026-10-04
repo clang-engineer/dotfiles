@@ -4,9 +4,16 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 let enabled = false;
 let continuationCount = 0;
 const maxContinuations = 10;
+const soundDebounceMs = 2000;
+const soundStateKey = Symbol.for("pi.autopilot.lastCompletionSoundAt");
 
 function playCompletionSound() {
   if (process.platform !== "darwin") return;
+
+  const soundState = globalThis as typeof globalThis & { [soundStateKey]?: number };
+  const now = Date.now();
+  if (now - (soundState[soundStateKey] ?? 0) < soundDebounceMs) return;
+  soundState[soundStateKey] = now;
 
   const child = spawn("afplay", ["/System/Library/Sounds/Glass.aiff"], {
     detached: true,
@@ -48,7 +55,6 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.on("agent_settled", () => {
-    if (!enabled) return;
     playCompletionSound();
   });
 
