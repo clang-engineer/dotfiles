@@ -1,8 +1,19 @@
+import { spawn } from "node:child_process";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 let enabled = false;
 let continuationCount = 0;
 const maxContinuations = 10;
+
+function playCompletionSound() {
+  if (process.platform !== "darwin") return;
+
+  const child = spawn("afplay", ["/System/Library/Sounds/Glass.aiff"], {
+    detached: true,
+    stdio: "ignore",
+  });
+  child.unref();
+}
 
 function statusText() {
   return `Autopilot: ${enabled ? "on" : "off"} (${continuationCount}/${maxContinuations})`;
@@ -34,6 +45,11 @@ export default function (pi: ExtensionAPI) {
 
       ctx.ui.notify("Usage: /autopilot on | off | status", "warning");
     },
+  });
+
+  pi.on("agent_settled", () => {
+    if (!enabled) return;
+    playCompletionSound();
   });
 
   pi.on("agent_before_settle", (event) => {
