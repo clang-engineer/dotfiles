@@ -13,6 +13,7 @@
     "npm:pi-web-access",
     "npm:pi-memory",
     "npm:pi-jev",
+    "npm:@clang.engineer/pi-workloop",
     "npm:@eko24ive/pi-ask",
     "npm:@henryqw/pi-add-dir"
   ]
