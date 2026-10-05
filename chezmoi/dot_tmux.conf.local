@@ -399,6 +399,12 @@ tmux_conf_urlscan_options="--compact --dedupe"
 
 # this is the place to override or undo settings
 
+# Disable OMT shortcuts that overlap with preferred stock habits.
+unbind e #!important      # OMT: edit ~/.tmux.conf.local and reload
+unbind - #!important      # OMT: split pane vertically
+unbind _ #!important      # OMT: split pane horizontally
+unbind Enter #!important  # OMT: enter copy mode
+
 # increase history size
 #set -g history-limit 10000
 
