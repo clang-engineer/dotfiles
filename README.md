@@ -83,6 +83,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
+| `tools/db/` | [Go database launcher](tools/db/README.md) — connection catalog, native config generation, target selection |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
 ## Cross-platform

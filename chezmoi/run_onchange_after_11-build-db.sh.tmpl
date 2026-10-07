@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Build the db launcher; reruns when the Go source changes.
+# db-go-mod {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/go.mod" | trim }}
+# db-go-sum {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/go.sum" | trim }}
+# db-main {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/main.go" | trim }}
+# db-catalog {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/catalog.go" | trim }}
+set -euo pipefail
+
+source_dir={{ .chezmoi.sourceDir | dir | quote }}
+project_dir="$source_dir/tools/db"
+target="$HOME/.local/libexec/db"
+mkdir -p "$(dirname "$target")"
+
+if [ ! -d "$project_dir" ]; then
+  printf '⚠︎ db source not found: %s\n' "$project_dir" >&2
+  exit 0
+fi
+
+if command -v mise >/dev/null 2>&1; then
+  (cd "$project_dir" && mise exec go -- go build -o "$target" .)
+elif command -v go >/dev/null 2>&1; then
+  (cd "$project_dir" && go build -o "$target" .)
+else
+  printf '⚠︎ go is required to build db launcher\n' >&2
+fi
