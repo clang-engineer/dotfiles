@@ -40,15 +40,22 @@ def default_config_path() -> Path:
     return base / "db" / "config.toml"
 
 
-def load_default() -> tuple[str, str] | None:
+def load_db_config() -> dict[str, Any]:
     path = default_config_path()
     try:
         with path.open("rb") as file:
-            data = tomllib.load(file)
+            return tomllib.load(file)
     except FileNotFoundError:
-        return None
+        return {}
     except tomllib.TOMLDecodeError as error:
         raise LauncherError(f"invalid default config: {error}") from error
+
+
+def load_default() -> tuple[str, str] | None:
+    path = default_config_path()
+    data = load_db_config()
+    if not data:
+        return None
 
     tool = data.get("tool")
     connection_id = data.get("connection")
@@ -68,10 +75,10 @@ def load_default() -> tuple[str, str] | None:
 def save_default(tool: str, connection_id: str) -> Path:
     path = default_config_path()
     path.parent.mkdir(parents=True, exist_ok=True)
-    content = (
-        f"tool = {json.dumps(tool)}\n"
-        f"connection = {json.dumps(connection_id)}\n"
-    )
+    data = load_db_config()
+    data["tool"] = tool
+    data["connection"] = connection_id
+    content = "".join(f"{key} = {json.dumps(value)}\n" for key, value in data.items())
     temporary_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(
@@ -207,6 +214,16 @@ def pick(
     return selection.split("\t", 1)[0] if db_rows else selection
 
 
+def harlequin_keymap_args() -> list[str]:
+    configured = os.environ.get("DB_HARLEQUIN_KEYMAPS")
+    keymaps = [item.strip() for item in configured.split(",")] if configured else load_db_config().get("harlequin_keymaps", [])
+    if isinstance(keymaps, str):
+        keymaps = [keymaps]
+    if not isinstance(keymaps, list) or not all(isinstance(keymap, str) for keymap in keymaps):
+        raise LauncherError("harlequin_keymaps must be a string or list of strings")
+    return [argument for keymap in keymaps if keymap.strip() for argument in ("--keymap-name", keymap.strip())]
+
+
 def launch_harlequin(connection_id: str, config_dir: Path) -> int:
     executable = shutil.which("harlequin")
     if not executable:
@@ -223,10 +240,7 @@ def launch_harlequin(connection_id: str, config_dir: Path) -> int:
             str(config),
             "-P",
             profile,
-            "--keymap-name",
-            "vim-tmux",
-            "--keymap-name",
-            "vscode",
+            *harlequin_keymap_args(),
         ],
     )
     return 1
