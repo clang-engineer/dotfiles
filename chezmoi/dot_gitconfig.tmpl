@@ -9,7 +9,7 @@
 # Identity ([user] name/email) is set per-machine in ~/.gitconfig.local
 # (gitignored), created by chezmoi/create_dot_gitconfig.local.tmpl at init.
 [include]
-	path = ~/.gitconfig.local
+	path = {{ .chezmoi.homeDir }}/.gitconfig.local
 [core]
 	pager = delta
 [interactive]
