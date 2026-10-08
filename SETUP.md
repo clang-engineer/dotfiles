@@ -46,7 +46,7 @@ chezmoi apply    # link, copy, install, and generate in one pass
 > and mise runtimes automatically. To place the configs
 > only and defer those, run `chezmoi apply --exclude=scripts`, then a plain
 > `chezmoi apply` later when you want them. Package and runtime installation is the
-> slowest part. Steps 6–7 are optional; run them anytime.
+> slowest part. Steps 7–8 are optional; run them anytime.
 
 What `chezmoi apply` runs, in order — file placement (source→target, managed vs
 symlink) is documented in the [README](README.md#how-it-works) table as the source
@@ -98,24 +98,60 @@ and private agent rules/skills). That repo's README documents the exact clone co
 
 ## 5. Git identity
 
-`dot_gitconfig` holds only shared settings plus `[include] ~/.gitconfig.local`.
-`~/.gitconfig.local` is created by `create_dot_gitconfig.local.tmpl` from the
-name/email you entered at `chezmoi init` (step 1), and chezmoi never overwrites
-it afterwards. Change them later by editing `~/.gitconfig.local` directly. If you
-skipped the prompts, the `[user]` fields are
-left empty and git asks on your first commit.
+`dot_gitconfig.tmpl` renders only shared settings plus an absolute `[include]`
+path to the machine-local `~/.gitconfig.local`. `~/.gitconfig.local` is created
+by `create_dot_gitconfig.local.tmpl` from the name/email you entered at
+`chezmoi init` (step 1), and chezmoi never overwrites it afterwards. Change them
+later by editing `~/.gitconfig.local` directly. If you skipped the prompts, the
+`[user]` fields are left empty and git asks on your first commit.
 
 To add a workspace-scoped identity (a different name/email for repos under a
 given directory), run `scripts/add-workspace-user.sh` — it appends an
 `[includeIf "gitdir:..."]` block to the same file.
 
-## 6. Sync Neovim plugins
+Keep GitHub authentication and commit identity separate:
+
+```text
+SSH Host alias + IdentityFile
+→ remote fetch/push account
+
+Git includeIf + workspace config
+→ commit author name/email
+```
+
+Verify both after restoring a machine:
+
+```sh
+ssh -G github.com | grep -E '^(hostname|user|identityfile|identitiesonly) '
+ssh -T git@github.com
+git var GIT_AUTHOR_IDENT
+```
+
+## 6. Verify the restored environment
+
+Run these checks after `chezmoi apply` and the private secrets bootstrap:
+
+```sh
+chezmoi status
+brew bundle check --file packages/Brewfile
+brew bundle check --file packages/Brewfile.cask
+mise doctor
+nvim --version
+ssh -T git@github.com
+git var GIT_AUTHOR_IDENT
+```
+
+If `chezmoi status` shows Pi settings drift, review it before applying blindly:
+`~/.pi/agent/settings.json` may contain machine-local state such as device ID,
+default provider, or default model.
+
+## 7. Sync Neovim plugins
 
 ```sh
 nvim --headless "+Lazy sync" +qa
 ```
 
-## 7. Optional (scripts/)
+## 8. Optional (scripts/)
 
 Run only what you need.
 
@@ -176,7 +212,7 @@ Generate `.nvim.lua` from a Neovim command at the project root:
 :JvmEnvInit 21 17
 ```
 
-## 8. Security
+## 9. Security
 
 Only public config is version-controlled; keys, tokens, and private hosts exist
 machine-locally only.
@@ -185,7 +221,7 @@ machine-locally only.
   `config.d/00-global` and `template.example`. Real keys, known_hosts, and private
   hosts (`config.d/[1-9]*`) are never committed (`.gitignore` + `secrets` overlay).
   `private_` guarantees `~/.ssh` is 0700, and chezmoi never generates keys.
-- **Git** (`dot_gitconfig` → `~/.gitconfig`): only shared settings are managed;
+- **Git** (`dot_gitconfig.tmpl` → `~/.gitconfig`): only shared settings are managed;
   identity lives in `~/.gitconfig.local` (outside the repo) in your home directory.
 - **`~/.secrets` / `~/.secrets.ps1`**: sensitive env vars like `GITHUB_TOKEN` and
   `ANTHROPIC_API_KEY` go here only (gitignored).

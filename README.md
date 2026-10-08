@@ -62,7 +62,7 @@ turns it into your home directory:
 
 | chezmoi source | becomes | kind |
 |---|---|---|
-| `dot_zshrc`, `dot_gitconfig`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.gitconfig`, … | **managed file** (copy) |
+| `dot_zshrc`, `dot_gitconfig.tmpl`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.gitconfig`, … | **managed file** (copy/render) |
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
@@ -94,6 +94,24 @@ with Scoop, and manages Git Bash startup files alongside a PowerShell 7 all-host
 profile. Terminal appearance remains host-specific. **Windows is scaffolded and
 must still be verified on a real machine after the migration.**
 
+## Git identity and GitHub accounts
+
+GitHub authentication and commit identity are separate concerns:
+
+```text
+SSH Host alias + IdentityFile
+→ which GitHub account is used for fetch/push
+
+Git includeIf + workspace config
+→ which user.name / user.email is written into commits
+```
+
+The shared `~/.gitconfig` is rendered from `dot_gitconfig.tmpl` and includes the
+machine-local `~/.gitconfig.local`. Default identity is created once during
+`chezmoi init`; workspace-specific identity can be added with
+`scripts/add-workspace-user.sh`. SSH host aliases live under `~/.ssh/config.d/`,
+while private keys and real host entries stay outside this public repo.
+
 ## Secrets
 
 Nothing private lives in this repo. `chezmoi apply` installs only the public config.
@@ -102,7 +120,7 @@ Personal agent instructions and skills belong to the private companion; its
 Pi settings and package declarations remain managed here.
 The private `secrets` companion (real SSH hosts, nvim DB connections, `~/.pgpass`) owns
 its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
-command. Public clones simply skip it. See [SETUP.md](SETUP.md#8-security).
+command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
 
 > Comments inside the config files are in Korean, but the configs themselves are
 > language-agnostic — the setup works the same regardless.
