@@ -101,15 +101,16 @@ scripts before removing their previous generator and generated files.
 ```text
 cmd/db/main.go          # executable entry point: exit status and error reporting
 internal/
-  app/                 # CLI orchestration, config, fzf selection, client adapters, sync
+  app/                 # CLI orchestration, config, selection, client adapters, sync
   catalog/             # connection model, TOML source validation, URL encoding
   storage/             # TOML serialization and private atomic file writes
 ```
 
 Dependencies flow from `cmd/db` → `app` → `catalog` / `storage`.
 Neither catalog nor storage depends on app or on each other. Only `app.Run` is
-exposed by the application package; tool adapters stay private and separated by
-file. Catalog and storage have their own public-API tests, while app tests cover
+exposed by the application package. App is intentionally grouped into a few files
+(`app.go`, `client.go`, `config.go`, `sync.go`) instead of one file per helper.
+Catalog and storage have their own public-API tests, while app tests cover
 integration and launcher behavior.
 
 Catalog maps are passed explicitly; no global mutable connection state is used.
