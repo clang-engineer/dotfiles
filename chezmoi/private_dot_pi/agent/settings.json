@@ -9,7 +9,6 @@
   "packages": [
     "npm:@clang.engineer/pi-notify",
     "npm:@plannotator/pi-extension",
-    "npm:pi-mcp-adapter",
     "npm:pi-web-access",
     "npm:pi-memory",
     "npm:pi-jev",
