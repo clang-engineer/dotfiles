@@ -4,7 +4,7 @@ set -eu
 binary="$HOME/.local/libexec/db"
 if [ ! -x "$binary" ]; then
   printf '%s\n' "db: compiled binary not found: $binary" >&2
-  printf '%s\n' "db: run 'chezmoi apply' or build from <dotfiles>/tools/db with: go build -o $binary ./cmd/db" >&2
+  printf '%s\n' "db: run 'chezmoi apply' or build from <dotfiles>/tools/db with: go build -o $binary ." >&2
   exit 1
 fi
 

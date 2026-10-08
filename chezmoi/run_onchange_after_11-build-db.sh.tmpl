@@ -18,9 +18,9 @@ if [ ! -d "$project_dir" ]; then
 fi
 
 if command -v mise >/dev/null 2>&1; then
-  (cd "$project_dir" && mise exec go -- go build -o "$target" ./cmd/db)
+  (cd "$project_dir" && mise exec go -- go build -o "$target" .)
 elif command -v go >/dev/null 2>&1; then
-  (cd "$project_dir" && go build -o "$target" ./cmd/db)
+  (cd "$project_dir" && go build -o "$target" .)
 else
   printf '⚠︎ go is required to build db launcher\n' >&2
 fi

@@ -7,7 +7,7 @@ and the selected database client (including its driver/adapter).
 ## Setup
 
 `chezmoi apply` builds `~/.local/libexec/db` and installs the `db` wrapper.
-For a manual build, run `go build -o ~/.local/libexec/db ./cmd/db` from this directory.
+For a manual build, run `go build -o ~/.local/libexec/db .` from this directory.
 
 By default, put connection TOML files in `~/.config/db/connections/`.
 For an existing catalog elsewhere, register it once:
@@ -99,14 +99,14 @@ scripts before removing their previous generator and generated files.
 ## Code layout
 
 ```text
-cmd/db/main.go          # executable entry point: exit status and error reporting
+main.go                 # executable entry point: exit status and error reporting
 internal/
   app/                 # CLI orchestration, config, selection, client adapters, sync
   catalog/             # connection model, TOML source validation, URL encoding
   storage/             # TOML serialization and private atomic file writes
 ```
 
-Dependencies flow from `cmd/db` → `app` → `catalog` / `storage`.
+Dependencies flow from `main.go` → `app` → `catalog` / `storage`.
 Neither catalog nor storage depends on app or on each other. Only `app.Run` is
 exposed by the application package. App is intentionally grouped into a few files
 (`app.go`, `client.go`, `config.go`, `sync.go`) instead of one file per helper.
