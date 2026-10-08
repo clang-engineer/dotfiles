@@ -1,4 +1,5 @@
-package main
+// Package storage provides private atomic file writes and TOML serialization.
+package storage
 
 import (
 	"bytes"
@@ -8,14 +9,15 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func encodeTOML(v any) ([]byte, error) {
+// EncodeTOML serializes a value without writing it to disk.
+func EncodeTOML(v any) ([]byte, error) {
 	var b bytes.Buffer
 	err := toml.NewEncoder(&b).Encode(v)
 	return b.Bytes(), err
 }
 
-// Atomic replacement never follows an existing file symlink into a source repository.
-func writePrivate(path string, data []byte) error {
+// WritePrivate atomically replaces a file with mode 0600, without following a file symlink.
+func WritePrivate(path string, data []byte) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
 		return err
 	}

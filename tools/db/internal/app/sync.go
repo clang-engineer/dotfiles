@@ -1,7 +1,9 @@
-package main
+package app
 
 import (
 	"bytes"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/catalog"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/storage"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +14,7 @@ func loadConnections() (map[string]connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	return readCatalog(path)
+	return catalog.Read(path)
 }
 
 func renderCatalog(catalog map[string]connection) (map[string][]byte, error) {
@@ -33,7 +35,7 @@ func renderCatalog(catalog map[string]connection) (map[string][]byte, error) {
 	}
 	outputs := map[string][]byte{}
 	for name, value := range map[string]any{"harlequin.toml": map[string]any{"profiles": profiles}, "rainfrog_config.toml": map[string]any{"db": rain}} {
-		data, err := encodeTOML(value)
+		data, err := storage.EncodeTOML(value)
 		if err != nil {
 			return nil, err
 		}
@@ -62,7 +64,7 @@ func syncCatalog() (map[string]connection, error) {
 		if err == nil && statErr == nil && info.Mode().IsRegular() && info.Mode().Perm() == 0o600 && bytes.Equal(existing, outputs[name]) {
 			continue
 		}
-		if err := writePrivate(path, outputs[name]); err != nil {
+		if err := storage.WritePrivate(path, outputs[name]); err != nil {
 			return nil, err
 		}
 	}

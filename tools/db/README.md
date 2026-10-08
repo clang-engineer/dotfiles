@@ -7,7 +7,7 @@ and the selected database client (including its driver/adapter).
 ## Setup
 
 `chezmoi apply` builds `~/.local/libexec/db` and installs the `db` wrapper.
-For a manual build, run `go build -o ~/.local/libexec/db .` from this directory.
+For a manual build, run `go build -o ~/.local/libexec/db ./cmd/db` from this directory.
 
 By default, put connection TOML files in `~/.config/db/connections/`.
 For an existing catalog elsewhere, register it once:
@@ -98,20 +98,22 @@ scripts before removing their previous generator and generated files.
 
 ## Code layout
 
-One Go package, split by responsibility (no framework or plugin registry):
+```text
+cmd/db/main.go          # executable entry point: exit status and error reporting
+internal/
+  app/                 # CLI orchestration, config, fzf selection, client adapters, sync
+  catalog/             # connection model, TOML source validation, URL encoding
+  storage/             # TOML serialization and private atomic file writes
+```
 
-- `main.go`: CLI dispatch, help, completion
-- `config.go`: source path and user defaults
-- `catalog.go`: connection model, loading, validation, filtering
-- `selector.go`: fzf selection and previews
-- `launcher.go`: validated client dispatch
-- `harlequin.go`, `rainfrog.go`, `nvim.go`: client-specific profiles and execution
-- `connection-url.go`: database connection-string encoding
-- `sync.go`: rendering and synchronizing persistent outputs
-- `storage.go`: TOML encoding and private atomic writes
+Dependencies flow from `cmd/db` → `app` → `catalog` / `storage`.
+Neither catalog nor storage depends on app or on each other. Only `app.Run` is
+exposed by the application package; tool adapters stay private and separated by
+file. Catalog and storage have their own public-API tests, while app tests cover
+integration and launcher behavior.
 
 Catalog maps are passed explicitly; no global mutable connection state is used.
-The chezmoi build hook hashes every Go file, including newly added modules.
+The chezmoi build hook recursively hashes every Go file, including new packages.
 
 ## Verification
 

@@ -1,6 +1,8 @@
-package main
+package app
 
 import (
+	"github.com/clang-engineer/dotfiles/tools/db/internal/catalog"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/storage"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -8,7 +10,7 @@ import (
 
 // Passwords remain in Rainfrog's platform keychain for both direct and launcher use.
 func rainfrogProfile(c connection) map[string]any {
-	return map[string]any{"connection_string": connectionURL(c, false), "driver": c.Driver}
+	return map[string]any{"connection_string": catalog.URL(c, false), "driver": c.Driver}
 }
 
 func launchRainfrog(connectionID string, c connection) (int, error) {
@@ -24,11 +26,11 @@ func launchRainfrog(connectionID string, c connection) (int, error) {
 	defer os.RemoveAll(dir)
 	profile := rainfrogProfile(c)
 	profile["default"] = true
-	data, err := encodeTOML(map[string]any{"db": map[string]any{connectionID: profile}})
+	data, err := storage.EncodeTOML(map[string]any{"db": map[string]any{connectionID: profile}})
 	if err != nil {
 		return 1, err
 	}
-	if err := writePrivate(filepath.Join(dir, "rainfrog_config.toml"), data); err != nil {
+	if err := storage.WritePrivate(filepath.Join(dir, "rainfrog_config.toml"), data); err != nil {
 		return 1, err
 	}
 	env := append(os.Environ(), "RAINFROG_CONFIG="+dir, "DATABASE_URL=")

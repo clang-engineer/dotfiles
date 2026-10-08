@@ -1,4 +1,4 @@
-package main
+package catalog
 
 import (
 	"fmt"
@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-func connectionURL(c connection, password bool) string {
+// URL encodes a target using the database driver's connection-string syntax.
+func URL(c Connection, password bool) string {
 	if c.Driver == "h2" {
 		return c.URL
 	}

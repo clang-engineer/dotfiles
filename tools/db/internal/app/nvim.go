@@ -1,12 +1,13 @@
-package main
+package app
 
 import (
 	"fmt"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/catalog"
 	"strings"
 )
 
 func nvimEntry(c connection) string {
-	return fmt.Sprintf("  { name = %s, url = %s },", luaString(c.Label), luaString(connectionURL(c, true)))
+	return fmt.Sprintf("  { name = %s, url = %s },", luaString(c.Label), luaString(catalog.URL(c, true)))
 }
 
 func luaString(s string) string {

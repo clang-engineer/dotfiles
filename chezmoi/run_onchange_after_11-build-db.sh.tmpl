@@ -2,8 +2,8 @@
 # Build the db launcher; reruns when the Go source changes.
 # db-go-mod {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/go.mod" | trim }}
 # db-go-sum {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/go.sum" | trim }}
-{{ range $file := glob (joinPath (.chezmoi.sourceDir | dir) "tools/db/*.go") -}}
-# db-source {{ base $file }} {{ output "git" "hash-object" $file | trim }}
+{{ range $file := (output "find" (joinPath (.chezmoi.sourceDir | dir) "tools/db") "-type" "f" "-name" "*.go" | trim | splitList "\n" | sortAlpha) -}}
+# db-source {{ $file }} {{ output "git" "hash-object" $file | trim }}
 {{ end -}}
 set -euo pipefail
 
@@ -18,9 +18,9 @@ if [ ! -d "$project_dir" ]; then
 fi
 
 if command -v mise >/dev/null 2>&1; then
-  (cd "$project_dir" && mise exec go -- go build -o "$target" .)
+  (cd "$project_dir" && mise exec go -- go build -o "$target" ./cmd/db)
 elif command -v go >/dev/null 2>&1; then
-  (cd "$project_dir" && go build -o "$target" .)
+  (cd "$project_dir" && go build -o "$target" ./cmd/db)
 else
   printf '⚠︎ go is required to build db launcher\n' >&2
 fi

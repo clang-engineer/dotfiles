@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"os"
@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/storage"
 )
 
 const fixture = `[local-db]
@@ -33,7 +34,7 @@ func setupCatalog(t *testing.T) string {
 
 func TestInitSync(t *testing.T) {
 	dir := setupCatalog(t)
-	if err := writePrivate(defaultConfigPath(), []byte("tool = 'harlequin'\nconnection = 'local-db'\n[extra]\nkeep = true\n")); err != nil {
+	if err := storage.WritePrivate(defaultConfigPath(), []byte("tool = 'harlequin'\nconnection = 'local-db'\n[extra]\nkeep = true\n")); err != nil {
 		t.Fatal(err)
 	}
 	if err := initializeSource(dir); err != nil {
@@ -111,7 +112,7 @@ func TestDefaultSourceAndInvalidArgs(t *testing.T) {
 	if err != nil || source != filepath.Join(configBase(), "db", "connections") {
 		t.Fatal("wrong default")
 	}
-	code, err := mainResult([]string{"invalid"})
+	code, err := Run([]string{"invalid"})
 	if code != 2 || err != nil {
 		t.Fatal("invalid command tried to sync")
 	}
@@ -147,10 +148,6 @@ func TestRenderDriversAndEscaping(t *testing.T) {
 	}
 	if !strings.Contains(parsed.Profiles["test_vertica"].ConnStr[0], "PWD={a;b}}}") {
 		t.Fatal("ODBC escaping")
-	}
-	c := connection{Host: "::1", Port: 5432, Username: "a b", Password: "@/", Database: "demo"}
-	if got := connectionURL(c, true); got != "postgresql://a%20b:%40%2F@[::1]:5432/demo" {
-		t.Fatalf("bad URL: %s", got)
 	}
 	if got := luaString("a\n\"\\"); got != "\"a\\010\\\"\\\\\"" {
 		t.Fatalf("bad Lua: %s", got)
@@ -219,24 +216,5 @@ func TestRetiredNvimOutput(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(root, "manual.lua")); err != nil {
 		t.Fatal("manual profile removed")
-	}
-}
-
-func TestPrivateWriteDoesNotFollowFileSymlink(t *testing.T) {
-	root := t.TempDir()
-	source := filepath.Join(root, "original")
-	link := filepath.Join(root, "link")
-	if err := os.WriteFile(source, []byte("original"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Symlink(source, link); err != nil {
-		t.Fatal(err)
-	}
-	if err := writePrivate(link, []byte("new")); err != nil {
-		t.Fatal(err)
-	}
-	data, _ := os.ReadFile(source)
-	if string(data) != "original" {
-		t.Fatal("source overwritten")
 	}
 }

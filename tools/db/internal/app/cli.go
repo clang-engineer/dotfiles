@@ -1,8 +1,8 @@
-package main
+// Package app coordinates CLI commands, selection, configuration, and client execution.
+package app
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 )
 
@@ -33,7 +33,8 @@ compdef _db db
 `
 }
 
-func mainResult(args []string) (int, error) {
+// Run executes a CLI command and returns its exit status without exiting the process.
+func Run(args []string) (int, error) {
 	if len(args) == 1 && (args[0] == "-h" || args[0] == "--help") {
 		usage()
 		return 0, nil
@@ -112,13 +113,4 @@ func mainResult(args []string) (int, error) {
 	}
 	usage()
 	return 2, nil
-}
-
-func main() {
-	code, err := mainResult(os.Args[1:])
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "db: %v\n", err)
-		os.Exit(1)
-	}
-	os.Exit(code)
 }

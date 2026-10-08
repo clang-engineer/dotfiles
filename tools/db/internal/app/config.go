@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"errors"
@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/catalog"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/storage"
 )
 
 type stringList []string
@@ -96,7 +98,7 @@ func initializeSource(path string) error {
 	if err != nil {
 		return err
 	}
-	if _, err := readCatalog(absolute); err != nil {
+	if _, err := catalog.Read(absolute); err != nil {
 		return err
 	}
 	_, raw, err := loadDBConfig()
@@ -104,11 +106,11 @@ func initializeSource(path string) error {
 		return err
 	}
 	raw["connections_dir"] = absolute
-	data, err := encodeTOML(raw)
+	data, err := storage.EncodeTOML(raw)
 	if err != nil {
 		return err
 	}
-	return writePrivate(defaultConfigPath(), data)
+	return storage.WritePrivate(defaultConfigPath(), data)
 }
 
 func loadDefault(connections map[string]connection) (string, string, bool, error) {
@@ -140,9 +142,9 @@ func saveDefault(tool, connectionID string) (string, error) {
 	}
 	raw["tool"] = tool
 	raw["connection"] = connectionID
-	data, err := encodeTOML(raw)
+	data, err := storage.EncodeTOML(raw)
 	if err != nil {
 		return "", err
 	}
-	return path, writePrivate(path, data)
+	return path, storage.WritePrivate(path, data)
 }

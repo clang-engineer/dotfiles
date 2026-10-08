@@ -1,7 +1,8 @@
-package main
+package app
 
 import (
 	"fmt"
+	"github.com/clang-engineer/dotfiles/tools/db/internal/catalog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,7 +15,7 @@ func harlequinProfile(c connection) map[string]any {
 	if adapter == "vertica" {
 		adapter = "odbc-vertica"
 	}
-	profile := map[string]any{"adapter": adapter, "conn_str": []string{connectionURL(c, true)}, "limit": 1000}
+	profile := map[string]any{"adapter": adapter, "conn_str": []string{catalog.URL(c, true)}, "limit": 1000}
 	if c.Driver == "h2" {
 		profile["user"] = c.Username
 		profile["password"] = c.Password
