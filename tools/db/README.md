@@ -96,6 +96,23 @@ The private companion's updated bootstrap no longer depends on Python or
 `databases/generated/`. Other installations must likewise update old bootstrap
 scripts before removing their previous generator and generated files.
 
+## Code layout
+
+One Go package, split by responsibility (no framework or plugin registry):
+
+- `main.go`: CLI dispatch, help, completion
+- `config.go`: source path and user defaults
+- `catalog.go`: connection model, loading, validation, filtering
+- `selector.go`: fzf selection and previews
+- `launcher.go`: validated client dispatch
+- `harlequin.go`, `rainfrog.go`, `nvim.go`: client-specific profiles and execution
+- `connection-url.go`: database connection-string encoding
+- `sync.go`: rendering and synchronizing persistent outputs
+- `storage.go`: TOML encoding and private atomic writes
+
+Catalog maps are passed explicitly; no global mutable connection state is used.
+The chezmoi build hook hashes every Go file, including newly added modules.
+
 ## Verification
 
 ```sh

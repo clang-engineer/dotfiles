@@ -2,8 +2,9 @@
 # Build the db launcher; reruns when the Go source changes.
 # db-go-mod {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/go.mod" | trim }}
 # db-go-sum {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/go.sum" | trim }}
-# db-main {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/main.go" | trim }}
-# db-catalog {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/db/catalog.go" | trim }}
+{{ range $file := glob (joinPath (.chezmoi.sourceDir | dir) "tools/db/*.go") -}}
+# db-source {{ base $file }} {{ output "git" "hash-object" $file | trim }}
+{{ end -}}
 set -euo pipefail
 
 source_dir={{ .chezmoi.sourceDir | dir | quote }}

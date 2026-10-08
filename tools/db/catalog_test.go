@@ -74,7 +74,6 @@ func TestInitSync(t *testing.T) {
 	if _, err := syncCatalog(); err != nil {
 		t.Fatal(err)
 	}
-	connections = catalog
 	if _, err := saveDefault("harlequin", "local-db"); err != nil {
 		t.Fatal(err)
 	}
@@ -163,8 +162,7 @@ func TestRainfrogSelectedProfile(t *testing.T) {
 	if err := initializeSource(dir); err != nil {
 		t.Fatal(err)
 	}
-	var err error
-	connections, err = syncCatalog()
+	connections, err := syncCatalog()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -176,7 +174,7 @@ func TestRainfrogSelectedProfile(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(bin, "rainfrog"), []byte(script), 0o700); err != nil {
 		t.Fatal(err)
 	}
-	code, err := launchRainfrog("local-db", filepath.Join(configBase(), "db"))
+	code, err := launchRainfrog("local-db", connections["local-db"])
 	if err != nil || code != 7 {
 		t.Fatalf("exit status: %d %v", code, err)
 	}
