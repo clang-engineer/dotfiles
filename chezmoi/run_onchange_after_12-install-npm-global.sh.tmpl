@@ -5,7 +5,10 @@
 set -euo pipefail
 
 pkg_file="{{ .chezmoi.sourceDir | dir }}/packages/npm-global.txt"
-[ -f "$pkg_file" ] || exit 0
+[ -f "$pkg_file" ] || {
+  printf 'npm package manifest not found: %s\n' "$pkg_file" >&2
+  exit 1
+}
 
 packages=()
 while IFS= read -r line || [ -n "$line" ]; do
@@ -13,7 +16,7 @@ while IFS= read -r line || [ -n "$line" ]; do
   line="${line%%#*}"
   line="$(printf '%s' "$line" | xargs)"
   [ -n "$line" ] && packages+=("$line")
-done < "$pkg_file"
+done <"$pkg_file"
 
 [ "${#packages[@]}" -gt 0 ] || exit 0
 
@@ -24,5 +27,6 @@ elif command -v npm >/dev/null 2>&1; then
   printf '→ Installing global npm CLIs: %s\n' "${packages[*]}"
   npm install -g --ignore-scripts "${packages[@]}"
 else
-  printf '→ npm not found; skipping global npm CLIs\n'
+  printf 'npm is required; install Node.js and retry chezmoi apply\n' >&2
+  exit 1
 fi

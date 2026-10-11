@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Idempotent shell tool installs; reruns when the mise config changes.
+# Idempotent shell tool installs; reruns when runtimes or tmux plugins change.
 # mise-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_config/mise/config.toml.tmpl" | trim }}
+# tmux-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_tmux.conf.local" | trim }}
 set -euo pipefail
 
 # zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting) are installed via
@@ -11,21 +12,26 @@ set -euo pipefail
 # Without this guard, a failed/skipped external clone would let `git clone tpm`
 # create ~/.tmux/plugins/ on its own, leaving ~/.tmux a non-git dir that later
 # breaks `chezmoi apply` (git pull → exit 128).
-if command -v tmux >/dev/null 2>&1 && [ -d "$HOME/.tmux/.git" ]; then
-  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    printf '→ Installing TPM...\n'
-    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" \
-      || printf '⚠︎ TPM install failed\n'
-  fi
-  # install plugins declared in ~/.tmux.conf (non-interactive, was: prefix + I)
-  if [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
-    "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null 2>&1 || true
-  fi
+command -v tmux >/dev/null 2>&1 || {
+  printf 'tmux is required; retry after installing packages\n' >&2
+  exit 1
+}
+if [ ! -d "$HOME/.tmux/.git" ]; then
+  printf 'oh-my-tmux clone is missing; retry chezmoi apply with externals enabled\n' >&2
+  exit 1
 fi
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  printf '→ Installing TPM...\n'
+  git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+fi
+# Install declared plugins non-interactively; preserve diagnostics on failure.
+"$HOME/.tmux/plugins/tpm/bin/install_plugins"
 
 # --- mise: install declared runtimes (node/ruby/java) ---
 # Versions live in ~/.config/mise/config.toml (chezmoi-managed). mise builds/
 # downloads each and puts them on PATH via `mise activate` in the shell rc.
-if command -v mise >/dev/null 2>&1; then
-  mise install
-fi
+command -v mise >/dev/null 2>&1 || {
+  printf 'mise is required; retry after installing packages\n' >&2
+  exit 1
+}
+mise install

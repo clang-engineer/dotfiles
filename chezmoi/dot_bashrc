@@ -7,6 +7,14 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+# Local helper binaries (shared with Zsh).
+if [ -d "$HOME/.local/bin" ]; then
+  case ":$PATH:" in
+    *:"$HOME/.local/bin":*) ;;
+    *) export PATH="$HOME/.local/bin:$PATH" ;;
+  esac
+fi
+
 # Load secrets (tokens, credentials) from a local-only file
 if [ -f "$HOME/.secrets" ]; then
   source "$HOME/.secrets"
