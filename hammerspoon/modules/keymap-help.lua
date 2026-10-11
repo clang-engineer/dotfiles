@@ -2,7 +2,9 @@
 -- No additional keyboard shortcut: click the Hammerspoon menu-bar item.
 
 local menu = hs.menubar.new()
-if not menu then return end
+if not menu then
+  return
+end
 
 menu:setTitle("⌘?")
 menu:setTooltip("Window keymaps")

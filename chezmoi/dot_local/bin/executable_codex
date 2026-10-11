@@ -56,12 +56,12 @@ for arg in "$@"; do
   fi
 
   case "$arg" in
-    -c|--config)
+    -c | --config)
       next_is_config=1
       ;;
-    -c=*|--config=*)
+    -c=* | --config=*)
       case "$arg" in
-        -c=developer_instructions=*|--config=developer_instructions=*)
+        -c=developer_instructions=* | --config=developer_instructions=*)
           has_developer_override=1
           ;;
       esac

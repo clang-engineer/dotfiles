@@ -128,14 +128,13 @@ ps aux | grep -i '[b]orders'
 ```ruby
 brew "shellcheck"
 brew "shfmt"
-brew "typos-cli"
 brew "stylua"
 brew "prek"
 ```
 
 ### 전역 hook
 
-`chezmoi/dot_gitconfig`에서 Git의 전역 hook 경로를 지정한다.
+`chezmoi/dot_gitconfig.tmpl`에서 Git의 전역 hook 경로를 지정한다.
 
 ```ini
 [core]
@@ -149,13 +148,15 @@ chezmoi가 `~/.config/git/hooks/pre-commit`을 관리한다. 이 hook 자체에�
 prek run --config "$HOME/.config/prek/global.yaml"
 ```
 
-공통 검사 정의는 `chezmoi/dot_config/prek/global.yaml`에 둔다.
+공통 검사 정의는 `chezmoi/dot_config/prek/global.yaml.tmpl`에 둔다.
 
 ```text
 Shell -> ShellCheck + shfmt --diff
 Lua   -> Stylua --check
-Text  -> typos
 ```
+
+`typos-cli`는 수동 검사 도구로 설치하지만 전역 hook에는 등록하지 않는다.
+Lua 포맷은 Neovim과 Hammerspoon 각각의 `stylua.toml`에서 2칸 들여쓰기를 지정한다.
 
 즉 검사 종류나 옵션을 바꿀 때는 hook shell script가 아니라 global prek config만
 수정하면 된다.

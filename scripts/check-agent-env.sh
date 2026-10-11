@@ -23,9 +23,9 @@ check() {
 
 echo "Shared agent command environment check"
 echo "─────────────────────────────"
-check "BLOG_DIR"    "$BLOG_DIR"    "/blog, /blog-improve"
+check "BLOG_DIR" "$BLOG_DIR" "/blog, /blog-improve"
 check "VAULT_DIR" "$VAULT_DIR" "/notes, /notes-cleanup"
-check "DEVKIT_DIR"  "$DEVKIT_DIR"  "/notes-cleanup (publish cheatsheets/notes)"
+check "DEVKIT_DIR" "$DEVKIT_DIR" "/notes-cleanup (publish cheatsheets/notes)"
 echo "─────────────────────────────"
 echo "  Result: ${ok} ok, ${fail} problem(s)"
 
