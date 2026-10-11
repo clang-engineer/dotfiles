@@ -1,7 +1,9 @@
 # Dotfiles Recommendations
 
-Reviewed on 2026-08-25. This is a review of useful additions, not an installation
-plan. Adopt tools only when the corresponding workflow is needed.
+Status refreshed on 2026-10-11. This distinguishes adopted tools from useful
+future additions, not an installation plan. Adopt new tools only when the
+corresponding workflow is needed. Actual integrations are documented in
+[TOOLING.md](TOOLING.md).
 
 ## Current pattern
 
@@ -10,8 +12,8 @@ The configuration already has a strong, deliberately small foundation:
 - chezmoi manages copied files, machine-local generated files, OS branches, and
   package installation; large live-edited trees such as Neovim and Hammerspoon
   are symlinked.
-- Zsh uses native initialization instead of a framework, with fzf, zoxide,
-  Starship, autosuggestions, and syntax highlighting.
+- Zsh uses native initialization instead of a framework, with fzf, Atuin, Yazi,
+  zoxide, autosuggestions, and syntax highlighting.
 - tmux uses Oh My Tmux, sesh, vim-tmux-navigator, resurrect, and continuum.
 - LazyVim already covers LSP, formatting, debugging, Git, SQL, Markdown, JVM and
   web development, Copilot, navigation, and editing helpers.
@@ -27,10 +29,10 @@ overlap.
 The terminal workflow is easier to reason about when each tool has a distinct
 role instead of treating fzf as a general-purpose file finder.
 
-- **fzf** is the low-level fuzzy picker. Its shell integration currently provides
-  `Ctrl-R` for history, `Ctrl-T` for inserting a selected path into the command
-  line, and `Alt-C` for choosing a directory and changing into it. Custom helpers
-  such as `gco` also use fzf as a generic selector.
+- **fzf** is the low-level fuzzy picker. Its shell integration provides `Ctrl-T`
+  for inserting a selected path into the command line and `Alt-C` for choosing a
+  directory and changing into it. Atuin takes over `Ctrl-R` in Zsh; PowerShell
+  still uses PSFzf for history. Custom helpers such as `gco` also use fzf.
 - **zoxide** is the preferred fast directory jumper for known or frequently used
   locations. This overlaps with fzf's `Alt-C`, so `Alt-C` is mainly useful when a
   directory must be discovered from a list rather than recalled by name.
@@ -38,14 +40,13 @@ role instead of treating fzf as a general-purpose file finder.
   In particular, grep/search actions such as `<leader>sg` find text inside the
   project and lead directly into editing. Opening Neovim only to discover a file
   or path is unnecessary when no editing context is needed.
-- **Atuin**, if adopted, should own `Ctrl-R` and structured shell-history search.
-  fzf remains installed as a generic selection primitive rather than being
-  removed.
-- **Yazi**, if adopted, should cover visual filesystem exploration, preview,
-  file operations, and shell-directory handoff. It complements rather than
+- **Atuin** owns `Ctrl-R` and structured shell-history search in Zsh. fzf remains
+  installed as a generic selection primitive.
+- **Yazi** covers visual filesystem exploration, preview, file operations, and
+  shell-directory handoff through the Zsh `y` wrapper. It complements rather than
   replaces fzf: Yazi is a file manager, while fzf selects an item from a list.
 
-A likely end state is therefore:
+The current Zsh workflow is therefore:
 
 | Need | Preferred tool |
 |---|---|
@@ -63,12 +64,12 @@ infrastructure: commands such as `fd | fzf`, `rg ... | fzf`, `git branch | fzf`,
 or `ps ... | fzf` can reuse the same picker whenever an ad-hoc selection is
 useful.
 
-## Recommended first
+## Adopted foundation and remaining follow-ups
 
 ### 1. ShellCheck, shfmt, and PSScriptAnalyzer
 
-This repository contains POSIX shell, Bash, and PowerShell setup scripts but has
-no matching static-analysis and formatting toolchain.
+ShellCheck and shfmt are installed and run through the global Git hook.
+PSScriptAnalyzer remains a Windows-only follow-up for the PowerShell setup scripts.
 
 - ShellCheck catches quoting, portability, and shell-semantic errors.
 - shfmt provides deterministic formatting for shell files.
@@ -83,8 +84,9 @@ machine. They complement Stylua and clang-format rather than duplicate them.
 It can run ShellCheck, shfmt, PSScriptAnalyzer, and typo checks without adding a
 custom validation script. It also fits the existing uv and mise-based toolchain.
 
-Add checks incrementally. A hook system that runs too many slow checks will be
-bypassed instead of helping.
+Already installed: the global hook runs ShellCheck, shfmt, and Stylua, then the
+repository config adds JSON/YAML and whitespace checks. typos remains manual.
+Add further checks incrementally; a slow hook system will be bypassed.
 
 ### 3. Atuin
 
@@ -92,23 +94,24 @@ Atuin adds structured shell history search by directory, exit status, duration,
 and host, with optional encrypted synchronization. It is a meaningful upgrade
 over plain history search for a cross-platform environment.
 
-The current Zsh and PowerShell configurations already assign `Ctrl-R` to fzf.
-Atuin should replace only that history binding; fzf should remain for files,
-directories, and generic fuzzy selection. Review history filters before enabling
-sync because command arguments can contain secrets.
+Already enabled in Zsh after fzf, so it owns `Ctrl-R`. PowerShell still uses
+PSFzf. fzf remains for files, directories, and generic fuzzy selection. Review
+history filters before enabling sync because command arguments can contain secrets.
 
 ### 4. Yazi
 
 Yazi fills the terminal file-management gap and reuses tools already installed:
 fd, ripgrep, fzf, zoxide, jq, and Nerd Fonts. It complements the Neovim explorer
 by handling bulk filesystem work and shell-directory handoff outside the editor.
-Homebrew and Scoop packages are available.
+Already installed through Homebrew with the Zsh `y` wrapper. Windows adoption
+remains optional; Yazi is not currently in the Scoop manifest.
 
 ### 5. watchexec
 
-watchexec is a cross-platform primitive for rerunning tests, formatters,
-generators, or development servers when files change. It avoids accumulating
-language-specific watchers such as separate Node and Rust watch tools.
+Already declared in the Brewfile. watchexec is a cross-platform primitive for
+rerunning tests, formatters, generators, or development servers when files change.
+It avoids accumulating language-specific watchers such as separate Node and Rust
+watch tools.
 
 ## Workflow-dependent
 
@@ -131,9 +134,10 @@ Mergiraf is a syntax-aware Git merge driver. It complements Delta's diff display
 and lazygit's UI by reducing structural merge conflicts. Add it if complex
 rebases or conflict resolution are frequent.
 
-### JankyBorders (macOS)
+### JankyBorders (macOS) — adopted
 
-JankyBorders adds focused-window borders and integrates cleanly with AeroSpace.
+JankyBorders is installed only on macOS and started by AeroSpace. It adds
+focused-window borders and integrates cleanly with AeroSpace.
 It does not compete with AeroSpace layout management or Hammerspoon automation.
 Prefer it over a full SketchyBar setup unless a desktop status bar is genuinely
 needed.
@@ -150,18 +154,18 @@ separate configuration, event/plugin scripts, icons/fonts, and another UI layer
 to maintain. Reconsider it only if persistent workspace visibility becomes a
 concrete problem that the existing AeroSpace/Hammerspoon feedback does not solve.
 
-### lazydocker
+### lazydocker — installed
 
-OrbStack already provides the container runtime and GUI. lazydocker is worthwhile
-only when Docker or Compose is used often enough to benefit from a keyboard-driven
-terminal UI similar to lazygit.
+Already declared in the Brewfile. OrbStack provides the container runtime and
+GUI. lazydocker is worthwhile only when Docker or Compose is used often enough to
+benefit from a keyboard-driven terminal UI similar to lazygit.
 
-### typos and hyperfine
+### typos and hyperfine — installed
 
-- `typos` is useful for config and documentation checks, especially through
-  prek. Keep a small allow-list for Korean text, product names, and identifiers.
-- `hyperfine` is useful for reproducible command and build benchmarks, but is not
-  a daily necessity.
+- `typos` is available for manual config and documentation checks; it is not in
+  the global hook. Keep a small allow-list for product names and identifiers.
+- `hyperfine` is available for reproducible command and build benchmarks, but is
+  not a daily necessity.
 
 ## AI agent and MCP usage
 
@@ -211,11 +215,9 @@ work over a large general-purpose tool catalog.**
 - Windows support is still documented as scaffolded and has not been verified on
   a real machine after the chezmoi migration.
 
-## Suggested order
+## Suggested follow-up order
 
-1. Add ShellCheck, shfmt, and PSScriptAnalyzer.
-2. Add prek and enable only the relevant checks.
-3. Try Atuin, explicitly replacing only fzf history search.
-4. Try Yazi.
-5. Add watchexec.
-6. Add workflow-dependent tools only after a concrete need appears.
+1. Verify the scaffolded Windows setup on a real machine.
+2. Add PSScriptAnalyzer when maintaining the Windows scripts actively.
+3. Resolve missing tools only for workflows actually in use.
+4. Add workflow-dependent tools only after a concrete need appears.

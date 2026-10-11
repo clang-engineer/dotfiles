@@ -149,14 +149,8 @@ local function render_candidates(results, limit)
   local max = math.min(limit, #results)
   for idx = 1, max do
     local item = results[idx]
-    lines[#lines + 1] = string.format(
-      "%-5d %4d %4d %4d  %s",
-      item.score,
-      item.loc,
-      item.complexity,
-      item.revisions,
-      item.path
-    )
+    lines[#lines + 1] =
+      string.format("%-5d %4d %4d %4d  %s", item.score, item.loc, item.complexity, item.revisions, item.path)
   end
 
   if #results > max then

@@ -91,8 +91,9 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 `chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,
 Hammerspoon, and casks. Windows uses AppData for Neovim, installs shared CLI tools
 with Scoop, and manages Git Bash startup files alongside a PowerShell 7 all-hosts
-profile. Terminal appearance remains host-specific. **Windows is scaffolded and
-must still be verified on a real machine after the migration.**
+profile. The DB launcher is macOS/Linux-only; its build hook and wrapper are
+excluded on Windows. Terminal appearance remains host-specific. **Windows is
+scaffolded and must still be verified on a real machine after the migration.**
 
 ## Git identity and GitHub accounts
 

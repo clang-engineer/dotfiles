@@ -14,16 +14,11 @@ function M.setup(opts)
   opts = opts or {}
 
   local command_name = opts.command_name or "DBPicker"
-  local open_group_picker = opts.open_group_picker or function()
-  end
-  local open_group = opts.open or function()
-  end
-  local edit_group = opts.edit_group or function()
-  end
-  local create_group = opts.create_group or function()
-  end
-  local restore_group = opts.restore_group or function()
-  end
+  local open_group_picker = opts.open_group_picker or function() end
+  local open_group = opts.open or function() end
+  local edit_group = opts.edit_group or function() end
+  local create_group = opts.create_group or function() end
+  local restore_group = opts.restore_group or function() end
   local show_info = opts.show_info or function(message)
     vim.notify(message, vim.log.levels.INFO)
   end
@@ -123,17 +118,11 @@ function M.setup(opts)
     return util.filter_starts_with(connection_group_candidates(), arg_lead)
   end
 
-  vim.api.nvim_create_user_command(
-    command_name,
-    handle_group_picker_command,
-    {
-      nargs = "*",
-      complete = connection_command_complete,
-      desc = "Open DB connection picker (`:"
-        .. command_name
-        .. " [all|<group>|add|edit <group>|restore|help`)"
-    }
-  )
+  vim.api.nvim_create_user_command(command_name, handle_group_picker_command, {
+    nargs = "*",
+    complete = connection_command_complete,
+    desc = "Open DB connection picker (`:" .. command_name .. " [all|<group>|add|edit <group>|restore|help`)",
+  })
 end
 
 return M

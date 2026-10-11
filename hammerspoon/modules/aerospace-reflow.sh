@@ -12,15 +12,20 @@ app=""
 while IFS= read -r line; do
   case "$line" in
     '[[on-window-detected]]'*) app="" ;;
-    'if.app-id'*) app="${line#*\'}"; app="${app%%\'*}" ;;
+    'if.app-id'*)
+      app="${line#*\'}"
+      app="${app%%\'*}"
+      ;;
     'run'*)
       if [[ "$line" == *move-node-to-workspace* && -n "$app" ]]; then
-        ws="${line#*move-node-to-workspace }"; ws="${ws%%\'*}"
+        ws="${line#*move-node-to-workspace }"
+        ws="${ws%%\'*}"
         MAP="${MAP}${app}|${ws}"$'\n'
       fi
-      app="" ;;
+      app=""
+      ;;
   esac
-done < "$TOML"
+done <"$TOML"
 
 # Move each window whose app has a home workspace
 moved=0

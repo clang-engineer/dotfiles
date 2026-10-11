@@ -6,13 +6,15 @@
 # Brewfile.cask {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "packages/Brewfile.cask" | trim }}
 {{ end }}
 set -euo pipefail
-command -v brew >/dev/null 2>&1 || { printf '→ brew not found; skipping packages\n'; exit 0; }
+command -v brew >/dev/null 2>&1 || {
+  printf 'brew is required; install Homebrew and retry chezmoi apply\n' >&2
+  exit 1
+}
 
 # --no-upgrade: install missing packages only, don't bump existing versions.
 brew bundle --no-upgrade --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile"
-
 {{ if eq .chezmoi.os "darwin" }}
 # brew 6.0 refuses casks from untrusted third-party taps; aerospace needs this.
 brew trust nikitabobko/tap
 brew bundle --no-upgrade --file="{{ .chezmoi.sourceDir | dir }}/packages/Brewfile.cask"
-{{ end }}
+{{ end -}}

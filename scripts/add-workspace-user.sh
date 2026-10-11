@@ -68,7 +68,7 @@ if [[ ! -d "$WORKSPACE_PATH" ]]; then
 fi
 
 # Create git config file
-cat > "$CONFIG_FILE" <<EOF
+cat >"$CONFIG_FILE" <<EOF
 [user]
     name = $GIT_NAME
     email = $GIT_EMAIL
@@ -81,7 +81,7 @@ if grep -q "gitdir:$WORKSPACE_PATH/" "$GITCONFIG" 2>/dev/null; then
   echo "includeIf entry already exists in $GITCONFIG"
 else
   # Add includeIf to global gitconfig
-  cat >> "$GITCONFIG" <<EOF
+  cat >>"$GITCONFIG" <<EOF
 
 [includeIf "gitdir:$WORKSPACE_PATH/"]
     path = $CONFIG_FILE

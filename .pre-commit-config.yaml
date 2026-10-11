@@ -1,5 +1,5 @@
 # Checks specific to this repository.
-# ShellCheck, shfmt, Stylua, and typos are already provided by the global prek config.
+# ShellCheck, shfmt, and Stylua are already provided by the global prek config.
 repos:
   - repo: local
     hooks:

@@ -6,6 +6,9 @@ and the selected database client (including its driver/adapter).
 
 ## Setup
 
+The managed launcher currently supports macOS/Linux only. Windows excludes both
+its build hook and shell wrapper.
+
 `chezmoi apply` builds `~/.local/libexec/db` and installs the `db` wrapper.
 For a manual build, run `go build -o ~/.local/libexec/db .` from this directory.
 

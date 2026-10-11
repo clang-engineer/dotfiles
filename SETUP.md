@@ -59,7 +59,13 @@ of truth. This section lists only the scripts that run:
 | `run_once_before_00-migrate-claude-home.sh` | migrate the legacy Claude symlink (macOS/Linux) |
 | `run_onchange_after_05-brew-bundle.sh` | install Homebrew formulae and macOS-only casks |
 | `run_onchange_after_10-install-shell-tools.sh` | install TPM plugins and mise runtimes (macOS/Linux) |
-| `run_onchange_after_15-windows-install.ps1` | install Scoop packages and mise runtimes |
+| `run_onchange_after_11-build-db.sh` | build the DB launcher (macOS/Linux) |
+| `run_onchange_after_12-install-npm-global.sh` | install global npm CLIs (macOS/Linux) |
+| `run_onchange_after_15-windows-install.ps1` | install Scoop packages and mise runtimes (Windows) |
+
+> Required dependency or install failures stop the apply instead of being recorded
+> as successful. Fix the reported problem and retry `chezmoi apply`; successful
+> unchanged scripts do not rerun. TPM installs also track changes to the tmux config.
 
 > Edit managed configs with `chezmoi edit --apply <target>` (edit source + apply
 > immediately). Only nvim and hammerspoon are whole-directory symlinks; Claude's
@@ -70,8 +76,10 @@ of truth. This section lists only the scripts that run:
 `chezmoi apply` installs package manifests and the Node/Java versions declared in
 `~/.config/mise/config.toml`. mise also installs Ruby on macOS/Linux; Windows uses
 Scoop Ruby because mise's Ruby backend is Unix-only. Linux skips the macOS cask
-manifest. The Windows PowerShell installer is only the bootstrap mechanism; installed
-CLI tools are available from PowerShell, Git Bash, cmd, and IDE terminals through PATH.
+manifest and JankyBorders. The DB launcher is currently macOS/Linux-only; Windows
+skips its build hook and wrapper. The Windows PowerShell installer is only the
+bootstrap mechanism; installed CLI tools are available from PowerShell, Git Bash,
+cmd, and IDE terminals through PATH.
 
 ## 4. Machine-local secrets (`~/.secrets`)
 

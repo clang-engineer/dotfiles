@@ -61,7 +61,7 @@ fi
 echo "Generating SSH key..."
 ssh-keygen -t rsa -b 4096 -C "$EMAIL" -f "$KEY_PATH" -N ""
 
-if ! pgrep -x ssh-agent > /dev/null; then
+if ! pgrep -x ssh-agent >/dev/null; then
   eval "$(ssh-agent -s)"
 fi
 ssh-add "$KEY_PATH" 2>/dev/null || true
