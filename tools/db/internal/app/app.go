@@ -21,12 +21,11 @@ func (e launcherError) Error() string { return string(e) }
 type connection = catalog.Connection
 
 func usage() {
-	fmt.Println("usage: db [--select | --set-default | --help]")
+	fmt.Println("usage: db [--select | --help]")
 	fmt.Println()
-	fmt.Println("Launch the saved database or select a Harlequin database interactively.")
+	fmt.Println("Launch the last database or select a Harlequin database interactively.")
 	fmt.Println()
-	fmt.Println("  --select       ignore the saved database and select a project/database")
-	fmt.Println("  --set-default  select and save the default database")
+	fmt.Println("  --select       select a project/database and save it as the last choice")
 	fmt.Println()
 	fmt.Println("Advanced setup commands (init, sync, and init zsh) are also supported.")
 }
@@ -38,7 +37,7 @@ _db() {
   if [[ CURRENT -eq 3 && "${words[2]}" == "init" ]]; then
     compadd zsh --source
   else
-    compadd -- --select --set-default sync init
+    compadd -- --select sync init
   fi
 }
 
@@ -65,7 +64,7 @@ func Run(args []string) (int, error) {
 	}
 
 	preview := len(args) == 2 && args[0] == "--preview-tool" || len(args) == 3 && (args[0] == "--preview-project" || args[0] == "--preview-connection")
-	valid := len(args) == 0 || len(args) == 1 && contains([]string{"sync", "--select", "--set-default"}, args[0]) || preview
+	valid := len(args) == 0 || len(args) == 1 && contains([]string{"sync", "--select"}, args[0]) || preview
 	if !valid {
 		usage()
 		return 2, nil
@@ -100,22 +99,6 @@ func Run(args []string) (int, error) {
 	if len(args) == 1 && args[0] == "--select" {
 		return runInteractive(connections, configDir)
 	}
-	if len(args) == 1 && args[0] == "--set-default" {
-		tool, connectionID, ok, err := selectConnection(connections)
-		if err != nil {
-			return 1, err
-		}
-		if !ok {
-			return 130, nil
-		}
-		path, err := saveDefault(tool, connectionID)
-		if err != nil {
-			return 1, err
-		}
-		fmt.Printf("Default database saved: %s / %s\n", tool, connectionID)
-		fmt.Printf("Config: %s\n", path)
-		return 0, nil
-	}
 	if len(args) == 2 && args[0] == "--preview-tool" {
 		previewTool(connections, args[1])
 		return 0, nil
@@ -144,6 +127,9 @@ func runInteractive(connections map[string]connection, configDir string) (int, e
 	}
 	if !ok {
 		return 130, nil
+	}
+	if _, err := saveDefault(tool, connectionID); err != nil {
+		return 1, err
 	}
 	return launchConnection(connections, configDir, tool, connectionID)
 }
