@@ -21,15 +21,14 @@ func (e launcherError) Error() string { return string(e) }
 type connection = catalog.Connection
 
 func usage() {
-	fmt.Println("usage: db [--select | --set-default | sync | init --source DIR | init zsh | --help]")
+	fmt.Println("usage: db [--select | --set-default | --help]")
 	fmt.Println()
-	fmt.Println("Launch the default database or select one interactively.")
+	fmt.Println("Launch the saved database or select a Harlequin database interactively.")
 	fmt.Println()
-	fmt.Println("  --select       ignore the default and select a database")
+	fmt.Println("  --select       ignore the saved database and select a project/database")
 	fmt.Println("  --set-default  select and save the default database")
-	fmt.Println("  init --source DIR  save the connection source directory")
-	fmt.Println("  sync           generate persistent tool configs from source TOML")
-	fmt.Println("  init zsh       output zsh completion script")
+	fmt.Println()
+	fmt.Println("Advanced setup commands (init, sync, and init zsh) are also supported.")
 }
 
 func initZsh() string {
@@ -135,7 +134,11 @@ func Run(args []string) (int, error) {
 func launchTools() []string { return []string{"harlequin", "rainfrog"} }
 
 func runInteractive(connections map[string]connection, configDir string) (int, error) {
-	tool, connectionID, ok, err := selectConnection(connections)
+	tool, err := interactiveTool()
+	if err != nil {
+		return 1, err
+	}
+	tool, connectionID, ok, err := selectConnectionForTool(connections, tool)
 	if err != nil {
 		return 1, err
 	}
@@ -264,10 +267,19 @@ func pick(items []string, prompt string, previewArgs []string, dbRows bool, esca
 }
 
 func selectConnection(connections map[string]connection) (string, string, bool, error) {
+	return selectConnectionForTool(connections, "")
+}
+
+func selectConnectionForTool(connections map[string]connection, fixedTool string) (string, string, bool, error) {
 	for {
-		tool, ok, err := pick(launchTools(), "tool", []string{"--preview-tool"}, false, "exit")
-		if err != nil || !ok {
-			return "", "", false, err
+		tool := fixedTool
+		if tool == "" {
+			var ok bool
+			var err error
+			tool, ok, err = pick(launchTools(), "tool", []string{"--preview-tool"}, false, "exit")
+			if err != nil || !ok {
+				return "", "", false, err
+			}
 		}
 		for {
 			entries := availableConnections(connections, tool, "")
@@ -280,6 +292,9 @@ func selectConnection(connections map[string]connection) (string, string, bool, 
 				return "", "", false, err
 			}
 			if !ok {
+				if fixedTool != "" {
+					return "", "", false, nil
+				}
 				break
 			}
 			for {

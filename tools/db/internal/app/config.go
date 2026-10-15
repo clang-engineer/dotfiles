@@ -113,6 +113,20 @@ func initializeSource(path string) error {
 	return storage.WritePrivate(defaultConfigPath(), data)
 }
 
+func interactiveTool() (string, error) {
+	cfg, _, err := loadDBConfig()
+	if err != nil {
+		return "", err
+	}
+	if cfg.Tool == "" {
+		return "harlequin", nil
+	}
+	if !contains(launchTools(), cfg.Tool) {
+		return "", launcherError(fmt.Sprintf("invalid interactive tool in default config: %s", defaultConfigPath()))
+	}
+	return cfg.Tool, nil
+}
+
 func loadDefault(connections map[string]connection) (string, string, bool, error) {
 	cfg, _, err := loadDBConfig()
 	if err != nil {

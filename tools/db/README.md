@@ -22,12 +22,14 @@ db init --source /path/to/connections
 This validates the catalog and saves its absolute path in
 `~/.config/db/config.toml`, preserving existing defaults. It does not copy or
 modify the original catalog. No environment variable is required.
-All `~/.config` paths below honor `XDG_CONFIG_HOME`.
+All `~/.config` paths below honor `XDG_CONFIG_HOME`. Set `tool = "harlequin"`
+in `~/.config/db/config.toml` to make interactive launches skip the tool picker;
+Harlequin is the default when it is omitted.
 
 ```sh
 db sync           # generate persistent client configurations
-db                # sync, then launch saved default or select interactively
-db --select       # sync, then select tool → project → connection
+db                # sync, then launch saved default or select Harlequin project → connection
+db --select       # sync, then select Harlequin project → connection
 db --set-default  # select and save default tool/connection
 db init zsh       # print zsh completion
 ```
