@@ -22,6 +22,42 @@ The window-management ownership should remain explicit:
 - Raycast or Hammerspoon: floating-window placement; avoid maintaining both
 - Hammerspoon: event watchers and integration between macOS tools
 
+## Troubleshooting: AeroSpace window-move shortcuts do nothing
+
+If `Option+Shift+1–4` does nothing after a fresh macOS installation, but running
+`modules/aerospace-move-node.sh` from Terminal works, check AeroSpace's folder
+access permissions—not just Accessibility.
+
+`~/.hammerspoon` is a symlink to this repository. If the repository is under
+Desktop, AeroSpace needs permission to access Desktop when its
+`exec-and-forget` binding launches the script. Terminal's permission does not
+grant the same access to AeroSpace.
+
+1. Open **System Settings → Privacy & Security → Files and Folders → AeroSpace**.
+2. Enable **Desktop Folder** access if the repository is stored there.
+3. Quit AeroSpace completely, reopen it, and retry the shortcut.
+
+For other protected locations, check the corresponding folder permission.
+Accessibility and folder access are separate permissions; restarting AeroSpace
+alone does not grant missing access.
+
+To compare the two execution paths, focus a window outside `1:Browser` and run
+these commands separately. Each attempts to send that window to `1:Browser`;
+refocus a window outside the target workspace before the second test:
+
+```sh
+# Runs with the terminal app's permissions.
+bash ~/.hammerspoon/modules/aerospace-move-node.sh '1:Browser'
+
+# Runs the configured binding through AeroSpace, with AeroSpace's permissions.
+aerospace trigger-binding --mode main alt-shift-1
+```
+
+If only the first works, folder access is one possible cause. AeroSpace's
+`exec-and-forget` discards stdout, stderr, and exit status, so a script launch
+failure may appear completely silent. This Desktop permission issue was
+confirmed after a macOS reinstall on 2026-10-20.
+
 ## Common patterns to consider
 
 These are proposals, not currently enabled features. Public Hammerspoon
