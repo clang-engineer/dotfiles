@@ -1,5 +1,7 @@
 # AeroSpace Config
 
+config-version = 2
+
 start-at-login = true
 
 # Start focused-window border indicator with AeroSpace.
