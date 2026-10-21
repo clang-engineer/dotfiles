@@ -88,6 +88,11 @@ if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
+# Starship — use the default prompt preset.
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi
+
 # Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
 if command -v yazi &>/dev/null; then
   y() {
