@@ -86,6 +86,15 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `tools/db/` | [Go database launcher](tools/db/README.md) — connection catalog, native config generation, target selection |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
+Ghostty's terminal appearance is set in `chezmoi/dot_config/ghostty/config`
+(`Rose Pine Moon` and Maple Mono NF); `chezmoi/dot_config/starship.toml` carries
+matching prompt accents. The font is provisioned by `packages/Brewfile.cask`.
+The previous Cyberdream theme remains in `chezmoi/dot_config/ghostty/themes/cyberdream`.
+To use it again, set Ghostty's `theme = cyberdream` and Starship's
+`palette = 'cyberdream'` (and `font-family = "JetBrains Mono"` for the old font).
+Use `ghostty +list-themes` to browse themes and reload with Cmd+Shift+, after
+applying the configs.
+
 ## Cross-platform
 
 `chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,

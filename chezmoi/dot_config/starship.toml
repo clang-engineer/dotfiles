@@ -1,9 +1,17 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Cyberdream colors, with a compact left-aligned prompt.
-palette = 'cyberdream'
+# Switch to 'cyberdream' when using Ghostty's saved cyberdream theme.
+palette = 'rose-pine-moon'
 add_newline = false
 format = '$directory$git_branch$git_status$java$nodejs$character'
+
+[palettes.rose-pine-moon]
+cyan = '#9ccfd8'
+blue = '#3e8fb0'
+purple = '#c4a7e7'
+yellow = '#f6c177'
+green = '#95b1ac'
+red = '#eb6f92'
 
 [palettes.cyberdream]
 cyan = '#5ef1ff'

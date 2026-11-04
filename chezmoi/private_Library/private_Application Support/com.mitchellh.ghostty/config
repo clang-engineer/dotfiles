@@ -1,3 +1,2 @@
+# Keep appearance in ~/.config/ghostty/config (loaded before this file).
 macos-option-as-alt = true
-theme = cyberdream
-scrollback-limit = 10000
