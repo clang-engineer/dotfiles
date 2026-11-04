@@ -28,7 +28,39 @@ if command -v fzf >/dev/null 2>&1; then
   eval "$(fzf --bash)"
 fi
 
-# mise — manages node/ruby/java runtimes (Windows Ruby comes from Scoop).
+# mise — use shims in Git Bash because the Windows binary emits a semicolon-delimited PATH.
 if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate bash)"
+  if [ -n "${MSYSTEM:-}" ] && command -v cygpath >/dev/null 2>&1; then
+    mise_data_dir="${MISE_DATA_DIR:-${LOCALAPPDATA:-$HOME/AppData/Local}/mise}"
+    mise_shims="$(cygpath -u "$mise_data_dir")/shims"
+    case ":$PATH:" in
+      *:"$mise_shims":*) ;;
+      *) export PATH="$mise_shims:$PATH" ;;
+    esac
+    unset mise_data_dir mise_shims
+  else
+    eval "$(mise activate bash)"
+  fi
+fi
+
+# Scoop shims — keep Windows-installed CLI tools available in Git Bash.
+if [ -d "$HOME/scoop/shims" ]; then
+  case ":$PATH:" in
+    *:"$HOME/scoop/shims":*) ;;
+    *) export PATH="$HOME/scoop/shims:$PATH" ;;
+  esac
+fi
+
+# Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
+if command -v yazi >/dev/null 2>&1; then
+  y() {
+    local tmp cwd
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && [ -d "$cwd" ]; then
+      builtin cd -- "$cwd"
+    fi
+    command rm -f -- "$tmp"
+  }
 fi

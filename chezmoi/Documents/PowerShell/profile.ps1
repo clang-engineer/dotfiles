@@ -25,6 +25,22 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     zoxide init powershell | Out-String | Invoke-Expression
 }
 
+# Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
+if (Get-Command yazi.exe -ErrorAction SilentlyContinue) {
+    function y {
+        $tmp = (New-TemporaryFile).FullName
+        try {
+            yazi.exe @args --cwd-file="$tmp"
+            $cwd = Get-Content -LiteralPath $tmp -Encoding UTF8
+            if ($cwd -and $cwd -ne $PWD.Path -and (Test-Path -LiteralPath $cwd -PathType Container)) {
+                Set-Location -LiteralPath (Resolve-Path -LiteralPath $cwd).Path
+            }
+        } finally {
+            Remove-Item -LiteralPath $tmp -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 if (Get-Command mise -ErrorAction SilentlyContinue) {
     mise activate pwsh | Out-String | Invoke-Expression
 }

@@ -21,4 +21,5 @@ ruby34             # Native Windows Ruby 3.4; mise's Ruby backend is Unix-only
 starship          # Cross-platform prompt. Shows git status / language versions in the prompt
 tree-sitter       # Incremental parsing library. Used by Neovim for syntax highlighting/code folding
 uv                # Blazing-fast Python package manager & virtualenv tool (pip/venv replacement)
+yazi              # Terminal file manager; `y` wrapper hands the final cwd back to PowerShell
 zoxide            # autojump/z replacement. Smart directory jump (e.g. z dotfiles, zi)

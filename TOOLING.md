@@ -45,16 +45,25 @@ secret/token이 기록될 수 있으므로 history filtering 정책을 먼저 �
 
 ### 설치
 
-`packages/Brewfile`:
+macOS/Linux의 `packages/Brewfile`:
 
 ```ruby
 brew "yazi"
 ```
 
+Windows의 `packages/scoop-packages.txt`:
+
+```text
+yazi
+```
+
 ### 추가 셋업
 
-기본 실행 명령은 `yazi`다. `chezmoi/dot_zshrc`에는 별도로 `y()` wrapper를 두어
-Yazi 종료 시 마지막 디렉터리를 현재 shell cwd로 넘긴다.
+기본 실행 명령은 `yazi`다. `chezmoi/dot_zshrc`, `chezmoi/dot_bashrc`,
+`chezmoi/Documents/PowerShell/profile.ps1`에는 각각 `y` wrapper를 두어 Yazi
+종료 시 마지막 디렉터리를 현재 shell cwd로 넘긴다.
+Windows Git Bash에서는 native `mise activate bash`가 세미콜론 구분 `PATH`를
+내보내므로 `.bashrc`가 mise shims를 직접 추가한다.
 
 동작 흐름:
 
