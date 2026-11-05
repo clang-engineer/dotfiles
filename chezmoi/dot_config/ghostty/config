@@ -1,8 +1,11 @@
 # Ghostty — tmux inherits this theme's ANSI colors.
 # `theme = cyberdream` restores the saved theme in themes/cyberdream.
-# Match Starship's palette separately; reload with Cmd+Shift+,.
-font-family = "Maple Mono NF"
+# Match Starship's palette separately; font-codepoint-map needs a new tab/window.
+font-family = "Jetendard"
+font-family = "IBM Plex Mono"
 font-family = "JuliaMono"
 font-family = "Symbols Nerd Font Mono"
+# Prefer IBM Plex Sans KR for Hangul syllables and compatibility jamo.
+font-codepoint-map = U+3130-U+318F,U+AC00-U+D7A3=IBM Plex Sans KR
 theme = Rose Pine Moon
 scrollback-limit = 10000
