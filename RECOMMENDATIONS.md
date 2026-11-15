@@ -32,7 +32,7 @@ role instead of treating fzf as a general-purpose file finder.
 - **fzf** is the low-level fuzzy picker. Its shell integration provides `Ctrl-T`
   for inserting a selected path into the command line and `Alt-C` for choosing a
   directory and changing into it. Atuin takes over `Ctrl-R` in Zsh; PowerShell
-  still uses PSFzf for history. Custom helpers such as `gco` also use fzf.
+  still uses PSFzf for history.
 - **zoxide** is the preferred fast directory jumper for known or frequently used
   locations. This overlaps with fzf's `Alt-C`, so `Alt-C` is mainly useful when a
   directory must be discovered from a list rather than recalled by name.
@@ -55,7 +55,6 @@ The current Zsh workflow is therefore:
 | Browse/manage the filesystem | Yazi |
 | Search while editing | LazyVim/Snacks pickers |
 | Select from arbitrary CLI output | fzf |
-| Select a Git branch with `gco` | fzf |
 
 `Ctrl-T` and `Alt-C` can remain available even if they are rarely used. They are
 cheap fallback bindings, and keeping them does not require fzf to be a primary

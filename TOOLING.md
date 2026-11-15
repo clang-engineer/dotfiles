@@ -35,7 +35,6 @@ binding을 Atuin이 최종적으로 가져가게 하기 위해서다.
 Ctrl-R -> Atuin history
 Ctrl-T -> fzf file/path picker
 Alt-C  -> fzf directory picker
-gco    -> fzf branch picker
 ```
 
 Atuin sync는 현재 필수 설정이 아니다. 동기화를 켜기 전에는 command argument에

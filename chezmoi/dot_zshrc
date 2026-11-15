@@ -30,7 +30,7 @@ if command -v brew >/dev/null 2>&1; then
   fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
 fi
 
-# Completion system (git, etc.) — was provided by oh-my-zsh
+# Shell completion
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive matching
 zstyle ':completion:*' menu select                      # arrow-key menu selection
@@ -40,11 +40,6 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 if command -v db &>/dev/null; then
   eval "$(db init zsh)"
 fi
-
-# Command typo correction: correct misspelled commands → "correct 'xyz' to 'abc' [nyae]?" prompt
-setopt CORRECT
-
-# Project directory vars come from the private secrets repo, loaded via ~/.secrets
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -71,11 +66,6 @@ fi
 # fzf (Ctrl+T file select, Alt+C directory jump; Ctrl+R is replaced by Atuin below)
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
-
-  # gco — fzf로 로컬/원격 브랜치 골라 checkout
-  gco() {
-    git checkout "$(git branch --all | grep -v HEAD | fzf | tr -d ' *' | sed 's|remotes/origin/||')"
-  }
 fi
 
 # Atuin — structured shell history; initialized after fzf so it owns Ctrl+R.
@@ -107,7 +97,7 @@ if command -v yazi &>/dev/null; then
   }
 fi
 
-# zsh plugins (installed via brew; replaced oh-my-zsh's plugin loader).
+# Brew-installed zsh plugins.
 # syntax-highlighting must be sourced last, after all other zle setup.
 if [[ -n "$BREW_PREFIX" ]]; then
   [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
