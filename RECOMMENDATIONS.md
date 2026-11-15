@@ -15,6 +15,8 @@ The configuration already has a strong, deliberately small foundation:
 - Zsh uses native initialization instead of a framework, with fzf, Atuin, Yazi,
   zoxide, autosuggestions, and syntax highlighting.
 - tmux uses Oh My Tmux, sesh, vim-tmux-navigator, resurrect, and continuum.
+  OMT's `prefix + F` uses fpp to select files from pane output for editing in
+  Neovim.
 - LazyVim already covers LSP, formatting, debugging, Git, SQL, Markdown, JVM and
   web development, Copilot, navigation, and editing helpers.
 - Git uses lazygit and Delta; macOS window management uses AeroSpace and
