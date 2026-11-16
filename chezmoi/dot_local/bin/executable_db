@@ -8,4 +8,9 @@ if [ ! -x "$binary" ]; then
   exit 1
 fi
 
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+if [ -z "${VERTICAINI:-}" ] && [ -f "$config_home/db/vertica.ini" ]; then
+  export VERTICAINI="$config_home/db/vertica.ini"
+fi
+
 exec "$binary" "$@"

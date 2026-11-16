@@ -60,6 +60,63 @@ H2 uses `url = "jdbc:h2:..."` instead of host/port/database; put H2 parameters i
 the URL. Harlequin needs the corresponding installed adapter. Credentials belong
 in private files, never in this repository. Source files should have mode 0600.
 
+Vertica profiles use the `harlequin-odbc-vertica` plug-in (`odbc-vertica`),
+which fixes Vertica catalog metadata that the generic `odbc` adapter cannot
+retrieve. Install it into Harlequin's Python environment. Separately, install
+the native Vertica ODBC driver and register it with unixODBC as `Vertica`.
+DataGrip's JDBC driver and `vsql` do not replace this ODBC driver.
+
+### macOS: Vertica ODBC connection errors
+
+The native driver is available through the [Rocket Customer Community download
+portal](https://my.rocketsoftware.com/RocketCommunity/RCLogin) after login:
+**Download → SELECT A PRODUCT: Vertica → macOS ODBC**.
+
+This machine used an Apple Silicon Homebrew unixODBC and a vendor `.pkg`, but
+driver locations and installation methods vary by machine. The `.pkg` put
+`libverticaodbc.dylib` in `/Library/Vertica/ODBC/lib/` and registered it in
+`/etc/odbcinst.ini`. Homebrew unixODBC reads its own driver registry instead;
+check the active path and driver name:
+
+```sh
+odbcinst -j
+odbcinst -q -d
+odbcinst -q -d -n Vertica
+```
+
+**`Can't open lib 'Vertica' : file not found`** means unixODBC cannot resolve
+`DRIVER={Vertica}`. If the library is installed but `odbcinst -q -d` does not
+list `[Vertica]`, add this stanza to the active `odbcinst.ini` reported by
+`odbcinst -j`, using the *actual* library path on that machine (do not copy
+the vendor's `[ODBC Drivers]` section):
+
+```ini
+[Vertica]
+Driver = /path/to/libverticaodbc.dylib
+```
+
+**`('H000', '[H000] [ (50404) (SQLDriverConnect)')`** occurred here after
+registration because the vendor's `vertica.ini` targeted iODBC (`UTF-32` and
+`libiodbcinst.dylib`), while Harlequin's `pyodbc` used Homebrew unixODBC.
+For that combination, create a **machine-local**, untracked `vertica.ini`
+in `${XDG_CONFIG_HOME:-$HOME/.config}/db/`, using the installed driver's
+messages directory and the *actual* unixODBC installer library path:
+
+```ini
+[Driver]
+ErrorMessagesPath=/path/to/vertica/messages/
+ODBCInstLib=/path/to/libodbcinst.2.dylib
+DriverManagerEncoding=UTF-16
+```
+
+The managed `db` wrapper reads this file if present; an existing `VERTICAINI`
+environment variable takes precedence. This Mac's verified paths are
+`/Library/Vertica/ODBC/messages/` and
+`/opt/homebrew/lib/libodbcinst.2.dylib`. Do not copy them to a different Mac
+without checking its installation. `odbcinst -q -d` alone only verifies
+registration, not this encoding mismatch; a successful `db` launch reaches
+the Harlequin Data Catalog.
+
 ## Use clients directly
 
 `db sync` writes persistent files, not launcher-only temporary profiles:
