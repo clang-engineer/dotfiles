@@ -14,9 +14,11 @@ The configuration already has a strong, deliberately small foundation:
   are symlinked.
 - Zsh uses native initialization instead of a framework, with fzf, Atuin, Yazi,
   zoxide, autosuggestions, and syntax highlighting.
-- tmux uses Oh My Tmux, sesh, vim-tmux-navigator, resurrect, and continuum.
-  OMT's `prefix + F` uses fpp to select files from pane output for editing in
-  Neovim.
+- tmux uses Oh My Tmux, sesh, vim-tmux-navigator, resurrect, continuum,
+  extrakto, and tmux-fingers. `prefix + F` selects visible text with fingers
+  hints; `prefix + J` jumps to a match in copy mode. These replace OMT's
+  PathPicker and pane-resize bindings. `prefix + Tab` searches output with
+  extrakto (`Tab` inserts, `Enter` copies); fpp remains available as a CLI.
 - LazyVim already covers LSP, formatting, debugging, Git, SQL, Markdown, JVM and
   web development, Copilot, navigation, and editing helpers.
 - Git uses lazygit and Delta; macOS window management uses AeroSpace and
