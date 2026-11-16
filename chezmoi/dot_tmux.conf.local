@@ -429,6 +429,9 @@ set -g mode-keys vi
 # Keep modifier-aware key parsing for option-modified arrows.
 set -g extended-keys on
 
+# fpp에서만 Neovim을 쓰고 다른 tmux 도구의 EDITOR는 건드리지 않는다.
+set-environment -g FPP_EDITOR nvim
+
 # move status line to top
 #set -g status-position top
 
@@ -479,7 +482,6 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @resurrect-capture-pane-contents 'off'
 set -g @continuum-restore 'on'
 set -g @plugin 'laktak/extrakto'
-set -g @plugin 'Morantron/tmux-fingers'
 
 
 # -- custom variables ----------------------------------------------------------

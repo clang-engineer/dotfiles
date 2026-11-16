@@ -4,8 +4,7 @@ tap "FelixKratz/formulae", trusted: { formula: "borders" } if OS.mac?
 brew "git"
 brew "neovim"
 brew "tmux"
-brew "tmux-fingers"    # Hint-select visible text; OMT TPM loads the plugin, Homebrew provides its binary
-brew "fpp"             # PathPicker CLI; OMT's prefix+F binding is replaced by tmux-fingers
+brew "fpp"             # OMT prefix+F opens pane output files in Neovim
 brew "sesh"            # tmux 스마트 세션 매니저 — fzf+zoxide 피커로 디렉토리/git repo 세션 점프 (tmux prefix+T)
 brew "fzf"              # Generic fuzzy picker (Ctrl+T files, Alt+C directories; Ctrl+R is owned by Atuin)
 brew "atuin"            # Structured shell history; replaces fzf Ctrl+R history search
