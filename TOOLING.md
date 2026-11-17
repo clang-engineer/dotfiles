@@ -61,28 +61,29 @@ vi Copy Mode의 기본 `o`(`other-end`)는 사용하지 않으므로 의도적�
 
 ## tmux Copy Mode 커스텀 키
 
-새 키바인딩은 `chezmoi/dot_config/tmux/keybindings.conf`에서 관리하고,
-`chezmoi/dot_tmux.conf.local`이 다음 파일을 로드한다.
+커스텀 바인딩은 독립 플러그인
+[`tmux-vim-copy`](https://github.com/clang-engineer/tmux-vim-copy)에서 관리한다.
+`chezmoi/dot_tmux.conf.local`에서 tmux-open 뒤에 TPM 플러그인으로 선언한다.
 
 ```tmux
-source-file ~/.config/tmux/keybindings.conf
+set -g @plugin 'clang-engineer/tmux-vim-copy'
 ```
 
-OMT 옵션·플러그인 선언·기존 예외 설정은 `.tmux.conf.local`에 그대로 둔다.
-키 파일은 chezmoi managed file이며 Windows에서는 제외한다.
-변경 후 `tmux source-file ~/.tmux.conf.local`로 현재 서버에 반영한다.
-
-Vi Copy Mode에서 `v` 또는 `Space`로 선택을 시작한 뒤 `i`/`a`와 대상 키를
-입력한다. `i`는 안쪽, `a`는 구분자를 포함한 선택이다. 지원 키와 동작은
+기존 `~/.config/tmux/keybindings.conf` 복사본과 `source-file`은 제거한다.
+tmux 3.7+와 Python 3.9+가 필요하며, 별도 뷰어 대신 기존 Copy Mode를 쓴다.
+`v`·`V`·`Ctrl+v` 선택 전환, `i`/`a` 텍스트 오브젝트, `y`/`yy`, `gg`·`ge`·`gE`,
+`zt`·`zz`·`zb`를 제공한다. 지원 키는
 [tmux cheatsheet](https://github.com/clang-engineer/devkit/blob/main/reference/cheatsheets/tmux.md)에 정리한다.
-`b`는 `()`, `B`는 `{}`의 별칭이며, 선택 결과는 기존 `y`·`o`·`Ctrl+o`로
-복사하거나 열 수 있다.
 
-구분자 선택은 같은 줄의 비어 있지 않은 단순 쌍 내부에서 사용한다.
-중첩·이스케이프·여러 줄 구분자·구분자 위의 커서는 Vim처럼 처리하지 않는다.
-`iw`·`iW`·`ip`도 tmux 경계를 사용하며 `ip`는 경계의 빈 줄을 포함한다.
-`i`/`a` 다음 대상 키를 기다릴 때 `Escape`·`Ctrl+c`·`q` 또는 미지원 키를
-누르면 대기만 취소하고 Copy Mode와 기존 선택은 유지한다.
+`o`·`Ctrl+o`·`Shift+s`는 tmux-open에 남겨두고, 선택 끝 교환에는 기본 `O`를
+쓴다. 기본 복사 정책은 복사 후 Copy Mode 종료이며,
+`@vim-copy-yank-exit off`로 선택·Copy Mode를 유지할 수 있다.
+숫자 반복은 기존 tmux 이동 키에서 유지되고, 새 helper 동작의 숫자 접두사는
+지원하지 않는다. `g`·`z`는 접두사이므로 기존 단일 키 동작은 `gg`·`zz`로 쓴다.
+
+괄호는 중첩·여러 줄·터미널 폭 줄바꿈을 처리한다. 따옴표는 논리적인 한 줄에서
+찾는다. 프로그래밍 언어 문법을 해석하지 않으며, 복합 emoji가 있는 줄의
+helper 선택은 오류 메시지와 함께 기존 선택을 유지한다.
 
 ## Atuin
 

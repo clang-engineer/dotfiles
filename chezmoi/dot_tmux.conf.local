@@ -416,9 +416,6 @@ unbind Enter #!important  # OMT: enter copy mode
 #set -g status-keys vi
 set -g mode-keys vi
 
-# Keep custom key tables separate from OMT options and plugin declarations.
-source-file ~/.config/tmux/keybindings.conf
-
 # replace C-b by C-a instead of using both prefixes
 # set -gu prefix2
 # unbind C-a
@@ -487,6 +484,8 @@ set -g @plugin 'sainnhe/tmux-fzf'
 set -g @open-editor-command 'nvim'
 set -g @open-S 'https://www.google.com/search?q='
 set -g @plugin 'tmux-plugins/tmux-open'
+# Native Copy Mode visual selection, text objects, yank policy, and Vim motions.
+set -g @plugin 'clang-engineer/tmux-vim-copy'
 
 
 # -- custom variables ----------------------------------------------------------
