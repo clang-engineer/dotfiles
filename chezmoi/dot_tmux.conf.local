@@ -483,6 +483,7 @@ set -g @resurrect-capture-pane-contents 'off'
 set -g @continuum-restore 'on'
 set -g @plugin 'laktak/extrakto'
 set -g @plugin 'sainnhe/tmux-fzf'
+set -g @plugin 'omerxx/tmux-sessionx'
 # Keep copy-mode editor opens in Neovim, independent of the tmux server's EDITOR.
 set -g @open-editor-command 'nvim'
 set -g @open-S 'https://www.google.com/search?q='

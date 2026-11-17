@@ -44,6 +44,20 @@ PathPicker 바인딩은 이후 로드되는 tmux-fzf가 덮어쓴다. 별도 중
 시스템 클립보드 이력을 위한 CopyQ나 프로세스 트리를 위한 pstree는 선택
 의존성이므로 추가 설치하지 않는다. CopyQ가 없으면 tmux 버퍼를 사용한다.
 
+## tmux-sessionx
+
+`chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
+
+```tmux
+set -g @plugin 'omerxx/tmux-sessionx'
+```
+
+추가 옵션 없이 기본 `prefix + O` (`Shift+o`)로 세션·윈도우 검색과
+미리보기를 연다. 기존 `prefix + o`의 다음 pane 이동은 유지한다.
+필수 의존성인 fzf (`fzf-tmux` 포함)와 bat은 기존 Brewfile 선언을 사용한다.
+zoxide 자동 경로 매칭 옵션은 기본값인 off로 두며, 프로젝트 진입용 sesh와
+전체 tmux 객체 관리용 tmux-fzf도 그대로 유지한다.
+
 ## tmux-open
 
 `chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.

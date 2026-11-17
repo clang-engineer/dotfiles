@@ -15,10 +15,11 @@ The configuration already has a strong, deliberately small foundation:
 - Zsh uses native initialization instead of a framework, with fzf, Atuin, Yazi,
   zoxide, autosuggestions, and syntax highlighting.
 - tmux uses Oh My Tmux, sesh, vim-tmux-navigator, resurrect, continuum,
-  extrakto, tmux-fzf, tmux-open, and tmux-vim-copy. `prefix + F` manages tmux
-  objects; `prefix + Tab` searches output with extrakto (`Tab` inserts, `Enter`
-  copies). tmux-open opens/searches selections; tmux-vim-copy adds Vim-style
-  selection transitions, text objects, yank policy, and multi-key motions.
+  extrakto, tmux-fzf, tmux-sessionx, tmux-open, and tmux-vim-copy. `prefix + F`
+  manages tmux objects; `prefix + O` opens sessionx session/window search.
+  `prefix + Tab` searches output with extrakto (`Tab` inserts, `Enter` copies).
+  tmux-open opens/searches selections; tmux-vim-copy adds Vim-style selection
+  transitions, text objects, yank policy, and multi-key motions.
 - LazyVim already covers LSP, formatting, debugging, Git, SQL, Markdown, JVM and
   web development, Copilot, navigation, and editing helpers.
 - Git uses lazygit and Delta; macOS window management uses AeroSpace and
