@@ -6,6 +6,18 @@
 도구의 일반적인 사용법과 비교는 `clang-engineer/devkit`의 cheatsheet에 두고,
 이 문서에는 이 저장소에서 실제로 어떤 설정을 추가했는지만 남긴다.
 
+## sesh
+
+`chezmoi/dot_tmux.conf.local`에서 `prefix + Shift+t`로 내장 선택기를 연다.
+
+```tmux
+bind-key T display-popup -h 90% -w 70% -E "sesh picker -i"
+```
+
+기존 tmux 세션, zoxide 디렉터리 이력, sesh에 등록한 세션을 검색해 선택한다.
+기존 세션은 전환하고, 세션이 없는 디렉터리는 새 세션을 만든다.
+별도 시작 명령 없이 새 세션은 해당 디렉터리의 셸 하나로 시작한다.
+
 ## tmux-fzf
 
 ### 설치·키 소유권

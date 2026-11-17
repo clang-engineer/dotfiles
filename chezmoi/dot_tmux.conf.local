@@ -405,6 +405,9 @@ unbind - #!important      # OMT: split pane vertically
 unbind _ #!important      # OMT: split pane horizontally
 unbind Enter #!important  # OMT: enter copy mode
 
+# 프로젝트 세션 선택기를 팝업으로 열기 (prefix + Shift+t).
+bind-key T display-popup -h 90% -w 70% -E "sesh picker -i"
+
 # increase history size
 #set -g history-limit 10000
 
