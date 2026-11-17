@@ -6,6 +6,84 @@
 도구의 일반적인 사용법과 비교는 `clang-engineer/devkit`의 cheatsheet에 두고,
 이 문서에는 이 저장소에서 실제로 어떤 설정을 추가했는지만 남긴다.
 
+## tmux-fzf
+
+### 설치·키 소유권
+
+`chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
+
+```tmux
+set -g @plugin 'sainnhe/tmux-fzf'
+```
+
+tmux-fzf의 기본 `prefix + F`를 그대로 사용한다. OMT 본체가 정의한
+PathPicker 바인딩은 이후 로드되는 tmux-fzf가 덮어쓴다. 별도 중복 바인딩이나
+수동 TPM 초기화는 추가하지 않는다.
+
+사용하지 않는 PathPicker의 `fpp` 패키지 선언과 `FPP_EDITOR` 설정은 제거했다.
+이미 실행 중인 서버를 전환할 때는 남아 있는 `FPP_EDITOR` 환경도 해제한다.
+
+현재 역할 분담:
+
+- `prefix + F`: tmux-fzf로 세션·윈도우·pane·명령·키 바인딩·tmux 버퍼 관리.
+- `prefix + Tab`: 기존 extrakto로 화면·Scrollback 텍스트 추출.
+- 프로젝트 디렉터리 기반 세션 생성·전환: 기존 sesh 설정 유지.
+
+시스템 클립보드 이력을 위한 CopyQ나 프로세스 트리를 위한 pstree는 선택
+의존성이므로 추가 설치하지 않는다. CopyQ가 없으면 tmux 버퍼를 사용한다.
+
+## tmux-open
+
+`chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
+
+```tmux
+set -g @open-editor-command 'nvim'
+set -g @open-S 'https://www.google.com/search?q='
+set -g @plugin 'tmux-plugins/tmux-open'
+```
+
+Copy Mode에서 선택한 텍스트에 다음 동작을 적용한다.
+
+| 키 | 현재 설정 |
+|---|---|
+| `o` | macOS `open`으로 파일·URL을 기본 앱에서 열기 |
+| `Ctrl+o` | Neovim으로 파일 열기 |
+| `Shift+s` | 선택 문구를 Google에서 검색 |
+
+vi Copy Mode의 기본 `o`(`other-end`)는 사용하지 않으므로 의도적으로
+덮어쓴다. tmux 서버의 `$EDITOR` 유무와 관계없이 Neovim을 사용하도록
+`@open-editor-command`를 지정한다. 검색 바인딩도 `@open-S`로 명시한다.
+
+`Ctrl+o`는 원래 pane에 `nvim -- "선택한 경로"`와 Enter를 보내므로
+셸 프롬프트에서 사용한다. 실행 중인 다른 프로그램에 명령을 보내지 않도록
+주의한다. 웹 검색 전에 선택 문구에 토큰·개인정보가 없는지도 확인한다.
+기존 extrakto의 `prefix + Tab`과 tmux-fzf의 `prefix + F`는 유지한다.
+
+## tmux Copy Mode 커스텀 키
+
+새 키바인딩은 `chezmoi/dot_config/tmux/keybindings.conf`에서 관리하고,
+`chezmoi/dot_tmux.conf.local`이 다음 파일을 로드한다.
+
+```tmux
+source-file ~/.config/tmux/keybindings.conf
+```
+
+OMT 옵션·플러그인 선언·기존 예외 설정은 `.tmux.conf.local`에 그대로 둔다.
+키 파일은 chezmoi managed file이며 Windows에서는 제외한다.
+변경 후 `tmux source-file ~/.tmux.conf.local`로 현재 서버에 반영한다.
+
+Vi Copy Mode에서 `v` 또는 `Space`로 선택을 시작한 뒤 `i`/`a`와 대상 키를
+입력한다. `i`는 안쪽, `a`는 구분자를 포함한 선택이다. 지원 키와 동작은
+[tmux cheatsheet](https://github.com/clang-engineer/devkit/blob/main/reference/cheatsheets/tmux.md)에 정리한다.
+`b`는 `()`, `B`는 `{}`의 별칭이며, 선택 결과는 기존 `y`·`o`·`Ctrl+o`로
+복사하거나 열 수 있다.
+
+구분자 선택은 같은 줄의 비어 있지 않은 단순 쌍 내부에서 사용한다.
+중첩·이스케이프·여러 줄 구분자·구분자 위의 커서는 Vim처럼 처리하지 않는다.
+`iw`·`iW`·`ip`도 tmux 경계를 사용하며 `ip`는 경계의 빈 줄을 포함한다.
+`i`/`a` 다음 대상 키를 기다릴 때 `Escape`·`Ctrl+c`·`q` 또는 미지원 키를
+누르면 대기만 취소하고 Copy Mode와 기존 선택은 유지한다.
+
 ## Atuin
 
 ### 설치

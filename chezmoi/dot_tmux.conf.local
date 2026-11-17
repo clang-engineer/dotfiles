@@ -416,6 +416,9 @@ unbind Enter #!important  # OMT: enter copy mode
 #set -g status-keys vi
 set -g mode-keys vi
 
+# Keep custom key tables separate from OMT options and plugin declarations.
+source-file ~/.config/tmux/keybindings.conf
+
 # replace C-b by C-a instead of using both prefixes
 # set -gu prefix2
 # unbind C-a
@@ -428,9 +431,6 @@ set -g mode-keys vi
 
 # Keep modifier-aware key parsing for option-modified arrows.
 set -g extended-keys on
-
-# fpp에서만 Neovim을 쓰고 다른 tmux 도구의 EDITOR는 건드리지 않는다.
-set-environment -g FPP_EDITOR nvim
 
 # move status line to top
 #set -g status-position top
@@ -482,6 +482,11 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @resurrect-capture-pane-contents 'off'
 set -g @continuum-restore 'on'
 set -g @plugin 'laktak/extrakto'
+set -g @plugin 'sainnhe/tmux-fzf'
+# Keep copy-mode editor opens in Neovim, independent of the tmux server's EDITOR.
+set -g @open-editor-command 'nvim'
+set -g @open-S 'https://www.google.com/search?q='
+set -g @plugin 'tmux-plugins/tmux-open'
 
 
 # -- custom variables ----------------------------------------------------------
