@@ -81,6 +81,20 @@ skips its build hook and wrapper. The Windows PowerShell installer is only the
 bootstrap mechanism; installed CLI tools are available from PowerShell, Git Bash,
 cmd, and IDE terminals through PATH.
 
+On macOS/Linux, the `tldr` command comes from Homebrew's `tlrc` formula (the old
+`tldr` formula is unavailable). If an older checkout fails with “No available
+formula with the name tldr”, update the checkout and rerun `chezmoi apply`.
+
+If the legacy `tldr` is already installed, its symlinks can block `tlrc` from
+linking. After `tlrc` installs, switch the links without overwriting files:
+
+```sh
+brew unlink tldr
+brew link tlrc
+tldr --version
+chezmoi apply
+```
+
 ## 4. Machine-local secrets (`~/.secrets`)
 
 Bootstrap tokens live in `~/.secrets` (never committed). `chezmoi apply` creates it

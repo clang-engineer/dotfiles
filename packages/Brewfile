@@ -20,7 +20,7 @@ brew "bat"              # cat replacement (syntax highlight, line numbers). Used
 brew "tree"             # Print directory tree
 brew "eza"              # ls replacement (color, git status, icons)
 brew "gh"               # GitHub CLI (PR/issue/Actions)
-brew "tldr"             # Condensed man pages — just the key examples
+brew "tlrc"             # Official tldr client; provides the `tldr` command
 brew "borders" if OS.mac? # JankyBorders: highlight the focused macOS window; started by AeroSpace
 
 # Shell/config quality — global Git hook delegates common checks to prek
