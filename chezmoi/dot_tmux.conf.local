@@ -490,6 +490,11 @@ set -g @open-S 'https://www.google.com/search?q='
 set -g @plugin 'tmux-plugins/tmux-open'
 # Native Copy Mode visual selection, text objects, yank policy, and Vim motions.
 set -g @plugin 'clang-engineer/tmux-vim-copy'
+# Keep pane logs, screen captures, and saved history out of the home directory.
+set -g @logging-path "$HOME/tmux-logs"
+set -g @screen-capture-path "$HOME/tmux-logs"
+set -g @save-complete-history-path "$HOME/tmux-logs"
+set -g @plugin 'tmux-plugins/tmux-logging'
 
 
 # -- custom variables ----------------------------------------------------------
