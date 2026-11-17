@@ -85,8 +85,11 @@ On macOS/Linux, the `tldr` command comes from Homebrew's `tlrc` formula (the old
 `tldr` formula is unavailable). If an older checkout fails with “No available
 formula with the name tldr”, update the checkout and rerun `chezmoi apply`.
 
-If the legacy `tldr` is already installed, its symlinks can block `tlrc` from
-linking. After `tlrc` installs, switch the links without overwriting files:
+The Brewfile declares `tldr` as a conflict, so Homebrew Bundle unlinks the legacy
+formula before installing `tlrc`; it does not uninstall it or overwrite files.
+If a previous attempt already installed `tlrc` but failed to link it, the
+`--no-upgrade` run skips that install-time conflict handling. Repair the links
+once, then retry the apply:
 
 ```sh
 brew unlink tldr
