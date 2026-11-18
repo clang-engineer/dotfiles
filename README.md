@@ -83,7 +83,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
-| `tools/harlequin-config/` | [Go database configuration generator](tools/harlequin-config/README.md) — Harlequin, Rainfrog, and Neovim configs; use native `harlequin -P` profile completion |
+| `tools/harlequin-config/` | [Go Harlequin configuration generator](tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
 Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
@@ -95,7 +95,7 @@ for the current font stack, Korean glyph mapping, alternatives, and switching.
 `chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,
 Hammerspoon, and casks. Windows uses AppData for Neovim, installs shared CLI tools
 with Scoop, and manages Git Bash startup files alongside a PowerShell 7 all-hosts
-profile. The DB launcher is macOS/Linux-only; its build hook and wrapper are
+profile. The Harlequin config generator is macOS/Linux-only; its build hook and wrapper are
 excluded on Windows. Terminal appearance remains host-specific. **Windows is
 scaffolded and must still be verified on a real machine after the migration.**
 
@@ -137,7 +137,7 @@ Thinking-level meanings and controls are documented in the
 After applying, restart OMP; an existing session may retain its saved thinking level.
 The `modify_` source is a chezmoi Go template, not raw YAML; the repository's
 YAML syntax hook excludes chezmoi modify scripts.
-The private `secrets` companion (real SSH hosts, nvim DB connections, `~/.pgpass`) owns
+The private `secrets` companion (real SSH hosts and Harlequin connection sources) owns
 its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
 command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
 

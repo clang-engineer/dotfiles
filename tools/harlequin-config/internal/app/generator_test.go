@@ -47,7 +47,7 @@ func TestGeneratedKeymaps(t *testing.T) {
 			if err := storage.WritePrivate(defaultConfigPath(), []byte(tc.setting)); err != nil {
 				t.Fatal(err)
 			}
-			outputs, err := renderCatalog(map[string]connection{"local-db": {Driver: "postgres", Tools: []string{"harlequin"}}})
+			output, err := renderCatalog(map[string]connection{"local-db": {Driver: "postgres"}})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -56,7 +56,7 @@ func TestGeneratedKeymaps(t *testing.T) {
 					Keymaps []string `toml:"keymap_name"`
 				}
 			}
-			if _, err := toml.Decode(string(outputs["harlequin.toml"]), &config); err != nil {
+			if _, err := toml.Decode(string(output), &config); err != nil {
 				t.Fatal(err)
 			}
 			if got := config.Profiles["local_db"].Keymaps; !reflect.DeepEqual(got, tc.want) {

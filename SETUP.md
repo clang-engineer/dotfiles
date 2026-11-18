@@ -117,7 +117,7 @@ terminal appearance remains configured by each host.
 Machine paths (`WORKSPACE_DIR`, `VAULT_DIR`, …) and any synced credentials are **not**
 in the public scaffold — they live in the private `secrets` repo. If you have access,
 clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
-sources its `env`, overlays real SSH hosts, nvim DB connections, and `~/.pgpass`, and
+sources its `env`, overlays real SSH hosts, generates Harlequin profiles, and
 generates `~/.claude/settings.json` (its own claude overlay owns the settings template
 and private agent rules/skills). That repo's README documents the exact clone command.
 

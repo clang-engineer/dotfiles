@@ -1,4 +1,4 @@
-// Package app generates native database client configurations.
+// Package app generates native Harlequin configurations.
 package app
 
 import (
@@ -20,7 +20,7 @@ func usage() {
 	fmt.Println("       harlequin-config init --source PATH")
 	fmt.Println("       harlequin-config init zsh")
 	fmt.Println()
-	fmt.Println("Generate Harlequin, Rainfrog, and Neovim configurations from the registered catalog.")
+	fmt.Println("Generate Harlequin profiles from the registered connection catalog.")
 }
 
 func initZsh() string {
@@ -88,7 +88,7 @@ func Run(args []string) (int, error) {
 		if err := initializeSource(args[2]); err != nil {
 			return 1, err
 		}
-		fmt.Println("Source saved. Run harlequin-config to generate tool configs.")
+		fmt.Println("Source saved. Run harlequin-config to generate Harlequin profiles.")
 		return 0, nil
 	}
 	if len(args) != 0 {
@@ -98,17 +98,8 @@ func Run(args []string) (int, error) {
 	if _, err := syncCatalog(); err != nil {
 		return 1, err
 	}
-	fmt.Printf("Generated tool configs: %s\n", filepath.Join(configBase(), "db"))
+	fmt.Printf("Generated Harlequin config: %s\n", filepath.Join(configBase(), "db", "harlequin.toml"))
 	return 0, nil
-}
-
-func contains(items []string, value string) bool {
-	for _, item := range items {
-		if item == value {
-			return true
-		}
-	}
-	return false
 }
 
 func sortedKeys[V any](items map[string]V) []string {

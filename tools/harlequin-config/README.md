@@ -1,8 +1,8 @@
 # harlequin-config
 
-A Go configuration generator that adapts a database connection catalog to
-Harlequin, Rainfrog, and Neovim configuration formats. It does not select
-connections, save launch choices, or launch database clients.
+A Go configuration generator that turns a database connection catalog into native
+Harlequin profiles. It does not select connections, save launch choices, launch
+database clients, or generate Rainfrog/Neovim configuration.
 
 ## Setup
 
@@ -27,7 +27,7 @@ All `~/.config` paths below honor `XDG_CONFIG_HOME`. Generation ignores obsolete
 launch settings and never persists a last choice.
 
 ```sh
-harlequin-config           # generate persistent client configurations
+harlequin-config           # generate persistent Harlequin profiles
 harlequin-config init zsh  # print generator and Harlequin profile completion
 ```
 
@@ -44,24 +44,23 @@ native default. The former `DB_HARLEQUIN_KEYMAPS` environment override is not us
 
 ## Catalog
 
-Each filename is the project ID; connection IDs must be unique across files.
-Project and connection IDs use lowercase letters, digits, and hyphens.
+Each filename is a project ID; connection IDs must be unique across files.
+Project and connection IDs use lowercase letters, digits, and hyphens. Every
+connection becomes a Harlequin profile; `label` and `tools` are not needed.
 
 ```toml
 # connections/local.toml
 [local-postgres]
-label = "Local PostgreSQL"
 driver = "postgres"
 host = "localhost"
 port = 5432
 database = "example"
 username = "example"
 password = ""
-tools = ["harlequin", "rainfrog", "nvim"]
 params = { sslmode = "disable" }
 ```
 
-Supported drivers: `postgres`, `vertica` (Harlequin/Neovim), `h2` (Harlequin).
+Supported drivers: `postgres`, `vertica`, and `h2`.
 H2 uses `url = "jdbc:h2:..."` instead of host/port/database; put H2 parameters in
 the URL. Harlequin needs the corresponding installed adapter. Credentials belong
 in private files, never in this repository. Source files should have mode 0600.
@@ -123,29 +122,22 @@ without checking its installation. `odbcinst -q -d` alone only verifies
 registration, not this encoding mismatch; a successful native `harlequin` launch
 reaches the Harlequin Data Catalog.
 
-## Use clients directly
+## Use Harlequin directly
 
-`harlequin-config` writes persistent files for native clients:
-
-| Output under `~/.config/db/` | Purpose |
-| --- | --- |
-| `harlequin.toml` | All Harlequin profiles (ID hyphens become underscores) |
-| `rainfrog_config.toml` | All Rainfrog profiles; passwords remain in the platform keychain |
-| `nvim/<project>.lua` | Neovim connection lists |
+`harlequin-config` writes only `~/.config/db/harlequin.toml`. It contains every
+connection as a native Harlequin profile, with ID hyphens converted to underscores
+(for example, `local-postgres` becomes `local_postgres`).
 
 ```sh
 harlequin --config-path "${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml" -P local_postgres
-RAINFROG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/db" rainfrog
 ```
 
 The managed zsh configuration points `HARLEQUIN_CONFIG_PATH` at the generated
 Harlequin file when it exists, preserving an already-set value. This lets
 `harlequin -P local_postgres` run directly. Outside the managed shell, export
 `HARLEQUIN_CONFIG_PATH` yourself or link the file into a native config location.
-Persist `RAINFROG_CONFIG` separately if you use Rainfrog directly.
-Existing native client configs are not automatically overwritten or linked.
-Point your Neovim connection loader at the generated `nvim/` directory.
-After editing source files, run `harlequin-config` before launching clients directly.
+Existing native Harlequin configs are not automatically overwritten or linked.
+After editing source files, run `harlequin-config` before launching Harlequin.
 
 ### Zsh profile completion
 
@@ -183,30 +175,40 @@ updated files without reloading zsh; completion itself never generates configs.
 After installing a new binary or changing shell setup, reload the completion
 registration with `eval "$(harlequin-config init zsh)"` or open a new shell.
 
-Generated files are private (0600), replaced atomically per file, and may contain
-credentials. Validation/rendering completes before writing. Writes across multiple
-files are not a single transaction. Rainfrog authentication continues to use its
-platform keychain.
+The generated file is private (0600), replaced atomically, and may contain
+credentials. Validation/rendering completes before writing. An existing symlink
+at `harlequin.toml` is replaced without modifying its former target.
 
 ## Migration from generate.py
 
-Register the directory containing your connection TOML files, then run `harlequin-config`.
-The private companion now keeps these directly in `databases/*.toml`;
-its `setup.sh` registers that directory and connects Neovim to the new outputs.
-`index.toml` and Python/StyLua are no longer required by this generator.
-Existing file symlinks for generated Harlequin/Rainfrog configs are replaced with
-local generated files without modifying their former targets. Change direct-client
-and Neovim integrations that still reference the old `databases/generated/` tree.
-The private companion's updated bootstrap no longer depends on Python or
-`databases/generated/`. Other installations must likewise update old bootstrap
-scripts before removing their previous generator and generated files.
+Register the directory containing your connection TOML files, then run
+`harlequin-config`. The private companion keeps these directly in
+`databases/*.toml`; its `setup.sh` registers that directory. `index.toml` and
+Python/StyLua are no longer required by this generator. Connection `label` and
+`tools` fields can be removed; any remaining values are ignored, so former
+Rainfrog-only or Neovim-only connections also become Harlequin profiles.
+
+Generation retires regular `rainfrog_config.toml` and `nvim/*.lua` files under
+`~/.config/db/` only when the first line is exactly the appropriate comment:
+`# Generated by harlequin-config. Do not edit.` or
+`# Generated by db sync. Do not edit.` for TOML, with `--` instead of `#` for Lua.
+The marker must end with a newline. Manual files, file symlinks (including dangling
+ones), directory symlinks, and their targets are preserved. No Rainfrog or Neovim
+configuration is generated; maintain any configurations still needed for those
+clients separately.
+
+Update direct-client and Neovim integrations that still reference the old
+`databases/generated/` tree. The private companion's bootstrap no longer links
+Neovim connection lists or depends on Python or `databases/generated/`. Other
+installations must likewise update old bootstrap scripts before removing their
+previous generator and generated files.
 
 ## Code layout
 
 ```text
 main.go                 # executable entry point: exit status and error reporting
 internal/
-  app/                 # generator CLI, config, client renderers, output writes
+  app/                 # generator CLI, config, Harlequin rendering, output writes
   catalog/             # connection model, TOML source validation, URL encoding
   storage/             # TOML serialization and private atomic file writes
 ```
