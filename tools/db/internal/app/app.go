@@ -41,7 +41,27 @@ _db() {
   fi
 }
 
+_harlequin() {
+  local context state state_descr line
+  local -A opt_args
+  _arguments -s -S \
+    '(-P --profile)-P+[select a saved profile]:profile:->profiles' \
+    '(-P --profile)--profile=[select a saved profile]:profile:->profiles' \
+    '--config-path=[use a config file]:config file:_files' \
+    '*:database:_files'
+
+  if [[ $state == profiles ]]; then
+    local -a profiles config_args
+    if [[ -n ${opt_args[--config-path]} ]]; then
+      config_args=("${(Q)opt_args[--config-path]}")
+    fi
+    profiles=("${(@f)$(db --complete-harlequin-profiles "${config_args[@]}" 2>/dev/null)}") || return
+    compadd -a profiles
+  fi
+}
+
 compdef _db db
+compdef _harlequin harlequin
 `
 }
 
@@ -53,6 +73,20 @@ func Run(args []string) (int, error) {
 	}
 	if len(args) == 2 && args[0] == "init" && args[1] == "zsh" {
 		fmt.Print(initZsh())
+		return 0, nil
+	}
+	if len(args) >= 1 && len(args) <= 2 && args[0] == "--complete-harlequin-profiles" {
+		path := ""
+		if len(args) == 2 {
+			path = args[1]
+		}
+		profiles, err := harlequinProfiles(path)
+		if err != nil {
+			return 1, err
+		}
+		for _, profile := range profiles {
+			fmt.Println(profile)
+		}
 		return 0, nil
 	}
 	if len(args) == 3 && args[0] == "init" && args[1] == "--source" {

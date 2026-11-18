@@ -162,3 +162,65 @@ func saveDefault(tool, connectionID string) (string, error) {
 	}
 	return path, storage.WritePrivate(path, data)
 }
+
+// harlequinProfiles reads names only, without syncing or loading the source catalog.
+func harlequinProfiles(configPath string) ([]string, error) {
+	if configPath == "" {
+		configPath = os.Getenv("HARLEQUIN_CONFIG_PATH")
+	}
+	var paths []string
+	if configPath != "" {
+		configPath = expandHome(configPath)
+		paths = append(paths, configPath)
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	configHome, err := os.UserConfigDir()
+	if err != nil {
+		return nil, err
+	}
+	for _, directory := range []struct {
+		path  string
+		names []string
+	}{
+		{cwd, []string{"harlequin.toml", ".harlequin.toml", "pyproject.toml"}},
+		{filepath.Join(configHome, "harlequin"), []string{"harlequin.toml", ".harlequin.toml", "config.toml"}},
+		{home, []string{"harlequin.toml", ".harlequin.toml", "pyproject.toml"}},
+	} {
+		for _, name := range directory.names {
+			paths = append(paths, filepath.Join(directory.path, name))
+		}
+	}
+	type profileNames struct {
+		Profiles map[string]struct{}
+	}
+	profiles := map[string]struct{}{"None": {}}
+	for _, path := range paths {
+		var config struct {
+			profileNames
+			Tool struct {
+				Harlequin profileNames
+			}
+		}
+		if _, err := toml.DecodeFile(path, &config); err != nil {
+			if errors.Is(err, os.ErrNotExist) && path != configPath {
+				continue
+			}
+			return nil, fmt.Errorf("reading Harlequin config %s: %w", path, err)
+		}
+		names := config.Profiles
+		if strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)) == "pyproject" {
+			names = config.Tool.Harlequin.Profiles
+		}
+		for name := range names {
+			profiles[name] = struct{}{}
+		}
+	}
+	return sortedKeys(profiles), nil
+}
