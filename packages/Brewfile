@@ -35,6 +35,7 @@ brew "watchexec"        # Re-run arbitrary commands when files change
 brew "hyperfine"        # Reproducible command/CLI benchmarks
 
 # zsh plugins (sourced directly in .zshrc — no framework)
+brew "fzf-tab"                   # fzf selection for Harlequin's zsh completion
 brew "zsh-autosuggestions"       # fish-style suggestions from history
 brew "zsh-syntax-highlighting"   # fish-style command syntax highlighting
 

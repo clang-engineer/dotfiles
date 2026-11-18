@@ -1,4 +1,4 @@
-// Package catalog loads and validates database connection sources independently of the CLI.
+// Package catalog loads and validates Harlequin database connection sources.
 package catalog
 
 import (
@@ -8,19 +8,15 @@ import (
 	"net/url"
 	"path/filepath"
 	"regexp"
-	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 )
 
-// Connection is a tool-independent database target.
+// Connection is a database target for a Harlequin profile.
 type Connection struct {
-	Project  string            `toml:"project"`
 	Driver   string            `toml:"driver"`
-	Label    string            `toml:"label"`
-	Tools    []string          `toml:"tools"`
 	URL      string            `toml:"url"`
 	Host     string            `toml:"host"`
 	Port     int               `toml:"port"`
@@ -39,7 +35,7 @@ func Read(dir string) (map[string]Connection, error) {
 		return nil, err
 	}
 	if len(files) == 0 {
-		return nil, errors.New("no connection TOML files found; run db init --source /path/to/connections")
+		return nil, errors.New("no connection TOML files found; run harlequin-config init --source /path/to/connections")
 	}
 	result := map[string]Connection{}
 	for _, path := range files {
@@ -55,7 +51,6 @@ func Read(dir string) (map[string]Connection, error) {
 			if _, exists := result[id]; exists {
 				return nil, fmt.Errorf("duplicate connection ID: %s", id)
 			}
-			c.Project = project
 			if err := validateConnection(id, c); err != nil {
 				return nil, err
 			}
@@ -73,17 +68,14 @@ func validateConnection(id string, c Connection) error {
 	if !slug.MatchString(id) {
 		return errors.New("connection IDs must be lowercase hyphenated slugs")
 	}
-	if c.Label == "" {
-		return invalid("label")
-	}
-	for _, s := range []string{c.Label, c.Host, c.Database, c.Username, c.Password, c.URL} {
+	for _, s := range []string{c.Host, c.Database, c.Username, c.Password, c.URL} {
 		if strings.ContainsFunc(s, func(r rune) bool { return r < 32 || r == 127 }) {
 			return invalid("control character")
 		}
 	}
-	allowed := map[string][]string{"postgres": {"nvim", "harlequin", "rainfrog"}, "vertica": {"nvim", "harlequin"}, "h2": {"harlequin"}}
-	supported, ok := allowed[c.Driver]
-	if !ok {
+	switch c.Driver {
+	case "postgres", "vertica", "h2":
+	default:
 		return invalid("driver")
 	}
 	if c.Driver == "h2" {
@@ -93,21 +85,11 @@ func validateConnection(id string, c Connection) error {
 	} else if c.Host == "" || c.Database == "" || c.Port < 1 || c.Port > 65535 {
 		return invalid("host/database/port")
 	}
-	if len(c.Tools) == 0 {
-		return invalid("tools")
-	}
-	seen := map[string]bool{}
-	for _, tool := range c.Tools {
-		if seen[tool] || !slices.Contains(supported, tool) {
-			return invalid("tools")
-		}
-		seen[tool] = true
-	}
 	return nil
 }
 
 // URL encodes a target using the database driver's connection-string syntax.
-func URL(c Connection, password bool) string {
+func URL(c Connection) string {
 	if c.Driver == "h2" {
 		return c.URL
 	}
@@ -117,7 +99,7 @@ func URL(c Connection, password bool) string {
 	}
 	u := url.URL{Scheme: "postgresql", Host: net.JoinHostPort(c.Host, strconv.Itoa(c.Port)), Path: "/" + c.Database}
 	u.User = url.User(c.Username)
-	if password && c.Password != "" {
+	if c.Password != "" {
 		u.User = url.UserPassword(c.Username, c.Password)
 	}
 	q := url.Values{}

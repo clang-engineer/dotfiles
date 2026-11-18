@@ -83,7 +83,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
-| `tools/db/` | [Go database launcher](tools/db/README.md) — connection catalog, native config generation, target selection |
+| `tools/harlequin-config/` | [Go Harlequin configuration generator](tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
 Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
@@ -95,7 +95,7 @@ for the current font stack, Korean glyph mapping, alternatives, and switching.
 `chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,
 Hammerspoon, and casks. Windows uses AppData for Neovim, installs shared CLI tools
 with Scoop, and manages Git Bash startup files alongside a PowerShell 7 all-hosts
-profile. The DB launcher is macOS/Linux-only; its build hook and wrapper are
+profile. The Harlequin config generator is macOS/Linux-only; its build hook and wrapper are
 excluded on Windows. Terminal appearance remains host-specific. **Windows is
 scaffolded and must still be verified on a real machine after the migration.**
 
@@ -123,7 +123,21 @@ Nothing private lives in this repo. `chezmoi apply` installs only the public con
 Personal agent instructions and skills belong to the private companion; its
 `setup.sh` links shared instructions and supplemental docs into Pi's agent directory.
 Pi settings and package declarations remain managed here.
-The private `secrets` companion (real SSH hosts, nvim DB connections, `~/.pgpass`) owns
+OMP's `~/.omp/agent/config.yml` is partially managed by
+`chezmoi/private_dot_omp/private_agent/modify_private_config.yml`: apply enforces
+`defaultThinkingLevel: auto`, text thinking-level labels, the built-in
+`dark-catppuccin` dark theme, and role-specific effort (`smol: "@default:low"`,
+`slow`/`plan: "@default:high"`) while preserving the machine-local default model
+and light theme. Role aliases follow the default model without
+pinning another provider or model. Authentication databases, sessions, and caches
+stay unmanaged. See the official [model-role docs](https://omp.sh/docs/roles) and
+[alias/effort rules](https://github.com/can1357/oh-my-pi/blob/main/docs/models.md).
+Thinking-level meanings and controls are documented in the
+[OMP cheatsheet](https://github.com/clang-engineer/devkit/blob/main/reference/cheatsheets/omp.md#추론-강도).
+After applying, restart OMP; an existing session may retain its saved thinking level.
+The `modify_` source is a chezmoi Go template, not raw YAML; the repository's
+YAML syntax hook excludes chezmoi modify scripts.
+The private `secrets` companion (real SSH hosts and Harlequin connection sources) owns
 its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
 command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
 

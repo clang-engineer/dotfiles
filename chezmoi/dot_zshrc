@@ -36,9 +36,15 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive match
 zstyle ':completion:*' menu select                      # arrow-key menu selection
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
-# db command completion
-if command -v db &>/dev/null; then
-  eval "$(db init zsh)"
+# Generated Harlequin config and native profile completion.
+if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml" ]]; then
+  export HARLEQUIN_CONFIG_PATH="${HARLEQUIN_CONFIG_PATH:-${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml}"
+fi
+if [[ -z "${VERTICAINI:-}" && -f "${XDG_CONFIG_HOME:-$HOME/.config}/db/vertica.ini" ]]; then
+  export VERTICAINI="${XDG_CONFIG_HOME:-$HOME/.config}/db/vertica.ini"
+fi
+if command -v harlequin-config &>/dev/null; then
+  eval "$(harlequin-config init zsh)"
 fi
 
 # Preferred editor for local and remote sessions
@@ -100,6 +106,13 @@ fi
 # Brew-installed zsh plugins.
 # syntax-highlighting must be sourced last, after all other zle setup.
 if [[ -n "$BREW_PREFIX" ]]; then
+  if command -v fzf &>/dev/null && [[ -r "$BREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh" ]]; then
+    # Keep other commands on their existing completion UI.
+    zstyle ':fzf-tab:*' disabled-on any
+    zstyle ':fzf-tab:complete:harlequin:*' disabled-on none
+    zstyle ':completion:*:harlequin:*' menu no
+    source "$BREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh"
+  fi
   [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
     && source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] \

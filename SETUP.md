@@ -59,7 +59,7 @@ of truth. This section lists only the scripts that run:
 | `run_once_before_00-migrate-claude-home.sh` | migrate the legacy Claude symlink (macOS/Linux) |
 | `run_onchange_after_05-brew-bundle.sh` | install Homebrew formulae and macOS-only casks |
 | `run_onchange_after_10-install-shell-tools.sh` | install TPM plugins and mise runtimes (macOS/Linux) |
-| `run_onchange_after_11-build-db.sh` | build the DB launcher (macOS/Linux) |
+| `run_onchange_after_11-build-harlequin-config.sh` | build the database configuration generator and retire owned legacy `db` installations (macOS/Linux) |
 | `run_onchange_after_12-install-npm-global.sh` | install global npm CLIs (macOS/Linux) |
 | `run_onchange_after_15-windows-install.ps1` | install Scoop packages and mise runtimes (Windows) |
 
@@ -117,7 +117,7 @@ terminal appearance remains configured by each host.
 Machine paths (`WORKSPACE_DIR`, `VAULT_DIR`, …) and any synced credentials are **not**
 in the public scaffold — they live in the private `secrets` repo. If you have access,
 clone it and run its `./setup.sh`: it appends a managed block to `~/.secrets` that
-sources its `env`, overlays real SSH hosts, nvim DB connections, and `~/.pgpass`, and
+sources its `env`, overlays real SSH hosts, generates Harlequin profiles, and
 generates `~/.claude/settings.json` (its own claude overlay owns the settings template
 and private agent rules/skills). That repo's README documents the exact clone command.
 

@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+binary="$HOME/.local/libexec/harlequin-config"
+if [ ! -x "$binary" ]; then
+  printf '%s\n' "harlequin-config: compiled binary not found: $binary" >&2
+  printf '%s\n' "harlequin-config: run 'chezmoi apply' or build from <dotfiles>/tools/harlequin-config with: go build -o $binary ." >&2
+  exit 1
+fi
+
+exec "$binary" "$@"

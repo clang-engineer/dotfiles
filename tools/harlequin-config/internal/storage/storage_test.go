@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
-	"github.com/clang-engineer/dotfiles/tools/db/internal/storage"
+	"github.com/clang-engineer/dotfiles/tools/harlequin-config/internal/storage"
 )
 
 func TestPrivateWriteDoesNotFollowFileSymlink(t *testing.T) {

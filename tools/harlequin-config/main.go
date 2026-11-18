@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/clang-engineer/dotfiles/tools/db/internal/app"
+	"github.com/clang-engineer/dotfiles/tools/harlequin-config/internal/app"
 )
 
 func main() {
