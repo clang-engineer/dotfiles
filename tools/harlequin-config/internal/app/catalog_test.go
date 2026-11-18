@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
-	"github.com/clang-engineer/dotfiles/tools/db/internal/storage"
+	"github.com/clang-engineer/dotfiles/tools/harlequin-config/internal/storage"
 )
 
 const fixture = `[local-db]
@@ -41,7 +41,7 @@ func TestInitSync(t *testing.T) {
 		t.Fatal(err)
 	}
 	cfg, raw, err := loadDBConfig()
-	if err != nil || cfg.ConnectionsDir != dir || cfg.Tool != "harlequin" || raw["extra"] == nil {
+	if err != nil || cfg.ConnectionsDir != dir || raw["tool"] != nil || raw["connection"] != nil || raw["extra"] == nil {
 		t.Fatalf("config not preserved: %v", err)
 	}
 	catalog, err := syncCatalog()
@@ -75,13 +75,6 @@ func TestInitSync(t *testing.T) {
 	if _, err := syncCatalog(); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := saveDefault("harlequin", "local-db"); err != nil {
-		t.Fatal(err)
-	}
-	cfg, raw, err = loadDBConfig()
-	if err != nil || cfg.ConnectionsDir != dir || raw["extra"] == nil {
-		t.Fatal("saveDefault lost source/nested settings")
-	}
 }
 
 func TestValidationBeforeWrites(t *testing.T) {
@@ -112,9 +105,15 @@ func TestDefaultSourceAndInvalidArgs(t *testing.T) {
 	if err != nil || source != filepath.Join(configBase(), "db", "connections") {
 		t.Fatal("wrong default")
 	}
-	code, err := Run([]string{"invalid"})
-	if code != 2 || err != nil {
-		t.Fatal("invalid command tried to sync")
+	for _, args := range [][]string{
+		{"invalid"}, {"sync"}, {"--select"}, {"--preview-tool", "harlequin"},
+		{"--preview-project", "harlequin", "local"}, {"--preview-connection", "harlequin", "local-db"},
+		{"default"}, {"init"}, {"init", "--source"},
+	} {
+		code, err := Run(args)
+		if code != 2 || err != nil {
+			t.Fatalf("invalid command %q tried to generate: %d %v", args, code, err)
+		}
 	}
 	if err := initializeSource(t.TempDir()); err == nil {
 		t.Fatal("empty source accepted")
@@ -125,6 +124,7 @@ func TestDefaultSourceAndInvalidArgs(t *testing.T) {
 }
 
 func TestRenderDriversAndEscaping(t *testing.T) {
+	setupCatalog(t)
 	catalog := map[string]connection{
 		"test-h2":      {Driver: "h2", URL: "jdbc:h2:mem:test", Username: "sa", Tools: []string{"harlequin"}},
 		"test-vertica": {Driver: "vertica", Host: "localhost", Port: 5433, Database: "demo", Password: "a;b}", Tools: []string{"harlequin"}},
@@ -151,45 +151,6 @@ func TestRenderDriversAndEscaping(t *testing.T) {
 	}
 	if got := luaString("a\n\"\\"); got != "\"a\\010\\\"\\\\\"" {
 		t.Fatalf("bad Lua: %s", got)
-	}
-}
-
-func TestRainfrogSelectedProfile(t *testing.T) {
-	dir := setupCatalog(t)
-	if err := initializeSource(dir); err != nil {
-		t.Fatal(err)
-	}
-	connections, err := syncCatalog()
-	if err != nil {
-		t.Fatal(err)
-	}
-	bin := t.TempDir()
-	capture := filepath.Join(t.TempDir(), "capture.toml")
-	t.Setenv("CAPTURE", capture)
-	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
-	script := "#!/bin/sh\ncp \"$RAINFROG_CONFIG/rainfrog_config.toml\" \"$CAPTURE\"\nprintf '%s' \"$RAINFROG_CONFIG\" > \"$CAPTURE.path\"\nexit 7\n"
-	if err := os.WriteFile(filepath.Join(bin, "rainfrog"), []byte(script), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	code, err := launchRainfrog("local-db", connections["local-db"])
-	if err != nil || code != 7 {
-		t.Fatalf("exit status: %d %v", code, err)
-	}
-	var selected struct {
-		DB map[string]struct {
-			Default          bool
-			ConnectionString string `toml:"connection_string"`
-		}
-	}
-	if _, err := toml.DecodeFile(capture, &selected); err != nil {
-		t.Fatal(err)
-	}
-	if len(selected.DB) != 1 || !selected.DB["local-db"].Default || strings.Contains(selected.DB["local-db"].ConnectionString, "secret") {
-		t.Fatal("incorrect selected profile")
-	}
-	tempPath, _ := os.ReadFile(capture + ".path")
-	if _, err := os.Stat(string(tempPath)); !os.IsNotExist(err) {
-		t.Fatal("temporary profile leaked")
 	}
 }
 

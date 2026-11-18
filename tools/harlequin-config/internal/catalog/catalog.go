@@ -39,7 +39,7 @@ func Read(dir string) (map[string]Connection, error) {
 		return nil, err
 	}
 	if len(files) == 0 {
-		return nil, errors.New("no connection TOML files found; run db init --source /path/to/connections")
+		return nil, errors.New("no connection TOML files found; run harlequin-config init --source /path/to/connections")
 	}
 	result := map[string]Connection{}
 	for _, path := range files {

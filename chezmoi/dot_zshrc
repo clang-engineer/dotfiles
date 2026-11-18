@@ -36,12 +36,15 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive match
 zstyle ':completion:*' menu select                      # arrow-key menu selection
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
-# Generated Harlequin config and db/Harlequin completion.
-if command -v db &>/dev/null; then
-  if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml" ]]; then
-    export HARLEQUIN_CONFIG_PATH="${HARLEQUIN_CONFIG_PATH:-${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml}"
-  fi
-  eval "$(db init zsh)"
+# Generated Harlequin config and native profile completion.
+if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml" ]]; then
+  export HARLEQUIN_CONFIG_PATH="${HARLEQUIN_CONFIG_PATH:-${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml}"
+fi
+if [[ -z "${VERTICAINI:-}" && -f "${XDG_CONFIG_HOME:-$HOME/.config}/db/vertica.ini" ]]; then
+  export VERTICAINI="${XDG_CONFIG_HOME:-$HOME/.config}/db/vertica.ini"
+fi
+if command -v harlequin-config &>/dev/null; then
+  eval "$(harlequin-config init zsh)"
 fi
 
 # Preferred editor for local and remote sessions

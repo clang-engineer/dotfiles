@@ -59,7 +59,7 @@ of truth. This section lists only the scripts that run:
 | `run_once_before_00-migrate-claude-home.sh` | migrate the legacy Claude symlink (macOS/Linux) |
 | `run_onchange_after_05-brew-bundle.sh` | install Homebrew formulae and macOS-only casks |
 | `run_onchange_after_10-install-shell-tools.sh` | install TPM plugins and mise runtimes (macOS/Linux) |
-| `run_onchange_after_11-build-db.sh` | build the DB launcher (macOS/Linux) |
+| `run_onchange_after_11-build-harlequin-config.sh` | build the database configuration generator and retire owned legacy `db` installations (macOS/Linux) |
 | `run_onchange_after_12-install-npm-global.sh` | install global npm CLIs (macOS/Linux) |
 | `run_onchange_after_15-windows-install.ps1` | install Scoop packages and mise runtimes (Windows) |
 

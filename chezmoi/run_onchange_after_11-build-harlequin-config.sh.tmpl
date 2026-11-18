@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Build harlequin-config; reruns when the Go source changes.
+# harlequin-config-go-mod {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/harlequin-config/go.mod" | trim }}
+# harlequin-config-go-sum {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/harlequin-config/go.sum" | trim }}
+{{ range $file := (output "find" (joinPath (.chezmoi.sourceDir | dir) "tools/harlequin-config") "-type" "f" "-name" "*.go" | trim | splitList "\n" | sortAlpha) -}}
+# harlequin-config-source {{ $file }} {{ output "git" "hash-object" $file | trim }}
+{{ end -}}
+set -euo pipefail
+
+source_dir={{ .chezmoi.sourceDir | dir | quote }}
+project_dir="$source_dir/tools/harlequin-config"
+target="$HOME/.local/libexec/harlequin-config"
+if [ ! -d "$project_dir" ]; then
+  printf 'harlequin-config source not found: %s\n' "$project_dir" >&2
+  exit 1
+fi
+mkdir -p "$(dirname "$target")"
+
+if command -v mise >/dev/null 2>&1; then
+  go_command=(mise exec go -- go)
+elif command -v go >/dev/null 2>&1; then
+  go_command=(go)
+else
+  printf 'go is required to build harlequin-config; install Go and retry chezmoi apply\n' >&2
+  exit 1
+fi
+
+(cd "$project_dir" && "${go_command[@]}" build -o "$target" .)
+
+# Retire only the exact wrapper and Go module previously deployed here.
+# Leave user replacements and symlinks untouched.
+legacy_wrapper="$HOME/.local/bin/db"
+if [[ -f "$legacy_wrapper" && ! -L "$legacy_wrapper" ]] && cmp -s "$legacy_wrapper" <(cat <<'LEGACY_WRAPPER'
+#!/bin/sh
+set -eu
+
+binary="$HOME/.local/libexec/db"
+if [ ! -x "$binary" ]; then
+  printf '%s\n' "db: compiled binary not found: $binary" >&2
+  printf '%s\n' "db: run 'chezmoi apply' or build from <dotfiles>/tools/db with: go build -o $binary ." >&2
+  exit 1
+fi
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+if [ -z "${VERTICAINI:-}" ] && [ -f "$config_home/db/vertica.ini" ]; then
+  export VERTICAINI="$config_home/db/vertica.ini"
+fi
+
+exec "$binary" "$@"
+LEGACY_WRAPPER
+); then
+  rm "$legacy_wrapper"
+fi
+legacy_binary="$HOME/.local/libexec/db"
+if [[ -f "$legacy_binary" && ! -L "$legacy_binary" ]]; then
+  metadata=$("${go_command[@]}" version -m "$legacy_binary" 2>/dev/null || true)
+  case "$metadata" in
+    *$'\n\tpath\tgithub.com/clang-engineer/dotfiles/tools/db\n'*)
+      rm "$legacy_binary"
+      ;;
+  esac
+fi

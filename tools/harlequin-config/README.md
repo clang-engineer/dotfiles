@@ -1,40 +1,46 @@
-# db
+# harlequin-config
 
-A Go launcher that selects a database target and adapts its connection catalog to
-Harlequin, Rainfrog, and Neovim configuration formats. Requires `fzf` for selection
-and the selected database client (including its driver/adapter).
+A Go configuration generator that adapts a database connection catalog to
+Harlequin, Rainfrog, and Neovim configuration formats. It does not select
+connections, save launch choices, or launch database clients.
 
 ## Setup
 
-The managed launcher currently supports macOS/Linux only. Windows excludes both
-its build hook and shell wrapper.
+The managed generator supports macOS/Linux only. Windows excludes its build hook
+and shell wrapper.
 
-`chezmoi apply` builds `~/.local/libexec/db` and installs the `db` wrapper.
-For a manual build, run `go build -o ~/.local/libexec/db .` from this directory.
+`chezmoi apply` builds `~/.local/libexec/harlequin-config` and installs the
+`harlequin-config` wrapper. For a manual build, run
+`go build -o ~/.local/libexec/harlequin-config .` from this directory.
 
 By default, put connection TOML files in `~/.config/db/connections/`.
 For an existing catalog elsewhere, register it once:
 
 ```sh
-db init --source /path/to/connections
+harlequin-config init --source /path/to/connections
 ```
 
 This validates the catalog and saves its absolute path in
-`~/.config/db/config.toml`, preserving existing defaults. It does not copy or
-modify the original catalog. No environment variable is required.
-All `~/.config` paths below honor `XDG_CONFIG_HOME`. Set `tool = "harlequin"`
-in `~/.config/db/config.toml` to make interactive launches skip the tool picker;
-Harlequin is the default when it is omitted. Each interactive selection is saved
-as the next `db` launch target.
+`~/.config/db/config.toml`, preserving unrelated settings and removing obsolete
+`tool` and `connection` settings. It does not copy or modify the original catalog.
+All `~/.config` paths below honor `XDG_CONFIG_HOME`. Generation ignores obsolete
+launch settings and never persists a last choice.
 
 ```sh
-db sync           # generate persistent client configurations
-db                # sync, then launch the last selected database
-db --select       # sync, then select and save a Harlequin project → connection
-db init zsh       # print db command and Harlequin profile completion
+harlequin-config           # generate persistent client configurations
+harlequin-config init zsh  # print generator and Harlequin profile completion
 ```
 
-Help, completion, and fzf previews do not regenerate files or connect to a database.
+Help and completion do not regenerate files or connect to a database.
+The former `db` executable, `sync`, `--select`, previews, and default/launch
+commands are not supported. Select a connection with native `harlequin -P`
+completion instead.
+
+To configure Harlequin keymaps, set `harlequin_keymaps = "vscode"` or
+`harlequin_keymaps = ["vscode", "vim"]` in `~/.config/db/config.toml`.
+The generator writes the nonempty, trimmed names to each Harlequin profile's
+native `keymap_name` list, preserving order. When omitted, Harlequin uses its
+native default. The former `DB_HARLEQUIN_KEYMAPS` environment override is not used.
 
 ## Catalog
 
@@ -109,17 +115,17 @@ ODBCInstLib=/path/to/libodbcinst.2.dylib
 DriverManagerEncoding=UTF-16
 ```
 
-The managed `db` wrapper reads this file if present; an existing `VERTICAINI`
-environment variable takes precedence. This Mac's verified paths are
+The managed zsh configuration exports this file as `VERTICAINI` if present;
+an existing environment value takes precedence. This Mac's verified paths are
 `/Library/Vertica/ODBC/messages/` and
 `/opt/homebrew/lib/libodbcinst.2.dylib`. Do not copy them to a different Mac
 without checking its installation. `odbcinst -q -d` alone only verifies
-registration, not this encoding mismatch; a successful `db` launch reaches
-the Harlequin Data Catalog.
+registration, not this encoding mismatch; a successful native `harlequin` launch
+reaches the Harlequin Data Catalog.
 
 ## Use clients directly
 
-`db sync` writes persistent files, not launcher-only temporary profiles:
+`harlequin-config` writes persistent files for native clients:
 
 | Output under `~/.config/db/` | Purpose |
 | --- | --- |
@@ -139,15 +145,15 @@ Harlequin file when it exists, preserving an already-set value. This lets
 Persist `RAINFROG_CONFIG` separately if you use Rainfrog directly.
 Existing native client configs are not automatically overwritten or linked.
 Point your Neovim connection loader at the generated `nvim/` directory.
-After editing source files, run `db sync` before launching clients directly.
+After editing source files, run `harlequin-config` before launching clients directly.
 
 ### Zsh profile completion
 
-The managed zsh configuration already evaluates `db init zsh`. For another zsh
+The managed zsh configuration already evaluates `harlequin-config init zsh`. For another zsh
 setup, load it after `compinit`:
 
 ```sh
-eval "$(db init zsh)"
+eval "$(harlequin-config init zsh)"
 ```
 
 In the managed shell, type `harlequin -P ` and press Tab to open an fzf picker.
@@ -172,23 +178,22 @@ takes precedence). `pyproject.toml` uses `[tool.harlequin.profiles]`. Duplicate
 names appear once; `None` is Harlequin's built-in option to bypass the default
 profile. Credentials are not included in the candidates.
 
-Run `db sync` after changing the source catalog. The next completion reads the
-updated files without reloading zsh; completion itself never syncs the catalog.
-After installing a new `db` binary or changing shell setup, reload the completion
-registration with `eval "$(db init zsh)"` or open a new shell.
+Run `harlequin-config` after changing the source catalog. The next completion reads
+updated files without reloading zsh; completion itself never generates configs.
+After installing a new binary or changing shell setup, reload the completion
+registration with `eval "$(harlequin-config init zsh)"` or open a new shell.
 
 Generated files are private (0600), replaced atomically per file, and may contain
 credentials. Validation/rendering completes before writing. Writes across multiple
-files are not a single transaction. The launcher gives Rainfrog a separate temporary
-selected/default profile and removes it on normal exit; persistent profiles stay
-unchanged. Rainfrog authentication continues to use its platform keychain.
+files are not a single transaction. Rainfrog authentication continues to use its
+platform keychain.
 
 ## Migration from generate.py
 
-Register the directory containing your connection TOML files, then run `db sync`.
+Register the directory containing your connection TOML files, then run `harlequin-config`.
 The private companion now keeps these directly in `databases/*.toml`;
 its `setup.sh` registers that directory and connects Neovim to the new outputs.
-`index.toml` and Python/StyLua are no longer required by this launcher.
+`index.toml` and Python/StyLua are no longer required by this generator.
 Existing file symlinks for generated Harlequin/Rainfrog configs are replaced with
 local generated files without modifying their former targets. Change direct-client
 and Neovim integrations that still reference the old `databases/generated/` tree.
@@ -201,7 +206,7 @@ scripts before removing their previous generator and generated files.
 ```text
 main.go                 # executable entry point: exit status and error reporting
 internal/
-  app/                 # CLI orchestration, config, selection, client adapters, sync
+  app/                 # generator CLI, config, client renderers, output writes
   catalog/             # connection model, TOML source validation, URL encoding
   storage/             # TOML serialization and private atomic file writes
 ```
@@ -211,7 +216,7 @@ Neither catalog nor storage depends on app or on each other. Only `app.Run` is
 exposed by the application package. App is intentionally grouped into a few files
 (`app.go`, `client.go`, `config.go`, `sync.go`) instead of one file per helper.
 Catalog and storage have their own public-API tests, while app tests cover
-integration and launcher behavior.
+integration, generation, configuration, and native profile completion behavior.
 
 Catalog maps are passed explicitly; no global mutable connection state is used.
 The chezmoi build hook recursively hashes every Go file, including new packages.

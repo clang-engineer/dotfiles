@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/clang-engineer/dotfiles/tools/db/internal/catalog"
+	"github.com/clang-engineer/dotfiles/tools/harlequin-config/internal/catalog"
 )
 
 func TestURL(t *testing.T) {
