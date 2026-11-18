@@ -14,6 +14,8 @@ repos:
         language: system
         entry: "ruby -ryaml -e 'ARGV.each { |f| YAML.safe_load_file(f, aliases: true) }' --"
         types: [yaml]
+        # chezmoi modify_ sources are scripts/templates, not target YAML.
+        exclude: ^chezmoi/(?:.*/)?modify_
 
       - id: trailing-whitespace
         name: Trailing whitespace

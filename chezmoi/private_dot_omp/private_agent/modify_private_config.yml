@@ -1,0 +1,13 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $config := dict -}}
+{{- if .chezmoi.stdin | trim -}}
+{{- $config = .chezmoi.stdin | fromYaml -}}
+{{- end -}}
+{{- $config
+    | setValueAtPath "defaultThinkingLevel" "auto"
+    | setValueAtPath "statusLine.compactThinkingLevel" false
+    | setValueAtPath "modelRoles.smol" "@default:low"
+    | setValueAtPath "modelRoles.slow" "@default:high"
+    | setValueAtPath "modelRoles.plan" "@default:high"
+    | setValueAtPath "theme.dark" "dark-catppuccin"
+    | toYaml }}

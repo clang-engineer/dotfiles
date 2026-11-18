@@ -123,6 +123,20 @@ Nothing private lives in this repo. `chezmoi apply` installs only the public con
 Personal agent instructions and skills belong to the private companion; its
 `setup.sh` links shared instructions and supplemental docs into Pi's agent directory.
 Pi settings and package declarations remain managed here.
+OMP's `~/.omp/agent/config.yml` is partially managed by
+`chezmoi/private_dot_omp/private_agent/modify_private_config.yml`: apply enforces
+`defaultThinkingLevel: auto`, text thinking-level labels, the built-in
+`dark-catppuccin` dark theme, and role-specific effort (`smol: "@default:low"`,
+`slow`/`plan: "@default:high"`) while preserving the machine-local default model
+and light theme. Role aliases follow the default model without
+pinning another provider or model. Authentication databases, sessions, and caches
+stay unmanaged. See the official [model-role docs](https://omp.sh/docs/roles) and
+[alias/effort rules](https://github.com/can1357/oh-my-pi/blob/main/docs/models.md).
+Thinking-level meanings and controls are documented in the
+[OMP cheatsheet](https://github.com/clang-engineer/devkit/blob/main/reference/cheatsheets/omp.md#추론-강도).
+After applying, restart OMP; an existing session may retain its saved thinking level.
+The `modify_` source is a chezmoi Go template, not raw YAML; the repository's
+YAML syntax hook excludes chezmoi modify scripts.
 The private `secrets` companion (real SSH hosts, nvim DB connections, `~/.pgpass`) owns
 its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
 command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
