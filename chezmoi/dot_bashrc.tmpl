@@ -1,0 +1,103 @@
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# Load secrets (tokens, credentials) from a local-only file
+if [ -f "$HOME/.secrets" ]; then
+  source "$HOME/.secrets"
+fi
+
+# 공통 값만 shell.yaml에서 가져오고 실행 로직은 이 셸에 둔다.
+if [ -d "$HOME/.local/bin" ]; then
+  case ":$PATH:" in
+    *:"$HOME/.local/bin":*) ;;
+    *) export PATH="$HOME/.local/bin:$PATH" ;;
+  esac
+fi
+{{ range $name, $value := .shell.environment }}
+export {{ $name }}='{{ $value | replace "'" "'\\''" }}'
+{{ end }}
+if [ -n "${SSH_CONNECTION:-}" ]; then
+  export EDITOR='{{ .shell.editor.remote | replace "'" "'\\''" }}'
+else
+  export EDITOR='{{ .shell.editor.local | replace "'" "'\\''" }}'
+fi
+
+if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/{{ .shell.configFiles.HARLEQUIN_CONFIG_PATH }}" ]; then
+  export HARLEQUIN_CONFIG_PATH="${HARLEQUIN_CONFIG_PATH:-${XDG_CONFIG_HOME:-$HOME/.config}/{{ .shell.configFiles.HARLEQUIN_CONFIG_PATH }}}"
+fi
+if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/{{ .shell.configFiles.VERTICAINI }}" ]; then
+  export VERTICAINI="${VERTICAINI:-${XDG_CONFIG_HOME:-$HOME/.config}/{{ .shell.configFiles.VERTICAINI }}}"
+fi
+
+# Scoop shims — keep Windows-installed CLI tools available in Git Bash.
+if [ -d "$HOME/scoop/shims" ]; then
+  case ":$PATH:" in
+    *:"$HOME/scoop/shims":*) ;;
+    *) export PATH="$HOME/scoop/shims:$PATH" ;;
+  esac
+fi
+
+# 프롬프트, 키 바인딩, tmux는 대화형 세션에만 적용한다.
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+# EDITOR와 무관하게 Emacs 편집 모드를 유지한다.
+set -o emacs
+
+if command -v tmux >/dev/null 2>&1 && [ -z "${TMUX:-}" ] && [ "${TERMINAL_EMULATOR:-}" != JetBrains-JediTerm ]; then
+  command tmux attach || command tmux new -s default
+fi
+{{ range $name, $command := .shell.aliases }}
+if command -v '{{ $command | replace "'" "'\\''" }}' >/dev/null 2>&1; then
+  alias {{ $name }}='{{ $command | replace "'" "'\\''" }}'
+fi
+{{ end }}
+alias g++='g++ -std={{ .shell.cppStandard }}'
+alias clang++='clang++ -std={{ .shell.cppStandard }}'
+
+# Windows mise의 PATH는 세미콜론 구분이므로 Git Bash에서는 shim을 사용한다.
+if command -v mise >/dev/null 2>&1; then
+  if [ -n "${MSYSTEM:-}" ] && command -v cygpath >/dev/null 2>&1; then
+    mise_data_dir="${MISE_DATA_DIR:-${LOCALAPPDATA:-$HOME/AppData/Local}/mise}"
+    mise_shims="$(cygpath -u "$mise_data_dir")/shims"
+    case ":$PATH:" in
+      *:"$mise_shims":*) ;;
+      *) export PATH="$mise_shims:$PATH" ;;
+    esac
+    unset mise_data_dir mise_shims
+  else
+    eval "$(mise activate bash)"
+  fi
+fi
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --bash)"
+fi
+# fzf 다음에 초기화하여 Ctrl+R을 Atuin에 맡긴다.
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init bash)"
+fi
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init bash)"
+fi
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init bash)"
+fi
+
+# Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
+if command -v yazi >/dev/null 2>&1; then
+  y() {
+    local tmp cwd
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && [ -d "$cwd" ]; then
+      builtin cd -- "$cwd"
+    fi
+    command rm -f -- "$tmp"
+  }
+fi

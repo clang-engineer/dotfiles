@@ -114,7 +114,7 @@ ODBCInstLib=/path/to/libodbcinst.2.dylib
 DriverManagerEncoding=UTF-16
 ```
 
-The managed zsh and fish configurations export this file as `VERTICAINI` if present;
+The managed Bash, Zsh, and Fish configurations export this file as `VERTICAINI` if present;
 an existing environment value takes precedence. This Mac's verified paths are
 `/Library/Vertica/ODBC/messages/` and
 `/opt/homebrew/lib/libodbcinst.2.dylib`. Do not copy them to a different Mac
@@ -132,7 +132,7 @@ connection as a native Harlequin profile, with ID hyphens converted to underscor
 harlequin --config-path "${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml" -P local_postgres
 ```
 
-The managed zsh and fish configurations point `HARLEQUIN_CONFIG_PATH` at the generated
+The managed Bash, Zsh, and Fish configurations point `HARLEQUIN_CONFIG_PATH` at the generated
 Harlequin file when it exists, preserving an already-set value. This lets
 `harlequin -P local_postgres` run directly. Outside the managed shell, export
 `HARLEQUIN_CONFIG_PATH` yourself or link the file into a native config location.

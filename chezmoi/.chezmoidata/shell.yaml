@@ -1,0 +1,13 @@
+shell:
+  aliases:
+    cat: bat
+    ls: eza
+  cppStandard: c++17
+  environment:
+    OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS: "true"
+  editor:
+    local: nvim
+    remote: vim
+  configFiles:
+    HARLEQUIN_CONFIG_PATH: db/harlequin.toml
+    VERTICAINI: db/vertica.ini

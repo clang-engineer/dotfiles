@@ -36,61 +36,59 @@ if test -f "$HOME/.secrets"
     end
 end
 
+# 공통 값만 shell.yaml에서 가져오고 실행 로직은 이 셸에 둔다.
 if test -d "$HOME/.local/bin"; and not contains -- "$HOME/.local/bin" $PATH
     set --global --export PATH "$HOME/.local/bin" $PATH
 end
-
-set --global --export OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS true
+{{ range $name, $value := .shell.environment }}
+set --global --export {{ $name }} '{{ $value | replace "\\" "\\\\" | replace "'" "\\'" }}'
+{{ end }}
 if test -n "$SSH_CONNECTION"
-    set --global --export EDITOR vim
+    set --global --export EDITOR '{{ .shell.editor.remote | replace "\\" "\\\\" | replace "'" "\\'" }}'
 else
-    set --global --export EDITOR nvim
+    set --global --export EDITOR '{{ .shell.editor.local | replace "\\" "\\\\" | replace "'" "\\'" }}'
 end
 
 set -l config_home "$HOME/.config"
 if test -n "$XDG_CONFIG_HOME"
     set config_home "$XDG_CONFIG_HOME"
 end
-if test -f "$config_home/db/harlequin.toml"
-    if test -z "$HARLEQUIN_CONFIG_PATH"
-        set --global --export HARLEQUIN_CONFIG_PATH "$config_home/db/harlequin.toml"
+{{ range $name, $path := .shell.configFiles }}
+if test -f "$config_home/{{ $path }}"
+    if test -z "${{ $name }}"
+        set --global --export {{ $name }} "$config_home/{{ $path }}"
     else
-        set --global --export HARLEQUIN_CONFIG_PATH "$HARLEQUIN_CONFIG_PATH"
+        set --global --export {{ $name }} "${{ $name }}"
     end
 end
-if test -z "$VERTICAINI"; and test -f "$config_home/db/vertica.ini"
-    set --global --export VERTICAINI "$config_home/db/vertica.ini"
-end
+{{ end }}
 
 # 프롬프트, 키 바인딩, tmux는 대화형 세션에만 적용한다.
 if not status is-interactive
     return
 end
 
-if command --query tmux; and test -z "$TMUX"; and test "$TERMINAL_EMULATOR" != JetBrains-JediTerm
-    command tmux attach; or command tmux new -s default
-end
-
 # EDITOR와 무관하게 Emacs 편집 모드를 유지한다.
 set --global fish_key_bindings fish_default_key_bindings
 
-if command --query bat
-    alias cat bat
+if command --query tmux; and test -z "$TMUX"; and test "$TERMINAL_EMULATOR" != JetBrains-JediTerm
+    command tmux attach; or command tmux new -s default
 end
-if command --query eza
-    alias ls eza
+{{ range $name, $command := .shell.aliases }}
+if command --query '{{ $command | replace "\\" "\\\\" | replace "'" "\\'" }}'
+    alias {{ $name }} '{{ $command | replace "\\" "\\\\" | replace "'" "\\'" }}'
 end
-alias g++ 'g++ -std=c++17'
-alias clang++ 'clang++ -std=c++17'
+{{ end }}
+alias g++ 'g++ -std={{ .shell.cppStandard }}'
+alias clang++ 'clang++ -std={{ .shell.cppStandard }}'
 
 if command --query mise
     mise activate fish | source
 end
-
-# Ctrl+T / Alt+C는 fzf, Ctrl+R은 뒤에 초기화하는 Atuin이 소유한다.
 if command --query fzf
     fzf --fish | source
 end
+# fzf 다음에 초기화하여 Ctrl+R을 Atuin에 맡긴다.
 if command --query atuin
     atuin init fish | source
 end

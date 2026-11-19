@@ -18,6 +18,24 @@ if (-not ($env:PATH -split ';' | Where-Object { $_ -eq $shim })) {
     $env:PATH = "$shim;$env:PATH"
 }
 
+# 공통 값만 shell.yaml에서 가져오고 PowerShell 초기화는 이 파일에 둔다.
+{{ range $name, $value := .shell.environment }}
+$env:{{ $name }} = '{{ $value | replace "'" "''" }}'
+{{ end }}
+if ($env:SSH_CONNECTION) {
+    $env:EDITOR = '{{ .shell.editor.remote | replace "'" "''" }}'
+} else {
+    $env:EDITOR = '{{ .shell.editor.local | replace "'" "''" }}'
+}
+
+$configHome = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { Join-Path $HOME '.config' }
+{{ range $name, $path := .shell.configFiles }}
+$configPath = Join-Path $configHome '{{ $path | replace "'" "''" }}'
+if (-not $env:{{ $name }} -and (Test-Path -LiteralPath $configPath -PathType Leaf)) {
+    $env:{{ $name }} = $configPath
+}
+{{ end }}
+
 # ──────────────────────────────────────────────────────────────────
 # Directory jump — zoxide (z / zi)
 # ──────────────────────────────────────────────────────────────────
@@ -80,9 +98,30 @@ if (Get-Command fzf -ErrorAction SilentlyContinue) {
 # ──────────────────────────────────────────────────────────────────
 # Modern CLI aliases — only if the tool is installed
 # ──────────────────────────────────────────────────────────────────
-if (Get-Command bat -ErrorAction SilentlyContinue) {
-    Remove-Item Alias:cat -ErrorAction SilentlyContinue
-    Set-Alias -Name cat -Value bat -Option AllScope
+{{ range $name, $command := .shell.aliases }}
+if (Get-Command '{{ $command | replace "'" "''" }}' -ErrorAction SilentlyContinue) {
+    Remove-Item 'Alias:{{ $name }}' -ErrorAction SilentlyContinue
+    Set-Alias -Name '{{ $name }}' -Value '{{ $command | replace "'" "''" }}' -Option AllScope
+}
+{{ end }}
+# PowerShell alias에는 인수를 넣을 수 없으므로 컴파일러는 함수로 감싼다.
+if (Get-Command g++.exe -ErrorAction SilentlyContinue) {
+    function g++ {
+        if ($MyInvocation.ExpectingInput) {
+            $input | & g++.exe '-std={{ .shell.cppStandard }}' @args
+        } else {
+            & g++.exe '-std={{ .shell.cppStandard }}' @args
+        }
+    }
+}
+if (Get-Command clang++.exe -ErrorAction SilentlyContinue) {
+    function clang++ {
+        if ($MyInvocation.ExpectingInput) {
+            $input | & clang++.exe '-std={{ .shell.cppStandard }}' @args
+        } else {
+            & clang++.exe '-std={{ .shell.cppStandard }}' @args
+        }
+    }
 }
 if (Get-Command eza -ErrorAction SilentlyContinue) {
     function ll { eza -lh --git --group-directories-first --icons @args }

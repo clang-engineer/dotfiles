@@ -62,7 +62,7 @@ turns it into your home directory:
 
 | chezmoi source | becomes | kind |
 |---|---|---|
-| `dot_zshrc`, `dot_gitconfig.tmpl`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.gitconfig`, … | **managed file** (copy/render) |
+| `dot_zshrc.tmpl`, `dot_bashrc.tmpl`, `dot_gitconfig.tmpl`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.bashrc`, `~/.gitconfig`, … | **managed file** (copy/render) |
 | `dot_config/fish/` | `~/.config/fish/` | managed fish startup, functions, and completions |
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
@@ -91,10 +91,34 @@ Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
 installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
 for the current font stack, Korean glyph mapping, alternatives, and switching.
 
-Fish is the preferred interactive shell on macOS/Linux. It uses default Emacs
-bindings, built-in suggestions/highlighting, and the existing cross-shell tools.
-Zsh remains available as a fallback. See [shell setup](SETUP.md#fish-interactive-shell)
-for login-shell selection; chezmoi does not change the account shell.
+Zsh is the reference for the Bash, Zsh, and Fish interactive environment.
+`chezmoi/.chezmoidata/shell.yaml` contains only shared values: command aliases
+(`cat`/`ls`), the C++ standard, environment variables, local/SSH editors, and the
+Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell profile
+render these values directly in their own startup templates. Edit the YAML, then
+run `chezmoi apply`; do not edit generated home files to change shared values.
+
+Startup logic stays explicit in each shell file: Homebrew/secrets loading, tool
+initialization, tmux, Zsh completion/plugins, Fish key bindings, and Git Bash's
+Scoop/mise shims. A little duplication is intentional; there is no cross-shell
+initialization dispatcher or shared tool list. Bash/Zsh/Fish initialize
+mise → fzf → Atuin → zoxide → Starship, use Emacs editing, and auto-attach tmux
+outside existing tmux sessions and JetBrains terminals. Noninteractive Bash/Fish
+startup skips interactive tools. Fish uses built-in suggestions/highlighting.
+Harlequin completion remains Zsh/Fish-specific.
+
+`chezmoi/Documents/PowerShell/profile.ps1.tmpl` uses the same shared values while
+keeping native PSReadLine/PSFzf, Scoop, and `.secrets.ps1` handling. Command aliases
+map one name to one executable; C++ flags use native wrapper functions because
+PowerShell aliases cannot carry arguments. Windows tool integrations remain
+independent rather than imitating Unix initialization. DB paths are used only when
+the files exist, with existing environment values taking precedence.
+Compiler wrappers preserve piped source input as well as ordinary file arguments.
+`scripts/windows/test-shell-profile.ps1` checks both paths and compiler failure
+status; it requires PowerShell 7, chezmoi, and `g++.exe` or `clang++.exe` on PATH.
+
+See [shell setup](SETUP.md#fish-interactive-shell) for trying Fish and selecting a
+login shell; chezmoi does not change the account shell.
 
 ## Cross-platform
 
