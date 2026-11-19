@@ -1,0 +1,102 @@
+# 비대화형 명령에도 Homebrew와 프로젝트 환경을 전달한다.
+if test -x /opt/homebrew/bin/brew
+    /opt/homebrew/bin/brew shellenv fish | source
+else if test -x /home/linuxbrew/.linuxbrew/bin/brew
+    /home/linuxbrew/.linuxbrew/bin/brew shellenv fish | source
+end
+
+# 기존 zsh 문법과 private source를 유지하고, 값은 코드로 평가하지 않는다.
+if test -f "$HOME/.secrets"
+    set -l import_failed 0
+    command zsh -f -e -c 'source "$HOME/.secrets" >/dev/null; command env -0' |
+        while read --null --local --delimiter '=' name value
+            if not string match --quiet --regex '^[A-Za-z_][A-Za-z0-9_]*$' -- "$name"
+                set import_failed 1
+                continue
+            end
+            # 자식 셸의 메타데이터와 fish 읽기 전용 변수는 가져오지 않는다.
+            switch "$name"
+                case PWD SHLVL _ status pipestatus status_generation version FISH_VERSION \
+                        fish_pid hostname history last_pid fish_kill_signal fish_killring \
+                        fish_terminal_color_theme
+                    continue
+            end
+            if not set --global --export -- "$name" "$value" 2>/dev/null
+                set import_failed 1
+            end
+        end
+    set -l import_status $pipestatus
+    if test "$import_status[1]" -ne 0
+        printf 'fish: ~/.secrets could not be loaded (zsh exit %s).\n' "$import_status[1]" >&2
+        return "$import_status[1]"
+    end
+    if test "$import_failed" -ne 0
+        printf 'fish: an exported variable from ~/.secrets could not be imported.\n' >&2
+        return 1
+    end
+end
+
+if test -d "$HOME/.local/bin"; and not contains -- "$HOME/.local/bin" $PATH
+    set --global --export PATH "$HOME/.local/bin" $PATH
+end
+
+set --global --export OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS true
+if test -n "$SSH_CONNECTION"
+    set --global --export EDITOR vim
+else
+    set --global --export EDITOR nvim
+end
+
+set -l config_home "$HOME/.config"
+if test -n "$XDG_CONFIG_HOME"
+    set config_home "$XDG_CONFIG_HOME"
+end
+if test -f "$config_home/db/harlequin.toml"
+    if test -z "$HARLEQUIN_CONFIG_PATH"
+        set --global --export HARLEQUIN_CONFIG_PATH "$config_home/db/harlequin.toml"
+    else
+        set --global --export HARLEQUIN_CONFIG_PATH "$HARLEQUIN_CONFIG_PATH"
+    end
+end
+if test -z "$VERTICAINI"; and test -f "$config_home/db/vertica.ini"
+    set --global --export VERTICAINI "$config_home/db/vertica.ini"
+end
+
+# 프롬프트, 키 바인딩, tmux는 대화형 세션에만 적용한다.
+if not status is-interactive
+    return
+end
+
+if command --query tmux; and test -z "$TMUX"; and test "$TERMINAL_EMULATOR" != JetBrains-JediTerm
+    command tmux attach; or command tmux new -s default
+end
+
+# EDITOR와 무관하게 Emacs 편집 모드를 유지한다.
+set --global fish_key_bindings fish_default_key_bindings
+
+if command --query bat
+    alias cat bat
+end
+if command --query eza
+    alias ls eza
+end
+alias g++ 'g++ -std=c++17'
+alias clang++ 'clang++ -std=c++17'
+
+if command --query mise
+    mise activate fish | source
+end
+
+# Ctrl+T / Alt+C는 fzf, Ctrl+R은 뒤에 초기화하는 Atuin이 소유한다.
+if command --query fzf
+    fzf --fish | source
+end
+if command --query atuin
+    atuin init fish | source
+end
+if command --query zoxide
+    zoxide init fish | source
+end
+if command --query starship
+    starship init fish | source
+end

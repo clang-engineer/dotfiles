@@ -98,6 +98,50 @@ tldr --version
 chezmoi apply
 ```
 
+### Fish interactive shell
+
+The Brewfile installs fish. Apply the managed configuration, then run `fish` to
+try it before changing the account login shell. `exit` returns to the previous
+shell. Existing zsh configuration is retained as a fallback.
+
+```sh
+chezmoi diff --recursive --exclude=scripts ~/.config/fish
+chezmoi apply --recursive --exclude=scripts ~/.config/fish
+fish
+```
+
+The configuration initializes mise, fzf, Atuin (Ctrl+R), zoxide, and Starship using
+their fish integrations, preserves tmux auto-attach and the Yazi `y` wrapper, and
+provides Harlequin profile completion with an fzf picker on Tab.
+Fish has built-in suggestions and syntax highlighting; it does not load zsh
+plugins. Shell histories are separate; Atuin retains its own shared history.
+
+`~/.secrets` remains a zsh-compatible file. Fish loads it in a clean zsh subprocess
+and imports exported environment variables, including those from the private
+companion. It never evaluates that file as fish code. Functions and aliases in
+that file are not imported.
+
+To select fish as the login shell (macOS/Linux), run these commands from zsh/bash:
+
+```sh
+fish_path="$(command -v fish)"
+grep -qxF "$fish_path" /etc/shells ||
+  printf '%s\n' "$fish_path" | sudo tee -a /etc/shells
+chsh -s "$fish_path"
+```
+
+Open a new terminal afterward. A terminal app with an explicit shell command
+needs that setting changed too. Existing tmux servers can retain their old shell;
+update new panes without terminating sessions:
+
+```sh
+tmux set-option -g default-shell "$(command -v fish)"
+```
+
+Existing panes keep running their current shell. On macOS, restore the login shell
+with `chsh -s /bin/zsh` if needed.
+
+
 ## 4. Machine-local secrets (`~/.secrets`)
 
 Bootstrap tokens live in `~/.secrets` (never committed). `chezmoi apply` creates it
@@ -108,8 +152,8 @@ overwritten), so anything you fill in survives later applies:
 $EDITOR ~/.secrets   # add GITHUB_TOKEN, API keys, etc. as you need them
 ```
 
-The shell (`.zshrc` / `.bashrc`) sources it automatically — open a new shell to load
-edits. On Windows, the PowerShell 7 all-hosts profile sources `~/.secrets.ps1`, which
+The shells (`config.fish` / `.zshrc` / `.bashrc`) load it automatically — open a new
+shell to load edits. On Windows, the PowerShell 7 all-hosts profile sources `~/.secrets.ps1`, which
 you create by hand (chezmoi scaffolds only the Unix `~/.secrets`). The same profile is
 loaded whenever `pwsh` runs in Windows Terminal, VS Code, JetBrains, or another host;
 terminal appearance remains configured by each host.

@@ -63,6 +63,7 @@ turns it into your home directory:
 | chezmoi source | becomes | kind |
 |---|---|---|
 | `dot_zshrc`, `dot_gitconfig.tmpl`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.gitconfig`, … | **managed file** (copy/render) |
+| `dot_config/fish/` | `~/.config/fish/` | managed fish startup, functions, and completions |
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
@@ -90,9 +91,10 @@ Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
 installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
 for the current font stack, Korean glyph mapping, alternatives, and switching.
 
-Zsh uses Emacs-style line editing (`bindkey -e`) independently of `EDITOR` and
-`VISUAL`, keeping Alt+Backspace as backward word deletion even when the preferred
-editor is Vim or Neovim.
+Fish is the preferred interactive shell on macOS/Linux. It uses default Emacs
+bindings, built-in suggestions/highlighting, and the existing cross-shell tools.
+Zsh remains available as a fallback. See [shell setup](SETUP.md#fish-interactive-shell)
+for login-shell selection; chezmoi does not change the account shell.
 
 ## Cross-platform
 

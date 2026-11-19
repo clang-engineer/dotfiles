@@ -114,7 +114,7 @@ ODBCInstLib=/path/to/libodbcinst.2.dylib
 DriverManagerEncoding=UTF-16
 ```
 
-The managed zsh configuration exports this file as `VERTICAINI` if present;
+The managed zsh and fish configurations export this file as `VERTICAINI` if present;
 an existing environment value takes precedence. This Mac's verified paths are
 `/Library/Vertica/ODBC/messages/` and
 `/opt/homebrew/lib/libodbcinst.2.dylib`. Do not copy them to a different Mac
@@ -132,12 +132,26 @@ connection as a native Harlequin profile, with ID hyphens converted to underscor
 harlequin --config-path "${XDG_CONFIG_HOME:-$HOME/.config}/db/harlequin.toml" -P local_postgres
 ```
 
-The managed zsh configuration points `HARLEQUIN_CONFIG_PATH` at the generated
+The managed zsh and fish configurations point `HARLEQUIN_CONFIG_PATH` at the generated
 Harlequin file when it exists, preserving an already-set value. This lets
 `harlequin -P local_postgres` run directly. Outside the managed shell, export
 `HARLEQUIN_CONFIG_PATH` yourself or link the file into a native config location.
 Existing native Harlequin configs are not automatically overwritten or linked.
 After editing source files, run `harlequin-config` before launching Harlequin.
+
+### Fish profile completion
+
+Chezmoi installs fish completions for `harlequin` and `harlequin-config`.
+After generating profiles, type `harlequin -P ` and press Tab to search them
+with fzf. Enter inserts the selected name; a second Enter launches Harlequin.
+Esc cancels without changing the command line. `--profile` and an explicit
+`--config-path` are supported too. Other completion positions keep fish's
+normal completion UI; without fzf, profile completion also uses that UI.
+
+The picker uses the same names-only generator endpoint as zsh completion.
+It does not generate configuration or connect to a database, and requires no
+fish plug-in manager or zsh plug-ins.
+
 
 ### Zsh profile completion
 
