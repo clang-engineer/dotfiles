@@ -147,3 +147,10 @@ $ExecutionContext.InvokeCommand.CommandNotFoundAction = {
 # Secrets (tokens, credentials) — local-only file
 # ──────────────────────────────────────────────────────────────────
 if (Test-Path "$HOME\.secrets.ps1") { . "$HOME\.secrets.ps1" }
+
+# 프롬프트는 로컬 환경을 불러온 뒤 대화형 터미널에서만 초기화한다.
+if (-not [Console]::IsOutputRedirected -and -not [Console]::IsInputRedirected) {
+    if (Get-Command starship -ErrorAction SilentlyContinue) {
+        starship init powershell | Out-String | Invoke-Expression
+    }
+}

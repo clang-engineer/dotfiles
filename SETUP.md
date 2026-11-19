@@ -81,6 +81,19 @@ skips its build hook and wrapper. The Windows PowerShell installer is only the
 bootstrap mechanism; installed CLI tools are available from PowerShell, Git Bash,
 cmd, and IDE terminals through PATH.
 
+Windows installs `bat` and `eza` for the shared `cat`/`ls` aliases. The PowerShell
+profile initializes the already-installed Starship prompt after local secrets,
+only when input and output are attached to a terminal.
+
+The Scoop manifest keeps only `mingw` for C/C++: its
+[package definition](https://github.com/ScoopInstaller/Main/blob/master/bucket/mingw.json)
+provides GCC/G++, GDB, and make, while the separate
+[`gcc` package](https://github.com/ScoopInstaller/Main/blob/master/bucket/gcc.json)
+overlaps the compiler and adds another toolchain `bin` directory to PATH.
+The installer does not uninstall packages removed from the manifest; existing
+Windows machines with both toolchains still need manual cleanup after checking
+which compiler their projects use.
+
 On macOS/Linux, the `tldr` command comes from Homebrew's `tlrc` formula (the old
 `tldr` formula is unavailable). If an older checkout fails with “No available
 formula with the name tldr”, update the checkout and rerun `chezmoi apply`.

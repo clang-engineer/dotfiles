@@ -2,16 +2,17 @@
 # Format: <package> [# description]  — install-packages.ps1 strips inline comments and blank lines automatically
 
 7zip              # General-purpose compression/extraction tool
+bat               # cat replacement used by shared shell aliases
 dark              # WiX Decompiler. For inspecting MSI installers
 delta             # Syntax-highlighting pager used by the shared Git configuration
+eza               # ls replacement used by shared shell aliases
 fd                # find replacement. Fast file search (e.g. fd -e ts)
 fzf               # General-purpose fuzzy finder. Combine with pipelines for interactive select (e.g. vim $(fzf))
-gcc               # GNU C/C++ compiler
 git-lfs           # Git Large File Storage. Manage large binaries/images (git lfs track "*.psd")
 JetBrainsMono-NF  # JetBrains Mono + Nerd Font icons (terminal font)
 jq                # CLI JSON processor (e.g. curl ... | jq '.items[].name')
 lazygit           # Git TUI client. Stage/commit/rebase from the keyboard
-mingw             # GCC toolchain for Windows (build native binaries)
+mingw             # GCC/G++, GDB and make; do not also install the overlapping gcc package
 mise              # Cross-shell Node/Ruby/Java version manager
 neovim            # Vim-based modern editor. Lua config, async plugins
 pwsh              # PowerShell 7; profile.ps1 is shared by all PowerShell hosts
