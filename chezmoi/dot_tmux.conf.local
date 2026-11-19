@@ -399,6 +399,9 @@ tmux_conf_urlscan_options="--compact --dedupe"
 
 # this is the place to override or undo settings
 
+# 새 window/pane은 로그인 셸과 무관하게 Homebrew fish로 시작.
+set -g default-shell /opt/homebrew/bin/fish
+
 # Disable OMT shortcuts that overlap with preferred stock habits.
 unbind e #!important      # OMT: edit ~/.tmux.conf.local and reload
 unbind - #!important      # OMT: split pane vertically

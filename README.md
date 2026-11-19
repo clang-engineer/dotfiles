@@ -120,6 +120,10 @@ status; it requires PowerShell 7, chezmoi, and `g++.exe` or `clang++.exe` on PAT
 See [shell setup](SETUP.md#fish-interactive-shell) for trying Fish and selecting a
 login shell; chezmoi does not change the account shell.
 
+Tmux explicitly starts new windows and panes with `/opt/homebrew/bin/fish`,
+independent of the account login shell. This Apple Silicon Homebrew path is set
+in `chezmoi/dot_tmux.conf.local`; adjust it when using another installation path.
+
 ## Cross-platform
 
 `chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,
