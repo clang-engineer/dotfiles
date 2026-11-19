@@ -90,6 +90,10 @@ Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
 installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
 for the current font stack, Korean glyph mapping, alternatives, and switching.
 
+Zsh uses Emacs-style line editing (`bindkey -e`) independently of `EDITOR` and
+`VISUAL`, keeping Alt+Backspace as backward word deletion even when the preferred
+editor is Vim or Neovim.
+
 ## Cross-platform
 
 `chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,

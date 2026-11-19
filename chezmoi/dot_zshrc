@@ -30,6 +30,9 @@ if command -v brew >/dev/null 2>&1; then
   fpath=("$BREW_PREFIX/share/zsh/site-functions" $fpath)
 fi
 
+# Keep shell editing in Emacs mode even when EDITOR/VISUAL selects Vim.
+bindkey -e
+
 # Shell completion
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive matching
