@@ -163,30 +163,16 @@ yazi
 
 ### 추가 셋업
 
-기본 실행 명령은 `yazi`다. `chezmoi/dot_zshrc.tmpl`, `chezmoi/dot_bashrc.tmpl`,
-`chezmoi/Documents/PowerShell/profile.ps1.tmpl`에는 각각 `y` wrapper를 두어 Yazi
-종료 시 마지막 디렉터리를 현재 shell cwd로 넘긴다.
+실행 명령은 `yazi`다. 별도의 `y` 단축 함수나 종료 시 셸 디렉터리 이동은 설정하지 않는다.
 Windows Git Bash에서는 native `mise activate bash`가 세미콜론 구분 `PATH`를
 내보내므로 `.bashrc`가 mise shims를 직접 추가한다.
-
-동작 흐름:
-
-```text
-y
--> Yazi에서 디렉터리 탐색
--> Yazi가 마지막 cwd를 임시 파일에 기록
--> wrapper가 해당 경로를 읽음
--> shell에서 cd
-```
 
 따라서 사용 기준은 다음처럼 나눈다.
 
 ```text
 목적지를 알고 있음       -> zoxide (`z`)
-구조를 보면서 찾아야 함  -> Yazi (`y`)
+구조를 보면서 찾아야 함  -> Yazi (`yazi`)
 ```
-
-`yazi` 명령 자체는 그대로 남아 있어 cwd handoff 없이 실행할 수도 있다.
 
 ## AeroSpace + JankyBorders
 

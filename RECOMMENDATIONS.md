@@ -47,9 +47,9 @@ role instead of treating fzf as a general-purpose file finder.
   or path is unnecessary when no editing context is needed.
 - **Atuin** owns `Ctrl-R` and structured shell-history search in Zsh. fzf remains
   installed as a generic selection primitive.
-- **Yazi** covers visual filesystem exploration, preview, file operations, and
-  shell-directory handoff through the Zsh `y` wrapper. It complements rather than
-  replaces fzf: Yazi is a file manager, while fzf selects an item from a list.
+- **Yazi** covers visual filesystem exploration, preview, and file operations.
+  It complements rather than replaces fzf: Yazi is a file manager, while fzf
+  selects an item from a list.
 
 The current Zsh workflow is therefore:
 
@@ -106,9 +106,8 @@ history filters before enabling sync because command arguments can contain secre
 
 Yazi fills the terminal file-management gap and reuses tools already installed:
 fd, ripgrep, fzf, zoxide, jq, and Nerd Fonts. It complements the Neovim explorer
-by handling bulk filesystem work and shell-directory handoff outside the editor.
-Already installed through Homebrew with the Zsh `y` wrapper. Windows adoption
-remains optional; Yazi is not currently in the Scoop manifest.
+by handling bulk filesystem work outside the editor.
+Installed through Homebrew and Scoop; launch it directly with `yazi`.
 
 ### 5. watchexec
 

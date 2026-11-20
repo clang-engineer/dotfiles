@@ -79,20 +79,6 @@ if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 fi
 
-# Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
-if command -v yazi &>/dev/null; then
-  y() {
-    local tmp cwd
-    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return
-    yazi "$@" --cwd-file="$tmp"
-    IFS= read -r -d '' cwd < <(printf '%s\0' "$(cat -- "$tmp")")
-    if [[ -n "$cwd" && "$cwd" != "$PWD" ]]; then
-      builtin cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
-  }
-fi
-
 # Brew-installed zsh plugins.
 # syntax-highlighting must be sourced last, after all other zle setup.
 if [[ -n "$BREW_PREFIX" ]]; then

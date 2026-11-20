@@ -87,17 +87,3 @@ fi
 if command -v starship >/dev/null 2>&1; then
   eval "$(starship init bash)"
 fi
-
-# Yazi — `y` opens the file manager and changes the shell cwd to the final Yazi directory.
-if command -v yazi >/dev/null 2>&1; then
-  y() {
-    local tmp cwd
-    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return
-    command yazi "$@" --cwd-file="$tmp"
-    IFS= read -r -d '' cwd < "$tmp"
-    if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && [ -d "$cwd" ]; then
-      builtin cd -- "$cwd"
-    fi
-    command rm -f -- "$tmp"
-  }
-fi

@@ -124,7 +124,7 @@ fish
 ```
 
 The configuration initializes mise, fzf, Atuin (Ctrl+R), zoxide, and Starship using
-their fish integrations, preserves tmux auto-attach and the Yazi `y` wrapper, and
+their fish integrations, preserves tmux auto-attach, and
 provides Harlequin profile completion with an fzf picker on Tab.
 Fish has built-in suggestions and syntax highlighting; it does not load zsh
 plugins. Shell histories are separate; Atuin retains its own shared history.
