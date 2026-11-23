@@ -1,0 +1,12 @@
+fzf:
+  ctrlT: >-
+    --no-height
+    --walker-skip .git,node_modules,target
+    --preview 'bat --color=always --style=numbers -- {}'
+    --preview-window 'right,50%'
+    --bind 'ctrl-/:change-preview-window(down|hidden|)'
+  ctrlTByOS:
+    darwin: >-
+      --bind 'ctrl-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
+      --bind 'alt-y:execute-silent(printf %s {} | pbcopy)+abort'
+      --header 'Ctrl-Y: 절대 경로 복사 · Alt-Y: 상대 경로 복사'

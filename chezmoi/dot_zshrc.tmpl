@@ -66,6 +66,8 @@ if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
 if command -v fzf &>/dev/null; then
+{{ $options := printf "%s %s" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") | trim }}
+  export FZF_CTRL_T_OPTS='{{ $options | replace "'" "'\\''" }}'
   source <(fzf --zsh)
 fi
 # fzf 다음에 초기화하여 Ctrl+R을 Atuin에 맡긴다.

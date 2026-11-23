@@ -86,6 +86,8 @@ if command --query mise
     mise activate fish | source
 end
 if command --query fzf
+{{ $options := printf "%s %s" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") | trim }}
+    set -gx FZF_CTRL_T_OPTS '{{ $options | replace "\\" "\\\\" | replace "'" "\\'" }}'
     fzf --fish | source
 end
 # fzf 다음에 초기화하여 Ctrl+R을 Atuin에 맡긴다.
