@@ -18,31 +18,30 @@ bind-key T display-popup -h 90% -w 70% -E "sesh picker -i"
 기존 세션은 전환하고, 세션이 없는 디렉터리는 새 세션을 만든다.
 별도 시작 명령 없이 새 세션은 해당 디렉터리의 셸 하나로 시작한다.
 
-## tmux-fzf
-
-### 설치·키 소유권
+## tmux-fingers
 
 `chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
 
 ```tmux
-set -g @plugin 'sainnhe/tmux-fzf'
+set -g @plugin 'Morantron/tmux-fingers'
 ```
 
-tmux-fzf의 기본 `prefix + F`를 그대로 사용한다. OMT 본체가 정의한
-PathPicker 바인딩은 이후 로드되는 tmux-fzf가 덮어쓴다. 별도 중복 바인딩이나
-수동 TPM 초기화는 추가하지 않는다.
+기존 tmux-fzf를 대체한다. 기본 `prefix + F`로 현재 pane의 경로·SHA·IP 등에
+문자 힌트를 표시하고, 힌트를 입력해 tmux 버퍼와 시스템 클립보드로 복사한다.
+Shift와 함께 선택하면 붙여넣고, Escape로 취소한다. OMT의 PathPicker
+바인딩은 이후 로드되는 fingers가 덮어쓰므로 별도 실행 바인딩은 추가하지 않는다.
 
-사용하지 않는 PathPicker의 `fpp` 패키지 선언과 `FPP_EDITOR` 설정은 제거했다.
-이미 실행 중인 서버를 전환할 때는 남아 있는 `FPP_EDITOR` 환경도 해제한다.
+점프 모드는 기본 `prefix + J`를 사용한다. 기존 pane 크기 조절 바인딩은
+fingers의 점프 모드가 덮어쓴다.
 
-현재 역할 분담:
+macOS arm64에서는 `.chezmoiexternal.toml`이 공식 2.7.1 단독 바이너리를
+SHA256 검증 후 `~/.local/bin/tmux-fingers`에 실행 파일로 설치한다.
+Homebrew 소스 빌드의 Crystal/LLVM 의존성은 설치하지 않는다.
+다른 플랫폼에서는 upstream의 최초 실행 설치 마법사를 사용한다.
+플러그인 업데이트로 바이너리 버전이 바뀌면 이 외부 파일의 URL과 체크섬도 함께 갱신한다.
 
-- `prefix + F`: tmux-fzf로 세션·윈도우·pane·명령·키 바인딩·tmux 버퍼 관리.
-- `prefix + Tab`: 기존 extrakto로 화면·Scrollback 텍스트 추출.
-- 프로젝트 디렉터리 기반 세션 생성·전환: 기존 sesh 설정 유지.
-
-시스템 클립보드 이력을 위한 CopyQ나 프로세스 트리를 위한 pstree는 선택
-의존성이므로 추가 설치하지 않는다. CopyQ가 없으면 tmux 버퍼를 사용한다.
+`prefix + Tab`의 extrakto는 화면·Scrollback 검색 추출용으로 유지하고,
+프로젝트 디렉터리 기반 세션 생성·전환은 기존 sesh를 사용한다.
 
 ## tmux-sessionx
 
@@ -55,8 +54,8 @@ set -g @plugin 'omerxx/tmux-sessionx'
 추가 옵션 없이 기본 `prefix + O` (`Shift+o`)로 세션·윈도우 검색과
 미리보기를 연다. 기존 `prefix + o`의 다음 pane 이동은 유지한다.
 필수 의존성인 fzf (`fzf-tmux` 포함)와 bat은 기존 Brewfile 선언을 사용한다.
-zoxide 자동 경로 매칭 옵션은 기본값인 off로 두며, 프로젝트 진입용 sesh와
-전체 tmux 객체 관리용 tmux-fzf도 그대로 유지한다.
+zoxide 자동 경로 매칭 옵션은 기본값인 off로 두며, 프로젝트 진입용 sesh도
+그대로 유지한다.
 
 ## tmux-open
 
@@ -83,7 +82,7 @@ vi Copy Mode의 기본 `o`(`other-end`)는 사용하지 않으므로 의도적�
 `Ctrl+o`는 원래 pane에 `nvim -- "선택한 경로"`와 Enter를 보내므로
 셸 프롬프트에서 사용한다. 실행 중인 다른 프로그램에 명령을 보내지 않도록
 주의한다. 웹 검색 전에 선택 문구에 토큰·개인정보가 없는지도 확인한다.
-기존 extrakto의 `prefix + Tab`과 tmux-fzf의 `prefix + F`는 유지한다.
+기존 extrakto의 `prefix + Tab`과 tmux-fingers의 `prefix + F`는 유지한다.
 
 ## tmux Copy Mode 커스텀 키
 
