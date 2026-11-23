@@ -38,6 +38,13 @@ A single LazyVim-based configuration. Plugins and settings are modularized under
 
 - If `:checkhealth` output shows missing dependencies such as LuaRocks, node, or python3, install them via Brew/Scoop and run it again.
 - If an error occurs during plugin installation, remove only the plugin directory (`rm -rf ~/.local/share/nvim/lazy` or Windows `%LOCALAPPDATA%\nvim-data\lazy`) and re-run `nvim --headless "+Lazy sync" +qa`. The parent data directory also contains undo history, swap recovery files, and local state.
+- CopilotChat's default `<C-l>` resets the conversation in both normal and insert
+  mode; this config disables that mapping to avoid accidental clearing. In normal
+  mode, `<C-l>` keeps the existing right-window/tmux-pane navigation. Insert mode
+  falls back to Neovim's native behavior (inserting a form-feed character), not
+  navigation; press `<Esc>` first to move right. Use `<leader>ax` in normal mode
+  when you intentionally want to clear the chat. Restart Neovim after changing
+  `lazy/lua/plugins/copilotchat.lua`.
 
 ## Database UI (vim-dadbod)
 

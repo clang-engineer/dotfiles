@@ -1,8 +1,8 @@
 -- Under Copilot Business policy the /models response always comes back with
 -- model_picker_enabled=false, so CopilotChat's default filter drops all chat models.
 -- Intercept the curl response to enable the picker flag on chat models only, then call
--- the original get_models. Delete this file once the org policy is lifted or the picker
--- is enabled in GitHub personal settings.
+-- the original get_models. Remove this workaround once the org policy is lifted or
+-- the picker is enabled in GitHub personal settings.
 return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
@@ -33,6 +33,8 @@ return {
       end
 
       opts.model = "auto"
+      -- Keep Ctrl-L for navigation; LazyVim already provides <leader>ax to reset chat.
+      opts.mappings = vim.tbl_deep_extend("force", opts.mappings or {}, { reset = false })
       return opts
     end,
   },
