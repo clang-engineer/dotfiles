@@ -10,4 +10,6 @@ return {
   { "scottmckendry/cyberdream.nvim", lazy = true },
   -- 추가 등록: LazyVim 기본엔 없어 상시 등록해두는 것
   { "ellisonleao/gruvbox.nvim", lazy = true },
+  -- Official Dracula port for Vim/Neovim: https://draculatheme.com/vim
+  { "dracula/vim", name = "dracula", lazy = true },
 }

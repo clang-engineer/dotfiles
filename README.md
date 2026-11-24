@@ -101,12 +101,19 @@ run `chezmoi apply`; do not edit generated home files to change shared values.
 `chezmoi/.chezmoidata/themes.yaml` is the single place to choose each tool's theme,
 independently; it does not force every tool onto the same palette. Chezmoi renders
 Ghostty, Starship, delta, and the existing Oh my tmux! color palette directly into
-their native configs. For tmux, `themes.tmux.colours` contains its 17 palette slots.
+their native configs. Dracula is selected by default. Ghostty, fzf, Starship, and
+delta use their [official Dracula integrations](https://draculatheme.com/), with
+pinned upstream sources and licenses beside the managed assets. Neovim uses
+the official `dracula/vim` plugin; bat and Harlequin use their built-in Dracula themes.
+`themes.delta.syntax` chooses syntax highlighting; `themes.delta.feature` selects
+the included delta feature. For tmux, `themes.tmux.colours` adapts the official
+Dracula colors to the 17 Oh my tmux! palette slots. It does not install the Dracula
+tmux plugin or replace the existing status layout.
 Neovim's symlinked config reads a small generated `dotfiles/theme.lua` beside its
 config directory, so GUI launches do not depend on shell environment variables.
 The source plugin declarations still determine which Neovim themes are installed.
-Bash/Zsh/Fish and PowerShell export native `BAT_THEME`; the preserved default is
-`auto`. Unix shells use `themes.fzf` for `FZF_DEFAULT_OPTS_FILE`.
+Bash/Zsh/Fish and PowerShell export native `BAT_THEME`.
+Unix shells use `themes.fzf` for `FZF_DEFAULT_OPTS_FILE`.
 Harlequin has no global theme environment variable, so the Unix shell function
 passes `themes.harlequin` via `--theme` for every profile, overriding profile theme
 values. An explicit later `--theme` overrides it. Direct executable invocations
@@ -127,12 +134,12 @@ there is no runtime config loader. Edit the YAML and run `chezmoi apply` to upda
 the generated shell files.
 
 `themes.fzf` selects the shared options file relative to the shell's config home.
-The managed `chezmoi/dot_config/fzf/catppuccin-mocha` becomes
-`~/.config/fzf/catppuccin-mocha`; Bash/Zsh/Fish export its path as
-`FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME` when set.
-Its color-only options apply to plain fzf, Ctrl+T, and `rg.fzf`, without changing
-key bindings or layout. The palette comes from [Catppuccin Mocha for fzf](https://github.com/catppuccin/fzf),
-with the main `bg` override omitted to preserve the terminal background.
+The managed `chezmoi/dot_config/fzf/dracula` becomes `~/.config/fzf/dracula`;
+Bash/Zsh/Fish export its path as `FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME`
+when set. Its color-only options apply to plain fzf, Ctrl+T, and `rg.fzf`, without
+changing key bindings or layout. It contains the [official Dracula fzf colors](https://draculatheme.com/fzf),
+including the background. The existing `fzf/catppuccin-mocha` file remains available
+as another central selection; its main background override is omitted.
 Edit the managed theme file and run `chezmoi apply` to change colors; bat's syntax
 highlighting remains independently configured.
 

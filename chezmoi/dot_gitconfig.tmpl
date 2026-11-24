@@ -10,6 +10,7 @@
 # (gitignored), created by chezmoi/create_dot_gitconfig.local.tmpl at init.
 [include]
 	path = {{ .chezmoi.homeDir }}/.gitconfig.local
+	path = {{ .chezmoi.homeDir }}/.config/delta/dracula/dracula.gitconfig
 [core]
 	pager = delta
 [interactive]
@@ -18,6 +19,7 @@
 	navigate = true
 	line-numbers = true
 	side-by-side = false
-	syntax-theme = {{ .themes.delta }}
+	syntax-theme = {{ .themes.delta.syntax }}
+	features = {{ .themes.delta.feature }}
 [merge]
 	conflictStyle = zdiff3

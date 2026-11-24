@@ -1,28 +1,31 @@
 themes:
-  ghostty: Rose Pine Moon
-  neovim: cyberdream
-  starship: rose-pine-moon
-  fzf: fzf/catppuccin-mocha
-  bat: auto
-  delta: Monokai Extended
-  harlequin: harlequin
+  ghostty: dracula
+  neovim: dracula
+  starship: dracula
+  fzf: fzf/dracula
+  bat: Dracula
+  delta:
+    syntax: Dracula
+    feature: dracula
+  harlequin: dracula
   tmux:
-    # Oh my tmux! colour_1 through colour_17, in order.
+    # Adapted for Oh my tmux! colour_1 through colour_17; not the Dracula tmux plugin.
+    # Palette: https://github.com/dracula/tmux/blob/50b5fdfcbece52124c1ecfd5687469d163e05bf3/scripts/dracula.sh
     colours:
-      - '#080808'
-      - '#303030'
-      - '#8a8a8a'
-      - '#00afff'
-      - '#ffff00'
-      - '#080808'
-      - '#e4e4e4'
-      - '#080808'
-      - '#ffff00'
-      - '#ff00af'
-      - '#5fff00'
-      - '#8a8a8a'
-      - '#e4e4e4'
-      - '#080808'
-      - '#080808'
-      - '#d70000'
-      - '#e4e4e4'
+      - '#282a36'
+      - '#44475a'
+      - '#f8f8f2'
+      - '#8be9fd'
+      - '#f1fa8c'
+      - '#282a36'
+      - '#f8f8f2'
+      - '#282a36'
+      - '#f1fa8c'
+      - '#ff79c6'
+      - '#50fa7b'
+      - '#f8f8f2'
+      - '#f8f8f2'
+      - '#282a36'
+      - '#282a36'
+      - '#ff5555'
+      - '#f8f8f2'
