@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Adapted from https://github.com/junegunn/everything.fzf/blob/77edfb6e763281efb09d0d0aa925822ec64d7426/rg.fzf
-# Local changes: right-side preview and Ctrl+arrow layout bindings.
+# Local changes: path insertion, editor/clipboard actions, and right-side preview bindings.
 #
 # MIT License
 #
@@ -25,9 +25,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+print0=false
+if [[ ${1:-} == --print0 ]]; then
+  print0=true
+  shift
+fi
+
 RG_FZF_PREV=$(mktemp) || exit
 export RG_FZF_PREV
-trap 'rm -f "$RG_FZF_PREV"' EXIT INT TERM
+RG_FZF_OUTPUT=
+trap 'rm -f "$RG_FZF_PREV" "$RG_FZF_OUTPUT"' EXIT INT TERM
+RG_FZF_OUTPUT=$(mktemp) || exit
 printf ' ' >"$RG_FZF_PREV" # sentinel: leading space is impossible after trim, forces initial reload
 
 # Evaluated by fzf's Bash child, not while defining ACTION.
@@ -62,16 +70,44 @@ OPENER='EDITOR=${EDITOR:-vim}
           "$EDITOR" {+1}
         fi'
 
-fzf --no-height --disabled --ansi --multi --query "${*:-}" \
+HEADER=$'RG QUERY \e[2m/\e[0m FZF QUERY\n\e[1menter\e[0m insert  \e[2m·\e[0m  \e[1mctrl-o\e[0m open (no exit)  \e[2m·\e[0m  \e[1malt-a/d\e[0m (de)select  \e[2m·\e[0m  \e[1mctrl-/\e[0m preview'
+clipboard_bindings=()
+if [[ $(uname -s) == Darwin ]]; then
+  clipboard_bindings=(
+    --bind 'ctrl-y:execute-silent(printf %s {1} | pbcopy)+abort'
+    --bind 'alt-y:execute-silent(realpath -- {1} | perl -pe chomp | pbcopy)+abort'
+  )
+  HEADER+=$'\n\e[1mctrl-y\e[0m 표시 경로 복사  \e[2m·\e[0m  \e[1malt-y\e[0m 절대 경로 복사'
+fi
+HEADER+=$'\nctrl-down / ctrl-right: preview position'
+
+fzf --no-height --disabled --ansi --multi --print0 --query "${*:-}" \
   --with-shell 'bash -c' \
   --bind "start,change:$ACTION" \
-  --bind "enter:become:$OPENER" \
+  --bind 'enter:accept' \
   --bind "ctrl-o:execute:$OPENER" \
   --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
   --bind 'ctrl-down:change-preview-window(down,40%,border-top,~3,+{2}+3/3)+show-preview' \
   --bind 'ctrl-right:change-preview-window(right,50%,border-left,~3,+{2}+3/3)+show-preview' \
-  --header-border --header $'RG QUERY \e[2m/\e[0m FZF QUERY\n\e[1menter\e[0m open  \e[2m·\e[0m  \e[1mctrl-o\e[0m open (no exit)  \e[2m·\e[0m  \e[1malt-a/d\e[0m (de)select  \e[2m·\e[0m  \e[1mctrl-/\e[0m preview\nctrl-down / ctrl-right: preview position' \
+  --header-border --header "$HEADER" \
+  "${clipboard_bindings[@]}" \
   --delimiter : \
   --preview 'bat --color=always --highlight-line {2} {1}' \
   --preview-window 'right,50%,border-left,~3,+{2}+3/3' \
-  </dev/null
+  </dev/null >"$RG_FZF_OUTPUT" || exit "$?"
+
+# Keep one path per selected file, in selection order. NUL records also preserve
+# whitespace and quotes when shell widgets request --print0.
+paths=()
+while IFS= read -r -d '' match; do
+  path=${match%%:*}
+  for selected in "${paths[@]}"; do
+    [[ $selected == "$path" ]] && continue 2
+  done
+  paths+=("$path")
+  if "$print0"; then
+    printf '%s\0' "$path"
+  else
+    printf '%s\n' "$path"
+  fi
+done <"$RG_FZF_OUTPUT"

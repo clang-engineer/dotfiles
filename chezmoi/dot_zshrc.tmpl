@@ -75,7 +75,15 @@ if command -v fzf &>/dev/null; then
 fi
 if command -v rg.fzf &>/dev/null; then
   _rg_fzf_widget() {
-    command rg.fzf
+    emulate -L zsh
+    local output item selected=''
+    output="$(command rg.fzf --print0)"
+    for item in "${(@0)output}"; do
+      [[ -z $item ]] && continue
+      selected+="${(q)item} "
+    done
+    # LBUFFER inserts at the native character cursor without touching RBUFFER.
+    [[ -n $selected ]] && LBUFFER+="$selected"
     zle reset-prompt
   }
   zle -N _rg_fzf_widget

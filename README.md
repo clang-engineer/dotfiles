@@ -123,29 +123,41 @@ Like `rg.fzf`, Ctrl+T uses the default bottom-input layout, a bordered multiline
 query/help header with emphasized keys, and a border separating the preview.
 Ctrl+/ toggles the preview on and off; Ctrl+Down shows it below at 40%, and
 Ctrl+Right shows it on the right at 50%. `/` remains available for search.
+Enter inserts selected paths into the command line; Ctrl+O opens a file in
+`$EDITOR` (Vim if unset) and returns to the picker when the editor exits.
 On macOS, disable conflicting Mission Control shortcuts to let Ctrl+arrow reach fzf.
 On macOS, Ctrl+Y copies the candidate as displayed (relative when searching from
 the working directory), while Alt+Y copies the absolute path via `realpath`. Both use `pbcopy` and
 close the picker without inserting a path; these bindings and their header are
 omitted on Linux and Windows.
 
-For interactive file-content search, press Ctrl+F in Bash/Zsh/Fish, or run
-`rg.fzf [QUERY]` from a project directory. Ctrl+F replaces Emacs forward-character
-editing when `rg.fzf` is installed; the right arrow remains available.
+For interactive file-content search, press Ctrl+F in Zsh/Fish, or run
+`rg.fzf [QUERY]` from a project directory. In Zsh/Fish, Ctrl+F replaces Emacs
+forward-character editing when `rg.fzf` is installed; the right arrow remains
+available. Bash keeps its standard Ctrl+F cursor movement and has no custom
+content-picker insertion binding; `rg.fzf` remains available as a command.
 Chezmoi installs `chezmoi/dot_local/bin/executable_rg.fzf` to `~/.local/bin/rg.fzf`
 on macOS/Linux. The managed script is adapted from a
 [pinned upstream revision](https://github.com/junegunn/everything.fzf/blob/77edfb6e763281efb09d0d0aa925822ec64d7426/rg.fzf),
 with its license retained. It requires Bash, fzf, ripgrep, and bat.
 Type `pattern / filter` to search contents with rg and narrow the results with fzf
-(for example, `rg.fzf 'handleLogin / .ts:'`). Enter opens the matching file and
-line in `$EDITOR` (Vim if unset); Ctrl+O opens it without exiting the picker.
-Tab selects multiple results; Vim/Neovim receive these as a quickfix list.
+(for example, `rg.fzf 'handleLogin / .ts:'`). Enter returns selected file paths,
+without line numbers or matched text; the Ctrl+F shell binding inserts them
+with shell escaping. Multiple matches in the same file yield one path.
+Ctrl+O opens the matching file and line in `$EDITOR` (Vim if unset) without
+exiting the picker. Tab selects multiple results; Vim/Neovim receive multiple
+matches as a quickfix list when opened with Ctrl+O.
+On macOS, Ctrl+Y copies the focused file's displayed path and Alt+Y copies its
+absolute path, then closes without inserting. These copy keys match Ctrl+T.
 The picker fills the current terminal pane, including inside tmux, without a popup.
 The preview starts visible on the right at 50%, with matching-line highlighting
 and scrolling. Ctrl+/ toggles it; Ctrl+Down shows it below at 40%, and Ctrl+Right
 shows it on the right at 50%, matching the Ctrl+T preview controls.
-The Ctrl+F binding preserves the current command line and returns to it when
-the picker/editor exits. It does not insert a selected path or change Ctrl+T/Alt+C.
+Ctrl+F preserves existing command text, inserts accepted file paths at the
+cursor, and leaves the command line unchanged on cancellation or clipboard copy.
+Ctrl+T and Alt+C retain their file selection and directory navigation roles.
+When run directly, `rg.fzf` prints one path per line; `rg.fzf --print0 [QUERY]`
+prints NUL-delimited paths for shell integration.
 
 `chezmoi/Documents/PowerShell/profile.ps1.tmpl` uses the same shared values while
 keeping native PSReadLine/PSFzf, Scoop, and `.secrets.ps1` handling. Command aliases
