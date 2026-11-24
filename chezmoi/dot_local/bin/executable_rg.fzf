@@ -70,13 +70,13 @@ OPENER='EDITOR=${EDITOR:-vim}
           "$EDITOR" {+1}
         fi'
 
-HEADER=$'RG QUERY \e[2m/\e[0m FZF QUERY\n\e[1menter\e[0m insert  \e[2m·\e[0m  \e[1mctrl-o\e[0m open (no exit)  \e[2m·\e[0m  \e[1malt-a/d\e[0m (de)select  \e[2m·\e[0m  \e[1mctrl-/\e[0m preview'
+HEADER=$'RG QUERY / FZF QUERY\nenter insert  ·  ctrl-o open (no exit)  ·  alt-a/d (de)select  ·  ctrl-/ preview'
 clipboard_bindings=()
 if [[ $(uname -s) == Darwin ]]; then
   clipboard_bindings=(
     --bind 'ctrl-y:execute-silent(realpath -- {1} | perl -pe chomp | pbcopy)+abort'
   )
-  HEADER+=$'\n\e[1mctrl-y\e[0m copy absolute'
+  HEADER+=$'\nctrl-y copy absolute'
 fi
 
 fzf --no-height --disabled --ansi --multi --print0 --query "${*:-}" \

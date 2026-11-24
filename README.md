@@ -120,7 +120,7 @@ Harlequin completion remains Zsh/Fish-specific.
 Bash, Zsh, and Fish Ctrl+T file pickers use `--no-height` to fill the current
 terminal pane, with a hidden-by-default right-side 50% `bat` preview with line numbers.
 Like `rg.fzf`, Ctrl+T uses the default bottom-input layout, a bordered multiline
-query/help header with emphasized keys, and a border separating the preview.
+query/help header without bold/dim escape codes, and a border separating the preview.
 Picker help is in English; both pickers use a standalone query title, a single
 action-help row, and a macOS-only absolute-path copy hint.
 Fish reconstructs the header with a startup action so its shell integration
