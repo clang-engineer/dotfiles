@@ -62,7 +62,7 @@ OPENER='EDITOR=${EDITOR:-vim}
           "$EDITOR" {+1}
         fi'
 
-fzf --no-height --tmux 100% --disabled --ansi --multi --query "${*:-}" \
+fzf --no-height --disabled --ansi --multi --query "${*:-}" \
   --with-shell 'bash -c' \
   --bind "start,change:$ACTION" \
   --bind "enter:become:$OPENER" \

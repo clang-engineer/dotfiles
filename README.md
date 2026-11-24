@@ -135,6 +135,7 @@ Type `pattern / filter` to search contents with rg and narrow the results with f
 (for example, `rg.fzf 'handleLogin / .ts:'`). Enter opens the matching file and
 line in `$EDITOR` (Vim if unset); Ctrl+O opens it without exiting the picker.
 Tab selects multiple results; Vim/Neovim receive these as a quickfix list.
+The picker fills the current terminal pane, including inside tmux, without a popup.
 The preview starts visible on the right at 50%, with matching-line highlighting
 and scrolling. Ctrl+/ toggles it; Ctrl+Down shows it below at 40%, and Ctrl+Right
 shows it on the right at 50%, matching the Ctrl+T preview controls.
