@@ -98,10 +98,10 @@ Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell prof
 render these values directly in their own startup templates. Edit the YAML, then
 run `chezmoi apply`; do not edit generated home files to change shared values.
 
-`chezmoi/.chezmoidata/themes.yaml` is the single place to choose each tool's theme,
-independently; it does not force every tool onto the same palette. Chezmoi renders
-Ghostty, Starship, delta, and the existing Oh my tmux! color palette directly into
-their native configs. Dracula is selected by default. Ghostty, fzf, Starship, and
+`chezmoi/.chezmoidata/themes.yaml` holds the independent, per-tool theme choices
+used by the default `custom` profile. Shared profiles can override Ghostty,
+Neovim, and tmux together; all other tools retain their independent settings.
+Chezmoi renders the native configs. The custom defaults select Dracula. Ghostty, fzf, Starship, and
 delta use their [official Dracula integrations](https://draculatheme.com/), with
 pinned upstream sources and licenses beside the managed assets. Neovim uses
 the official `dracula/vim` plugin; bat and Harlequin use their built-in Dracula themes.
@@ -121,6 +121,85 @@ bypass that shell default.
 Change the central values, run `chezmoi apply`, then reload/restart the affected
 apps or shell. Theme names must be supported/installed by each tool; this does not
 install arbitrary palettes or change the existing layouts/keymaps.
+
+The Unix `theme` command switches Ghostty, Neovim, and Oh my tmux! together:
+
+```sh
+# Install the command and integrations after updating the checkout.
+chezmoi apply ~/.local/bin/theme ~/.config/ghostty/config \
+  ~/.config/ghostty/themes ~/.config/dotfiles/theme.lua ~/.tmux.conf.local \
+  ~/.config/fish/completions/theme.fish
+# Install the three newly registered Neovim providers once.
+nvim --headless "+Lazy! install kanagawa.nvim everforest onedark.nvim" +qa
+
+theme list
+theme show
+theme set catppuccin-mocha
+theme set dracula
+theme set custom
+```
+
+Available shared profiles (plus `custom`):
+
+| Profile | Variant | Neovim provider |
+| --- | --- | --- |
+| `catppuccin-mocha` | Mocha | [catppuccin/nvim](https://github.com/catppuccin/nvim) |
+| `cyberdream` | Default dark | [scottmckendry/cyberdream.nvim](https://github.com/scottmckendry/cyberdream.nvim) |
+| `dracula` | Dracula | [dracula/vim](https://github.com/dracula/vim) |
+| `everforest` | Dark, medium contrast | [sainnhe/everforest](https://github.com/sainnhe/everforest) |
+| `gruvbox` | Dark, medium contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
+| `kanagawa` | Wave | [rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) |
+| `nord` | Nord | [nordtheme/vim](https://github.com/nordtheme/vim) |
+| `onedark` | Default dark | [navarasu/onedark.nvim](https://github.com/navarasu/onedark.nvim) |
+| `rose-pine` | Main | [rose-pine/neovim](https://github.com/rose-pine/neovim) |
+| `tokyonight` | Night | [folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim) |
+
+Named profiles explicitly select Neovim's dark background, including when
+switching from a light colorscheme. `custom` leaves that option untouched.
+
+Fish completes the subcommands and fetches profile candidates from `theme list`
+for `theme set <Tab>`. If an existing Fish session has already tried completing
+`theme`, load the new definition once with
+`source ~/.config/fish/completions/theme.fish`; new sessions load it automatically.
+
+`theme set` updates `chezmoi/.chezmoidata/theme-profile.yaml` in the active
+chezmoi source, then applies only those three app configs, without install hooks.
+The selection survives subsequent `chezmoi apply` runs and appears as a source
+checkout change; it is not committed automatically. Profiles live in
+`chezmoi/.chezmoidata/theme-profiles.yaml`. `custom` restores the choices in
+`themes.yaml`, not a snapshot of previously running apps.
+
+Ghostty uses bundled equivalents for Catppuccin Mocha, Nord, Rosé Pine,
+TokyoNight Night, Gruvbox Dark, and Kanagawa Wave. Bundled themes can lag upstream
+in details such as bright ANSI or selection colors. Dracula and Cyberdream use
+managed upstream theme files; Everforest and One Dark use managed adapters of their
+official Neovim palettes to match the selected backgrounds and accents. Sources
+and licenses are kept beside those assets. The tmux profiles adapt each palette
+to the existing 17 Oh my tmux! slots without changing the status layout.
+Neovim providers are lazy-loaded; run the plugin installation on a fresh setup
+before switching. Starship, fzf, bat, delta, Harlequin, and the current shell
+environment are **not** changed by this command.
+
+Running apps reload as follows:
+
+- **Neovim:** restart once after installing the integration. Afterwards a directory
+  watcher reloads the generated colorscheme, including atomic file replacements.
+  If watching fails, an error is reported and focus changes retry the theme load.
+- **tmux:** updates the current/default server through Oh my tmux!'s theme stage,
+  preserving the status layout and avoiding plugin updates. Separate servers must
+  be refreshed separately.
+- **Ghostty on macOS:** invokes its native AppleScript `reload_config` action.
+  macOS may request Automation permission. If unavailable or denied, the command
+  reports failure; use `Cmd+Shift+,` to reload manually. It does not use simulated
+  keystrokes or require Accessibility permission.
+- **Ghostty on Linux:** sends the documented `SIGUSR2` reload signal to running
+  Ghostty processes. This path is not verified on Linux. See the
+  [Ghostty reload documentation](https://ghostty.org/docs/linux/systemd).
+
+Unknown profile names are rejected before writing. Apply conflicts stop the
+command without forcing overwrites; the requested source selection remains, so
+resolve the conflict and rerun the command. Reload failures likewise do not undo
+the saved configuration. The command is excluded on Windows.
 
 `chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish fzf
 settings. `fileCommand` uses `fd --type f` for both plain fzf and Ctrl+T:

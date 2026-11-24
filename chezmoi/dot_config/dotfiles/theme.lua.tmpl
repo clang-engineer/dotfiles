@@ -1,1 +1,9 @@
-return {{ .themes.neovim | quote }}
+{{- $theme := .themes -}}
+{{- if ne .themeProfile "custom" -}}
+{{- if not (hasKey .themeProfiles .themeProfile) -}}
+{{- fail (printf "Unknown theme profile: %s" .themeProfile) -}}
+{{- end -}}
+{{- $theme = index .themeProfiles .themeProfile -}}
+vim.o.background = "dark"
+{{ end -}}
+return {{ $theme.neovim | quote }}
