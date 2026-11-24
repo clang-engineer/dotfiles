@@ -98,11 +98,15 @@ Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell prof
 render these values directly in their own startup templates. Edit the YAML, then
 run `chezmoi apply`; do not edit generated home files to change shared values.
 
-`chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish Ctrl+T
-options. `ctrlT` holds common options; `ctrlTByOS` adds options for the chezmoi
-target OS. Each shell template renders the combined value as `FZF_CTRL_T_OPTS`
-before initializing fzf; there is no runtime config loader. Edit the YAML and run
-`chezmoi apply` to update the generated shell files.
+`chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish fzf
+settings. `fileCommand` uses `fd --type f` for both plain fzf and Ctrl+T:
+only files are listed, hidden entries are excluded, and fd's
+default ignore rules (including `.gitignore`) apply. Fish Ctrl+T also searches
+from the directory parsed from the current token. Piped input bypasses this command.
+`ctrlT` holds common picker options; `ctrlTByOS` adds options for the chezmoi
+target OS. Each shell template renders these values before initializing fzf;
+there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
+the generated shell files.
 
 Startup logic stays explicit in each shell file: Homebrew/secrets loading, tool
 initialization, tmux, Zsh completion/plugins, Fish key bindings, and Git Bash's
@@ -113,12 +117,12 @@ outside existing tmux sessions and JetBrains terminals. Noninteractive Bash/Fish
 startup skips interactive tools. Fish uses built-in suggestions/highlighting.
 Harlequin completion remains Zsh/Fish-specific.
 Bash, Zsh, and Fish Ctrl+T file pickers use `--no-height` to fill the current
-terminal pane, with `bat` line numbers in a right-side 50% preview pane.
-The default fzf walker skips `.git`, `node_modules`, and `target`
-(custom `FZF_CTRL_T_COMMAND` generators must handle their own exclusions).
-Ctrl+/ cycles the preview through below, hidden, and the default right-side pane.
-On macOS, Ctrl+Y copies the absolute path via `realpath`, while Alt+Y copies the
-candidate as displayed (relative with the default walker). Both use `pbcopy` and
+terminal pane, with a hidden-by-default right-side 50% `bat` preview with line numbers.
+Ctrl+/ toggles the preview on and off; Ctrl+Down shows it below at 40%, and
+Ctrl+Right shows it on the right at 50%. `/` remains available for search.
+On macOS, disable conflicting Mission Control shortcuts to let Ctrl+arrow reach fzf.
+On macOS, Ctrl+Y copies the candidate as displayed (relative when searching from
+the working directory), while Alt+Y copies the absolute path via `realpath`. Both use `pbcopy` and
 close the picker without inserting a path; these bindings and their header are
 omitted on Linux and Windows.
 

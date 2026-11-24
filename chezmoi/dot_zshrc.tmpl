@@ -67,6 +67,8 @@ if command -v mise &>/dev/null; then
 fi
 if command -v fzf &>/dev/null; then
 {{ $options := printf "%s %s" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") | trim }}
+  export FZF_DEFAULT_COMMAND='{{ .fzf.fileCommand | replace "'" "'\\''" }} --strip-cwd-prefix'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_CTRL_T_OPTS='{{ $options | replace "'" "'\\''" }}'
   source <(fzf --zsh)
 fi

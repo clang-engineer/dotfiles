@@ -87,6 +87,9 @@ if command --query mise
 end
 if command --query fzf
 {{ $options := printf "%s %s" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") | trim }}
+    set -gx FZF_DEFAULT_COMMAND '{{ .fzf.fileCommand | replace "\\" "\\\\" | replace "'" "\\'" }} --strip-cwd-prefix'
+    # fd cannot combine --strip-cwd-prefix with an explicit search path.
+    set -gx FZF_CTRL_T_COMMAND '{{ .fzf.fileCommand | replace "\\" "\\\\" | replace "'" "\\'" }} . (string unescape -- $dir)'
     set -gx FZF_CTRL_T_OPTS '{{ $options | replace "\\" "\\\\" | replace "'" "\\'" }}'
     fzf --fish | source
 end

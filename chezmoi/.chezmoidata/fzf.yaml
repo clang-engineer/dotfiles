@@ -1,12 +1,14 @@
 fzf:
+  fileCommand: fd --type f
   ctrlT: >-
     --no-height
-    --walker-skip .git,node_modules,target
     --preview 'bat --color=always --style=numbers -- {}'
-    --preview-window 'right,50%'
-    --bind 'ctrl-/:change-preview-window(down|hidden|)'
+    --preview-window 'right,50%,hidden'
+    --bind 'ctrl-/:toggle-preview'
+    --bind 'ctrl-down:change-preview-window(down,40%)+show-preview'
+    --bind 'ctrl-right:change-preview-window(right,50%)+show-preview'
   ctrlTByOS:
     darwin: >-
-      --bind 'ctrl-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
-      --bind 'alt-y:execute-silent(printf %s {} | pbcopy)+abort'
-      --header 'Ctrl-Y: 절대 경로 복사 · Alt-Y: 상대 경로 복사'
+      --bind 'ctrl-y:execute-silent(printf %s {} | pbcopy)+abort'
+      --bind 'alt-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
+      --header 'Ctrl-Y: 표시 경로 복사 · Alt-Y: 절대 경로 복사'
