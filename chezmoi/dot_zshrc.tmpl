@@ -66,11 +66,20 @@ if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
 if command -v fzf &>/dev/null; then
-{{ $options := printf "%s %s" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") | trim }}
+{{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
+{{ $options := printf "%s %s --header '%s'" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") ($header | replace "'" "'\\''") | trim }}
   export FZF_DEFAULT_COMMAND='{{ .fzf.fileCommand | replace "'" "'\\''" }} --strip-cwd-prefix'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_CTRL_T_OPTS='{{ $options | replace "'" "'\\''" }}'
   source <(fzf --zsh)
+fi
+if command -v rg.fzf &>/dev/null; then
+  _rg_fzf_widget() {
+    command rg.fzf
+    zle reset-prompt
+  }
+  zle -N _rg_fzf_widget
+  bindkey '^F' _rg_fzf_widget
 fi
 # fzf 다음에 초기화하여 Ctrl+R을 Atuin에 맡긴다.
 if command -v atuin &>/dev/null; then

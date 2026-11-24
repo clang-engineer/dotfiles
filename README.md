@@ -104,7 +104,8 @@ only files are listed, hidden entries are excluded, and fd's
 default ignore rules (including `.gitignore`) apply. Fish Ctrl+T also searches
 from the directory parsed from the current token. Piped input bypasses this command.
 `ctrlT` holds common picker options; `ctrlTByOS` adds options for the chezmoi
-target OS. Each shell template renders these values before initializing fzf;
+target OS. `ctrlTHeader` and `ctrlTHeaderByOS` provide the shared multiline header
+and platform-specific help. Each shell template renders these values before initializing fzf;
 there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
 the generated shell files.
 
@@ -118,6 +119,8 @@ startup skips interactive tools. Fish uses built-in suggestions/highlighting.
 Harlequin completion remains Zsh/Fish-specific.
 Bash, Zsh, and Fish Ctrl+T file pickers use `--no-height` to fill the current
 terminal pane, with a hidden-by-default right-side 50% `bat` preview with line numbers.
+Like `rg.fzf`, Ctrl+T uses the default bottom-input layout, a bordered multiline
+query/help header with emphasized keys, and a border separating the preview.
 Ctrl+/ toggles the preview on and off; Ctrl+Down shows it below at 40%, and
 Ctrl+Right shows it on the right at 50%. `/` remains available for search.
 On macOS, disable conflicting Mission Control shortcuts to let Ctrl+arrow reach fzf.
@@ -126,7 +129,9 @@ the working directory), while Alt+Y copies the absolute path via `realpath`. Bot
 close the picker without inserting a path; these bindings and their header are
 omitted on Linux and Windows.
 
-For interactive file-content search, run `rg.fzf [QUERY]` from a project directory.
+For interactive file-content search, press Ctrl+F in Bash/Zsh/Fish, or run
+`rg.fzf [QUERY]` from a project directory. Ctrl+F replaces Emacs forward-character
+editing when `rg.fzf` is installed; the right arrow remains available.
 Chezmoi installs `chezmoi/dot_local/bin/executable_rg.fzf` to `~/.local/bin/rg.fzf`
 on macOS/Linux. The managed script is adapted from a
 [pinned upstream revision](https://github.com/junegunn/everything.fzf/blob/77edfb6e763281efb09d0d0aa925822ec64d7426/rg.fzf),
@@ -139,8 +144,8 @@ The picker fills the current terminal pane, including inside tmux, without a pop
 The preview starts visible on the right at 50%, with matching-line highlighting
 and scrolling. Ctrl+/ toggles it; Ctrl+Down shows it below at 40%, and Ctrl+Right
 shows it on the right at 50%, matching the Ctrl+T preview controls.
-This is a separate command, not a shell path-insertion binding, and does not
-change Ctrl+T or Alt+C.
+The Ctrl+F binding preserves the current command line and returns to it when
+the picker/editor exits. It does not insert a selected path or change Ctrl+T/Alt+C.
 
 `chezmoi/Documents/PowerShell/profile.ps1.tmpl` uses the same shared values while
 keeping native PSReadLine/PSFzf, Scoop, and `.secrets.ps1` handling. Command aliases
