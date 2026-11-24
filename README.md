@@ -126,6 +126,21 @@ the working directory), while Alt+Y copies the absolute path via `realpath`. Bot
 close the picker without inserting a path; these bindings and their header are
 omitted on Linux and Windows.
 
+For interactive file-content search, run `rg.fzf [QUERY]` from a project directory.
+Chezmoi installs `chezmoi/dot_local/bin/executable_rg.fzf` to `~/.local/bin/rg.fzf`
+on macOS/Linux. The managed script is adapted from a
+[pinned upstream revision](https://github.com/junegunn/everything.fzf/blob/77edfb6e763281efb09d0d0aa925822ec64d7426/rg.fzf),
+with its license retained. It requires Bash, fzf, ripgrep, and bat.
+Type `pattern / filter` to search contents with rg and narrow the results with fzf
+(for example, `rg.fzf 'handleLogin / .ts:'`). Enter opens the matching file and
+line in `$EDITOR` (Vim if unset); Ctrl+O opens it without exiting the picker.
+Tab selects multiple results; Vim/Neovim receive these as a quickfix list.
+The preview starts visible on the right at 50%, with matching-line highlighting
+and scrolling. Ctrl+/ toggles it; Ctrl+Down shows it below at 40%, and Ctrl+Right
+shows it on the right at 50%, matching the Ctrl+T preview controls.
+This is a separate command, not a shell path-insertion binding, and does not
+change Ctrl+T or Alt+C.
+
 `chezmoi/Documents/PowerShell/profile.ps1.tmpl` uses the same shared values while
 keeping native PSReadLine/PSFzf, Scoop, and `.secrets.ps1` handling. Command aliases
 map one name to one executable; C++ flags use native wrapper functions because
