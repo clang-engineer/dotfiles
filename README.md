@@ -109,6 +109,16 @@ and platform-specific help. Each shell template renders these values before init
 there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
 the generated shell files.
 
+`themeFile` selects the shared options file relative to the shell's config home.
+The managed `chezmoi/dot_config/fzf/catppuccin-mocha` becomes
+`~/.config/fzf/catppuccin-mocha`; Bash/Zsh/Fish export its path as
+`FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME` when set.
+Its color-only options apply to plain fzf, Ctrl+T, and `rg.fzf`, without changing
+key bindings or layout. The palette comes from [Catppuccin Mocha for fzf](https://github.com/catppuccin/fzf),
+with the main `bg` override omitted to preserve the terminal background.
+Edit the managed theme file and run `chezmoi apply` to change colors; bat's syntax
+highlighting remains independently configured.
+
 Inside tmux, Ctrl+H/J/K/L moves between panes even while a shell fzf picker is
 open. `@vim_navigator_pattern` excludes fzf from Vim detection; Vim/Neovim
 retain their integrated split navigation. Use arrow keys to navigate fzf results.
