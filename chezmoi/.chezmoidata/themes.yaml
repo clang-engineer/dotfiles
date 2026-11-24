@@ -1,0 +1,28 @@
+themes:
+  ghostty: Rose Pine Moon
+  neovim: cyberdream
+  starship: rose-pine-moon
+  fzf: fzf/catppuccin-mocha
+  bat: auto
+  delta: Monokai Extended
+  harlequin: harlequin
+  tmux:
+    # Oh my tmux! colour_1 through colour_17, in order.
+    colours:
+      - '#080808'
+      - '#303030'
+      - '#8a8a8a'
+      - '#00afff'
+      - '#ffff00'
+      - '#080808'
+      - '#e4e4e4'
+      - '#080808'
+      - '#ffff00'
+      - '#ff00af'
+      - '#5fff00'
+      - '#8a8a8a'
+      - '#e4e4e4'
+      - '#080808'
+      - '#080808'
+      - '#d70000'
+      - '#e4e4e4'

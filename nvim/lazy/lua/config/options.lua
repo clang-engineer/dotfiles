@@ -16,6 +16,6 @@ vim.filetype.add({
     dot_bash_profile = "bash",
     dot_gitconfig = "gitconfig",
     ["dot_tmux.conf"] = "tmux",
-    ["dot_tmux.conf.local"] = "tmux",
+    ["dot_tmux.conf.local.tmpl"] = "tmux",
   },
 })

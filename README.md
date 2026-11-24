@@ -87,7 +87,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `tools/harlequin-config/` | [Go Harlequin configuration generator](tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
-Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
+Ghostty is managed in `chezmoi/dot_config/ghostty/config.tmpl`; available fonts are
 installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
 for the current font stack, Korean glyph mapping, alternatives, and switching.
 
@@ -97,6 +97,23 @@ Zsh is the reference for the Bash, Zsh, and Fish interactive environment.
 Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell profile
 render these values directly in their own startup templates. Edit the YAML, then
 run `chezmoi apply`; do not edit generated home files to change shared values.
+
+`chezmoi/.chezmoidata/themes.yaml` is the single place to choose each tool's theme,
+independently; it does not force every tool onto the same palette. Chezmoi renders
+Ghostty, Starship, delta, and the existing Oh my tmux! color palette directly into
+their native configs. For tmux, `themes.tmux.colours` contains its 17 palette slots.
+Neovim's symlinked config reads a small generated `dotfiles/theme.lua` beside its
+config directory, so GUI launches do not depend on shell environment variables.
+The source plugin declarations still determine which Neovim themes are installed.
+Bash/Zsh/Fish and PowerShell export native `BAT_THEME`; the preserved default is
+`auto`. Unix shells use `themes.fzf` for `FZF_DEFAULT_OPTS_FILE`.
+Harlequin has no global theme environment variable, so the Unix shell function
+passes `themes.harlequin` via `--theme` for every profile, overriding profile theme
+values. An explicit later `--theme` overrides it. Direct executable invocations
+bypass that shell default.
+Change the central values, run `chezmoi apply`, then reload/restart the affected
+apps or shell. Theme names must be supported/installed by each tool; this does not
+install arbitrary palettes or change the existing layouts/keymaps.
 
 `chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish fzf
 settings. `fileCommand` uses `fd --type f` for both plain fzf and Ctrl+T:
@@ -109,7 +126,7 @@ and platform-specific help. Each shell template renders these values before init
 there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
 the generated shell files.
 
-`themeFile` selects the shared options file relative to the shell's config home.
+`themes.fzf` selects the shared options file relative to the shell's config home.
 The managed `chezmoi/dot_config/fzf/catppuccin-mocha` becomes
 `~/.config/fzf/catppuccin-mocha`; Bash/Zsh/Fish export its path as
 `FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME` when set.
@@ -191,7 +208,7 @@ login shell; chezmoi does not change the account shell.
 
 Tmux explicitly starts new windows and panes with `/opt/homebrew/bin/fish`,
 independent of the account login shell. This Apple Silicon Homebrew path is set
-in `chezmoi/dot_tmux.conf.local`; adjust it when using another installation path.
+in `chezmoi/dot_tmux.conf.local.tmpl`; adjust it when using another installation path.
 
 ## Cross-platform
 
@@ -249,13 +266,13 @@ command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
 
 ## Verify tmux local changes against upstream
 
-- Use this when you want to check whether `dot_tmux.conf.local` has drifted from
-  upstream OMT defaults.
+- Use this when you want to check whether the rendered `dot_tmux.conf.local.tmpl`
+  has drifted from upstream OMT defaults.
 
 ```zsh
 git diff --no-index --color=always \
   <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
-  chezmoi/dot_tmux.conf.local
+  <(chezmoi cat ~/.tmux.conf.local)
 ```
 
 - If you only want to compare the currently applied file with upstream:
@@ -276,7 +293,7 @@ git diff --no-index --color=always \
 ```zsh
 git diff --no-index --color=always \
   <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
-  chezmoi/dot_tmux.conf.local \
+  <(chezmoi cat ~/.tmux.conf.local) \
   | delta
 ```
 
@@ -285,11 +302,15 @@ git diff --no-index --color=always \
 ```python
 import urllib.request
 import difflib
+import subprocess
+from pathlib import Path
 
 upstream_url = 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local'
 up = urllib.request.urlopen(upstream_url).read().decode().splitlines()
-with open('chezmoi/dot_tmux.conf.local', 'r', encoding='utf-8') as f:
-    local = f.read().splitlines()
+local = subprocess.check_output(
+    ['chezmoi', 'cat', str(Path.home() / '.tmux.conf.local')],
+    text=True,
+).splitlines()
 
 diff_lines = list(difflib.unified_diff(up, local, lineterm=''))
 print('added', sum(1 for l in diff_lines if l.startswith('+') and not l.startswith('+++')))

@@ -1,7 +1,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Switch to 'cyberdream' when using Ghostty's saved cyberdream theme.
-palette = 'rose-pine-moon'
+# Select the active palette in .chezmoidata/themes.yaml.
+palette = {{ .themes.starship | quote }}
 add_newline = false
 format = '$directory$git_branch$git_status$java$nodejs$character'
 

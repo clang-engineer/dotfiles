@@ -1,6 +1,5 @@
 fzf:
   fileCommand: fd --type f
-  themeFile: fzf/catppuccin-mocha
   ctrlT: >-
     --no-height
     --layout=default

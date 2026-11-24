@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Idempotent shell tool installs; reruns when runtimes or tmux plugins change.
 # mise-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_config/mise/config.toml.tmpl" | trim }}
-# tmux-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_tmux.conf.local" | trim }}
+# tmux-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_tmux.conf.local.tmpl" | trim }}
 set -euo pipefail
 
 # zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting) are installed via

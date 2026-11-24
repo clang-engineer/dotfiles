@@ -8,7 +8,7 @@
 
 ## sesh
 
-`chezmoi/dot_tmux.conf.local`에서 `prefix + Shift+t`로 내장 선택기를 연다.
+`chezmoi/dot_tmux.conf.local.tmpl`에서 `prefix + Shift+t`로 내장 선택기를 연다.
 
 ```tmux
 bind-key T display-popup -h 90% -w 70% -E "sesh picker -i"
@@ -20,7 +20,7 @@ bind-key T display-popup -h 90% -w 70% -E "sesh picker -i"
 
 ## tmux-fingers
 
-`chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
+`chezmoi/dot_tmux.conf.local.tmpl`에서 OMT의 TPM 연동으로 설치한다.
 
 ```tmux
 set -g @plugin 'Morantron/tmux-fingers'
@@ -45,7 +45,7 @@ Homebrew 소스 빌드의 Crystal/LLVM 의존성은 설치하지 않는다.
 
 ## tmux-sessionx
 
-`chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
+`chezmoi/dot_tmux.conf.local.tmpl`에서 OMT의 TPM 연동으로 설치한다.
 
 ```tmux
 set -g @plugin 'omerxx/tmux-sessionx'
@@ -59,7 +59,7 @@ zoxide 자동 경로 매칭 옵션은 기본값인 off로 두며, 프로젝트 �
 
 ## tmux-open
 
-`chezmoi/dot_tmux.conf.local`에서 OMT의 TPM 연동으로 설치한다.
+`chezmoi/dot_tmux.conf.local.tmpl`에서 OMT의 TPM 연동으로 설치한다.
 
 ```tmux
 set -g @open-editor-command 'nvim'
@@ -88,7 +88,7 @@ vi Copy Mode의 기본 `o`(`other-end`)는 사용하지 않으므로 의도적�
 
 커스텀 바인딩은 독립 플러그인
 [`tmux-vim-copy`](https://github.com/clang-engineer/tmux-vim-copy)에서 관리한다.
-`chezmoi/dot_tmux.conf.local`에서 tmux-open 뒤에 TPM 플러그인으로 선언한다.
+`chezmoi/dot_tmux.conf.local.tmpl`에서 tmux-open 뒤에 TPM 플러그인으로 선언한다.
 
 ```tmux
 set -g @plugin 'clang-engineer/tmux-vim-copy'
