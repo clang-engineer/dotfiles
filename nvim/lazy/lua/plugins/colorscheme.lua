@@ -9,7 +9,14 @@ return {
   },
   { "scottmckendry/cyberdream.nvim", lazy = true, opts = { variant = "default", transparent = false } },
   -- 추가 등록: LazyVim 기본엔 없어 상시 등록해두는 것
-  { "ellisonleao/gruvbox.nvim", lazy = true, opts = { contrast = "", transparent_mode = false } },
+  {
+    "ellisonleao/gruvbox.nvim",
+    lazy = true,
+    opts = function()
+      local _, contrast = require("config.theme").read()
+      return { contrast = contrast or "", transparent_mode = false }
+    end,
+  },
   -- Official Dracula port for Vim/Neovim: https://draculatheme.com/vim
   { "dracula/vim", name = "dracula", lazy = true },
   { "nordtheme/vim", name = "nord", lazy = true },
@@ -24,4 +31,7 @@ return {
     end,
   },
   { "navarasu/onedark.nvim", lazy = true, opts = { style = "dark", transparent = false } },
+  { "projekt0n/github-nvim-theme", lazy = true },
+  { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = true },
+  { "Mofiqul/vscode.nvim", lazy = true, opts = { style = "dark", transparent = false } },
 }

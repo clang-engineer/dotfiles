@@ -129,8 +129,8 @@ The Unix `theme` command switches Ghostty, Neovim, and Oh my tmux! together:
 chezmoi apply ~/.local/bin/theme ~/.config/ghostty/config \
   ~/.config/ghostty/themes ~/.config/dotfiles/theme.lua ~/.tmux.conf.local \
   ~/.config/fish/completions/theme.fish
-# Install the three newly registered Neovim providers once.
-nvim --headless "+Lazy! install kanagawa.nvim everforest onedark.nvim" +qa
+# Install the additional Neovim providers once.
+nvim --headless "+Lazy! install kanagawa.nvim everforest onedark.nvim github-nvim-theme moonfly vscode.nvim" +qa
 
 theme list
 theme show
@@ -147,15 +147,27 @@ Available shared profiles (plus `custom`):
 | `cyberdream` | Default dark | [scottmckendry/cyberdream.nvim](https://github.com/scottmckendry/cyberdream.nvim) |
 | `dracula` | Dracula | [dracula/vim](https://github.com/dracula/vim) |
 | `everforest` | Dark, medium contrast | [sainnhe/everforest](https://github.com/sainnhe/everforest) |
+| `github-dark-high-contrast` | GitHub Dark High Contrast | [projekt0n/github-nvim-theme](https://github.com/projekt0n/github-nvim-theme) |
 | `gruvbox` | Dark, medium contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
+| `gruvbox-hard` | Dark, hard contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
 | `kanagawa` | Wave | [rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) |
+| `moonfly` | Dark charcoal | [bluz71/vim-moonfly-colors](https://github.com/bluz71/vim-moonfly-colors) |
 | `nord` | Nord | [nordtheme/vim](https://github.com/nordtheme/vim) |
 | `onedark` | Default dark | [navarasu/onedark.nvim](https://github.com/navarasu/onedark.nvim) |
 | `rose-pine` | Main | [rose-pine/neovim](https://github.com/rose-pine/neovim) |
 | `tokyonight` | Night | [folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim) |
+| `vscode-dark` | VS Code Dark+ inspired | [Mofiqul/vscode.nvim](https://github.com/Mofiqul/vscode.nvim) |
 
 Named profiles explicitly select Neovim's dark background, including when
 switching from a light colorscheme. `custom` leaves that option untouched.
+`gruvbox-hard` sets `gruvboxContrast: hard`; ordinary `gruvbox` resets it to medium.
+The generated Lua returns contrast alongside the shared `gruvbox` colorscheme
+name, so both initial plugin loading and live reloads apply the selected variant.
+Restart existing Neovim instances once after updating this integration.
+Moonfly is a dark-charcoal option, not an accessibility-certified high-contrast theme.
+`vscode-dark` uses the upstream dark palette, not VS Code's High Contrast theme.
+The plugin also adjusts JavaScript/TypeScript Tree-sitter queries to more closely
+match VS Code syntax highlighting.
 
 Fish completes the subcommands and fetches profile candidates from `theme list`
 for `theme set <Tab>`. If an existing Fish session has already tried completing
@@ -170,9 +182,10 @@ checkout change; it is not committed automatically. Profiles live in
 `themes.yaml`, not a snapshot of previously running apps.
 
 Ghostty uses bundled equivalents for Catppuccin Mocha, Nord, Rosé Pine,
-TokyoNight Night, Gruvbox Dark, and Kanagawa Wave. Bundled themes can lag upstream
-in details such as bright ANSI or selection colors. Dracula and Cyberdream use
-managed upstream theme files; Everforest and One Dark use managed adapters of their
+TokyoNight Night, Gruvbox Dark/Hard, Kanagawa Wave, and GitHub Dark High Contrast.
+Bundled themes can lag upstream in details such as bright ANSI or selection colors.
+Dracula, Cyberdream, Moonfly, and VS Code Dark use managed upstream theme files;
+Everforest and One Dark use managed adapters of their
 official Neovim palettes to match the selected backgrounds and accents. Sources
 and licenses are kept beside those assets. The tmux profiles adapt each palette
 to the existing 17 Oh my tmux! slots without changing the status layout.

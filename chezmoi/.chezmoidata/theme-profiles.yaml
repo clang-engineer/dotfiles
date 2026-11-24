@@ -232,3 +232,100 @@ themeProfiles:
         - '#16181a'
         - '#ff6e5e'
         - '#ffffff'
+  github-dark-high-contrast:
+    ghostty: GitHub Dark High Contrast
+    neovim: github_dark_high_contrast
+    tmux:
+      # Official high-contrast palette; selection follows bundled Ghostty.
+      # https://github.com/projekt0n/github-theme-contrib/blob/a1c07099528be70b6273b13e2a19d5d2c3ce4661/themes/kitty/github_dark_high_contrast.conf
+      colours:
+        - '#0a0c10'
+        - '#f0f3f6'
+        - '#f0f3f6'
+        - '#39c5cf'
+        - '#f0b72f'
+        - '#0a0c10'
+        - '#f0f3f6'
+        - '#0a0c10'
+        - '#f0b72f'
+        - '#cb9eff'
+        - '#26cd4d'
+        - '#f0f3f6'
+        - '#f0f3f6'
+        - '#0a0c10'
+        - '#0a0c10'
+        - '#ff9492'
+        - '#f0f3f6'
+  gruvbox-hard:
+    ghostty: Gruvbox Dark Hard
+    neovim: gruvbox
+    gruvboxContrast: hard
+    tmux:
+      # Same official Gruvbox palette as medium, with dark0_hard background.
+      # https://github.com/ellisonleao/gruvbox.nvim/blob/154eb5ff5b96d0641307113fa385eaf0d36d9796/lua/gruvbox.lua
+      colours:
+        - '#1d2021'
+        - '#665c54'
+        - '#ebdbb2'
+        - '#8ec07c'
+        - '#fabd2f'
+        - '#1d2021'
+        - '#ebdbb2'
+        - '#1d2021'
+        - '#fabd2f'
+        - '#d3869b'
+        - '#b8bb26'
+        - '#ebdbb2'
+        - '#ebdbb2'
+        - '#1d2021'
+        - '#1d2021'
+        - '#fb4934'
+        - '#ebdbb2'
+  moonfly:
+    ghostty: moonfly
+    neovim: moonfly
+    tmux:
+      # Official charcoal palette; managed Ghostty extra.
+      # https://github.com/bluz71/vim-moonfly-colors/blob/2c883835f5b7b380a0a9e80695c420f7efebdfe4/extras/moonfly-ghostty.conf
+      colours:
+        - '#080808'
+        - '#b2ceee'
+        - '#bdbdbd'
+        - '#79dac8'
+        - '#e3c78a'
+        - '#080808'
+        - '#bdbdbd'
+        - '#080808'
+        - '#e3c78a'
+        - '#cf87e8'
+        - '#8cc85f'
+        - '#bdbdbd'
+        - '#bdbdbd'
+        - '#080808'
+        - '#080808'
+        - '#ff5d5d'
+        - '#bdbdbd'
+  vscode-dark:
+    ghostty: vscode-dark
+    neovim: vscode
+    tmux:
+      # Official Dark+ inspired palette; managed upstream Ghostty extra.
+      # https://github.com/Mofiqul/vscode.nvim/blob/6439ed89d0e10193f07e92268a321d7c6f6e93ee/extra/ghostty/vscode-dark
+      colours:
+        - '#1f1f1f'
+        - '#264f78'
+        - '#d4d4d4'
+        - '#56b6c2'
+        - '#dcdcaa'
+        - '#1f1f1f'
+        - '#d4d4d4'
+        - '#1f1f1f'
+        - '#dcdcaa'
+        - '#c586c0'
+        - '#6a9955'
+        - '#d4d4d4'
+        - '#d4d4d4'
+        - '#1f1f1f'
+        - '#1f1f1f'
+        - '#f44747'
+        - '#d4d4d4'

@@ -6,4 +6,4 @@
 {{- $theme = index .themeProfiles .themeProfile -}}
 vim.o.background = "dark"
 {{ end -}}
-return {{ $theme.neovim | quote }}
+return {{ $theme.neovim | quote }}{{ if eq $theme.neovim "gruvbox" }}, {{ get $theme "gruvboxContrast" | quote }}{{ end }}

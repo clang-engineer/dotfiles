@@ -29,24 +29,30 @@ function M.read()
     end
     return
   end
-  local ok, colorscheme = pcall(chunk)
+  local ok, colorscheme, contrast = pcall(chunk)
   if not ok or type(colorscheme) ~= "string" or not colorscheme:find("%S") then
     report("read", "Invalid " .. M.path .. ": " .. (ok and "expected a colorscheme name" or tostring(colorscheme)))
     return
   end
   errors.read = nil
-  return colorscheme
+  return colorscheme, contrast
 end
 
 function M.reload()
-  local colorscheme = M.read()
+  local colorscheme, contrast = M.read()
   if not colorscheme then
     return false
   end
-  if colorscheme == vim.g.colors_name then
+  if colorscheme == vim.g.colors_name and contrast == nil then
     return true
   end
-  local ok, err = pcall(vim.cmd.colorscheme, colorscheme)
+  local ok, err = pcall(function()
+    -- Gruvbox variants share one colorscheme name, so apply contrast on every switch.
+    if colorscheme == "gruvbox" then
+      require("gruvbox").setup({ contrast = contrast or "", transparent_mode = false })
+    end
+    vim.cmd.colorscheme(colorscheme)
+  end)
   if ok then
     errors.apply = nil
   else
