@@ -109,6 +109,10 @@ and platform-specific help. Each shell template renders these values before init
 there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
 the generated shell files.
 
+Inside tmux, Ctrl+H/J/K/L moves between panes even while a shell fzf picker is
+open. `@vim_navigator_pattern` excludes fzf from Vim detection; Vim/Neovim
+retain their integrated split navigation. Use arrow keys to navigate fzf results.
+
 Startup logic stays explicit in each shell file: Homebrew/secrets loading, tool
 initialization, tmux, Zsh completion/plugins, Fish key bindings, and Git Bash's
 Scoop/mise shims. A little duplication is intentional; there is no cross-shell
