@@ -121,15 +121,18 @@ Bash, Zsh, and Fish Ctrl+T file pickers use `--no-height` to fill the current
 terminal pane, with a hidden-by-default right-side 50% `bat` preview with line numbers.
 Like `rg.fzf`, Ctrl+T uses the default bottom-input layout, a bordered multiline
 query/help header with emphasized keys, and a border separating the preview.
+Picker help is in English; both pickers use a standalone query title, a single
+action-help row, and a macOS-only absolute-path copy hint.
+Fish reconstructs the header with a startup action so its shell integration
+cannot flatten embedded newlines while collecting default options.
 Ctrl+/ toggles the preview on and off; Ctrl+Down shows it below at 40%, and
 Ctrl+Right shows it on the right at 50%. `/` remains available for search.
 Enter inserts selected paths into the command line; Ctrl+O opens a file in
 `$EDITOR` (Vim if unset) and returns to the picker when the editor exits.
 On macOS, disable conflicting Mission Control shortcuts to let Ctrl+arrow reach fzf.
-On macOS, Ctrl+Y copies the candidate as displayed (relative when searching from
-the working directory), while Alt+Y copies the absolute path via `realpath`. Both use `pbcopy` and
-close the picker without inserting a path; these bindings and their header are
-omitted on Linux and Windows.
+On macOS, Ctrl+Y copies the focused file's absolute path via `realpath` and
+`pbcopy`, then closes without inserting. There is no custom Alt+Y binding.
+The copy binding and its header are omitted on Linux and Windows.
 
 For interactive file-content search, press Ctrl+F in Zsh/Fish, or run
 `rg.fzf [QUERY]` from a project directory. In Zsh/Fish, Ctrl+F replaces Emacs
@@ -147,8 +150,8 @@ with shell escaping. Multiple matches in the same file yield one path.
 Ctrl+O opens the matching file and line in `$EDITOR` (Vim if unset) without
 exiting the picker. Tab selects multiple results; Vim/Neovim receive multiple
 matches as a quickfix list when opened with Ctrl+O.
-On macOS, Ctrl+Y copies the focused file's displayed path and Alt+Y copies its
-absolute path, then closes without inserting. These copy keys match Ctrl+T.
+On macOS, Ctrl+Y copies the focused file's absolute path, then closes without
+inserting. This copy key matches Ctrl+T; Alt+Y has no custom binding.
 The picker fills the current terminal pane, including inside tmux, without a popup.
 The preview starts visible on the right at 50%, with matching-line highlighting
 and scrolling. Ctrl+/ toggles it; Ctrl+Down shows it below at 40%, and Ctrl+Right

@@ -87,7 +87,8 @@ if command --query mise
 end
 if command --query fzf
 {{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
-{{ $options := printf "%s %s --header '%s'" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") ($header | replace "'" "'\\''") | trim }}
+{{ $headerAction := printf "start:transform-header:printf '%%b' %s" (printf "%q" $header) }}
+{{ $options := printf "%s %s --bind '%s'" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") ($headerAction | replace "'" "'\\''") | trim }}
     set -gx FZF_DEFAULT_COMMAND '{{ .fzf.fileCommand | replace "\\" "\\\\" | replace "'" "\\'" }} --strip-cwd-prefix'
     # fd cannot combine --strip-cwd-prefix with an explicit search path.
     set -gx FZF_CTRL_T_COMMAND '{{ .fzf.fileCommand | replace "\\" "\\\\" | replace "'" "\\'" }} . (string unescape -- $dir)'

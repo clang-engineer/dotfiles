@@ -13,8 +13,7 @@ fzf:
     --bind 'ctrl-right:change-preview-window(right,50%,border-left)+show-preview'
   ctrlTByOS:
     darwin: >-
-      --bind 'ctrl-y:execute-silent(printf %s {} | pbcopy)+abort'
-      --bind 'alt-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
-  ctrlTHeader: "FILE QUERY\n\u001b[1menter\u001b[0m insert  \u001b[2m·\u001b[0m  \u001b[1mctrl-o\u001b[0m open (no exit)  \u001b[2m·\u001b[0m  \u001b[1mtab\u001b[0m select  \u001b[2m·\u001b[0m  \u001b[1mctrl-/\u001b[0m preview\nctrl-down / ctrl-right: preview position"
+      --bind 'ctrl-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
+  ctrlTHeader: "FILE QUERY\n\u001b[1menter\u001b[0m insert  \u001b[2m·\u001b[0m  \u001b[1mctrl-o\u001b[0m open (no exit)  \u001b[2m·\u001b[0m  \u001b[1mtab\u001b[0m select  \u001b[2m·\u001b[0m  \u001b[1mctrl-/\u001b[0m preview"
   ctrlTHeaderByOS:
-    darwin: "\u001b[1mctrl-y\u001b[0m 표시 경로 복사  \u001b[2m·\u001b[0m  \u001b[1malt-y\u001b[0m 절대 경로 복사"
+    darwin: "\u001b[1mctrl-y\u001b[0m copy absolute"
