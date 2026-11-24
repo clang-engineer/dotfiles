@@ -34,4 +34,21 @@ return {
   { "projekt0n/github-nvim-theme", lazy = true },
   { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = true },
   { "Mofiqul/vscode.nvim", lazy = true, opts = { style = "dark", transparent = false } },
+  {
+    "sainnhe/sonokai",
+    lazy = true,
+    config = function()
+      vim.g.sonokai_style = "default"
+      vim.g.sonokai_transparent_background = 0
+    end,
+  },
+  {
+    "miikanissi/modus-themes.nvim",
+    lazy = true,
+    opts = {
+      style = "modus_vivendi",
+      variants = { modus_vivendi = "default" },
+      transparent = false,
+    },
+  },
 }

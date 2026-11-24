@@ -329,3 +329,51 @@ themeProfiles:
         - '#1f1f1f'
         - '#f44747'
         - '#d4d4d4'
+  sonokai:
+    ghostty: Sonokai
+    neovim: sonokai
+    tmux:
+      # Official default palette; bundled Ghostty uses the same background and accents.
+      # https://github.com/sainnhe/sonokai/blob/b023c5280b16fe2366f5e779d8d2756b3e5ee9c3/autoload/sonokai.vim
+      colours:
+        - '#2c2e34'
+        - '#414550'
+        - '#e2e2e3'
+        - '#76cce0'
+        - '#e7c664'
+        - '#2c2e34'
+        - '#e2e2e3'
+        - '#2c2e34'
+        - '#e7c664'
+        - '#b39df3'
+        - '#9ed072'
+        - '#e2e2e3'
+        - '#e2e2e3'
+        - '#2c2e34'
+        - '#2c2e34'
+        - '#fc5d7c'
+        - '#e2e2e3'
+  modus-vivendi:
+    ghostty: Modus Vivendi
+    neovim: modus_vivendi
+    tmux:
+      # Official default palette; selection follows bundled Ghostty, not the newer extra.
+      # https://github.com/miikanissi/modus-themes.nvim/blob/15ffb5ab6a12f72ee1e8393fe5810d5317da2d3e/extras/ghostty/modus_vivendi
+      colours:
+        - '#000000'
+        - '#5a5a5a'
+        - '#ffffff'
+        - '#00d3d0'
+        - '#d0bc00'
+        - '#000000'
+        - '#ffffff'
+        - '#000000'
+        - '#d0bc00'
+        - '#feacd0'
+        - '#44bc44'
+        - '#ffffff'
+        - '#ffffff'
+        - '#000000'
+        - '#000000'
+        - '#ff5f59'
+        - '#ffffff'

@@ -130,7 +130,7 @@ chezmoi apply ~/.local/bin/theme ~/.config/ghostty/config \
   ~/.config/ghostty/themes ~/.config/dotfiles/theme.lua ~/.tmux.conf.local \
   ~/.config/fish/completions/theme.fish
 # Install the additional Neovim providers once.
-nvim --headless "+Lazy! install kanagawa.nvim everforest onedark.nvim github-nvim-theme moonfly vscode.nvim" +qa
+nvim --headless "+Lazy! install kanagawa.nvim everforest onedark.nvim github-nvim-theme moonfly vscode.nvim sonokai modus-themes.nvim" +qa
 
 theme list
 theme show
@@ -151,10 +151,12 @@ Available shared profiles (plus `custom`):
 | `gruvbox` | Dark, medium contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
 | `gruvbox-hard` | Dark, hard contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
 | `kanagawa` | Wave | [rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) |
+| `modus-vivendi` | Default dark, accessibility-focused | [miikanissi/modus-themes.nvim](https://github.com/miikanissi/modus-themes.nvim) |
 | `moonfly` | Dark charcoal | [bluz71/vim-moonfly-colors](https://github.com/bluz71/vim-moonfly-colors) |
 | `nord` | Nord | [nordtheme/vim](https://github.com/nordtheme/vim) |
 | `onedark` | Default dark | [navarasu/onedark.nvim](https://github.com/navarasu/onedark.nvim) |
 | `rose-pine` | Main | [rose-pine/neovim](https://github.com/rose-pine/neovim) |
+| `sonokai` | Default dark, vivid Monokai-inspired colors | [sainnhe/sonokai](https://github.com/sainnhe/sonokai) |
 | `tokyonight` | Night | [folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim) |
 | `vscode-dark` | VS Code Dark+ inspired | [Mofiqul/vscode.nvim](https://github.com/Mofiqul/vscode.nvim) |
 
@@ -168,6 +170,9 @@ Moonfly is a dark-charcoal option, not an accessibility-certified high-contrast 
 `vscode-dark` uses the upstream dark palette, not VS Code's High Contrast theme.
 The plugin also adjusts JavaScript/TypeScript Tree-sitter queries to more closely
 match VS Code syntax highlighting.
+Sonokai pins its `default` style; Modus Vivendi pins the default dark variant,
+not tinted. The Modus Neovim port documents WCAG AAA contrast; this does not
+certify the Ghostty or Oh my tmux! mappings.
 
 Fish completes the subcommands and fetches profile candidates from `theme list`
 for `theme set <Tab>`. If an existing Fish session has already tried completing
@@ -182,8 +187,11 @@ checkout change; it is not committed automatically. Profiles live in
 `themes.yaml`, not a snapshot of previously running apps.
 
 Ghostty uses bundled equivalents for Catppuccin Mocha, Nord, Rosé Pine,
-TokyoNight Night, Gruvbox Dark/Hard, Kanagawa Wave, and GitHub Dark High Contrast.
-Bundled themes can lag upstream in details such as bright ANSI or selection colors.
+TokyoNight Night, Gruvbox Dark/Hard, Kanagawa Wave, GitHub Dark High Contrast,
+Sonokai, and Modus Vivendi. Bundled themes can lag upstream in details such as
+bright ANSI or selection colors. In particular, bundled Modus Vivendi matches
+the main background/foreground and base accents, but its bright ANSI and
+selection colors differ from the current Neovim extra.
 Dracula, Cyberdream, Moonfly, and VS Code Dark use managed upstream theme files;
 Everforest and One Dark use managed adapters of their
 official Neovim palettes to match the selected backgrounds and accents. Sources
