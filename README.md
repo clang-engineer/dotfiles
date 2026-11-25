@@ -120,6 +120,11 @@ Yazi settings. Catppuccin ports use the Mauve accent; its fzf options require
 fzf 0.52.0 or newer. Yazi includes the official syntax theme while retaining
 local separators, icons, file rules, layouts, and keymaps. Provenance and
 licenses are recorded by the independent CLI.
+Dracula for Yazi and eza is acquired from pinned application-maintained sources
+when missing, then activated through native flavor selection/YAML settings.
+Verified downloads and licenses are cached for offline reuse; dry-run does not
+download. `paths.yazi`/`paths.eza` must match the apps' actual config locations
+(including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
 
 The published Homebrew package is declared in `packages/Brewfile`. Install it
 directly, or let the normal Brewfile setup install it:
