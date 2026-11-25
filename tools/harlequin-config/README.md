@@ -172,20 +172,22 @@ setup, load it after `compinit`:
 eval "$(harlequin-config init zsh)"
 ```
 
-In the managed shell, type `harlequin -P ` and press Tab to open an fzf picker.
+In the managed Zsh shell, type `harlequin -P ` and press Tab to open an fzf picker.
 Type to search, use arrow keys to select a profile, and press Enter to insert its
 name. A second Enter executes the command; Esc cancels the picker without
 changing the command line. `--profile` uses the same picker.
 
 `fzf-tab` is installed through `packages/Brewfile` and loaded after fzf's shell
-integration, before autosuggestions and syntax highlighting. It is enabled only
-for Harlequin; other commands retain their existing completion UI. Atuin's
-Ctrl+R history search and fzf's Ctrl+T file selection are unchanged. No tmux
-plugin or tmux session is required.
+integration, before autosuggestions and syntax highlighting. It handles general
+Zsh completion, including Harlequin profiles. Atuin's Ctrl+R history search and
+fzf's Ctrl+T file selection are unchanged. No tmux plugin or tmux session is required.
 
-Without `fzf-tab`, Tab lists the candidates using the regular zsh completion UI.
-Press Tab again to enter the selection menu; arrow-key selection requires
-`zstyle ':completion:*' menu select`, which the managed shell already enables.
+Without `fzf-tab`, Zsh uses its regular completion UI.
+
+In Fish, `-P` and `--profile` use native Fish completion on Tab. The standard
+`fzf --fish` integration provides Shift+Tab completion through `fzf_complete`
+for all commands, including Harlequin, `cd`, and `kill`. No Harlequin-specific
+key binding or picker is needed.
 
 Completion supports `-P`, `--profile`, and explicit `--config-path` values. It reads
 profile names from Harlequin's current-directory, platform-config, and home config
