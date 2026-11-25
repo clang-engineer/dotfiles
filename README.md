@@ -102,8 +102,9 @@ run `chezmoi apply`; do not edit generated home files to change shared values.
 
 [`themeset`](https://github.com/clang-engineer/themeset) is an independent Go CLI, not a chezmoi wrapper.
 Explicit user-registered per-tool ports take priority. Otherwise it selects an
-application's existing native theme or a bundled official port. If neither is
-available, it reports a skip and preserves the application's previous settings.
+installed native theme, a bundled port, or a pinned official/app-maintained
+source that is downloaded when needed. If none is available, it reports a
+per-tool skip reason and preserves the application's previous settings.
 Invalid user overrides fail rather than silently selecting other colors.
 It never derives replacement colors from another application's palette.
 A theme being listed does **not** promise that every tool supports it.
@@ -120,11 +121,13 @@ Yazi settings. Catppuccin ports use the Mauve accent; its fzf options require
 fzf 0.52.0 or newer. Yazi includes the official syntax theme while retaining
 local separators, icons, file rules, layouts, and keymaps. Provenance and
 licenses are recorded by the independent CLI.
-Dracula for Yazi and eza is acquired from pinned application-maintained sources
-when missing, then activated through native flavor selection/YAML settings.
-Verified downloads and licenses are cached for offline reuse; dry-run does not
-download. `paths.yazi`/`paths.eza` must match the apps' actual config locations
-(including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
+Yazi Dracula, eza Dracula/Gruvbox Dark, btop Catppuccin/Dracula/Gruvbox
+Dark/Nord, and Starship Catppuccin/Gruvbox Dark can acquire pinned sources when
+missing. Verified downloads and licenses are cached for offline reuse; dry-run
+does not download. Starship selects a palette but cannot recolor hardcoded
+prompt styles. `paths.yazi`/`paths.eza` must match the apps' actual config
+locations (including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
+These new recipes need a local source build until the next published release.
 
 The published Homebrew package is declared in `packages/Brewfile`. Install it
 directly, or let the normal Brewfile setup install it:
