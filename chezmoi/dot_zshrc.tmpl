@@ -30,6 +30,11 @@ if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/{{ .shell.configFiles.VERTICAINI }}"
   export VERTICAINI="${VERTICAINI:-${XDG_CONFIG_HOME:-$HOME/.config}/{{ .shell.configFiles.VERTICAINI }}}"
 fi
 
+# env_unset [FILE]: clear file-listed variables, or select a .env* file with fzf.
+if [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/shell/env_unset.sh" ]]; then
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/env_unset.sh"
+fi
+
 # Cache the brew prefix (brew --prefix is slow, so call it only once)
 if command -v brew >/dev/null 2>&1; then
   BREW_PREFIX="$(brew --prefix)"

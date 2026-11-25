@@ -40,6 +40,11 @@ if [ -d "$HOME/scoop/shims" ]; then
   esac
 fi
 
+# env_unset [FILE]: clear file-listed variables, or select a .env* file with fzf.
+if [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/shell/env_unset.sh" ]; then
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/env_unset.sh"
+fi
+
 # 프롬프트, 키 바인딩, tmux는 대화형 세션에만 적용한다.
 case $- in
   *i*) ;;
