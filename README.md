@@ -120,10 +120,12 @@ chezmoi apply
 # Start a fresh login session to discard legacy BAT_THEME and Harlequin functions.
 
 themeset list
-themeset tools
-themeset check dracula
+themeset list tools
+themeset apply dracula --dry-run
 themeset apply dracula
 themeset current
+# Or select with a sourced preview, review the plan, and confirm:
+themeset apply
 ```
 
 `chezmoi/dot_config/themeset/create_config.json.tmpl` seeds
