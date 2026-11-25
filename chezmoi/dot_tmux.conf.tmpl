@@ -1,0 +1,9 @@
+# Keep Oh my tmux!'s embedded shell parser pointed at its upstream engine.
+set-environment -g TMUX_CONF "{{ .chezmoi.homeDir }}/.tmux/.tmux.conf"
+set-environment -g TMUX_CONF_LOCAL "{{ .chezmoi.homeDir }}/.tmux.conf.local"
+source-file "{{ .chezmoi.homeDir }}/.tmux/.tmux.conf"
+
+# Native themes run after Oh my tmux! finishes applying the managed layout.
+source-file -q "{{ .chezmoi.homeDir }}/.config/themeset/tmux.conf"
+bind r source-file "{{ .chezmoi.homeDir }}/.tmux.conf" \; display-message "Configuration reloaded"
+bind e new-window -n "#{TMUX_CONF_LOCAL}" sh -c '_E=${VISUAL:-${EDITOR:-vim}}; case "$_E" in *vim*) $_E -c ":set syntax=tmux" "$TMUX_CONF_LOCAL";; *) $_E "$TMUX_CONF_LOCAL";; esac && "$TMUX_PROGRAM" ${TMUX_SOCKET:+-S "$TMUX_SOCKET"} source "$HOME/.tmux.conf" \; display "Configuration reloaded"'

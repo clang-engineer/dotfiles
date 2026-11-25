@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/BurntSushi/toml"
+
 	"github.com/clang-engineer/dotfiles/tools/harlequin-config/internal/catalog"
 	"github.com/clang-engineer/dotfiles/tools/harlequin-config/internal/storage"
 )
@@ -24,6 +26,14 @@ func renderCatalog(catalog map[string]connection) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	// The catalog owns connections; themeset owns each native profile's theme.
+	var previous struct {
+		Profiles map[string]struct{ Theme string }
+	}
+	path := filepath.Join(configBase(), "db", "harlequin.toml")
+	if _, err := toml.DecodeFile(path, &previous); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
 	keymaps := make([]string, 0, len(cfg.HarlequinKeymaps))
 	for _, keymap := range cfg.HarlequinKeymaps {
 		if keymap = strings.TrimSpace(keymap); keymap != "" {
@@ -33,6 +43,10 @@ func renderCatalog(catalog map[string]connection) ([]byte, error) {
 	profiles := make(map[string]any, len(catalog))
 	for id, c := range catalog {
 		profile := harlequinProfile(c)
+		profile["theme"] = "dracula"
+		if theme := previous.Profiles[strings.ReplaceAll(id, "-", "_")].Theme; theme != "" {
+			profile["theme"] = theme
+		}
 		if len(keymaps) != 0 {
 			profile["keymap_name"] = keymaps
 		}

@@ -98,201 +98,127 @@ Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell prof
 render these values directly in their own startup templates. Edit the YAML, then
 run `chezmoi apply`; do not edit generated home files to change shared values.
 
-`chezmoi/.chezmoidata/themes.yaml` holds the independent, per-tool theme choices
-used by `custom` and by tools omitted from `themeTargets`. Shared profiles can
-override the eleven targets listed below; other tools retain their independent
-settings.
-Chezmoi renders the native configs. The custom defaults select Dracula. Ghostty, fzf, Starship, and
-delta use their [official Dracula integrations](https://draculatheme.com/), with
-pinned upstream sources and licenses beside the managed assets. Neovim uses
-the official `dracula/vim` plugin; bat and Harlequin use their built-in Dracula themes.
-`themes.delta.syntax` chooses syntax highlighting; `themes.delta.feature` selects
-the included delta feature. For tmux, `themes.tmux.colours` adapts the official
-Dracula colors to the 17 Oh my tmux! palette slots. It does not install the Dracula
-tmux plugin or replace the existing status layout.
-Neovim's symlinked config reads a small generated `dotfiles/theme.lua` beside its
-config directory, so GUI launches do not depend on shell environment variables.
-The source plugin declarations still determine which Neovim themes are installed.
-Bash/Zsh/Fish and PowerShell export native `BAT_THEME`.
-Unix shells point `FZF_DEFAULT_OPTS_FILE` at the generated `fzf/theme` options file;
-it uses the shared palette when selected, otherwise the options asset in `themes.fzf`.
-Harlequin has no global theme environment variable, so the Unix shell function
-passes `themes.harlequin` via `--theme` for every profile, overriding profile theme
-values. An explicit later `--theme` overrides it. Direct executable invocations
-bypass that shell default.
-Change the central values, run `chezmoi apply`, then reload/restart the affected
-apps or shell. Theme names must be supported/installed by each tool; this does not
-install arbitrary palettes or change the existing layouts/keymaps.
+### Themes (macOS/Linux)
 
-The Unix `theme` command switches the tools declared in
-`chezmoi/.chezmoidata/theme-targets.yaml` (all eleven enabled by default):
+[`themeset`](https://github.com/clang-engineer/themeset) is an independent Go CLI, not a chezmoi wrapper.
+It selects an application's existing native/official theme first. If that
+theme/tool pair is unavailable, it warns and uses only an explicitly registered
+app-native custom theme. Without one, it reports a skip and preserves the
+application's previous configuration. It never derives replacement colors from
+another application's palette. A theme being listed does **not** promise that
+every tool supports it.
 
-```yaml
-themeTargets:
-  - ghostty
-  - neovim
-  - tmux
-  - starship
-  - fzf
-  - yazi
-  - atuin
-  - lazygit
-  - lazydocker
-  - btop
-  - eza
-```
-
-Remove a tool to use its individual `themes.yaml` setting; use `themeTargets: []`
-to disable all shared overrides. Unknown targets and non-list values fail before
-`theme set` changes the selection or app configs. `themeTargets` is kept separate
-from `theme-profile.yaml`, so profile switches preserve the target list.
-
-For Yazi, Atuin, lazygit, lazydocker, btop, and eza, individual settings accept
-`terminal` (native defaults) or any name in `theme-profiles.yaml`. Their adapters
-use native color settings, so all shared profiles work without installing
-third-party themes. Atuin changes foreground meanings only; its background
-remains terminal-native. Palette adapters do not replace editor syntax themes.
-
-Atuin and btop use chezmoi-native modify templates to preserve existing non-theme
-preferences. Atuin re-encodes TOML, so active values survive but comments and
-formatting do not. btop changes only the `color_theme` line. Custom application
-config-directory environment overrides are not followed by `theme set`; these
-integrations manage the native default paths.
+The published Homebrew package is declared in `packages/Brewfile`. Install it
+directly, or let the normal Brewfile setup install it:
 
 ```sh
-# Install the command and integrations after updating the checkout.
-chezmoi apply ~/.local/bin/theme ~/.config/ghostty/config \
-  ~/.config/ghostty/themes ~/.config/dotfiles/theme.lua ~/.tmux.conf.local \
-  ~/.config/fish/completions/theme.fish ~/.config/starship.toml ~/.config/fzf/theme \
-  ~/.zshrc ~/.bashrc ~/.config/fish/config.fish \
-  ~/.config/yazi ~/.config/atuin ~/.config/btop ~/.config/eza
-case "$(uname -s)" in
-  Darwin)
-    chezmoi apply "$HOME/Library/Application Support/lazygit" \
-      "$HOME/Library/Application Support/lazydocker"
-    ;;
-  Linux)
-    chezmoi apply ~/.config/lazygit ~/.config/lazydocker
-    ;;
-esac
-# Restart the shell once so fzf uses the stable generated options path.
-# Install the additional Neovim providers once.
-nvim --headless "+Lazy! install kanagawa.nvim everforest onedark.nvim github-nvim-theme moonfly vscode.nvim sonokai modus-themes.nvim" +qa
+brew install clang-engineer/tap/themeset
 
-theme list
-theme show
-theme set catppuccin-mocha
-theme set dracula
-theme set custom
+# Review and install the dotfiles integration.
+chezmoi diff
+chezmoi apply
+# Start a fresh login session to discard legacy BAT_THEME and Harlequin functions.
+
+themeset list
+themeset tools
+themeset check dracula
+themeset apply dracula
+themeset current
 ```
 
-Available shared profiles (plus `custom`):
+`chezmoi/dot_config/themeset/create_config.json.tmpl` seeds
+`~/.config/themeset/config.json` once. Its `tools` array declares the enabled
+targets: Ghostty, Neovim, tmux, bat, delta, Harlequin, Starship, fzf, Yazi,
+Atuin, lazygit, lazydocker, btop, and eza. Remove targets there to leave them
+alone; `paths` overrides each adapter's native configuration destination.
+Edit this **local JSON**, not the removed shared profile YAML, to configure the
+CLI. Existing files with `create_` ownership are deliberately not reset by
+later chezmoi applies. Config-directory environment overrides require matching
+paths in this JSON and in the app's include/startup integration.
 
-| Profile | Variant | Neovim provider |
+Ownership is split narrowly, so changing themes does not surrender management
+of fonts, layouts, keymaps, or unrelated settings:
+
+| Application | Theme ownership | Still managed by dotfiles |
 | --- | --- | --- |
-| `catppuccin-mocha` | Mocha | [catppuccin/nvim](https://github.com/catppuccin/nvim) |
-| `cyberdream` | Default dark | [scottmckendry/cyberdream.nvim](https://github.com/scottmckendry/cyberdream.nvim) |
-| `dracula` | Dracula | [dracula/vim](https://github.com/dracula/vim) |
-| `everforest` | Dark, medium contrast | [sainnhe/everforest](https://github.com/sainnhe/everforest) |
-| `github-dark-high-contrast` | GitHub Dark High Contrast | [projekt0n/github-nvim-theme](https://github.com/projekt0n/github-nvim-theme) |
-| `gruvbox` | Dark, medium contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
-| `gruvbox-hard` | Dark, hard contrast | [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim) |
-| `kanagawa` | Wave | [rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) |
-| `modus-vivendi` | Default dark, accessibility-focused | [miikanissi/modus-themes.nvim](https://github.com/miikanissi/modus-themes.nvim) |
-| `moonfly` | Dark charcoal | [bluz71/vim-moonfly-colors](https://github.com/bluz71/vim-moonfly-colors) |
-| `nord` | Nord | [nordtheme/vim](https://github.com/nordtheme/vim) |
-| `onedark` | Default dark | [navarasu/onedark.nvim](https://github.com/navarasu/onedark.nvim) |
-| `rose-pine` | Main | [rose-pine/neovim](https://github.com/rose-pine/neovim) |
-| `sonokai` | Default dark, vivid Monokai-inspired colors | [sainnhe/sonokai](https://github.com/sainnhe/sonokai) |
-| `tokyonight` | Night | [folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim) |
-| `vscode-dark` | VS Code Dark+ inspired | [Mofiqul/vscode.nvim](https://github.com/Mofiqul/vscode.nvim) |
+| Ghostty | `~/.config/themeset/ghostty.conf`, included last from its main config; create-only initial selector | Fonts, scrollback, official theme assets |
+| Neovim | Optional `~/.config/themeset/neovim.lua`, loaded after Lazy setup | Symlinked config, installed providers, previous selection migrated once or default Dracula on fresh setups |
+| tmux | Optional `~/.config/themeset/tmux.conf`, sourced **after** the upstream Oh my tmux! engine | Existing Dracula starting colors and status layout, plugins, keymaps; reload/edit bindings use the managed wrapper |
+| delta | `~/.config/themeset/delta.gitconfig`, included last; create-only Dracula selector | Git behavior, delta navigation/layout, official Dracula feature |
+| fzf | `~/.config/themeset/fzf.opts`; preserves previous color options or seeds official Dracula | Stable `FZF_DEFAULT_OPTS_FILE` in Bash/Zsh/Fish, independent picker options and commands |
+| Starship | Existing `palette` selector and `palettes` tables survive the modify template | Prompt layout and module styles; official Dracula palette seeded only when missing |
+| bat | Native `~/.config/bat/config`, create-only Dracula seed | No Unix `BAT_THEME` override |
+| Harlequin | `profiles.<name>.theme` in the generated DB catalog, selected via `paths.harlequin` | Connection generator, keymaps, native profile completion; no forced `--theme` shell function |
+| lazygit | Native `gui.theme` survives the modify template | Git diff renderers; macOS uses `~/Library/Application Support/lazygit/config.yml`, Linux uses `~/.config/lazygit/config.yml` |
+| Yazi, Atuin, lazydocker, btop, eza | Native settings/assets belong to the app and themeset, not a palette generator | No theme selector or palette is reset by chezmoi |
 
-Named profiles explicitly select Neovim's dark background when Neovim is a
-shared target, including when switching from a light colorscheme.
-`custom` and excluded Neovim leave that option untouched.
-`gruvbox-hard` sets `gruvboxContrast: hard`; ordinary `gruvbox` resets it to medium.
-The generated Lua returns contrast alongside the shared `gruvbox` colorscheme
-name, so both initial plugin loading and live reloads apply the selected variant.
-Restart existing Neovim instances once after updating this integration.
-Moonfly is a dark-charcoal option, not an accessibility-certified high-contrast theme.
-`vscode-dark` uses the upstream dark palette, not VS Code's High Contrast theme.
-The plugin also adjusts JavaScript/TypeScript Tree-sitter queries to more closely
-match VS Code syntax highlighting.
-Sonokai pins its `default` style; Modus Vivendi pins the default dark variant,
-not tinted. The Modus Neovim port documents WCAG AAA contrast; this does not
-certify the Ghostty or Oh my tmux! mappings.
+The one-time `run_once_before_02-migrate-theme-selection.sh.tmpl` copies the old
+Neovim selection into its new runtime-owned Lua file before obsolete-file cleanup.
+It never overwrites an existing themeset script. Ghostty/fzf create-only seeds
+also retain previous selections when migrating. No palette is generated.
+Open a fresh terminal after applying the cutover, or explicitly `unset BAT_THEME`
+in existing Unix shells: an inherited old export overrides bat's native config.
 
-Fish completes the subcommands and fetches profile candidates from `theme list`
-for `theme set <Tab>`. If an existing Fish session has already tried completing
-`theme`, load the new definition once with
-`source ~/.config/fish/completions/theme.fish`; new sessions load it automatically.
+Harlequin reads an explicit `HARLEQUIN_CONFIG_PATH` first and selects whole
+profiles by name. Therefore themeset targets the existing
+`~/.config/db/harlequin.toml` catalog rather than a shadowed global theme.
+`harlequin-config` preserves the selected theme of each surviving profile when
+regenerating connection fields; newly added profiles start with Dracula.
+Run `harlequin-config` to generate the catalog before applying themes on a fresh
+setup. If you override `HARLEQUIN_CONFIG_PATH`, update `paths.harlequin` too.
 
-`theme set` updates `chezmoi/.chezmoidata/theme-profile.yaml` in the active
-chezmoi source, then renders/applies the eleven tools' native theme configs
-without install hooks. On macOS, lazygit and lazydocker use
-`~/Library/Application Support/<tool>/config.yml`; Linux uses
-`~/.config/<tool>/config.yml`.
-Configs for omitted tools are also rendered so removing a target resets that
-tool to its individual settings on the next `theme set` or `chezmoi apply`.
-The selection survives subsequent `chezmoi apply` runs and appears as a source
-checkout change; it is not committed automatically. Profiles live in
-`chezmoi/.chezmoidata/theme-profiles.yaml`. `custom` restores the choices in
-`themes.yaml`, not a snapshot of previously running apps.
+For unsupported theme/tool pairs, install an actual app-native theme yourself
+and register that specific fallback. For example, after installing a btop theme:
 
-Ghostty uses bundled equivalents for Catppuccin Mocha, Nord, Rosé Pine,
-TokyoNight Night, Gruvbox Dark/Hard, Kanagawa Wave, GitHub Dark High Contrast,
-Sonokai, and Modus Vivendi. Bundled themes can lag upstream in details such as
-bright ANSI or selection colors. In particular, bundled Modus Vivendi matches
-the main background/foreground and base accents, but its bright ANSI and
-selection colors differ from the current Neovim extra.
-Dracula, Cyberdream, Moonfly, and VS Code Dark use managed upstream theme files;
-Everforest and One Dark use managed adapters of their
-official Neovim palettes to match the selected backgrounds and accents. Sources
-and licenses are kept beside those assets. The tmux profiles adapt each palette
-to the existing 17 Oh my tmux! slots without changing the status layout.
-Starship, fzf, Yazi, Atuin, lazygit, lazydocker, btop, and eza adapt the existing
-profile's tmux palette for all named profiles; these are palette adapters, not
-additional official upstream integrations. Existing layouts and keymaps stay
-unchanged. New native adapters blend the background/foreground to obtain a
-distinct selection surface and muted text; tmux's second slot can itself equal
-the foreground in high-contrast profiles. fzf's active row keeps the base
-background to avoid the same collision.
-Neovim providers are lazy-loaded; run the plugin installation on a fresh setup
-before switching. bat, delta, Harlequin, and the current shell environment are
-**not** changed by this command.
+```json
+{
+  "themes": {
+    "dracula": {
+      "custom": {
+        "btop": {
+          "file": "~/.config/btop/themes/dracula.theme",
+          "source": "https://draculatheme.com/btop"
+        }
+      }
+    }
+  }
+}
+```
 
-Other declared tools such as sesh (fzf picker), gh, ripgrep, fd, and tree use
-terminal/ANSI or their existing picker colors rather than a new shared adapter.
-Shell syntax-highlighting preferences, OpenCode, Claude Code, JankyBorders, and
-desktop GUI application themes remain independently managed.
+Merge this entry into the existing config, keeping its `tools` and `paths`.
+`file` must already exist and use that application's native format; it is not
+a shared palette definition. `name` may select an existing native theme where
+the adapter supports it, and `source` records provenance. Custom fallback
+always warns; no bundled custom table pretends every tool has official support.
+In particular, tmux has no general native theme registry: its existing Oh my
+tmux! Dracula layout stays unchanged unless you register a real native tmux
+theme file. The CLI does not generate Oh my tmux! color mappings.
 
-Running apps reload as follows:
+The existing [official Dracula integrations](https://draculatheme.com/) for
+Ghostty, fzf, Starship, and delta retain their pinned provenance and licenses.
+Neovim retains the official `dracula/vim` plugin and the other declared Lazy
+theme providers. Install providers with Lazy before selecting them; the CLI
+does not install editor plugins. Old generated palette assets already in a
+home directory are left untouched, not silently deleted or used as automatic
+fallbacks.
 
-- **Starship:** the next prompt reads the updated palette.
-- **fzf:** the next invocation reads the generated options file. Existing shells
-  must first use the stable `FZF_DEFAULT_OPTS_FILE` path installed above.
-- **Yazi, Atuin search, lazygit, lazydocker, btop:** close/reopen the application.
-  Existing running instances are not forcibly restarted.
-- **eza:** the next invocation reads `~/.config/eza/theme.yml`; native environment
-  overrides still take precedence.
-- **Neovim:** restart once after installing the integration. Afterwards a directory
-  watcher reloads the generated colorscheme, including atomic file replacements.
-  If watching fails, an error is reported and focus changes retry the theme load.
-- **tmux:** updates the current/default server through Oh my tmux!'s theme stage,
-  preserving the status layout and avoiding plugin updates. Separate servers must
-  be refreshed separately.
-- **Ghostty on macOS:** invokes its native AppleScript `reload_config` action.
-  macOS may request Automation permission. If unavailable or denied, the command
-  reports failure; use `Cmd+Shift+,` to reload manually. It does not use simulated
-  keystrokes or require Accessibility permission.
-- **Ghostty on Linux:** sends the documented `SIGUSR2` reload signal to running
-  Ghostty processes. This path is not verified on Linux. See the
-  [Ghostty reload documentation](https://ghostty.org/docs/linux/systemd).
+Starship takes effect on the next prompt; fzf, bat, delta, and eza on the next
+invocation. Reopen Yazi, Atuin search, lazygit, lazydocker, and btop. Neovim loads
+the optional native selection on its next launch; the old palette-file watcher
+is gone. Ghostty may reload through its native integration; otherwise reload
+the app manually. Native tmux custom configuration applies through its theme
+include; separate tmux servers need their own reload.
 
-Unknown profile names are rejected before writing. Apply conflicts stop the
-command without forcing overwrites; the requested source selection remains, so
-resolve the conflict and rerun the command. Reload failures likewise do not undo
-the saved configuration. The command is excluded on Windows.
+The old `theme` executable, Fish completion, generated Neovim return-data file,
+shared profile resolver, and palette adapters are removed. A subsequent
+`chezmoi apply` removes those obsolete executable/integration files, but does
+not revert themeset's native selections. Windows remains independently
+configured and is not a supported themeset platform; its legacy PowerShell
+`BAT_THEME` remains separate.
+
+Other tools such as sesh, gh, ripgrep, fd, and tree use terminal/ANSI or their
+existing picker colors. Shell syntax highlighting, OpenCode, Claude Code,
+JankyBorders, and desktop GUI application themes remain independently managed.
 
 `chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish fzf
 settings. `fileCommand` uses `fd --type f --hidden --exclude .git` for both plain
@@ -306,18 +232,16 @@ and platform-specific help. Each shell template renders these values before init
 there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
 the generated shell files.
 
-`themes.fzf` selects the shared options file relative to the shell's config home.
-The managed `chezmoi/dot_config/fzf/dracula` becomes `~/.config/fzf/dracula`;
-Bash/Zsh/Fish export its path as `FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME`
-when set. Its color-only options apply to plain fzf, Ctrl+T, and `rg.fzf`, without
-changing key bindings or layout. It contains the [official Dracula fzf colors](https://draculatheme.com/fzf),
-including the background. The existing `fzf/catppuccin-mocha` file remains available
-as another central selection; its main background override is omitted.
-Keep generated fzf options comment-free: Fish's official integration joins file
+The theme-only `~/.config/themeset/fzf.opts` is the stable
+`FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME` when set. Its color flags apply
+to plain fzf, Ctrl+T, and `rg.fzf`, without replacing picker key bindings,
+headers, previews, or layout. The create-only seed uses the
+[official Dracula fzf colors](https://draculatheme.com/fzf), including the
+background; themeset owns subsequent changes.
+Keep this options file comment-free: Fish's official integration joins file
 lines with spaces before appending picker options, so a `#` comment would also
-comment out Ctrl+T's layout, header, preview, and bindings.
-Edit the managed theme file and run `chezmoi apply` to change colors; bat's syntax
-highlighting remains independently configured.
+comment out Ctrl+T's options. The old shared generated `fzf/theme` is no longer
+used.
 
 Inside tmux, Ctrl+H/J/K/L moves between panes even while a shell fzf picker is
 open. `@vim_navigator_pattern` excludes fzf from Vim detection; Vim/Neovim

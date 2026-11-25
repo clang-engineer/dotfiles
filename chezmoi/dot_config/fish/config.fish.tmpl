@@ -43,12 +43,6 @@ end
 {{ range $name, $value := .shell.environment }}
 set --global --export {{ $name }} '{{ $value | replace "\\" "\\\\" | replace "'" "\\'" }}'
 {{ end }}
-set -gx BAT_THEME '{{ .themes.bat | replace "\\" "\\\\" | replace "'" "\\'" }}'
-
-# Harlequin has no global theme environment variable; explicit CLI options win.
-function harlequin --wraps harlequin
-    command harlequin --theme '{{ .themes.harlequin | replace "\\" "\\\\" | replace "'" "\\'" }}' $argv
-end
 if test -n "$SSH_CONNECTION"
     set --global --export EDITOR '{{ .shell.editor.remote | replace "\\" "\\\\" | replace "'" "\\'" }}'
 else
@@ -92,7 +86,7 @@ if command --query mise
     mise activate fish | source
 end
 if command --query fzf
-    set -gx FZF_DEFAULT_OPTS_FILE "$config_home/fzf/theme"
+    set -gx FZF_DEFAULT_OPTS_FILE "$config_home/themeset/fzf.opts"
 {{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
 {{ $headerAction := printf "start:transform-header:printf '%%b' %s" (printf "%q" $header) }}
 {{ $options := printf "%s %s --bind '%s'" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") ($headerAction | replace "'" "'\\''") | trim }}

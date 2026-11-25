@@ -86,6 +86,29 @@ func TestInitSync(t *testing.T) {
 	}
 }
 
+func TestCatalogPreservesNativeProfileThemes(t *testing.T) {
+	dir := setupCatalog(t)
+	if err := initializeSource(dir); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(configBase(), "db", "harlequin.toml")
+	if err := storage.WritePrivate(path, []byte("[profiles.local_db]\ntheme = 'nord'\nadapter = 'stale'\n[profiles.removed]\ntheme = 'dracula'\n")); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := syncCatalog(); err != nil {
+		t.Fatal(err)
+	}
+	var config struct {
+		Profiles map[string]struct{ Theme, Adapter string }
+	}
+	if _, err := toml.DecodeFile(path, &config); err != nil {
+		t.Fatal(err)
+	}
+	if len(config.Profiles) != 1 || config.Profiles["local_db"].Theme != "nord" || config.Profiles["local_db"].Adapter != "postgres" {
+		t.Fatal("theme ownership or connection regeneration changed")
+	}
+}
+
 func TestEveryConnectionBecomesProfile(t *testing.T) {
 	dir := setupCatalog(t)
 	source := fixture + strings.ReplaceAll(fixture, "local-db", "second-db") + "tools = ['nvim']\n" + strings.ReplaceAll(fixture, "local-db", "third-db") + "tools = ['rainfrog']\n"

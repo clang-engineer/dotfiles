@@ -1,11 +1,18 @@
-{{- $theme := includeTemplate "theme-resolve" . | fromJson -}}
+{{- $previous := joinPath .chezmoi.homeDir ".config/ghostty/config" -}}
+{{- $initial := "theme = dracula" -}}
+{{- if stat $previous -}}
+{{- $selection := regexFind "(?m)^[\\t ]*theme[\\t ]*=.*$" (include $previous) -}}
+{{- if $selection -}}{{- $initial = $selection -}}{{- end -}}
+{{- end -}}
 # Ghostty — tmux inherits this theme's ANSI colors.
-# Choose shared-profile participants in .chezmoidata/theme-targets.yaml; defaults live in themes.yaml.
+# Theme ownership is delegated to themeset; this file keeps fonts and terminal behavior managed.
 # Font changes need a new tab/window.
 font-family = "JetBrains Mono"
 font-family = "D2Coding"
 font-family = "JuliaMono"
 font-family = "Symbols Nerd Font Mono"
 font-codepoint-map = U+3130-U+318F,U+AC00-U+D7A3=D2Coding
-theme = {{ $theme.ghostty }}
+# Preserve the initial fallback during migration; the runtime-owned include below wins.
+{{ $initial }}
+config-file = {{ .chezmoi.homeDir }}/.config/themeset/ghostty.conf
 scrollback-limit = 10000

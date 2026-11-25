@@ -1,0 +1,6 @@
+{{- $legacy := joinPath .chezmoi.homeDir ".config/fzf/theme" -}}
+{{- if stat $legacy -}}
+{{ include $legacy -}}
+{{- else -}}
+{{ include "dot_config/fzf/dracula" -}}
+{{- end -}}

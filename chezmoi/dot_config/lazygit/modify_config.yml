@@ -1,0 +1,4 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $config := fromYaml .chezmoi.stdin | default dict -}}
+{{- $managed := includeTemplate "lazygit-config" . | fromYaml -}}
+{{ $config | setValueAtPath "git.diffRenderers" $managed.git.diffRenderers | toYaml -}}

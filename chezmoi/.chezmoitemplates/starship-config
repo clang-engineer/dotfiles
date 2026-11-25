@@ -1,26 +1,9 @@
-{{- $theme := includeTemplate "theme-resolve" . | fromJson -}}
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Shared-profile participants follow theme-targets.yaml; defaults live in themes.yaml.
-palette = {{ $theme.starship | quote }}
+# Initial native palette; themeset owns the selector and named palettes after creation.
+palette = 'dracula'
 add_newline = false
 format = '$directory$git_branch$git_status$java$nodejs$character'
-
-[palettes.rose-pine-moon]
-cyan = '#9ccfd8'
-blue = '#3e8fb0'
-purple = '#c4a7e7'
-yellow = '#f6c177'
-green = '#95b1ac'
-red = '#eb6f92'
-
-[palettes.cyberdream]
-cyan = '#5ef1ff'
-blue = '#5ea1ff'
-purple = '#bd5eff'
-yellow = '#f1ff5e'
-green = '#5eff6c'
-red = '#ff6e5e'
 
 # Official palette: https://github.com/dracula/starship/blob/920e9f46ccc25beee15ed7fe0baddabdfeaaf92a/starship.toml
 # MIT license: starship.dracula.LICENSE
@@ -39,19 +22,6 @@ yellow = '#f1fa8c'
 # Dracula uses purple for ANSI blue; keep existing module styles unchanged.
 blue = '#bd93f9'
 
-{{ if eq $theme.starship "shared" -}}
-{{ $c := $theme.sharedColours -}}
-# Adapted from the shared profile's Oh my tmux! palette; existing module styles stay unchanged.
-[palettes.shared]
-background = '{{ index $c 0 }}'
-foreground = '{{ index $c 2 }}'
-cyan = '{{ index $c 3 }}'
-blue = '{{ index $c 3 }}'
-purple = '{{ index $c 9 }}'
-yellow = '{{ index $c 4 }}'
-green = '{{ index $c 10 }}'
-red = '{{ index $c 15 }}'
-{{ end }}
 [directory]
 style = 'bold cyan'
 format = '[$path]($style) '

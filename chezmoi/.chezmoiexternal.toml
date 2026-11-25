@@ -1,6 +1,6 @@
-# Oh my tmux! — the engine (.tmux.conf) lives upstream and is symlinked to
-# ~/.tmux.conf (see symlink_dot_tmux.conf.tmpl). Our customizations live in
-# ~/.tmux.conf.local (managed as dot_tmux.conf.local.tmpl). tpm installs plugins into
+# Oh my tmux! — the engine lives upstream in ~/.tmux/.tmux.conf.
+# The managed ~/.tmux.conf wrapper loads it before the optional themeset include.
+# Customizations live in ~/.tmux.conf.local; tpm installs plugins into
 # ~/.tmux/plugins on first launch.
 [".tmux"]
     type = "git-repo"

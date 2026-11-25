@@ -1,0 +1,15 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /* Manage prompt layout, but never reset themeset's native palette selections. */ -}}
+{{- $config := fromToml .chezmoi.stdin | default dict -}}
+{{- $managed := includeTemplate "starship-config" . | fromToml -}}
+{{- if not (hasKey $config "palette") -}}
+{{- $_ := set $config "palette" $managed.palette -}}
+{{- end -}}
+{{- $palettes := get $config "palettes" | default dict -}}
+{{- if not (hasKey $palettes "dracula") -}}
+{{- $_ := set $palettes "dracula" $managed.palettes.dracula -}}
+{{- end -}}
+{{- $_ := set $config "palettes" $palettes -}}
+{{- $_ := unset $managed "palette" -}}
+{{- $_ := unset $managed "palettes" -}}
+{{ mergeOverwrite $config $managed | toToml -}}
