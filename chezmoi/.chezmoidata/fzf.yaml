@@ -1,8 +1,27 @@
 fzf:
-  fileCommand: fd --type f --hidden --exclude .git
+  fileCommand: fd --type f --exclude .git
+  # The prompt encodes independent H/I state for fzf's transform bindings.
+  # Reload from the directory captured by the shell's Ctrl+T widget.
+  toggleHidden: >-
+    --bind 'H:transform:
+      prompt={fzf:prompt};
+      case "$prompt" in *"H:on"*) hidden=off;; *) hidden=on;; esac;
+      case "$prompt" in *"I:on"*) ignored=on;; *) ignored=off;; esac;
+      flags=; [ "$hidden" = on ] && flags="--hidden";
+      [ "$ignored" = on ] && flags="$flags --no-ignore";
+      printf "change-prompt[H:%s I:%s > ]+reload[fd --type f --exclude .git %s . \"\${FZF_FILE_ROOT:-.}\"]" "$hidden" "$ignored" "$flags"'
+  toggleIgnored: >-
+    --bind 'I:transform:
+      prompt={fzf:prompt};
+      case "$prompt" in *"H:on"*) hidden=on;; *) hidden=off;; esac;
+      case "$prompt" in *"I:on"*) ignored=off;; *) ignored=on;; esac;
+      flags=; [ "$hidden" = on ] && flags="--hidden";
+      [ "$ignored" = on ] && flags="$flags --no-ignore";
+      printf "change-prompt[H:%s I:%s > ]+reload[fd --type f --exclude .git %s . \"\${FZF_FILE_ROOT:-.}\"]" "$hidden" "$ignored" "$flags"'
   ctrlT: >-
     --no-height
     --layout=default
+    --prompt 'H:off I:off > '
     --header-border
     --with-shell 'bash -c'
     --preview 'bat --color=always --style=numbers -- {}'
@@ -16,6 +35,6 @@ fzf:
       --bind 'ctrl-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
   ctrlTHeader: |-
     FILE QUERY
-    enter insert  ·  ctrl-o open (no exit)  ·  tab select  ·  ctrl-/ preview
+    enter insert  ·  shift-h hidden  ·  shift-i ignored  ·  ctrl-o open  ·  tab select  ·  ctrl-/ preview
   ctrlTHeaderByOS:
     darwin: "ctrl-y copy absolute"

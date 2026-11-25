@@ -73,7 +73,7 @@ fi
 if command -v fzf &>/dev/null; then
   export FZF_DEFAULT_OPTS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/themeset/fzf.opts"
 {{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
-{{ $options := printf "%s %s --header '%s'" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") ($header | replace "'" "'\\''") | trim }}
+{{ $options := printf "%s %s %s %s --header '%s'" .fzf.ctrlT .fzf.toggleHidden .fzf.toggleIgnored (get .fzf.ctrlTByOS .chezmoi.os | default "") ($header | replace "'" "'\\''") | trim }}
   export FZF_DEFAULT_COMMAND='{{ .fzf.fileCommand | replace "'" "'\\''" }} --strip-cwd-prefix'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_CTRL_T_OPTS='{{ $options | replace "'" "'\\''" }}'

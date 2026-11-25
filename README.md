@@ -245,16 +245,29 @@ existing picker colors. Shell syntax highlighting, OpenCode, Claude Code,
 JankyBorders, and desktop GUI application themes remain independently managed.
 
 `chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish fzf
-settings. `fileCommand` uses `fd --type f --hidden --exclude .git` for both plain
-fzf and Ctrl+T: only files are listed, including hidden entries, while `.git`
+settings. `fileCommand` uses `fd --type f --exclude .git` for both plain
+fzf and Ctrl+T: only non-hidden, non-ignored files are listed. `.git`
 directories are excluded and fd's default ignore rules (including `.gitignore`)
 still apply. Fish Ctrl+T also searches from the directory parsed from the current
 token. Piped input bypasses this command.
+
+In the Ctrl+T file picker, Shift-H toggles hidden files and Shift-I toggles
+ignored files independently. The prompt shows both states; each key reloads
+the list while retaining the current query. The Fish widget retains its parsed
+search directory on reload. These bindings do not affect piped fzf input or
+the separate `rg.fzf` content-search picker.
+
 `ctrlT` holds common picker options; `ctrlTByOS` adds options for the chezmoi
 target OS. `ctrlTHeader` and `ctrlTHeaderByOS` provide the shared multiline header
 and platform-specific help. Each shell template renders these values before initializing fzf;
 there is no runtime config loader. Edit the YAML and run `chezmoi apply` to update
 the generated shell files.
+
+Zsh uses Homebrew's `fzf-tab` for general Tab completion, including command
+options, paths, and Harlequin profiles. It loads after `compinit` and fzf's shell
+integration, before autosuggestions and syntax highlighting. Ctrl+T remains the
+fzf file picker; Ctrl+R remains Atuin. After applying `~/.zshrc`, open a new Zsh
+session (`exec zsh`) to load the completion settings.
 
 The theme-only `~/.config/themeset/fzf.opts` is the stable
 `FZF_DEFAULT_OPTS_FILE`, using `$XDG_CONFIG_HOME` when set. Its color flags apply
