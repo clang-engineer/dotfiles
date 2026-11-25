@@ -1,5 +1,5 @@
 fzf:
-  fileCommand: fd --type f
+  fileCommand: fd --type f --hidden --exclude .git
   ctrlT: >-
     --no-height
     --layout=default

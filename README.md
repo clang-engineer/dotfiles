@@ -223,10 +223,11 @@ resolve the conflict and rerun the command. Reload failures likewise do not undo
 the saved configuration. The command is excluded on Windows.
 
 `chezmoi/.chezmoidata/fzf.yaml` is the single source for Bash/Zsh/Fish fzf
-settings. `fileCommand` uses `fd --type f` for both plain fzf and Ctrl+T:
-only files are listed, hidden entries are excluded, and fd's
-default ignore rules (including `.gitignore`) apply. Fish Ctrl+T also searches
-from the directory parsed from the current token. Piped input bypasses this command.
+settings. `fileCommand` uses `fd --type f --hidden --exclude .git` for both plain
+fzf and Ctrl+T: only files are listed, including hidden entries, while `.git`
+directories are excluded and fd's default ignore rules (including `.gitignore`)
+still apply. Fish Ctrl+T also searches from the directory parsed from the current
+token. Piped input bypasses this command.
 `ctrlT` holds common picker options; `ctrlTByOS` adds options for the chezmoi
 target OS. `ctrlTHeader` and `ctrlTHeaderByOS` provide the shared multiline header
 and platform-specific help. Each shell template renders these values before initializing fzf;
@@ -281,6 +282,8 @@ Chezmoi installs `chezmoi/dot_local/bin/executable_rg.fzf` to `~/.local/bin/rg.f
 on macOS/Linux. The managed script is adapted from a
 [pinned upstream revision](https://github.com/junegunn/everything.fzf/blob/77edfb6e763281efb09d0d0aa925822ec64d7426/rg.fzf),
 with its license retained. It requires Bash, fzf, ripgrep, and bat.
+Content search includes hidden files and directories, excludes `.git`, and
+continues to respect ripgrep's default ignore rules, including `.gitignore`.
 Type `pattern / filter` to search contents with rg and narrow the results with fzf
 (for example, `rg.fzf 'handleLogin / .ts:'`). Enter returns selected file paths,
 without line numbers or matched text; the Ctrl+F shell binding inserts them

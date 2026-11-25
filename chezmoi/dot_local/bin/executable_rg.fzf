@@ -56,7 +56,7 @@ ACTION='bg-transform:shopt -s extglob
         fi
         if [[ $rg_query != "$(cat "$RG_FZF_PREV" 2>/dev/null)" ]]; then
           printf "%s" "$rg_query" > "$RG_FZF_PREV"
-          printf "reload(rg --column --color=always --smart-case \"\$(cat \"\$RG_FZF_PREV\")\" || :)+"
+          printf "reload(rg --hidden --glob '!.git' --column --color=always --smart-case \"\$(cat \"\$RG_FZF_PREV\")\" || :)+"
         fi
         printf "search:%s" "$fzf_query"'
 # Evaluated by fzf's Bash child when opening the selection.
