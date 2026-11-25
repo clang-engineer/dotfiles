@@ -148,6 +148,9 @@ a second Enter launches Harlequin.
 Esc cancels without changing the command line. `--profile` and an explicit
 `--config-path` are supported too. Other completion positions keep fish's
 normal completion UI; without fzf, profile completion also uses that UI.
+The picker inherits the shared fzf color theme through `FZF_DEFAULT_OPTS_FILE`,
+but clears `FZF_DEFAULT_OPTS` to isolate global actions and output options.
+Single selection and Enter/Esc/Ctrl+C handling use fzf's native defaults.
 
 The picker uses the same names-only generator endpoint as zsh completion.
 It does not generate configuration or connect to a database, and requires no

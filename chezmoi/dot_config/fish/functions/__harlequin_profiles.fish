@@ -45,10 +45,9 @@ function __harlequin_profiles --argument-names action
     set -l start (math (string length -- "$prefix") + 1)
     set -l query (string sub -s $start -- "$current")
     set query (string unescape -- "$query" 2>/dev/null)
-    # Keep user fzf actions from turning Esc into acceptance or adding output fields.
-    set -l selected (printf '%s\n' $profiles | env FZF_DEFAULT_OPTS= FZF_DEFAULT_OPTS_FILE= fzf \
-        --height=40% --layout=reverse --no-multi --query="$query" --prompt='Harlequin profile> ' \
-        --bind=enter:accept,esc:abort,ctrl-c:abort)
+    # Keep global actions/output options isolated while inheriting the shared color theme.
+    set -l selected (printf '%s\n' $profiles | env FZF_DEFAULT_OPTS= fzf \
+        --height=40% --layout=reverse --query="$query" --prompt='Harlequin profile> ')
     if test $status -eq 0; and test (count $selected) -eq 1
         commandline --current-token --replace -- "$prefix"(string escape -- "$selected")
     end
