@@ -101,12 +101,25 @@ run `chezmoi apply`; do not edit generated home files to change shared values.
 ### Themes (macOS/Linux)
 
 [`themeset`](https://github.com/clang-engineer/themeset) is an independent Go CLI, not a chezmoi wrapper.
-It selects an application's existing native/official theme first. If that
-theme/tool pair is unavailable, it warns and uses only an explicitly registered
-app-native custom theme. Without one, it reports a skip and preserves the
-application's previous configuration. It never derives replacement colors from
-another application's palette. A theme being listed does **not** promise that
-every tool supports it.
+Explicit user-registered per-tool ports take priority. Otherwise it selects an
+application's existing native theme or a bundled official port. If neither is
+available, it reports a skip and preserves the application's previous settings.
+Invalid user overrides fail rather than silently selecting other colors.
+It never derives replacement colors from another application's palette.
+A theme being listed does **not** promise that every tool supports it.
+
+The CLI's curated default catalog is Catppuccin Mocha, Dracula, Gruvbox, Moonfly,
+and Nord, shared by `list`, completion, and the picker. These favor broader
+native/official coverage, not full coverage of all 14 tools. Additional theme IDs
+require an explicit entry under `themes` in the local JSON config.
+
+Bundled ports are written during `apply`, without separate theme installation or
+runtime downloads. fzf supports all five catalog themes; Dracula also bundles
+lazygit/lazydocker settings, and Catppuccin Mocha bundles lazygit, Atuin, eza, and
+Yazi settings. Catppuccin ports use the Mauve accent; its fzf options require
+fzf 0.52.0 or newer. Yazi includes the official syntax theme while retaining
+local separators, icons, file rules, layouts, and keymaps. Provenance and
+licenses are recorded by the independent CLI.
 
 The published Homebrew package is declared in `packages/Brewfile`. Install it
 directly, or let the normal Brewfile setup install it:
@@ -169,8 +182,8 @@ regenerating connection fields; newly added profiles start with Dracula.
 Run `harlequin-config` to generate the catalog before applying themes on a fresh
 setup. If you override `HARLEQUIN_CONFIG_PATH`, update `paths.harlequin` too.
 
-For unsupported theme/tool pairs, install an actual app-native theme yourself
-and register that specific fallback. For example, after installing a btop theme:
+To override a theme/tool pair, provide an actual app-native settings file and
+register that specific override. For example, after installing a btop theme:
 
 ```json
 {
@@ -190,11 +203,12 @@ and register that specific fallback. For example, after installing a btop theme:
 Merge this entry into the existing config, keeping its `tools` and `paths`.
 `file` must already exist and use that application's native format; it is not
 a shared palette definition. `name` may select an existing native theme where
-the adapter supports it, and `source` records provenance. Custom fallback
-always warns; no bundled custom table pretends every tool has official support.
-In particular, tmux has no general native theme registry: its existing Oh my
-tmux! Dracula layout stays unchanged unless you register a real native tmux
-theme file. The CLI does not generate Oh my tmux! color mappings.
+the adapter supports it, and `source` records provenance. Registered custom ports
+take priority even when native/official support exists, without a fallback
+warning. Missing or invalid override files fail visibly. In particular, tmux has
+no general native theme registry: its existing Oh my tmux! Dracula layout stays
+unchanged unless you register a real native tmux theme file. The CLI does not
+generate Oh my tmux! color mappings or install the script-driven Dracula plugin.
 
 The existing [official Dracula integrations](https://draculatheme.com/) for
 Ghostty, fzf, Starship, and delta retain their pinned provenance and licenses.
