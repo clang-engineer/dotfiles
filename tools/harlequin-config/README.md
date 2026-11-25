@@ -142,8 +142,9 @@ After editing source files, run `harlequin-config` before launching Harlequin.
 ### Fish profile completion
 
 Chezmoi installs fish completions for `harlequin` and `harlequin-config`.
-After generating profiles, type `harlequin -P ` and press Tab to search them
-with fzf. Enter inserts the selected name; a second Enter launches Harlequin.
+After generating profiles, type `harlequin -P` and press Tab to search them
+with fzf, with or without a space after `-P`. Enter inserts the selected name;
+a second Enter launches Harlequin.
 Esc cancels without changing the command line. `--profile` and an explicit
 `--config-path` are supported too. Other completion positions keep fish's
 normal completion UI; without fzf, profile completion also uses that UI.

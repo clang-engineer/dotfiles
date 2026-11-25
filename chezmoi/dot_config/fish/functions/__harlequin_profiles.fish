@@ -22,7 +22,7 @@ function __harlequin_profiles --argument-names action
             if string match -q -- '--profile=*' "$current"
                 set prefix --profile=
                 set profile_position 1
-            else if string match -qr '^-P.+' -- "$current"
+            else if string match -qr '^-P' -- "$current"
                 set prefix -P
                 set profile_position 1
             end
