@@ -1,0 +1,28 @@
+{{- $palette := includeTemplate "theme-palette" (dict "root" . "tool" "lazygit") | fromJson -}}
+{{ if $palette -}}
+gui:
+  theme:
+    activeBorderColor: [{{ $palette.accent | quote }}, bold]
+    inactiveBorderColor: [{{ $palette.muted | quote }}]
+    searchingActiveBorderColor: [{{ $palette.cyan | quote }}, bold]
+    optionsTextColor: [{{ $palette.cyan | quote }}]
+    selectedLineFgColor: [{{ $palette.foreground | quote }}]
+    selectedLineBgColor: [{{ $palette.surface | quote }}]
+    inactiveViewSelectedLineBgColor: [{{ $palette.surface | quote }}]
+    cherryPickedCommitFgColor: [{{ $palette.background | quote }}]
+    cherryPickedCommitBgColor: [{{ $palette.cyan | quote }}]
+    markedBaseCommitFgColor: [{{ $palette.background | quote }}]
+    markedBaseCommitBgColor: [{{ $palette.yellow | quote }}]
+    unstagedChangesColor: [{{ $palette.red | quote }}]
+    defaultFgColor: [{{ $palette.foreground | quote }}]
+{{ end -}}
+git:
+  diffRenderers:
+    - name: delta
+      command: delta --dark --paging=never
+      colorArg: always
+    - name: side-by-side
+      command: delta --dark --paging=never --side-by-side
+      colorArg: always
+    - name: default
+      type: rawGit

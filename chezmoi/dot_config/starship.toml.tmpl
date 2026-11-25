@@ -1,7 +1,8 @@
+{{- $theme := includeTemplate "theme-resolve" . | fromJson -}}
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Select the active palette in .chezmoidata/themes.yaml.
-palette = {{ .themes.starship | quote }}
+# Shared-profile participants follow theme-targets.yaml; defaults live in themes.yaml.
+palette = {{ $theme.starship | quote }}
 add_newline = false
 format = '$directory$git_branch$git_status$java$nodejs$character'
 
@@ -38,6 +39,19 @@ yellow = '#f1fa8c'
 # Dracula uses purple for ANSI blue; keep existing module styles unchanged.
 blue = '#bd93f9'
 
+{{ if eq $theme.starship "shared" -}}
+{{ $c := $theme.sharedColours -}}
+# Adapted from the shared profile's Oh my tmux! palette; existing module styles stay unchanged.
+[palettes.shared]
+background = '{{ index $c 0 }}'
+foreground = '{{ index $c 2 }}'
+cyan = '{{ index $c 3 }}'
+blue = '{{ index $c 3 }}'
+purple = '{{ index $c 9 }}'
+yellow = '{{ index $c 4 }}'
+green = '{{ index $c 10 }}'
+red = '{{ index $c 15 }}'
+{{ end }}
 [directory]
 style = 'bold cyan'
 format = '[$path]($style) '

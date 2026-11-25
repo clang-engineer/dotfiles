@@ -1,0 +1,25 @@
+{{- $palette := includeTemplate "theme-palette" (dict "root" . "tool" "atuin") | fromJson -}}
+# Atuin themes control foreground meanings; backgrounds remain terminal-native.
+{{ if gt (len $palette) 0 -}}
+[theme]
+name = "dotfiles"
+
+[colors]
+AlertInfo = "{{ $palette.green }}"
+AlertWarn = "{{ $palette.yellow }}"
+AlertError = "{{ $palette.red }}"
+Annotation = "{{ $palette.muted }}"
+Base = "{{ $palette.foreground }}"
+Guidance = "{{ $palette.cyan }}"
+Important = "{{ $palette.accent }}"
+Title = "{{ $palette.accent }}"
+Muted = "{{ $palette.muted }}"
+SyntaxCommand = "{{ $palette.accent }}"
+SyntaxFlag = "{{ $palette.cyan }}"
+SyntaxString = "{{ $palette.green }}"
+SyntaxVariable = "{{ $palette.yellow }}"
+SyntaxOperator = "{{ $palette.red }}"
+SyntaxComment = "{{ $palette.muted }}"
+{{ else -}}
+# No palette override: config.toml leaves Atuin's native default theme selected.
+{{ end -}}

@@ -1,0 +1,9 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /* Only the native theme selector is managed. Active preferences, including enter_accept, survive TOML re-encoding; comments and formatting do not. */ -}}
+{{- $palette := includeTemplate "theme-palette" (dict "root" . "tool" "atuin") | fromJson -}}
+{{- $config := fromToml .chezmoi.stdin | default dict -}}
+{{- if gt (len $palette) 0 -}}
+{{ $config | setValueAtPath "theme.name" "dotfiles" | toToml }}
+{{- else -}}
+{{ $config | deleteValueAtPath "theme.name" | toToml }}
+{{- end -}}

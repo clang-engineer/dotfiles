@@ -61,9 +61,23 @@ fi
 source_dir=$(chezmoi execute-template '{{ .chezmoi.sourceDir }}')
 destination=$(chezmoi execute-template '{{ .chezmoi.destDir }}')
 selection="$source_dir/.chezmoidata/theme-profile.yaml"
-# 설치나 다른 dotfiles 변경 없이 세 설정만 검사하고 적용한다.
+# 목록에서 빠진 도구도 개별 설정으로 되돌리도록 통합 설정들을 렌더링한다.
+# 검증은 프로필 선택값이나 실제 설정 파일을 변경하기 전에 수행한다.
 set -- "$destination/.config/ghostty/config" \
-  "$destination/.config/dotfiles/theme.lua" "$destination/.tmux.conf.local"
+  "$destination/.config/dotfiles/theme.lua" "$destination/.tmux.conf.local" \
+  "$destination/.config/starship.toml" "$destination/.config/fzf/theme" \
+  "$destination/.config/yazi/theme.toml" "$destination/.config/atuin/config.toml" \
+  "$destination/.config/atuin/themes/dotfiles.toml" "$destination/.config/btop/btop.conf" \
+  "$destination/.config/btop/themes/dotfiles.theme" "$destination/.config/eza/theme.yml"
+case "$(chezmoi execute-template '{{ .chezmoi.os }}')" in
+  darwin)
+    set -- "$@" "$destination/Library/Application Support/lazygit/config.yml" \
+      "$destination/Library/Application Support/lazydocker/config.yml"
+    ;;
+  *)
+    set -- "$@" "$destination/.config/lazygit/config.yml" "$destination/.config/lazydocker/config.yml"
+    ;;
+esac
 override=$(printf '{"themeProfile":"%s"}' "$profile")
 chezmoi --override-data "$override" cat "$@" >/dev/null
 
@@ -74,7 +88,9 @@ mv "$temporary" "$selection"
 trap - EXIT HUP INT TERM
 # 실패 시 선택값은 유지된다. 충돌을 해결한 뒤 같은 명령으로 다시 적용한다.
 chezmoi --no-tty --error-on-conflict apply --exclude scripts "$@"
-printf 'Selected %s for Ghostty, Neovim and tmux.\n' "$profile"
+printf 'Selected %s; shared targets: ' "$profile"
+chezmoi execute-template '{{ join ", " .themeTargets }}{{ "\n" }}'
+printf '%s\n' 'Other tools use their individual themes.yaml settings.'
 
 reload_failed=false
 if command -v tmux >/dev/null 2>&1 && tmux has-session 2>/dev/null; then
@@ -123,4 +139,6 @@ APPLESCRIPT
 esac
 
 printf '%s\n' 'Open Neovim instances reload through the theme watcher after this integration is loaded.'
+printf '%s\n' 'Starship uses the new palette at the next prompt; fzf uses it on the next launch.'
+printf '%s\n' 'Reopen Yazi, Atuin search, lazygit, lazydocker, and btop to read the updated colors; eza uses them on its next invocation.'
 [ "$reload_failed" = false ]

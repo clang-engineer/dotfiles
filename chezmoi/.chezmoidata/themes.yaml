@@ -3,6 +3,14 @@ themes:
   neovim: dracula
   starship: dracula
   fzf: fzf/dracula
+  # Native-default restore for tools with generated palette adapters.
+  # Use terminal or a name from theme-profiles.yaml for independent colors.
+  yazi: terminal
+  atuin: terminal
+  lazygit: terminal
+  lazydocker: terminal
+  btop: terminal
+  eza: terminal
   bat: Dracula
   delta:
     syntax: Dracula

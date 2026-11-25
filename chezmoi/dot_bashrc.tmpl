@@ -81,7 +81,7 @@ if command -v mise >/dev/null 2>&1; then
   fi
 fi
 if command -v fzf >/dev/null 2>&1; then
-  export FZF_DEFAULT_OPTS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/{{ .themes.fzf }}"
+  export FZF_DEFAULT_OPTS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/theme"
 {{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
 {{ $options := printf "%s %s --header '%s'" .fzf.ctrlT (get .fzf.ctrlTByOS .chezmoi.os | default "") ($header | replace "'" "'\\''") | trim }}
   export FZF_DEFAULT_COMMAND='{{ .fzf.fileCommand | replace "'" "'\\''" }} --strip-cwd-prefix'

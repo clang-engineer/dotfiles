@@ -10,6 +10,12 @@ Library
 .hammerspoon
 .config/nvim
 .config/dotfiles
+.config/yazi
+.config/atuin
+.config/lazygit
+.config/lazydocker
+.config/btop
+.config/eza
 00-migrate-claude-home.sh
 05-brew-bundle.sh
 10-install-shell-tools.sh
@@ -23,6 +29,11 @@ Library
 AppData
 Documents
 15-windows-install.ps1
+{{ if eq .chezmoi.os "darwin" }}
+# macOS uses the native Library/Application Support paths.
+.config/lazygit
+.config/lazydocker
+{{ end }}
 {{ if eq .chezmoi.os "linux" }}
 # macOS-only — ignored on Linux
 Library

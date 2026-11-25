@@ -1,12 +1,6 @@
-{{- $theme := .themes -}}
-{{- if ne .themeProfile "custom" -}}
-{{- if not (hasKey .themeProfiles .themeProfile) -}}
-{{- fail (printf "Unknown theme profile: %s" .themeProfile) -}}
-{{- end -}}
-{{- $theme = index .themeProfiles .themeProfile -}}
-{{- end -}}
+{{- $theme := includeTemplate "theme-resolve" . | fromJson -}}
 # Ghostty — tmux inherits this theme's ANSI colors.
-# Choose a shared profile in .chezmoidata/theme-profile.yaml or per-app custom themes in themes.yaml.
+# Choose shared-profile participants in .chezmoidata/theme-targets.yaml; defaults live in themes.yaml.
 # Font changes need a new tab/window.
 font-family = "JetBrains Mono"
 font-family = "D2Coding"
