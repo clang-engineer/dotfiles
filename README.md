@@ -258,6 +258,10 @@ the list while retaining the current query. The Fish widget retains its parsed
 search directory on reload. These bindings do not affect piped fzf input or
 the separate `rg.fzf` content-search picker.
 
+On macOS, Ctrl+Y copies the selected file's absolute path, shows confirmation
+on the fzf header border for two seconds, then restores its `FILES` label
+without closing the picker. Repeated copies restart the timer.
+
 `ctrlT` holds common picker options; `ctrlTByOS` adds options for the chezmoi
 target OS. `ctrlTHeader` and `ctrlTHeaderByOS` provide the shared multiline header
 and platform-specific help. Each shell template renders these values before initializing fzf;

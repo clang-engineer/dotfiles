@@ -32,7 +32,7 @@ fzf:
     --bind 'ctrl-right:change-preview-window(right,50%,border-left)+show-preview'
   ctrlTByOS:
     darwin: >-
-      --bind 'ctrl-y:execute-silent(realpath -- {} | perl -pe chomp | pbcopy)+abort'
+      --header-label 'FILES' --bind 'ctrl-y:bg-cancel+transform-header-label(realpath -- {} | perl -pe chomp | pbcopy && printf "Copied absolute path")+bg-transform[sleep 2; printf "change-header-label(FILES)"]'
   ctrlTHeader: |-
     FILE QUERY
     enter insert  ·  shift-h hidden  ·  shift-i ignored  ·  ctrl-o open  ·  tab select  ·  ctrl-/ preview
