@@ -102,8 +102,8 @@ run `chezmoi apply`; do not edit generated home files to change shared values.
 
 [`themeset`](https://github.com/clang-engineer/themeset) is an independent Go CLI, not a chezmoi wrapper.
 Explicit user-registered per-tool ports take priority. Otherwise it selects an
-installed native theme, a bundled port, or a pinned official/app-maintained
-source that is downloaded when needed. If none is available, it reports a
+installed native theme or fetches the current official/app-maintained theme file
+over HTTPS. If none is available, it reports a
 per-tool skip reason and preserves the application's previous settings.
 Invalid user overrides fail rather than silently selecting other colors.
 It never derives replacement colors from another application's palette.
@@ -114,22 +114,20 @@ Moonfly, Nord, Rosé Pine (Main), and Tokyo Night (Night), shared by `list`,
 completion, and the picker. A listed theme need not support all 14 tools.
 Additional theme IDs require an explicit entry under `themes` in the local JSON config.
 
-Bundled ports are written during `apply`, without separate theme installation or
-runtime downloads. Bundled fzf ports cover the original five catalog themes;
-Dracula also bundles lazygit/lazydocker settings, and Catppuccin Mocha bundles
-lazygit, Atuin, eza, and Yazi settings. Catppuccin ports use the Mauve accent;
-its fzf options require fzf 0.52.0 or newer. Yazi includes the official syntax
-theme while retaining local separators, icons, file rules, layouts, and keymaps.
-Provenance and licenses are recorded by the independent CLI.
+Official theme files are fetched during `apply`; no theme assets are bundled.
+fzf accepts all seven catalog themes. Catppuccin uses the Mauve accent; its fzf
+options require fzf 0.52.0 or newer. Yazi imports style tables and the official
+syntax theme while retaining local separators, icons, file rules, layouts, and
+keymaps. Upstream source and licensing references live in themeset's notices.
 Yazi Dracula, eza Dracula/Gruvbox Dark, btop Catppuccin/Dracula/Gruvbox
-Dark/Nord, and Starship Catppuccin/Gruvbox Dark can acquire pinned sources when
-missing. Rosé Pine (Main) adds pinned official assets for Starship, fzf, Delta,
-Atuin, lazygit, btop, eza, and Yazi; Tokyo Night (Night) adds fzf, tmux
-(styles only), lazygit, btop, eza, and Yazi. Unsupported targets are skipped
-without synthesizing colors. Verified downloads and licenses are cached for
-offline reuse; dry-run does not download. Starship selects a palette but cannot
-recolor hardcoded prompt styles. `paths.yazi`/`paths.eza` must match the apps'
-actual config locations (including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
+Dark/Nord, and Starship Catppuccin/Gruvbox Dark fetch current official sources.
+Rosé Pine (Main) adds official assets for Starship, fzf, Delta, Atuin, lazygit,
+btop, eza, and Yazi; Tokyo Night (Night) adds fzf, tmux (styles only), lazygit,
+btop, eza, and Yazi. Unsupported targets are skipped without synthesizing colors.
+Downloads happen on each apply, require network access, and are format-checked
+before changing settings; dry-run does not download. Starship selects a palette
+but cannot recolor hardcoded prompt styles. `paths.yazi`/`paths.eza` must match
+the apps' actual config locations (including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
 These new recipes need a local source build until the next published release.
 
 The published Homebrew package is declared in `packages/Brewfile`. Install it
@@ -221,8 +219,8 @@ no general native theme registry: its existing Oh my tmux! Dracula layout stays
 unchanged unless you register a real native tmux theme file. The CLI does not
 generate Oh my tmux! color mappings or install the script-driven Dracula plugin.
 
-The existing [official Dracula integrations](https://draculatheme.com/) for
-Ghostty, fzf, Starship, and delta retain their pinned provenance and licenses.
+The [official Dracula integrations](https://draculatheme.com/) for Ghostty,
+fzf, Starship, and delta remain available; downloaded ports use current sources.
 Neovim retains the official `dracula/vim` plugin and the other declared Lazy
 theme providers. Install providers with Lazy before selecting them; the CLI
 does not install editor plugins. Old generated palette assets already in a
