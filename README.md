@@ -109,24 +109,27 @@ Invalid user overrides fail rather than silently selecting other colors.
 It never derives replacement colors from another application's palette.
 A theme being listed does **not** promise that every tool supports it.
 
-The CLI's curated default catalog is Catppuccin Mocha, Dracula, Gruvbox, Moonfly,
-and Nord, shared by `list`, completion, and the picker. These favor broader
-native/official coverage, not full coverage of all 14 tools. Additional theme IDs
-require an explicit entry under `themes` in the local JSON config.
+The CLI's curated default catalog includes Catppuccin Mocha, Dracula, Gruvbox,
+Moonfly, Nord, Rosé Pine (Main), and Tokyo Night (Night), shared by `list`,
+completion, and the picker. A listed theme need not support all 14 tools.
+Additional theme IDs require an explicit entry under `themes` in the local JSON config.
 
 Bundled ports are written during `apply`, without separate theme installation or
-runtime downloads. fzf supports all five catalog themes; Dracula also bundles
-lazygit/lazydocker settings, and Catppuccin Mocha bundles lazygit, Atuin, eza, and
-Yazi settings. Catppuccin ports use the Mauve accent; its fzf options require
-fzf 0.52.0 or newer. Yazi includes the official syntax theme while retaining
-local separators, icons, file rules, layouts, and keymaps. Provenance and
-licenses are recorded by the independent CLI.
+runtime downloads. Bundled fzf ports cover the original five catalog themes;
+Dracula also bundles lazygit/lazydocker settings, and Catppuccin Mocha bundles
+lazygit, Atuin, eza, and Yazi settings. Catppuccin ports use the Mauve accent;
+its fzf options require fzf 0.52.0 or newer. Yazi includes the official syntax
+theme while retaining local separators, icons, file rules, layouts, and keymaps.
+Provenance and licenses are recorded by the independent CLI.
 Yazi Dracula, eza Dracula/Gruvbox Dark, btop Catppuccin/Dracula/Gruvbox
 Dark/Nord, and Starship Catppuccin/Gruvbox Dark can acquire pinned sources when
-missing. Verified downloads and licenses are cached for offline reuse; dry-run
-does not download. Starship selects a palette but cannot recolor hardcoded
-prompt styles. `paths.yazi`/`paths.eza` must match the apps' actual config
-locations (including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
+missing. Rosé Pine (Main) adds pinned official assets for Starship, fzf, Delta,
+Atuin, lazygit, btop, eza, and Yazi; Tokyo Night (Night) adds fzf, tmux
+(styles only), lazygit, btop, eza, and Yazi. Unsupported targets are skipped
+without synthesizing colors. Verified downloads and licenses are cached for
+offline reuse; dry-run does not download. Starship selects a palette but cannot
+recolor hardcoded prompt styles. `paths.yazi`/`paths.eza` must match the apps'
+actual config locations (including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
 These new recipes need a local source build until the next published release.
 
 The published Homebrew package is declared in `packages/Brewfile`. Install it
