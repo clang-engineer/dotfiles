@@ -55,6 +55,9 @@ if [ -n "$plugin" ]; then
   if [ -n "$option" ]; then
     printf 'set -g %s %s\n' "$option" "$variant" > "$tmp"
   fi
+  if [ "$option" = @catppuccin_flavor ]; then
+    printf '%s\n' 'set -g @catppuccin_reset true' >> "$tmp"
+  fi
   # Quote for the tmux parser and the shell invoked by run-shell.
   quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
   printf "run-shell \"'%s'\"\n" "$quoted" >> "$tmp"
