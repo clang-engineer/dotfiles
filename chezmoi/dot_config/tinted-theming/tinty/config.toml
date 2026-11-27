@@ -1,0 +1,12 @@
+# Tinty trial: generated theme stays separate from themeset.
+default-scheme = "base16-dracula"
+
+[[items]]
+name = "tinted-terminal"
+path = "https://github.com/tinted-theming/tinted-terminal"
+themes-dir = "themes/ghostty"
+supported-systems = ["base16", "base24"]
+hook = '''
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes" &&
+cp -f "$TINTY_THEME_FILE_PATH" "${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes/tinted-theming"
+'''
