@@ -5,6 +5,9 @@ source-file "{{ .chezmoi.homeDir }}/.tmux/.tmux.conf"
 
 # Reset to OMT, then apply Tinty colors and any selected native statusbar.
 set-environment -g TINTED_TMUX_OPTION_STATUSBAR 0
+# Everforest also sets legacy status-bg/fg, which override the next theme's status-style.
+set -gu status-bg
+set -gu status-fg
 source-file -qF "#{?XDG_CONFIG_HOME,#{XDG_CONFIG_HOME},#{HOME}/.config}/tinted-theming/tinty/generated/tmux.conf"
 source-file -qF "#{?XDG_CONFIG_HOME,#{XDG_CONFIG_HOME},#{HOME}/.config}/tinted-theming/tinty/generated/tmux-native.conf"
 bind r source-file "{{ .chezmoi.homeDir }}/.tmux.conf" \; display-message "Configuration reloaded"

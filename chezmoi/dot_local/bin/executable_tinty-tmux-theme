@@ -13,34 +13,38 @@ plugin=
 option=
 variant=
 case "$TINTY_SCHEME_ID" in
-  base16-catppuccin-latte|base16-catppuccin-frappe|base16-catppuccin-macchiato|base16-catppuccin-mocha)
+  base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
+  *) scheme= ;;
+esac
+case "$scheme" in
+  catppuccin-latte|catppuccin-frappe|catppuccin-macchiato|catppuccin-mocha)
     plugin="$plugins/catppuccin/tmux/catppuccin.tmux"
     option=@catppuccin_flavor
-    variant=${TINTY_SCHEME_ID##*-}
+    variant=${scheme##*-}
     ;;
-  base16-rose-pine|base16-rose-pine-moon|base16-rose-pine-dawn)
+  rose-pine|rose-pine-moon|rose-pine-dawn)
     plugin="$plugins/rose-pine/tmux/rose-pine.tmux"
     option=@rose_pine_variant
-    variant=${TINTY_SCHEME_ID#base16-rose-pine}
+    variant=${scheme#rose-pine}
     variant=${variant#-}
     variant=${variant:-main}
     ;;
-  base16-dracula)
+  dracula)
     plugin="$plugins/dracula/tmux/dracula.tmux"
     ;;
-  base16-nord)
+  nord)
     plugin="$plugins/nordtheme/tmux/nord.tmux"
     ;;
-  base16-gruvbox-dark)
+  gruvbox-dark)
     plugin="$plugins/egel/tmux-gruvbox/gruvbox-tpm.tmux"
     option=@tmux-gruvbox
     variant=dark256
     ;;
-  base16-everforest|base16-everforest-dark-hard|base16-everforest-dark-medium|base16-everforest-dark-soft|base16-everforest-light-hard|base16-everforest-light-medium|base16-everforest-light-soft)
+  everforest|everforest-dark-hard|everforest-dark-medium|everforest-dark-soft|everforest-light-hard|everforest-light-medium|everforest-light-soft)
     plugin="$plugins/TanglingTreats/tmux-everforest/everforest-theme.tmux"
     option=@tmux-everforest
-    variant=${TINTY_SCHEME_ID#base16-everforest-}
-    [ "$variant" = "$TINTY_SCHEME_ID" ] && variant=dark-medium
+    variant=${scheme#everforest-}
+    [ "$variant" = "$scheme" ] && variant=dark-medium
     ;;
 esac
 
