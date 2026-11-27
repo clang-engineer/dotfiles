@@ -7,6 +7,27 @@
     url = "https://github.com/gpakosz/.tmux.git"
     refreshPeriod = "168h"
 
+# Theme-author tmux statusbars; kept separate from TPM's shared "tmux" directory.
+[".config/tmux/plugins/catppuccin/tmux"]
+    type = "git-repo"
+    url = "https://github.com/catppuccin/tmux.git"
+    clone.args = ["--branch", "v2.3.2"]
+[".config/tmux/plugins/rose-pine/tmux"]
+    type = "git-repo"
+    url = "https://github.com/rose-pine/tmux.git"
+[".config/tmux/plugins/dracula/tmux"]
+    type = "git-repo"
+    url = "https://github.com/dracula/tmux.git"
+[".config/tmux/plugins/nordtheme/tmux"]
+    type = "git-repo"
+    url = "https://github.com/nordtheme/tmux.git"
+[".config/tmux/plugins/egel/tmux-gruvbox"]
+    type = "git-repo"
+    url = "https://github.com/egel/tmux-gruvbox.git"
+[".config/tmux/plugins/TanglingTreats/tmux-everforest"]
+    type = "git-repo"
+    url = "https://github.com/TanglingTreats/tmux-everforest.git"
+
 # Official standalone binary avoids the Crystal/LLVM build dependency on macOS.
 {{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}
 [".local/bin/tmux-fingers"]

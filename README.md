@@ -172,14 +172,14 @@ The managed configuration is
 targets. Start with **Base16**: it is the common supported system
 across these integrations. Base24 and Tinted8 are different palette systems,
 not higher-quality versions, and not all configured targets support them.
-These are Tinted renditions, not the original app-specific Dracula/Catppuccin
-plugins; color assignments can differ.
+Most targets use Tinted renditions, not the original app-specific
+Dracula/Catppuccin palettes; native tmux ports are the exception.
 
 | Application | Tinty integration |
 | --- | --- |
 | Ghostty | Native theme file; fonts and terminal behavior remain managed separately |
 | Neovim | `tinted-vim` themes from Tinty's synced repository; new Neovim sessions read Tinty's current scheme |
-| tmux | Official pane/status styles applied on theme changes; OMT status segments use Ghostty's Tinty-driven ANSI palette |
+| tmux | `tinted-tmux` colors plus theme-author statusbars where available; otherwise OMT layout with Tinty-driven ANSI colors |
 | fzf | Generated `fzf.opts` read by Bash/Zsh/Fish through `FZF_DEFAULT_OPTS_FILE` |
 | Yazi | Native `tinted-scheme` flavor; other theme settings, layout and keymaps are preserved |
 | delta | Native theme written to `~/.config/delta/theme.gitconfig`, included by Git |
@@ -190,10 +190,18 @@ After the first apply, open a new shell so the lazygit merge environment and
 theme directly; reopen lazygit, Yazi, and Neovim. A new Neovim session reads
 Tinty's current scheme from its data directory and loads the matching `tinted-vim`
 colorscheme. Open sessions keep their existing theme.
-Ghostty reloads automatically via SIGUSR2. Tinty applies tmux colors to a
-running server; OMT loads generated colors when tmux starts or its configuration
-is reloaded. OMT's status segments inherit Ghostty's changing ANSI colors rather
-than keeping a fixed hex palette.
+Ghostty reloads automatically via SIGUSR2. For tmux, `tinty apply` resets the
+running server to OMT, then applies Tinty colors and any matching native
+statusbar. The same order runs on tmux startup/reload, so a previous statusbar
+cannot leak into the next theme.
+
+Native tmux ports installed by `chezmoi apply`: Catppuccin (four flavors),
+Rosé Pine (main, moon, dawn), Dracula, Nord, Gruvbox dark, and Everforest
+(dark/light hard, medium, soft; unqualified Everforest uses dark-medium).
+These upstream plugins execute shell code when selected; Catppuccin is pinned
+to v2.3.2. Other Base16/Base24 schemes retain OMT's status layout, with
+Tinty colors from Ghostty and `tinted-tmux`. Native plugin palettes may
+differ from Tinted renditions in other apps.
 
 Choosing a Base24 scheme does not update the Base16-only Yazi and lazygit targets.
 For a consistent theme across these integrations, select a `base16-…` scheme.
@@ -215,10 +223,10 @@ Starship prompt. Atuin, btop, eza, lazydocker, and Harlequin do not
 automatically follow new Tinty selections. An explicit `BAT_THEME` export
 takes precedence over bat's native config.
 
-The former themeset runtime includes and trial-only Tinty opt-in are removed,
-except the original tmux wrapper's optional include. Chezmoi removes its old
-`themeset/tmux.conf` target so that include cannot override Tinty. Other existing
-local themeset files are left untouched but are no longer loaded.
+The former themeset runtime is not used. The native tmux provider mapping
+lives in `chezmoi/dot_local/bin/executable_tinty-tmux-theme`; managed upstream
+plugins live under `~/.config/tmux/plugins`. Existing themeset files are left
+untouched but are no longer loaded.
 Delta and fzf use Tinty's generated themes after `tinty sync` and `tinty apply`;
 there are no separate bundled themes or first-run seeds. Windows remains
 independently configured. Shell syntax highlighting, OpenCode, Claude Code,

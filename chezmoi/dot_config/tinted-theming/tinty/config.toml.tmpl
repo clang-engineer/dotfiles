@@ -27,12 +27,7 @@ path = "https://github.com/tinted-theming/tinted-tmux"
 themes-dir = "colors"
 supported-systems = ["base16", "base24"]
 hook = '''
-dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/tmux.conf" || exit
-# -N prevents starting a server; source only colors, not the layout.
-if command -v tmux >/dev/null 2>&1 && tmux -N has-session 2>/dev/null; then
-    tmux -N source-file "$dir/tmux.conf"
-fi
+"$HOME/.local/bin/tinty-tmux-theme"
 '''
 
 [[items]]

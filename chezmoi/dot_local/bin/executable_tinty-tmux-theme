@@ -1,0 +1,71 @@
+#!/bin/sh
+set -eu
+
+: "${TINTY_SCHEME_ID:?Tinty scheme is required}"
+: "${TINTY_THEME_FILE_PATH:?Tinty tmux theme is required}"
+config_home=${XDG_CONFIG_HOME:-$HOME/.config}
+dir="$config_home/tinted-theming/tinty/generated"
+plugins="$config_home/tmux/plugins"
+mkdir -p "$dir"
+cp -f "$TINTY_THEME_FILE_PATH" "$dir/tmux.conf"
+
+plugin=
+option=
+variant=
+case "$TINTY_SCHEME_ID" in
+  base16-catppuccin-latte|base16-catppuccin-frappe|base16-catppuccin-macchiato|base16-catppuccin-mocha)
+    plugin="$plugins/catppuccin/tmux/catppuccin.tmux"
+    option=@catppuccin_flavor
+    variant=${TINTY_SCHEME_ID##*-}
+    ;;
+  base16-rose-pine|base16-rose-pine-moon|base16-rose-pine-dawn)
+    plugin="$plugins/rose-pine/tmux/rose-pine.tmux"
+    option=@rose_pine_variant
+    variant=${TINTY_SCHEME_ID#base16-rose-pine}
+    variant=${variant#-}
+    variant=${variant:-main}
+    ;;
+  base16-dracula)
+    plugin="$plugins/dracula/tmux/dracula.tmux"
+    ;;
+  base16-nord)
+    plugin="$plugins/nordtheme/tmux/nord.tmux"
+    ;;
+  base16-gruvbox-dark)
+    plugin="$plugins/egel/tmux-gruvbox/gruvbox-tpm.tmux"
+    option=@tmux-gruvbox
+    variant=dark256
+    ;;
+  base16-everforest|base16-everforest-dark-hard|base16-everforest-dark-medium|base16-everforest-dark-soft|base16-everforest-light-hard|base16-everforest-light-medium|base16-everforest-light-soft)
+    plugin="$plugins/TanglingTreats/tmux-everforest/everforest-theme.tmux"
+    option=@tmux-everforest
+    variant=${TINTY_SCHEME_ID#base16-everforest-}
+    [ "$variant" = "$TINTY_SCHEME_ID" ] && variant=dark-medium
+    ;;
+esac
+
+if [ -n "$plugin" ] && [ ! -f "$plugin" ]; then
+  printf 'Tinty tmux: missing native theme %s; run chezmoi apply first.\n' "$plugin" >&2
+  exit 1
+fi
+
+tmp=$(mktemp "$dir/tmux-native.conf.XXXXXX") || exit 1
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+if [ -n "$plugin" ]; then
+  if [ -n "$option" ]; then
+    printf 'set -g %s %s\n' "$option" "$variant" > "$tmp"
+  fi
+  # Quote for the tmux parser and the shell invoked by run-shell.
+  quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
+  printf "run-shell \"'%s'\"\n" "$quoted" >> "$tmp"
+  if [ "$option" = @catppuccin_flavor ]; then
+    printf '%s\n' 'set -g status-left "#{E:@catppuccin_status_session}"' \
+      'set -g status-right "#{E:@catppuccin_status_application}"' >> "$tmp"
+  fi
+fi
+mv -f "$tmp" "$dir/tmux-native.conf"
+
+# Reload OMT first so a previous plugin cannot leak its status layout into the fallback.
+if command -v tmux >/dev/null 2>&1 && tmux -N has-session 2>/dev/null; then
+  tmux -N source-file "$HOME/.tmux.conf"
+fi
