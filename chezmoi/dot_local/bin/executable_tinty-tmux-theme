@@ -12,6 +12,7 @@ cp -f "$TINTY_THEME_FILE_PATH" "$dir/tmux.conf"
 plugin=
 option=
 variant=
+launcher=
 case "$TINTY_SCHEME_ID" in
   base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
   *) scheme= ;;
@@ -34,6 +35,8 @@ case "$scheme" in
     ;;
   nord)
     plugin="$plugins/nordtheme/tmux/nord.tmux"
+    # Upstream's entrypoint uses Bash syntax but has no shebang.
+    launcher='bash '
     ;;
   gruvbox-dark)
     plugin="$plugins/egel/tmux-gruvbox/gruvbox-tpm.tmux"
@@ -64,7 +67,7 @@ if [ -n "$plugin" ]; then
   fi
   # Quote for the tmux parser and the shell invoked by run-shell.
   quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
-  printf "run-shell \"'%s'\"\n" "$quoted" >> "$tmp"
+  printf "run-shell \"%s'%s'\"\n" "$launcher" "$quoted" >> "$tmp"
   if [ "$option" = @catppuccin_flavor ]; then
     printf '%s\n' 'set -g status-left "#{E:@catppuccin_status_session}"' \
       'set -g status-right "#{E:@catppuccin_status_application}"' >> "$tmp"
