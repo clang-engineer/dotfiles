@@ -171,15 +171,13 @@ but cannot recolor hardcoded prompt styles. `paths.yazi`/`paths.eza` must match
 the apps' actual config locations (including `YAZI_CONFIG_HOME`/`EZA_CONFIG_DIR` overrides).
 These new recipes need a local source build until the next published release.
 
-The published Homebrew package is declared in `packages/Brewfile`. Install it
-directly, or let the normal Brewfile setup install it:
+`themeset` is no longer installed by `packages/Brewfile`. Existing theme
+selections and optional integrations below remain in place; normal setup does
+not install the CLI or trust its former Homebrew tap.
+
+For an existing installation:
 
 ```sh
-brew install clang-engineer/tap/themeset
-
-# Review and install the dotfiles integration.
-chezmoi diff
-chezmoi apply
 # Start a fresh login session to discard legacy BAT_THEME and Harlequin functions.
 
 themeset list

@@ -1,5 +1,4 @@
 tap "FelixKratz/formulae", trusted: { formula: "borders" } if OS.mac?
-tap "clang-engineer/tap"
 
 # Core tools
 brew "git"
@@ -10,7 +9,6 @@ brew "sesh"            # tmux 스마트 세션 매니저 — fzf+zoxide 피커�
 brew "fzf"              # Generic fuzzy picker (Ctrl+T files, Alt+C directories; Ctrl+R is owned by Atuin)
 brew "atuin"            # Structured shell history; replaces fzf Ctrl+R history search
 brew "starship"         # Cross-shell prompt (default preset)
-brew "clang-engineer/tap/themeset" # Apply existing native/official themes across installed tools
 brew "yazi"             # Terminal file manager
 brew "resvg"            # SVG renderer used by yazi previews
 brew "ripgrep"          # rg: blazing-fast text search. neovim grep backend
