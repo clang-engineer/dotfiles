@@ -22,7 +22,6 @@ if (-not ($env:PATH -split ';' | Where-Object { $_ -eq $shim })) {
 {{ range $name, $value := .shell.environment }}
 $env:{{ $name }} = '{{ $value | replace "'" "''" }}'
 {{ end }}
-$env:BAT_THEME = '{{ .themes.bat | replace "'" "''" }}'
 if ($env:SSH_CONNECTION) {
     $env:EDITOR = '{{ .shell.editor.remote | replace "'" "''" }}'
 } else {

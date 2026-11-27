@@ -140,10 +140,9 @@ Existing native Harlequin configs are not automatically overwritten or linked.
 After editing source files, run `harlequin-config` before launching Harlequin.
 The generator owns connection fields, but preserves each existing profile's
 native `theme` selection by profile ID when regenerating. Newly added profiles
-start with Dracula. The independent [`themeset`](https://github.com/clang-engineer/themeset) CLI can
-target this catalog through `paths.harlequin`; it changes profile-scoped theme
-options without modifying connection details. Removed profiles are not retained
-merely to keep their former theme.
+start with Dracula. Edit native profile-scoped `theme` options directly in the
+generated file; regeneration preserves them without changing connection details.
+Removed profiles are not retained merely to keep their former theme.
 
 ### Fish profile completion
 

@@ -130,6 +130,12 @@ integration provides fzf completion on Shift+Tab for all commands.
 Fish has built-in suggestions and syntax highlighting; it does not load zsh
 plugins. Shell histories are separate; Atuin retains its own shared history.
 
+Run `tinty sync` once to download schemes. In Fish, type `tinty apply ` and press
+Tab to complete a scheme ID. With `tinty`, `fzf`, and `jq` installed, Shift+Tab
+opens a ranked Base16 picker for `tinty apply` and `tinty info`; elsewhere it
+retains standard fzf completion. Enter applies the selected command. After
+`chezmoi apply`, start a new Fish session to load updated completion and bindings.
+
 `~/.secrets` remains a zsh-compatible file. Fish loads it in a clean zsh subprocess
 and imports exported environment variables, including those from the private
 companion. It never evaluates that file as fish code. Functions and aliases in

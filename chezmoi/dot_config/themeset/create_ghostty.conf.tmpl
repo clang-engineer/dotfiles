@@ -1,8 +1,0 @@
-{{- $legacy := joinPath .chezmoi.homeDir ".config/ghostty/config" -}}
-{{- $selection := "theme = dracula" -}}
-{{- if stat $legacy -}}
-{{- $line := regexFind "(?m)^[\\t ]*theme[\\t ]*=.*$" (include $legacy) -}}
-{{- if $line -}}{{- $selection = $line -}}{{- end -}}
-{{- end -}}
-# Native Ghostty theme selector; themeset owns this file after creation.
-{{ $selection }}

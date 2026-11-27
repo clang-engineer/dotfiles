@@ -10,7 +10,6 @@
 # (gitignored), created by chezmoi/create_dot_gitconfig.local.tmpl at init.
 [include]
 	path = {{ .chezmoi.homeDir }}/.gitconfig.local
-	path = {{ .chezmoi.homeDir }}/.config/delta/dracula/dracula.gitconfig
 [core]
 	pager = delta
 [interactive]
@@ -22,4 +21,4 @@
 [merge]
 	conflictStyle = zdiff3
 [include]
-	path = {{ .chezmoi.homeDir }}/.config/themeset/delta.gitconfig
+	path = "{{ env "XDG_CONFIG_HOME" | default (joinPath .chezmoi.homeDir ".config") }}/delta/theme.gitconfig"

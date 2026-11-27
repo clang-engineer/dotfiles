@@ -24,9 +24,6 @@ packages/Brewfile.lock.json
 # Any subdirectory here (connections/, backups, etc.) must never be committed.
 nvim/lazy/lua/user/db/*/
 
-# themeset generates its selector outside the symlinked Neovim dotfiles.
-nvim/lazy/plugin/themeset.lua
-
 # Legacy Claude runtime source from the old whole-directory symlink layout.
 # Keep ignored until every machine has run the one-time migration.
 claude/*

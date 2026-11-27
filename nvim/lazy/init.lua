@@ -1,12 +1,6 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 
--- themeset writes an optional native colorscheme script, independent of this symlinked config.
-local theme = vim.fn.fnamemodify(vim.fn.stdpath("config"), ":h") .. "/themeset/neovim.lua"
-if vim.fn.filereadable(theme) == 1 then
-  dofile(theme)
-end
-
 -- docs viewer/search over knowledge roots (:Docs / :DocsGrep)
 require("user.docs").setup({
   roots = {

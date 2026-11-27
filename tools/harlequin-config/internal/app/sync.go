@@ -26,7 +26,7 @@ func renderCatalog(catalog map[string]connection) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	// The catalog owns connections; themeset owns each native profile's theme.
+	// The catalog owns connections; preserve each native profile's local theme.
 	var previous struct {
 		Profiles map[string]struct{ Theme string }
 	}

@@ -45,6 +45,15 @@ if [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/shell/env_unset.sh" ]; then
   source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/env_unset.sh"
 fi
 
+# Lazygit merges its native settings with Tinty's generated theme.
+if [ -z "${LG_CONFIG_FILE:-}" ] && [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated/lazygit.yml" ]; then
+{{ if eq .chezmoi.os "darwin" }}
+  export LG_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/Library/Application Support}/lazygit/config.yml,${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated/lazygit.yml"
+{{ else }}
+  export LG_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/lazygit/config.yml,${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated/lazygit.yml"
+{{ end }}
+fi
+
 # 프롬프트, 키 바인딩, tmux는 대화형 세션에만 적용한다.
 case $- in
   *i*) ;;
@@ -80,7 +89,11 @@ if command -v mise >/dev/null 2>&1; then
   fi
 fi
 if command -v fzf >/dev/null 2>&1; then
-  export FZF_DEFAULT_OPTS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/themeset/fzf.opts"
+  fzf_theme="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated/fzf.opts"
+  if [ -f "$fzf_theme" ]; then
+    export FZF_DEFAULT_OPTS_FILE="$fzf_theme"
+  fi
+  unset fzf_theme
 {{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
 {{ $options := printf "%s %s %s %s --header '%s'" .fzf.ctrlT .fzf.toggleHidden .fzf.toggleIgnored (get .fzf.ctrlTByOS .chezmoi.os | default "") ($header | replace "'" "'\\''") | trim }}
   export FZF_DEFAULT_COMMAND='{{ .fzf.fileCommand | replace "'" "'\\''" }} --strip-cwd-prefix'

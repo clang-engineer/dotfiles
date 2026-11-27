@@ -1,6 +1,6 @@
 # Terminal fonts
 
-Ghostty font settings live in [`chezmoi/dot_config/ghostty/config.tmpl`](chezmoi/dot_config/ghostty/config.tmpl),
+Ghostty font settings live in [`chezmoi/dot_config/ghostty/config`](chezmoi/dot_config/ghostty/config),
 which chezmoi manages as `~/.config/ghostty/config`. macOS also loads
 `~/Library/Application Support/com.mitchellh.ghostty/config` **after** the XDG
 file; keep font settings in the XDG file so the macOS file does not override
@@ -40,7 +40,7 @@ editing the first `font-family` entry.
 
 ## Switching and checking
 
-1. Edit `chezmoi/dot_config/ghostty/config.tmpl`. Change the first `font-family` to
+1. Edit `chezmoi/dot_config/ghostty/config`. Change the first `font-family` to
    the chosen family; leave the rest as fallbacks unless there is a reason to
    change them.
 2. If testing a font's **own Korean glyphs** (especially Jetendard or D2Coding),
@@ -61,6 +61,5 @@ editing the first `font-family` entry.
 
 `+list-fonts` lists available font families; `+show-face` resolves the real font
 used for each character. Compare Korean/English text and aligned columns in a
-new terminal, not only the family names. Color themes are independent of font
-selection; the saved Cyberdream theme remains available in
-`chezmoi/dot_config/ghostty/themes/cyberdream`.
+new terminal, not only the family names. Tinty's colors are independent of font
+selection.

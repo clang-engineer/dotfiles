@@ -1,0 +1,86 @@
+# Official Tinted integrations; run tinty sync before the first tinty apply.
+default-scheme = "base16-dracula"
+
+[[items]]
+name = "tinted-terminal"
+path = "https://github.com/tinted-theming/tinted-terminal"
+themes-dir = "themes/ghostty"
+supported-systems = ["base16", "base24"]
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/tinted-theming" || exit
+# Ghostty reloads its live surfaces on SIGUSR2 (official Tinted integration).
+if pgrep -u "$(id -u)" -x ghostty >/dev/null; then
+    pkill -USR2 -u "$(id -u)" -x ghostty
+fi
+'''
+
+[[items]]
+name = "tinted-tmux"
+path = "https://github.com/tinted-theming/tinted-tmux"
+themes-dir = "colors"
+supported-systems = ["base16", "base24"]
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/tmux.conf" || exit
+# -N prevents starting a server; source only colors, not the layout.
+if command -v tmux >/dev/null 2>&1 && tmux -N has-session 2>/dev/null; then
+    tmux -N source-file "$dir/tmux.conf"
+fi
+'''
+
+[[items]]
+name = "tinted-fzf"
+path = "https://github.com/tinted-theming/tinted-fzf"
+themes-dir = "sh"
+supported-systems = ["base16", "base24"]
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
+mkdir -p "$dir" || exit
+# Evaluate the official POSIX template here, not in an interactive shell.
+FZF_DEFAULT_OPTS=
+. "$TINTY_THEME_FILE_PATH"
+printf "%s\n" "$FZF_DEFAULT_OPTS" > "$dir/fzf.opts"
+'''
+
+[[items]]
+name = "tinted-yazi"
+path = "https://github.com/tinted-theming/tinted-yazi"
+themes-dir = "flavors"
+supported-systems = ["base16"]
+hook = '''
+dir="${YAZI_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/yazi}/flavors/tinted-scheme.yazi"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/flavor.toml" || exit
+theme="${dir%/flavors/tinted-scheme.yazi}/theme.toml"
+test -e "$theme" || : > "$theme"
+template=$(cat <<TEMPLATE
+{{ "{{" }} .chezmoi.stdin | fromToml | default dict | setValueAtPath "flavor.dark" "tinted-scheme" | setValueAtPath "flavor.light" "tinted-scheme" | toToml {{ "}}" }}
+TEMPLATE
+)
+tmp=$(mktemp) || exit
+chezmoi execute-template --with-stdin "$template" < "$theme" > "$tmp" || { rm -f "$tmp"; exit 1; }
+cat "$tmp" > "$theme"
+result=$?
+rm -f "$tmp"
+exit "$result"
+'''
+
+[[items]]
+name = "tinted-delta"
+path = "https://github.com/tinted-theming/tinted-delta"
+themes-dir = "configs"
+supported-systems = ["base16", "base24"]
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/delta"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/theme.gitconfig"
+'''
+
+[[items]]
+name = "tinted-lazygit"
+path = "https://github.com/tinted-theming/tinted-lazygit"
+themes-dir = "themes"
+supported-systems = ["base16"]
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/lazygit.yml"
+'''

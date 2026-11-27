@@ -63,6 +63,17 @@ if test -f "$config_home/{{ $path }}"
 end
 {{ end }}
 
+# Lazygit merges its native settings with Tinty's generated theme.
+if test -z "$LG_CONFIG_FILE"; and test -f "$config_home/tinted-theming/tinty/generated/lazygit.yml"
+    set -l lazygit_home "$config_home"
+{{ if eq .chezmoi.os "darwin" }}
+    if not set -q XDG_CONFIG_HOME; or test -z "$XDG_CONFIG_HOME"
+        set lazygit_home "$HOME/Library/Application Support"
+    end
+{{ end }}
+    set -gx LG_CONFIG_FILE "$lazygit_home/lazygit/config.yml,$config_home/tinted-theming/tinty/generated/lazygit.yml"
+end
+
 # 프롬프트, 키 바인딩, tmux는 대화형 세션에만 적용한다.
 if not status is-interactive
     return
@@ -86,7 +97,9 @@ if command --query mise
     mise activate fish | source
 end
 if command --query fzf
-    set -gx FZF_DEFAULT_OPTS_FILE "$config_home/themeset/fzf.opts"
+    if test -f "$config_home/tinted-theming/tinty/generated/fzf.opts"
+        set -gx FZF_DEFAULT_OPTS_FILE "$config_home/tinted-theming/tinty/generated/fzf.opts"
+    end
 {{ $header := printf "%s\n%s" .fzf.ctrlTHeader (get .fzf.ctrlTHeaderByOS .chezmoi.os | default "") | trim }}
 {{ $headerAction := printf "start:transform-header:printf '%%b' %s" (printf "%q" $header) }}
 {{ $options := printf "%s %s %s %s --bind '%s'" .fzf.ctrlT .fzf.toggleHidden .fzf.toggleIgnored (get .fzf.ctrlTByOS .chezmoi.os | default "") ($headerAction | replace "'" "'\\''") | trim }}

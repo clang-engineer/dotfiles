@@ -1,10 +1,5 @@
-function __tinty_completion_schemes
-    if command -q jq
-        __tinty_ranked_schemes | cut -f1
-    else
-        command tinty list | string match 'base16-*'
-    end
-end
-complete -c tinty -n '__fish_tinty_using_subcommand apply' -f --keep-order -a '(__tinty_completion_schemes)'
+command -q tinty; or return
+command tinty generate-completion fish | source
 
+complete -c tinty -n '__fish_tinty_using_subcommand apply' -f -a '(command tinty list)' -d 'Scheme'
 complete -c tinty -n '__fish_tinty_using_subcommand info' -f -a '(command tinty list)' -d 'Scheme'

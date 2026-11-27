@@ -1,5 +1,5 @@
 # Oh my tmux! — the engine lives upstream in ~/.tmux/.tmux.conf.
-# The managed ~/.tmux.conf wrapper loads it before the optional themeset include.
+# The managed ~/.tmux.conf wrapper loads it; the Tinty reload lives in ~/.tmux.conf.local.
 # Customizations live in ~/.tmux.conf.local; tpm installs plugins into
 # ~/.tmux/plugins on first launch.
 [".tmux"]
