@@ -1,20 +1,13 @@
 return {
   {
-    "tinted-theming/tinted-nvim",
-    version = "1.0.0",
-    priority = 1000,
-    lazy = false,
-    opts = {
-      default_scheme = "base16-dracula",
-      apply_scheme_on_startup = false,
-      selector = { enabled = true },
-    },
-  },
-  {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = function()
-        require("tinted-nvim").load()
+        local data_dir = vim.fn.fnamemodify(vim.fn.stdpath("data"), ":h") .. "/tinted-theming/tinty"
+        local current = data_dir .. "/current_scheme"
+        local scheme = vim.fn.filereadable(current) == 1 and vim.fn.readfile(current, "", 1)[1] or "base16-dracula"
+        vim.opt.rtp:prepend(data_dir .. "/repos/tinted-vim")
+        vim.cmd.colorscheme(scheme)
       end,
     },
   },

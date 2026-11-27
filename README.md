@@ -178,8 +178,8 @@ plugins; color assignments can differ.
 | Application | Tinty integration |
 | --- | --- |
 | Ghostty | Native theme file; fonts and terminal behavior remain managed separately |
-| Neovim | `tinted-nvim` reads Tinty's current scheme and watches it for live changes; no `tinted-vim` template repository needed |
-| tmux | Official colors applied on theme changes and loaded at startup after OMT; OMT controls its own status layout and colors |
+| Neovim | `tinted-vim` themes from Tinty's synced repository; new Neovim sessions read Tinty's current scheme |
+| tmux | Official pane/status styles applied on theme changes; OMT status segments use Ghostty's Tinty-driven ANSI palette |
 | fzf | Generated `fzf.opts` read by Bash/Zsh/Fish through `FZF_DEFAULT_OPTS_FILE` |
 | Yazi | Native `tinted-scheme` flavor; other theme settings, layout and keymaps are preserved |
 | delta | Native theme written to `~/.config/delta/theme.gitconfig`, included by Git |
@@ -187,11 +187,13 @@ plugins; color assignments can differ.
 
 After the first apply, open a new shell so the lazygit merge environment and
 `FZF_DEFAULT_OPTS_FILE` are refreshed. Later fzf/delta invocations read the new
-theme directly; reopen lazygit and Yazi. Neovim uses the last applied scheme
-on startup and updates open sessions when Tinty's current scheme changes.
+theme directly; reopen lazygit, Yazi, and Neovim. A new Neovim session reads
+Tinty's current scheme from its data directory and loads the matching `tinted-vim`
+colorscheme. Open sessions keep their existing theme.
 Ghostty reloads automatically via SIGUSR2. Tinty applies tmux colors to a
-running server; OMT reloads the generated colors when tmux starts or its
-configuration is reloaded.
+running server; OMT loads generated colors when tmux starts or its configuration
+is reloaded. OMT's status segments inherit Ghostty's changing ANSI colors rather
+than keeping a fixed hex palette.
 
 Choosing a Base24 scheme does not update the Base16-only Yazi and lazygit targets.
 For a consistent theme across these integrations, select a `base16-…` scheme.
