@@ -9,4 +9,4 @@ font-codepoint-map = U+3130-U+318F,U+AC00-U+D7A3=D2Coding
 config-file = ?themes/tinted-theming
 scrollback-limit = 10000
 window-padding-y = 0
-window-padding-color = extend-always
+window-padding-color = background
