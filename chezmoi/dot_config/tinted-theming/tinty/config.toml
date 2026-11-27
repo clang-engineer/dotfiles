@@ -1,0 +1,40 @@
+# Tinty trial: generated theme stays separate from themeset.
+default-scheme = "base16-dracula"
+
+[[items]]
+name = "tinted-terminal"
+path = "https://github.com/tinted-theming/tinted-terminal"
+themes-dir = "themes/ghostty"
+supported-systems = ["base16", "base24"]
+hook = '''
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes" &&
+cp -f "$TINTY_THEME_FILE_PATH" "${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes/tinted-theming"
+'''
+
+# Trial assets only: active application settings are unchanged.
+[[items]]
+name = "tinted-tmux"
+path = "https://github.com/tinted-theming/tinted-tmux"
+themes-dir = "colors"
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/tmux.conf"
+'''
+
+[[items]]
+name = "tinted-fzf"
+path = "https://github.com/tinted-theming/tinted-fzf"
+themes-dir = "fish"
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/fzf.fish"
+'''
+
+[[items]]
+name = "tinted-yazi"
+path = "https://github.com/tinted-theming/tinted-yazi"
+themes-dir = "flavors"
+hook = '''
+dir="${YAZI_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/yazi}/flavors/tinted-scheme.yazi"
+mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/flavor.toml"
+'''
