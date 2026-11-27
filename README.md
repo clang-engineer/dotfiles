@@ -67,6 +67,7 @@ turns it into your home directory:
 | `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
 | `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
 | `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
+| `symlink_dot_sops.yaml.tmpl` | `~/.sops.yaml` → `sops/.sops.yaml` | symlink; public age recipient rules, private identity stays outside Git |
 | `dot_claude/` | selected files in `~/.claude/` | managed files |
 | `run_once_*` / `run_onchange_*` | packages, TPM plugins, and mise runtimes | scripts |
 
@@ -87,6 +88,12 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
 | `tools/harlequin-config/` | [Go Harlequin configuration generator](tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
+
+### SOPS public recipient
+
+`sops/.sops.yaml` contains the public age recipient used for new SOPS files.
+`chezmoi apply ~/.sops.yaml` links it into the home directory; SOPS discovers
+it automatically from projects under `$HOME`. Keep age private keys outside Git.
 
 Ghostty is managed in `chezmoi/dot_config/ghostty/config.tmpl`; available fonts are
 installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
