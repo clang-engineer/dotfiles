@@ -80,6 +80,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | Folder | What |
 |---|---|
 | `chezmoi/` | chezmoi source — managed dotfiles, OS-branched via `.chezmoiignore.tmpl` |
+| `chezmoi/dot_local/bin/executable_repos` | `~/.local/bin/repos` — sync configured Git repositories or repositories directly under a chosen directory |
 | `nvim/` | Neovim — `lazy/` LazyVim → `~/.config/nvim` |
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
@@ -97,6 +98,35 @@ Zsh is the reference for the Bash, Zsh, and Fish interactive environment.
 Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell profile
 render these values directly in their own startup templates. Edit the YAML, then
 run `chezmoi apply`; do not edit generated home files to change shared values.
+
+### Repository sync
+
+`repos` is installed by `chezmoi apply`. Configure the default repository list in
+`${XDG_CONFIG_HOME:-$HOME/.config}/repos/config`, a **trusted Bash file** sourced
+by the command:
+
+```bash
+repo "$HOME/projects/site" "git@github.com:you/site.git"
+repo "$HOME/projects/docs" "https://github.com/you/docs.git"
+```
+
+Each `repo` entry supplies a local path and its clone URL. No account, host, or
+repository paths are built into the executable. The private `secrets` repository
+provides this machine's list via its `setup.sh`; other users can create their own
+config file. Only source a config file you trust.
+
+```bash
+repos clone                      # clone missing configured repositories
+repos pull                       # fast-forward configured repositories
+repos push                       # push configured repositories ahead of upstream
+repos pull --workspace           # configured list plus $WORKSPACE_DIR's direct children
+repos pull .                     # repositories immediately under the current directory
+repos push "$HOME/projects"      # repositories immediately under this path
+```
+
+The path form needs no config. `clone`, the default pull/push, and `--workspace`
+require at least one configured entry; `--workspace` additionally needs
+`WORKSPACE_DIR`. A missing config is an error, not a silent no-op.
 
 ### Themes (macOS/Linux)
 
@@ -175,6 +205,13 @@ of fonts, layouts, keymaps, or unrelated settings:
 | Harlequin | `profiles.<name>.theme` in the generated DB catalog, selected via `paths.harlequin` | Connection generator, keymaps, native profile completion; no forced `--theme` shell function |
 | lazygit | Native `gui.theme` survives the modify template | Git diff renderers; macOS uses `~/Library/Application Support/lazygit/config.yml`, Linux uses `~/.config/lazygit/config.yml` |
 | Yazi, Atuin, lazydocker, btop, eza | Native settings/assets belong to the app and themeset, not a palette generator | No theme selector or palette is reset by chezmoi |
+
+The OMT status bar puts the last themeset selection (for example, `moonfly`)
+in the first right-hand segment, followed by status/clock and user/host
+segments. It reads themeset's `state.json` on a 30-second cadence instead of
+launching themeset on every status refresh. The selection is a recorded result,
+not a live check or a promise that every tool uses that theme: tools may have
+used `default_theme` or been skipped.
 
 The one-time `run_once_before_02-migrate-theme-selection.sh.tmpl` copies the old
 Neovim selection into its new runtime-owned Lua file before obsolete-file cleanup.

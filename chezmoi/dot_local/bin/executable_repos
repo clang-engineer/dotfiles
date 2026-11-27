@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2001
+# Sync multiple Git repositories
+# Usage:
+#   repos clone               # Clone configured repositories missing locally
+#   repos pull  [--workspace|DIR]  # git pull --ff-only
+#   repos push  [--workspace|DIR]  # Push repositories with commits ahead of upstream
+#
+# --workspace: include immediate children of $WORKSPACE_DIR (pull/push only)
+# DIR: operate only on Git repositories directly below DIR (e.g. .)
+# Default list: ${XDG_CONFIG_HOME:-$HOME/.config}/repos/config (path and clone URL)
+
+usage() {
+  sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+  exit 1
+}
+
+CMD="${1:-}"
+[ -z "$CMD" ] && usage
+shift
+
+INCLUDE_WORKSPACE=false
+TARGET_DIR=""
+case "$CMD" in
+  pull | push)
+    [ "$#" -le 1 ] || usage
+    case "${1:-}" in
+      --workspace) INCLUDE_WORKSPACE=true ;;
+      "") ;;
+      --*) usage ;;
+      *)
+        if [ ! -d "$1" ]; then
+          echo "✗ Directory not found: $1" >&2
+          exit 1
+        fi
+        TARGET_DIR="$(cd -- "$1" && pwd)"
+        ;;
+    esac
+    ;;
+  clone) [ "$#" -eq 0 ] || usage ;;
+  *)
+    echo "✗ Unknown command: $CMD" >&2
+    usage
+    ;;
+esac
+
+require_dir() {
+  local label="$1" dir="$2"
+  if [ -z "$dir" ]; then
+    echo "⚠ $label is not set" >&2
+    return 1
+  fi
+  if [ ! -d "$dir" ]; then
+    echo "⚠ $label=$dir does not exist" >&2
+    return 1
+  fi
+  return 0
+}
+
+CONFIG_DIRS=()
+CONFIG_URLS=()
+repo() {
+  if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]; then
+    echo "✗ repo requires a local path and a clone URL" >&2
+    exit 1
+  fi
+  CONFIG_DIRS+=("$1")
+  CONFIG_URLS+=("$2")
+}
+
+load_config() {
+  local config="${XDG_CONFIG_HOME:-$HOME/.config}/repos/config"
+  if [ ! -f "$config" ]; then
+    echo "✗ Missing config: $config (add repo \"local path\" \"clone URL\")" >&2
+    exit 1
+  fi
+  # shellcheck disable=SC1090
+  . "$config" || exit 1
+  if [ "${#CONFIG_DIRS[@]}" -eq 0 ]; then
+    echo "✗ No repo entries in config: $config" >&2
+    exit 1
+  fi
+}
+
+if [ -z "$TARGET_DIR" ]; then
+  load_config
+fi
+
+REPOS=()
+add_repo() {
+  printf '%s\n' "${REPOS[@]}" | grep -Fxq "$1" && return
+  REPOS+=("$1")
+}
+
+# Collect existing local Git repositories for pull/push.
+collect_repos() {
+  if [ -n "$TARGET_DIR" ]; then
+    for dir in "$TARGET_DIR"/*/ "$TARGET_DIR"/.[!.]*/ "$TARGET_DIR"/..?*/; do
+      dir="${dir%/}"
+      if [ -d "$dir/.git" ] || [ -f "$dir/.git" ]; then
+        add_repo "$dir"
+      fi
+    done
+    return
+  fi
+
+  for dir in "${CONFIG_DIRS[@]}"; do
+    require_dir "repo" "$dir" || continue
+    if [ ! -d "$dir/.git" ] && [ ! -f "$dir/.git" ]; then
+      echo "⚠ $dir is not a Git repository" >&2
+      continue
+    fi
+    add_repo "$dir"
+  done
+
+  if [ "$INCLUDE_WORKSPACE" = true ] && require_dir "WORKSPACE_DIR" "${WORKSPACE_DIR:-}"; then
+    for dir in "$WORKSPACE_DIR"/*/; do
+      [ -d "${dir%/}/.git" ] && add_repo "${dir%/}"
+    done
+  fi
+}
+
+case "$CMD" in
+  clone)
+    cloned=()
+    skipped=()
+    failed=()
+    for ((i = 0; i < ${#CONFIG_DIRS[@]}; i++)); do
+      dir="${CONFIG_DIRS[i]}"
+      url="${CONFIG_URLS[i]}"
+      name=$(basename "$dir")
+      if [ -d "$dir/.git" ] || [ -f "$dir/.git" ]; then
+        echo "[$name] already exists — skipped"
+        skipped+=("$name")
+        continue
+      fi
+      echo "[$name] clone $url"
+      if git clone "$url" "$dir"; then
+        echo "[$name] ✓ cloned"
+        cloned+=("$name")
+      else
+        echo "[$name] ✗ failed"
+        failed+=("$name")
+      fi
+      echo ""
+    done
+
+    echo "── Summary (configured: ${#CONFIG_DIRS[@]}) ──"
+    [ ${#cloned[@]} -gt 0 ] && echo "↓ Cloned: ${cloned[*]}"
+    [ ${#skipped[@]} -gt 0 ] && echo "= Already present: ${skipped[*]}"
+    [ ${#failed[@]} -gt 0 ] && echo "✗ Failed: ${failed[*]}"
+    if [ ${#cloned[@]} -eq 0 ] && [ ${#failed[@]} -eq 0 ]; then
+      echo "✓ All repositories already present"
+    fi
+    ;;
+  pull)
+    collect_repos
+    updated=()
+    failed=()
+    for repo in "${REPOS[@]}"; do
+      name=$(basename "$repo")
+      output=$(git -C "$repo" pull --ff-only 2>&1)
+      status=$?
+      echo "$output" | sed "s/^/[$name] /"
+      if [ $status -ne 0 ]; then
+        echo "[$name] ✗ failed"
+        reason=$(echo "$output" | grep -iE 'error|aborting|no such ref|specifies to merge' | head -1)
+        failed+=("$name — ${reason:-unknown}")
+      else
+        echo "[$name] ✓ ok"
+        echo "$output" | grep -q 'Already up to date' || updated+=("$name")
+      fi
+      echo ""
+    done
+
+    echo "── Summary (checked: ${#REPOS[@]}) ──"
+    if [ ${#updated[@]} -gt 0 ]; then
+      echo "↓ Updated: ${updated[*]}"
+    fi
+    if [ ${#failed[@]} -gt 0 ]; then
+      echo "✗ Failed (${#failed[@]}):"
+      printf '  - %s\n' "${failed[@]}"
+    else
+      echo "✓ No failures"
+    fi
+    ;;
+  push)
+    collect_repos
+    pushed=()
+    failed=()
+    dirty=()
+    for repo in "${REPOS[@]}"; do
+      name=$(basename "$repo")
+      [ -n "$(git -C "$repo" status --porcelain)" ] && dirty+=("$name")
+      git -C "$repo" rev-parse "@{u}" &>/dev/null || continue
+      ahead=$(git -C "$repo" log "@{u}..HEAD" --oneline 2>/dev/null)
+      [ -z "$ahead" ] && continue
+      echo "[$name]"
+      echo "$ahead" | sed 's/^/  /'
+      output=$(git -C "$repo" push 2>&1)
+      status=$?
+      echo "$output" | sed "s/^/[$name] /"
+      if [ $status -eq 0 ]; then
+        echo "[$name] ✓ pushed"
+        pushed+=("$name")
+      else
+        echo "[$name] ✗ failed"
+        failed+=("$name")
+      fi
+      echo ""
+    done
+
+    echo "── Summary (checked: ${#REPOS[@]}) ──"
+    if [ ${#pushed[@]} -eq 0 ] && [ ${#failed[@]} -eq 0 ]; then
+      echo "✓ All repositories up to date with upstream"
+    else
+      [ ${#pushed[@]} -gt 0 ] && echo "↑ Pushed: ${pushed[*]}"
+      [ ${#failed[@]} -gt 0 ] && echo "✗ Push failed: ${failed[*]}"
+    fi
+    if [ ${#dirty[@]} -gt 0 ]; then
+      echo "⚠ Uncommitted changes: ${dirty[*]}"
+    fi
+    ;;
+esac
