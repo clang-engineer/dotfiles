@@ -13,6 +13,7 @@ plugin=
 option=
 variant=
 launcher=
+mode=run
 case "$TINTY_SCHEME_ID" in
   base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
   *) scheme= ;;
@@ -38,16 +39,25 @@ case "$scheme" in
     # Upstream's entrypoint uses Bash syntax but has no shebang.
     launcher='bash '
     ;;
-  gruvbox-dark)
+  gruvbox-dark|gruvbox-light)
     plugin="$plugins/egel/tmux-gruvbox/gruvbox-tpm.tmux"
     option=@tmux-gruvbox
-    variant=dark256
+    variant=${scheme#gruvbox-}256
     ;;
   everforest|everforest-dark-hard|everforest-dark-medium|everforest-dark-soft|everforest-light-hard|everforest-light-medium|everforest-light-soft)
     plugin="$plugins/TanglingTreats/tmux-everforest/everforest-theme.tmux"
     option=@tmux-everforest
     variant=${scheme#everforest-}
     [ "$variant" = "$scheme" ] && variant=dark-medium
+    ;;
+  tomorrow|tomorrow-night|tomorrow-night-eighties)
+    plugin="$plugins/jondavidjohn/tmux-tomorrow-theme/tomorrow.tmux"
+    option=@tomorrow_flavour
+    variant=$scheme
+    ;;
+  nightfox|carbonfox|dawnfox|dayfox|duskfox|nordfox|terafox)
+    plugin="$plugins/EdenEast/nightfox.nvim/extra/$scheme/$scheme.tmux"
+    mode=source
     ;;
 esac
 
@@ -65,9 +75,15 @@ if [ -n "$plugin" ]; then
   if [ "$option" = @catppuccin_flavor ]; then
     printf '%s\n' 'set -g @catppuccin_reset true' >> "$tmp"
   fi
-  # Quote for the tmux parser and the shell invoked by run-shell.
-  quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
-  printf "run-shell \"%s'%s'\"\n" "$launcher" "$quoted" >> "$tmp"
+  if [ "$mode" = source ]; then
+    # The Nightfox project ships tmux config files, not executable entrypoints.
+    quoted=$(printf '%s' "$plugin" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\$/\\$/g; s/`/\\`/g')
+    printf 'source-file "%s"\n' "$quoted" >> "$tmp"
+  else
+    # Quote for the tmux parser and the shell invoked by run-shell.
+    quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
+    printf "run-shell \"%s'%s'\"\n" "$launcher" "$quoted" >> "$tmp"
+  fi
   if [ "$option" = @catppuccin_flavor ]; then
     printf '%s\n' 'set -g status-left "#{E:@catppuccin_status_session}"' \
       'set -g status-right "#{E:@catppuccin_status_application}"' >> "$tmp"

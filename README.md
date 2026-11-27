@@ -196,13 +196,19 @@ statusbar. The same order runs on tmux startup/reload, so a previous statusbar
 cannot leak into the next theme.
 
 Native tmux ports installed by `chezmoi apply`: Catppuccin (four flavors),
-Rosé Pine (main, moon, dawn), Dracula, Nord, Gruvbox dark, and Everforest
-(dark/light hard, medium, soft; unqualified Everforest uses dark-medium).
-These upstream plugins execute shell code when selected; Catppuccin is pinned
+Rosé Pine (main, moon, dawn), Dracula, Nord, Gruvbox (dark/light), Everforest
+(dark/light hard, medium, soft; unqualified Everforest uses dark-medium),
+Tomorrow (default/night/eighties), and the first-party Nightfox variants
+(Nightfox, Carbonfox, Dawnfox, Dayfox, Duskfox, Nordfox, Terafox).
+These trusted upstream tmux configs may execute shell code; Catppuccin is pinned
 to v2.3.2. Matching Base16 and Base24 IDs use the same native tmux port.
 Other schemes retain OMT's status layout, with Tinty colors from Ghostty and
 `tinted-tmux`. Native plugin palettes may differ from Tinted renditions in
 other apps.
+
+The GitHub Stars ranking measures scheme popularity, not native tmux support.
+For example, Solarized's dedicated tmux port only changes colors, so it
+uses OMT's status layout instead of masquerading as a native statusbar.
 
 Choosing a Base24 scheme does not update the Base16-only Yazi and lazygit targets.
 For a consistent theme across these integrations, select a `base16-…` scheme.

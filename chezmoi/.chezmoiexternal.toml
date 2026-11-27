@@ -7,7 +7,7 @@
     url = "https://github.com/gpakosz/.tmux.git"
     refreshPeriod = "168h"
 
-# Theme-author tmux statusbars; kept separate from TPM's shared "tmux" directory.
+# Theme-specific tmux statusbars; kept separate from TPM's shared "tmux" directory.
 [".config/tmux/plugins/catppuccin/tmux"]
     type = "git-repo"
     url = "https://github.com/catppuccin/tmux.git"
@@ -27,6 +27,12 @@
 [".config/tmux/plugins/TanglingTreats/tmux-everforest"]
     type = "git-repo"
     url = "https://github.com/TanglingTreats/tmux-everforest.git"
+[".config/tmux/plugins/EdenEast/nightfox.nvim"]
+    type = "git-repo"
+    url = "https://github.com/EdenEast/nightfox.nvim.git"
+[".config/tmux/plugins/jondavidjohn/tmux-tomorrow-theme"]
+    type = "git-repo"
+    url = "https://github.com/jondavidjohn/tmux-tomorrow-theme.git"
 
 # Official standalone binary avoids the Crystal/LLVM build dependency on macOS.
 {{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}
