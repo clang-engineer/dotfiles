@@ -128,6 +128,10 @@ The path form needs no config. `clone`, the default pull/push, and `--workspace`
 require at least one configured entry; `--workspace` additionally needs
 `WORKSPACE_DIR`. A missing config is an error, not a silent no-op.
 
+Failed pulls include a Git diagnostic in the summary (or the exit status if Git
+prints nothing). Local-only repositories without a remote cannot be pulled; add
+a remote and upstream branch when they are ready to sync.
+
 ### Themes (macOS/Linux)
 
 [`themeset`](https://github.com/clang-engineer/themeset) is an independent Go CLI, not a chezmoi wrapper.

@@ -164,8 +164,16 @@ case "$CMD" in
       echo "$output" | sed "s/^/[$name] /"
       if [ $status -ne 0 ]; then
         echo "[$name] ✗ failed"
-        reason=$(echo "$output" | grep -iE 'error|aborting|no such ref|specifies to merge' | head -1)
-        failed+=("$name — ${reason:-unknown}")
+        reason=$(printf '%s\n' "$output" | grep -i -m 1 -E 'error|aborting|no such ref|specifies to merge')
+        if [ -z "$reason" ]; then
+          while IFS= read -r line; do
+            [ -z "$line" ] || {
+              reason="$line"
+              break
+            }
+          done <<<"$output"
+        fi
+        failed+=("$name — ${reason:-git pull exited with status $status}")
       else
         echo "[$name] ✓ ok"
         echo "$output" | grep -q 'Already up to date' || updated+=("$name")
