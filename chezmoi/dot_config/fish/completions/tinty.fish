@@ -6,3 +6,5 @@ function __tinty_completion_schemes
     end
 end
 complete -c tinty -n '__fish_tinty_using_subcommand apply' -f --keep-order -a '(__tinty_completion_schemes)'
+
+complete -c tinty -n '__fish_tinty_using_subcommand info' -f -a '(command tinty list)' -d 'Scheme'
