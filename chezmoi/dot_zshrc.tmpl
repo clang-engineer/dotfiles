@@ -48,7 +48,6 @@ bindkey -e
 # Shell completion
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # case-insensitive matching
-zstyle ':completion:*' menu select                      # arrow-key menu selection
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # color matches like ls
 
 # Generated Harlequin config and native profile completion.
@@ -110,10 +109,8 @@ fi
 # syntax-highlighting must be sourced last, after all other zle setup.
 if [[ -n "$BREW_PREFIX" ]]; then
   if command -v fzf &>/dev/null && [[ -r "$BREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh" ]]; then
-    # Keep other commands on their existing completion UI.
-    zstyle ':fzf-tab:*' disabled-on any
-    zstyle ':fzf-tab:complete:harlequin:*' disabled-on none
-    zstyle ':completion:*:harlequin:*' menu no
+    # Let fzf-tab select completion candidates instead of Zsh's menu.
+    zstyle ':completion:*' menu no
     source "$BREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh"
   fi
   [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
