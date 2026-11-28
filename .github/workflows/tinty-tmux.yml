@@ -4,11 +4,15 @@ on:
     paths:
       - 'chezmoi/dot_config/tinted-theming/tinty/hooks/tmux/**'
       - 'tests/tinty-tmux.sh'
+      - 'tests/tinty-picker.sh'
+      - 'chezmoi/dot_config/fish/functions/__tinty*.fish'
       - '.github/workflows/tinty-tmux.yml'
   pull_request:
     paths:
       - 'chezmoi/dot_config/tinted-theming/tinty/hooks/tmux/**'
       - 'tests/tinty-tmux.sh'
+      - 'tests/tinty-picker.sh'
+      - 'chezmoi/dot_config/fish/functions/__tinty*.fish'
       - '.github/workflows/tinty-tmux.yml'
   workflow_dispatch:
 jobs:
@@ -16,5 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y jq tmux
+      - run: sudo apt-get update && sudo apt-get install -y jq tmux fish
       - run: sh tests/tinty-tmux.sh
+      - run: sh tests/tinty-picker.sh
