@@ -37,5 +37,5 @@ claude/*
 /nvim/lazy/colors/.tinted-theming.*
 
 # Generated LazyVim theme selection (not part of the base config).
-/nvim/lazy/lua/plugins/colorscheme.lua
+/nvim/lazy/lua/plugins/zz-colorscheme-local.lua
 /nvim/lazy/lua/plugins/.colorscheme.*
