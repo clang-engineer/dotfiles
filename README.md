@@ -33,11 +33,12 @@ One command to set up a reproducible, keyboard-driven development environment wi
 With Git, Homebrew and chezmoi installed on macOS/Linux:
 
 ```sh
-git clone https://github.com/clang-engineer/dotfiles.git ~/dotfiles
-chezmoi init --source ~/dotfiles
-chezmoi diff
-chezmoi apply  # packages, runtimes, configs, and integrations
+chezmoi init --apply https://github.com/clang-engineer/dotfiles.git
 ```
+
+To preview before applying, omit `--apply`, run `chezmoi diff`, then `chezmoi apply`.
+
+Optional theme setup (macOS/Linux):
 
 ```sh
 tinty sync
