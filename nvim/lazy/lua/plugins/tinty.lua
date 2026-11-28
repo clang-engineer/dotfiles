@@ -1,24 +1,13 @@
 return {
   {
-    "tinted-theming/tinted-nvim",
-    version = "^1.0.0",
-    priority = 1000,
-    lazy = false,
-    opts = {
-      default_scheme = "base16-dracula",
-      selector = {
-        enabled = true,
-        mode = "file",
-        watch = true,
-      },
-    },
-  },
-  {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = function()
-        local tinted = require("tinted-nvim")
-        tinted.load(tinted.get_scheme() or "base16-dracula")
+        if #vim.api.nvim_get_runtime_file("colors/tinted-theming.vim", false) > 0 then
+          vim.cmd.colorscheme("tinted-theming")
+        else
+          vim.cmd.colorscheme("tokyonight")
+        end
       end,
     },
   },
