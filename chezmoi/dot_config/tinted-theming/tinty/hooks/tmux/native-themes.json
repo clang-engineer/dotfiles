@@ -1,4 +1,55 @@
 {
+  "repositories": [
+    {
+      "path": "tmux-plugins/tmux-cpu",
+      "url": "https://github.com/tmux-plugins/tmux-cpu.git"
+    },
+    {
+      "path": "tmux-plugins/tmux-battery",
+      "url": "https://github.com/tmux-plugins/tmux-battery.git"
+    },
+    {
+      "path": "catppuccin/tmux",
+      "url": "https://github.com/catppuccin/tmux.git",
+      "revision": "v2.3.2"
+    },
+    {
+      "path": "rose-pine/tmux",
+      "url": "https://github.com/rose-pine/tmux.git"
+    },
+    {
+      "path": "dracula/tmux",
+      "url": "https://github.com/dracula/tmux.git"
+    },
+    {
+      "path": "nordtheme/tmux",
+      "url": "https://github.com/nordtheme/tmux.git"
+    },
+    {
+      "path": "egel/tmux-gruvbox",
+      "url": "https://github.com/egel/tmux-gruvbox.git"
+    },
+    {
+      "path": "TanglingTreats/tmux-everforest",
+      "url": "https://github.com/TanglingTreats/tmux-everforest.git"
+    },
+    {
+      "path": "EdenEast/nightfox.nvim",
+      "url": "https://github.com/EdenEast/nightfox.nvim.git"
+    },
+    {
+      "path": "jondavidjohn/tmux-tomorrow-theme",
+      "url": "https://github.com/jondavidjohn/tmux-tomorrow-theme.git"
+    },
+    {
+      "path": "janoamaral/tokyo-night-tmux",
+      "url": "https://github.com/janoamaral/tokyo-night-tmux.git"
+    },
+    {
+      "path": "Nybkox/tmux-ukiyo",
+      "url": "https://github.com/Nybkox/tmux-ukiyo.git"
+    }
+  ],
   "themes": [
     {
       "schemes": [
