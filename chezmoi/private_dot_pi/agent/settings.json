@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.87.0",
-  "theme": "dark",
+  "theme": "system",
   "quietStartup": true,
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-sol",
