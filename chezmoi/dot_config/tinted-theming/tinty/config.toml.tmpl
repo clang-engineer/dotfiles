@@ -1,7 +1,17 @@
 # Official Tinted integrations; run tinty sync before the first tinty apply.
 default-scheme = "base16-dracula"
 
-# Neovim uses the official tinted-nvim selector (no export hook needed).
+[[items]]
+name = "tinted-vim"
+path = "https://github.com/tinted-theming/tinted-vim"
+themes-dir = "colors"
+supported-systems = ["base16", "base24"]
+hook = '''
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/${NVIM_APPNAME:-nvim}/colors"
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.tinted-theming.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/tinted-theming.vim" || { rm -f "$tmp"; exit 1; }
+'''
 
 [[items]]
 name = "tinted-terminal"
