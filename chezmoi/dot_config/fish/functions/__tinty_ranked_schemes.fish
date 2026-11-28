@@ -47,9 +47,20 @@ function __tinty_ranked_schemes
         or set families '{}'
     end
 
+    set -l config_home "$HOME/.config"
+    if set -q XDG_CONFIG_HOME; and test -n "$XDG_CONFIG_HOME"
+        set config_home "$XDG_CONFIG_HOME"
+    end
+    set -l native '[]'
+    set -l registry "$config_home/tinted-theming/tinty/hooks/tmux/native-themes.json"
+    if test -r "$registry"
+        set native (jq -c '[.themes[].schemes[]] | unique' "$registry" 2>/dev/null)
+        or set native '[]'
+    end
+
     # The JSON ID can omit a variant suffix present in the applyable plain list.
     set -l ids (command tinty list | jq -Rsc 'split("\n") | map(select(length > 0))')
-    command tinty list --json | jq -r --argjson ids "$ids" --argjson stars "$stars" --argjson families "$families" '
+    command tinty list --json | jq -r --argjson ids "$ids" --argjson stars "$stars" --argjson families "$families" --argjson native "$native" '
         def leftpad($width): (" " * ([$width - length, 0] | max)) + .;
         def commas:
             tostring | split("") as $digits
@@ -59,21 +70,21 @@ function __tinty_ranked_schemes
                     then "," else "" end)]
             | join("");
         def rank($id):
-            ($id | sub("^base16-"; "") | split("-")) as $words
+            ($id | sub("^base(16|24)-"; "") | split("-")) as $words
             | [range(1; ($words | length) + 1) as $n
                 | {key: ($words[:$n] | join("")), next: ($words[$n] // "")}
                 | select($stars[.key] != null)]
             | .[-1] // null
             | if . == null or ($stars[.next] != null)
                 then 0 else ($stars[.key] // 0) end;
-        [.[] | select(.system == "base16") | . as $scheme
+        [.[] | select(.system == "base16" or .system == "base24") | . as $scheme
             | ($scheme.id as $id
                 | if ($ids | index($id)) != null then $id
                   elif ($ids | index($id + "-" + $scheme.variant)) != null
                     then $id + "-" + $scheme.variant
                   else empty end) as $valid_id
             | . + {id: $valid_id, stars: ($families[$valid_id] // rank($valid_id))}]
-        | sort_by(-.stars, .id)[]
-        | "\(.id)\t\(if .stars > 0 then " " else "  " end)\((if .stars > 0 then (.stars | commas) else "-" end) | leftpad(7))  \(.id | sub("^base16-"; ""))\(if .variant == "light" then "  [light]" else "" end)"
+        | unique_by(.id) | sort_by(-.stars, .id)[]
+        | "\(.id)\t\(if .stars > 0 then " " else "  " end)\((if .stars > 0 then (.stars | commas) else "-" end) | leftpad(7))  \(.id | sub("^base(16|24)-"; ""))\(if .variant == "light" then "  [light]" else "" end)  [\(.system)]\(if (.id | sub("^base(16|24)-"; "")) as $slug | ($native | index($slug)) != null then "  [TMUX]" else "" end)"
     '
 end
