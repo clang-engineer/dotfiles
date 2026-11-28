@@ -19,6 +19,7 @@ brew "fd"               # fd: intuitive file search (find replacement). Used by 
 brew "lazygit"          # Git TUI client
 brew "lazydocker"       # Docker/Compose TUI; useful when managing containers from tmux
 brew "git-delta"        # delta: syntax-highlighting pager for git diff. Used by .gitconfig core.pager
+brew "bash"             # Modern Bash for tmux theme plugins.
 brew "jq"               # CLI JSON filter/transform. Used for JSON parsing in scripts
 brew "bat"              # cat replacement (syntax highlight, line numbers). Used by fzf preview
 brew "tree"             # Print directory tree
