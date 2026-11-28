@@ -18,52 +18,40 @@ case "$TINTY_SCHEME_ID" in
   base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
   *) scheme= ;;
 esac
-case "$scheme" in
-  catppuccin-latte|catppuccin-frappe|catppuccin-macchiato|catppuccin-mocha)
-    plugin="$plugins/catppuccin/tmux/catppuccin.tmux"
-    option=@catppuccin_flavor
-    variant=${scheme##*-}
-    ;;
-  rose-pine|rose-pine-moon|rose-pine-dawn)
-    plugin="$plugins/rose-pine/tmux/rose-pine.tmux"
-    option=@rose_pine_variant
-    variant=${scheme#rose-pine}
-    variant=${variant#-}
-    variant=${variant:-main}
-    ;;
-  dracula)
-    plugin="$plugins/dracula/tmux/dracula.tmux"
-    ;;
-  nord)
-    plugin="$plugins/nordtheme/tmux/nord.tmux"
-    # Upstream's entrypoint uses Bash syntax but has no shebang.
-    launcher='bash '
-    ;;
-  gruvbox-dark|gruvbox-light)
-    plugin="$plugins/egel/tmux-gruvbox/gruvbox-tpm.tmux"
-    option=@tmux-gruvbox
-    variant=${scheme#gruvbox-}256
-    ;;
-  everforest|everforest-dark-hard|everforest-dark-medium|everforest-dark-soft|everforest-light-hard|everforest-light-medium|everforest-light-soft)
-    plugin="$plugins/TanglingTreats/tmux-everforest/everforest-theme.tmux"
-    option=@tmux-everforest
-    variant=${scheme#everforest-}
-    [ "$variant" = "$scheme" ] && variant=dark-medium
-    ;;
-  tomorrow|tomorrow-night|tomorrow-night-eighties)
-    plugin="$plugins/jondavidjohn/tmux-tomorrow-theme/tomorrow.tmux"
-    option=@tomorrow_flavour
-    variant=$scheme
-    ;;
-  nightfox|carbonfox|dawnfox|dayfox|duskfox|nordfox|terafox)
-    plugin="$plugins/EdenEast/nightfox.nvim/extra/$scheme/$scheme.tmux"
-    mode=source
-    ;;
-esac
+registry="$config_home/tmux/tinty-native-themes.tsv"
+if [ -r "$registry" ]; then
+  while IFS='|' read -r patterns entry opt rule entry_mode shell; do
+    case "$patterns" in ''|\#*) continue ;; esac
+    case ",$patterns," in
+      *,"$scheme",*) ;;
+      *) continue ;;
+    esac
+    case "$entry" in
+      *%s*) plugin="$plugins/$(printf "$entry" "$scheme" "$scheme")" ;;
+      *) plugin="$plugins/$entry" ;;
+    esac
+    option=$opt
+    mode=$entry_mode
+    launcher=${shell:+$shell }
+    case "$rule" in
+      suffix) variant=${scheme##*-} ;;
+      rose-pine)
+        variant=${scheme#rose-pine}
+        variant=${variant#-}
+        variant=${variant:-main} ;;
+      gruvbox) variant=${scheme#gruvbox-}256 ;;
+      everforest)
+        variant=${scheme#everforest-}
+        [ "$variant" = "$scheme" ] && variant=dark-medium ;;
+      scheme) variant=$scheme ;;
+    esac
+    break
+  done < "$registry"
+fi
 
 if [ -n "$plugin" ] && [ ! -f "$plugin" ]; then
   printf 'Tinty tmux: missing native theme %s; run chezmoi apply first.\n' "$plugin" >&2
-  exit 1
+  plugin=
 fi
 
 tmp=$(mktemp "$dir/tmux-native.conf.XXXXXX") || exit 1
