@@ -1,72 +1,64 @@
 #!/bin/sh
 set -eu
-
 : "${TINTY_SCHEME_ID:?Tinty scheme is required}"
 : "${TINTY_THEME_FILE_PATH:?Tinty tmux theme is required}"
-config_home=${XDG_CONFIG_HOME:-$HOME/.config}
-dir="$config_home/tinted-theming/tinty/generated"
-plugins="$config_home/tmux/plugins"
+hook_dir=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+. "$hook_dir/common.sh"
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
 mkdir -p "$dir"
-cp -f "$TINTY_THEME_FILE_PATH" "$dir/tmux.conf"
+palette=$(mktemp "$dir/tmux.conf.XXXXXX")
+native=$(mktemp "$dir/tmux-native.conf.XXXXXX")
+trap 'rm -f "$palette" "$native"' EXIT
+trap 'exit 1' HUP INT TERM
+cp "$TINTY_THEME_FILE_PATH" "$palette"
 
-plugin=
-option=
-variant=
-launcher=
-mode=run
-case "$TINTY_SCHEME_ID" in
-  base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
-  *) scheme= ;;
-esac
-registry="$(dirname "$0")/native-themes.json"
-if [ -r "$registry" ]; then
+# Escape a path for a tmux double-quoted argument.
+tmux_quote() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\$/\\$/g; s/`/\\`/g'; }
+emit_run() {
+  shell_path=$(printf '%s' "$2" | sed "s/'/'\\\\''/g")
+  command="${1:+$1 }'$shell_path'"
+  printf 'run-shell "%s"\n' "$(tmux_quote "$command")"
+}
+render_native() (
+  case "$TINTY_SCHEME_ID" in base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;; *) exit 0 ;; esac
   row=$(jq -c --arg scheme "$scheme" 'first(.themes[] | select(.schemes | index($scheme))) // empty' "$registry") || exit 1
-  if [ -n "$row" ]; then
-    entry=$(printf '%s' "$row" | jq -r '.entrypoint')
-    option=$(printf '%s' "$row" | jq -r '.option // ""')
-    variant=$(printf '%s' "$row" | jq -r --arg scheme "$scheme" '.variants[$scheme] // ""')
-    mode=$(printf '%s' "$row" | jq -r '.mode // "run"')
-    shell=$(printf '%s' "$row" | jq -r '.launcher // ""')
-    launcher=${shell:+$shell }
-    case "$entry" in
-      *%s*) plugin="$plugins/$(printf "$entry" "$scheme" "$scheme")" ;;
-      *) plugin="$plugins/$entry" ;;
-    esac
-    if [ "$(printf '%s' "$row" | jq -r '.requiresBash // ""')" = 4.2 ]; then
-      if ! bash -c '(( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) ))' 2>/dev/null; then
-        printf '%s\n' 'Tinty tmux: Bash 4.2+ required; using fallback.' >&2
-        plugin=
-      fi
-    fi
+  [ -n "$row" ] || exit 0
+  field() { printf '%s' "$row" | jq -r "$1"; }
+  if [ "$(field '.requiresBash // empty')" = 4.2 ]; then
+    bash -c '(( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) ))' || exit 1
   fi
+  keys=$(field '.repository, .dependencies[]?') || exit 1
+  for key in $keys; do ensure_repo "$key" install || exit 1; done
+  entry=$(field '.entrypoint') || exit 1
+  case "$entry" in *%s*) entry=$(printf "$entry" "$scheme" "$scheme") ;; esac
+  plugin="$plugins/$entry"
+  [ -f "$plugin" ] || exit 1
+  option=$(field '.option // empty')
+  variant=$(printf '%s' "$row" | jq -r --arg scheme "$scheme" '.variants[$scheme] // empty')
+  if [ -n "$option" ]; then printf 'set -g %s %s\n' "$option" "$variant"; fi
+  field '.before[]?' || exit 1
+  case "$(field '.mode // "run"')" in
+    source) printf 'source-file "%s"\n' "$(tmux_quote "$plugin")" ;;
+    run) emit_run "$(field '.launcher // empty')" "$plugin" ;;
+    *) exit 1 ;;
+  esac
+  field '.after[]?' || exit 1
+  modules=$(field '.modules[]?') || exit 1
+  for module in $modules; do
+    [ -f "$plugins/$module" ] || exit 1
+    emit_run "" "$plugins/$module"
+  done
+)
+if ! render_native > "$native"; then
+  warn "native theme unavailable for $TINTY_SCHEME_ID; using Tinted fallback"
+  : > "$native"
 fi
-
-if [ -n "$plugin" ] && [ ! -f "$plugin" ]; then
-  printf 'Tinty tmux: missing native theme %s; run chezmoi apply first.\n' "$plugin" >&2
-  plugin=
-fi
-
-tmp=$(mktemp "$dir/tmux-native.conf.XXXXXX") || exit 1
-trap 'rm -f "$tmp"' EXIT HUP INT TERM
-if [ -n "$plugin" ]; then
-  if [ -n "$option" ]; then
-    printf 'set -g %s %s\n' "$option" "$variant" > "$tmp"
-  fi
-  printf '%s' "$row" | jq -r '.before[]?' >> "$tmp"
-  if [ "$mode" = source ]; then
-    # The Nightfox project ships tmux config files, not executable entrypoints.
-    quoted=$(printf '%s' "$plugin" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\$/\\$/g; s/`/\\`/g')
-    printf 'source-file "%s"\n' "$quoted" >> "$tmp"
-  else
-    # Quote for the tmux parser and the shell invoked by run-shell.
-    quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
-    printf "run-shell \"%s'%s'\"\n" "$launcher" "$quoted" >> "$tmp"
-  fi
-  printf '%s' "$row" | jq -r '.after[]?' >> "$tmp"
-fi
-mv -f "$tmp" "$dir/tmux-native.conf"
-
-# Reload OMT first so a previous plugin cannot leak its status layout into the fallback.
+mv -f "$palette" "$dir/tmux.conf"
+mv -f "$native" "$dir/tmux-native.conf"
 if command -v tmux >/dev/null 2>&1 && tmux -N has-session 2>/dev/null; then
-  tmux -N source-file "$HOME/.tmux.conf"
+  if ! tmux -N source-file "$HOME/.tmux.conf"; then
+    warn "reload failed; retrying without native theme"
+    : > "$dir/tmux-native.conf"
+    tmux -N source-file "$HOME/.tmux.conf"
+  fi
 fi
