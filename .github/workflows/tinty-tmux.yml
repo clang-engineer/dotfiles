@@ -1,0 +1,20 @@
+name: Tinty tmux hooks
+on:
+  push:
+    paths:
+      - 'chezmoi/dot_config/tinted-theming/tinty/hooks/tmux/**'
+      - 'tests/tinty-tmux.sh'
+      - '.github/workflows/tinty-tmux.yml'
+  pull_request:
+    paths:
+      - 'chezmoi/dot_config/tinted-theming/tinty/hooks/tmux/**'
+      - 'tests/tinty-tmux.sh'
+      - '.github/workflows/tinty-tmux.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y jq tmux
+      - run: sh tests/tinty-tmux.sh
