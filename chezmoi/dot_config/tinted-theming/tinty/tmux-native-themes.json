@@ -1,0 +1,84 @@
+{
+  "themes": [
+    {
+      "schemes": [
+        "catppuccin-latte",
+        "catppuccin-frappe",
+        "catppuccin-macchiato",
+        "catppuccin-mocha"
+      ],
+      "entrypoint": "catppuccin/tmux/catppuccin.tmux",
+      "option": "@catppuccin_flavor",
+      "variant": "suffix"
+    },
+    {
+      "schemes": [
+        "rose-pine",
+        "rose-pine-moon",
+        "rose-pine-dawn"
+      ],
+      "entrypoint": "rose-pine/tmux/rose-pine.tmux",
+      "option": "@rose_pine_variant",
+      "variant": "rose-pine"
+    },
+    {
+      "schemes": [
+        "dracula"
+      ],
+      "entrypoint": "dracula/tmux/dracula.tmux"
+    },
+    {
+      "schemes": [
+        "nord"
+      ],
+      "entrypoint": "nordtheme/tmux/nord.tmux",
+      "launcher": "bash"
+    },
+    {
+      "schemes": [
+        "gruvbox-dark",
+        "gruvbox-light"
+      ],
+      "entrypoint": "egel/tmux-gruvbox/gruvbox-tpm.tmux",
+      "option": "@tmux-gruvbox",
+      "variant": "gruvbox"
+    },
+    {
+      "schemes": [
+        "everforest",
+        "everforest-dark-hard",
+        "everforest-dark-medium",
+        "everforest-dark-soft",
+        "everforest-light-hard",
+        "everforest-light-medium",
+        "everforest-light-soft"
+      ],
+      "entrypoint": "TanglingTreats/tmux-everforest/everforest-theme.tmux",
+      "option": "@tmux-everforest",
+      "variant": "everforest"
+    },
+    {
+      "schemes": [
+        "tomorrow",
+        "tomorrow-night",
+        "tomorrow-night-eighties"
+      ],
+      "entrypoint": "jondavidjohn/tmux-tomorrow-theme/tomorrow.tmux",
+      "option": "@tomorrow_flavour",
+      "variant": "scheme"
+    },
+    {
+      "schemes": [
+        "nightfox",
+        "carbonfox",
+        "dawnfox",
+        "dayfox",
+        "duskfox",
+        "nordfox",
+        "terafox"
+      ],
+      "entrypoint": "EdenEast/nightfox.nvim/extra/%s/%s.tmux",
+      "mode": "source"
+    }
+  ]
+}
