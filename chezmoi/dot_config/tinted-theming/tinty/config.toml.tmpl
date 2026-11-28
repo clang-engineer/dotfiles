@@ -53,7 +53,8 @@ mkdir -p "$dir" || exit
 # Evaluate the official POSIX template here, not in an interactive shell.
 FZF_DEFAULT_OPTS=
 . "$TINTY_THEME_FILE_PATH"
-printf "%s\n" "$FZF_DEFAULT_OPTS" > "$dir/fzf.opts"
+tmp=$(mktemp "$dir/.fzf.opts.XXXXXX") || exit 1
+printf "%s\n" "$FZF_DEFAULT_OPTS" > "$tmp" && mv -f "$tmp" "$dir/fzf.opts" || { rm -f "$tmp"; exit 1; }
 '''
 
 [[items]]
