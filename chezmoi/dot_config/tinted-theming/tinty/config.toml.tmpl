@@ -26,7 +26,9 @@ themes-dir = "themes/ghostty"
 supported-systems = ["base16", "base24"]
 hook = '''
 dir="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/tinted-theming" || exit
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.tinted-theming.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/tinted-theming" || { rm -f "$tmp"; exit 1; }
 # Ghostty reloads its live surfaces on SIGUSR2 (official Tinted integration).
 if pgrep -u "$(id -u)" -x ghostty >/dev/null; then
     pkill -USR2 -u "$(id -u)" -x ghostty
@@ -63,7 +65,9 @@ path = "https://github.com/tinted-theming/tinted-yazi"
 themes-dir = "flavors"
 hook = '''
 dir="${YAZI_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/yazi}/flavors/tinted-scheme.yazi"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/flavor.toml" || exit
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.flavor.toml.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/flavor.toml" || { rm -f "$tmp"; exit 1; }
 '''
 
 [[items]]
