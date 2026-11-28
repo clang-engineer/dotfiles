@@ -34,7 +34,7 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 brew install chezmoi
-git clone <repo> ~/dotfiles
+git clone https://github.com/clang-engineer/dotfiles.git ~/dotfiles
 
 # one-time: generate ~/.config/chezmoi/chezmoi.toml — prompts once for your
 # git name/email and derives sourceDir from where you cloned (~ is expanded)
@@ -231,7 +231,7 @@ automatically follow new Tinty selections. An explicit `BAT_THEME` export
 takes precedence over bat's native config.
 
 The former themeset runtime is not used. The native tmux provider mapping
-lives in `chezmoi/dot_local/bin/executable_tinty-tmux-theme`; managed upstream
+is managed under `chezmoi/dot_config/tinted-theming/tinty/hooks/tmux/`; managed upstream
 plugins live under `~/.config/tmux/plugins`. Existing themeset files are left
 untouched but are no longer loaded.
 Delta and fzf use Tinty's generated themes after `tinty sync` and `tinty apply`;
@@ -300,7 +300,7 @@ Enter inserts selected paths into the command line; Ctrl+O opens a file in
 `$EDITOR` (Vim if unset) and returns to the picker when the editor exits.
 On macOS, disable conflicting Mission Control shortcuts to let Ctrl+arrow reach fzf.
 On macOS, Ctrl+Y copies the focused file's absolute path via `realpath` and
-`pbcopy`, then closes without inserting. There is no custom Alt+Y binding.
+`pbcopy` without closing the Ctrl+T picker. There is no custom Alt+Y binding.
 The copy binding and its header are omitted on Linux and Windows.
 
 For interactive file-content search, press Ctrl+F in Zsh/Fish, or run
@@ -322,7 +322,7 @@ Ctrl+O opens the matching file and line in `$EDITOR` (Vim if unset) without
 exiting the picker. Tab selects multiple results; Vim/Neovim receive multiple
 matches as a quickfix list when opened with Ctrl+O.
 On macOS, Ctrl+Y copies the focused file's absolute path, then closes without
-inserting. This copy key matches Ctrl+T; Alt+Y has no custom binding.
+inserting. Ctrl+T uses the same key but keeps its picker open; Alt+Y has no custom binding.
 The picker fills the current terminal pane, including inside tmux, without a popup.
 The preview starts visible on the right at 50%, with matching-line highlighting
 and scrolling. Ctrl+/ toggles it; Ctrl+Down shows it below at 40%, and Ctrl+Right
