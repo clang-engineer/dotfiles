@@ -18,7 +18,7 @@ case "$TINTY_SCHEME_ID" in
   base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
   *) scheme= ;;
 esac
-registry="$config_home/tmux/tinty-native-themes.tsv"
+registry="$config_home/tinted-theming/tinty/tmux-native-themes.conf"
 if [ -r "$registry" ]; then
   while IFS='|' read -r patterns entry opt rule entry_mode shell; do
     case "$patterns" in ''|\#*) continue ;; esac
