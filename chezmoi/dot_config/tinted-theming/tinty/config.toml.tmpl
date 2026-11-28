@@ -1,7 +1,9 @@
 # Official Tinted integrations; run tinty sync before the first tinty apply.
 default-scheme = "base16-dracula"
 
-# Indirect integration: bat inherits terminal ANSI colors (configured by chezmoi).
+# Indirect integrations: terminal palette inheritance (no hooks).
+# bat and OpenCode: native theme selection via chezmoi.
+# Atuin and eza: default ANSI colors.
 
 [[items]]
 name = "tinted-vim"
