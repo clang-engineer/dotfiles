@@ -5,6 +5,32 @@ default-scheme = "base16-dracula"
 # bat and OpenCode: native theme selection via chezmoi.
 # Atuin and eza: default ANSI colors.
 
+# JankyBorders: custom palette mapping, no template repository.
+hooks = [
+  '''
+if [ "$(uname -s)" = Darwin ] && command -v borders >/dev/null 2>&1; then
+  scheme=$(tinty current) || exit 1
+  colors=$(tinty list --json | jq -er --arg scheme "$scheme" '
+    .[] | select(.id == $scheme) |
+    [.palette.base0D.hex_str, .palette.base03.hex_str] |
+    if all(.[]; type == "string" and test("^#[0-9a-fA-F]{6}$"))
+    then map("0xff" + .[1:]) | join(" ")
+    else error("Invalid border palette") end
+  ') || exit 1
+  active=${colors%% *}
+  inactive=${colors#* }
+  dir="$HOME/.config/borders"
+  mkdir -p "$dir" || exit 1
+  tmp=$(mktemp "$dir/.bordersrc.XXXXXX") || exit 1
+  printf '#!/bin/sh\nexec /opt/homebrew/bin/borders active_color=%s inactive_color=%s width=5.0\n' "$active" "$inactive" > "$tmp" &&
+    chmod +x "$tmp" && mv -f "$tmp" "$dir/bordersrc" || { rm -f "$tmp"; exit 1; }
+  if pgrep -x borders >/dev/null; then
+    borders "active_color=$active" "inactive_color=$inactive"
+  fi
+fi
+''',
+]
+
 [[items]]
 name = "tinted-vim"
 path = "https://github.com/tinted-theming/tinted-vim"
