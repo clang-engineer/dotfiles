@@ -6,13 +6,3 @@
     type = "git-repo"
     url = "https://github.com/gpakosz/.tmux.git"
     refreshPeriod = "168h"
-
-# Native theme repositories are defined in the Tinty hook registry.
-{{ range ((include "dot_config/tinted-theming/tinty/hooks/tmux/native-themes.json" | fromJson).repositories) }}
-[".config/tmux/plugins/{{ .path }}"]
-    type = "git-repo"
-    url = {{ .url | quote }}
-{{ if hasKey . "revision" }}
-    clone.args = ["--branch", {{ .revision | quote }}]
-{{ end }}
-{{ end }}
