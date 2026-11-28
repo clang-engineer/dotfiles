@@ -49,7 +49,7 @@ chezmoi apply    # link, copy, install, and generate in one pass
 > slowest part. Steps 7–8 are optional; run them anytime.
 
 What `chezmoi apply` runs, in order — file placement (source→target, managed vs
-symlink) is documented in the [README](README.md#how-it-works) table as the source
+symlink) is documented in the [managed files](#how-it-works) table as the source
 of truth. This section lists only the scripts that run:
 
 ### Scripts (run\_)
@@ -332,3 +332,87 @@ machine-locally only.
 
 3. Review that newly added scripts don't `echo` or log secret data.
 4. When adding a file under a sensitive path, check whether `.gitignore` needs updating.
+
+## Managed files and repository layout
+
+### How it works
+
+The chezmoi source lives in `chezmoi/` (a home-mirror tree). `chezmoi apply`
+turns it into your home directory:
+
+| chezmoi source | becomes | kind |
+|---|---|---|
+| `dot_zshrc.tmpl`, `dot_bashrc.tmpl`, `dot_gitconfig.tmpl`, `dot_tmux.conf`, … | `~/.zshrc`, `~/.bashrc`, `~/.gitconfig`, … | **managed file** (copy/render) |
+| `dot_config/fish/` | `~/.config/fish/` | managed fish startup, functions, and completions |
+| `private_dot_ssh/` | `~/.ssh/` (0700) | managed files; keys stay per-machine |
+| `dot_config/symlink_nvim.tmpl` | `~/.config/nvim` → `nvim/lazy` | **symlink** |
+| `symlink_dot_hammerspoon.tmpl` | `~/.hammerspoon` → `hammerspoon/` | symlink |
+| `symlink_dot_sops.yaml.tmpl` | `~/.sops.yaml` → `sops/.sops.yaml` | symlink; public age recipient rules, private identity stays outside Git |
+| `dot_claude/` | selected files in `~/.claude/` | managed files |
+| `run_once_*` / `run_onchange_*` | packages, TPM plugins, and mise runtimes | scripts |
+
+**Managed vs symlink:** big, live-edited config directories (`nvim/`,
+`hammerspoon/`) stay as their own folders and are symlinked. Claude's runtime
+directory stays local while chezmoi manages only its public config files. Everything
+else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
+
+### Layout
+
+| Folder | What |
+|---|---|
+| `chezmoi/` | chezmoi source — managed dotfiles, OS-branched via `.chezmoiignore.tmpl` |
+| `chezmoi/dot_local/bin/executable_repos` | `~/.local/bin/repos` — sync configured Git repositories or repositories directly under a chosen directory |
+| `nvim/` | Neovim — `lazy/` LazyVim → `~/.config/nvim` |
+| `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
+| `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
+| `scripts/` | tooling: key generation, workspace identity, and Windows installers |
+| `tools/harlequin-config/` | [Go Harlequin configuration generator](tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
+| `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
+
+### SOPS public recipient
+
+`sops/.sops.yaml` contains the public age recipient used for new SOPS files.
+`chezmoi apply ~/.sops.yaml` links it into the home directory; SOPS discovers
+it automatically from projects under `$HOME`. Keep age private keys outside Git.
+
+### Cross-platform
+
+`chezmoi/.chezmoiignore.tmpl` branches by OS. Linux skips macOS-only AeroSpace,
+Hammerspoon, and casks. Windows uses AppData for Neovim, installs shared CLI tools
+with Scoop, and manages Git Bash startup files alongside a PowerShell 7 all-hosts
+profile. The Harlequin config generator is macOS/Linux-only; its build hook and wrapper are
+excluded on Windows. Terminal appearance remains host-specific. **Windows is
+scaffolded and must still be verified on a real machine after the migration.**
+
+### Git identity and GitHub accounts
+
+GitHub authentication and commit identity are separate concerns:
+
+```text
+SSH Host alias + IdentityFile
+→ which GitHub account is used for fetch/push
+
+Git includeIf + workspace config
+→ which user.name / user.email is written into commits
+```
+
+The shared `~/.gitconfig` is rendered from `dot_gitconfig.tmpl` and includes the
+machine-local `~/.gitconfig.local`. Default identity is created once during
+`chezmoi init`; workspace-specific identity can be added with
+`scripts/add-workspace-user.sh`. SSH host aliases live under `~/.ssh/config.d/`,
+while private keys and real host entries stay outside this public repo.
+
+### Secrets
+
+Nothing private lives in this repo. `chezmoi apply` installs only the public config.
+Personal agent instructions and skills belong to the private companion; its
+`setup.sh` links shared instructions and supplemental docs into Pi's agent directory.
+Pi settings and package declarations remain managed here.
+See [agent configuration](TOOLING.md#agent-configuration) for OMP details.
+
+The private `secrets` companion (real SSH hosts and Harlequin connection sources) owns
+its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
+command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
+
+> Comments inside the config files are in Korean, but the configs themselves are
+> language-agnostic — the setup works the same regardless.
