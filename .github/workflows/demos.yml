@@ -14,9 +14,8 @@ jobs:
       - name: Install demo dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y fish jq fzf ripgrep fd-find bat ffmpeg
+          sudo apt-get install -y fish jq fzf ripgrep fd-find bat ffmpeg ttyd
           go install github.com/charmbracelet/vhs@latest
-          go install github.com/tsl0922/ttyd@latest
       - name: Prepare navigation demo
         run: |
           mkdir -p "$HOME/.local/bin" "$HOME/.config/fish"
