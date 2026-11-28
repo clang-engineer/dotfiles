@@ -4,7 +4,9 @@ function __tinty_refresh_rank_cache --argument-names cache url filter
     end
     mkdir -p (dirname "$cache"); or return 1
     set -l download (mktemp "$cache.XXXXXX"); or return 1
-    if curl -fsSL --connect-timeout 2 --max-time 3 "$url" | jq -e "$filter" > "$download"
+    curl -fsSL --connect-timeout 2 --max-time 3 "$url" | jq -e "$filter" > "$download"
+    set -l result $pipestatus
+    if test "$result[1]" -eq 0; and test "$result[2]" -eq 0
         if mv -f -- "$download" "$cache"
             return 0
         end
