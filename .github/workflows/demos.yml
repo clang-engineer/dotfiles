@@ -1,0 +1,48 @@
+name: Record terminal demos
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/demos.yml'
+permissions:
+  contents: read
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install demo dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fish jq fzf ripgrep fd-find bat ffmpeg
+          go install github.com/charmbracelet/vhs@latest
+          go install github.com/tsl0922/ttyd@latest
+      - name: Prepare navigation demo
+        run: |
+          mkdir -p "$HOME/.local/bin" "$HOME/.config/fish"
+          ln -s "$(command -v fdfind)" "$HOME/.local/bin/fd"
+          ln -s "$(command -v batcat)" "$HOME/.local/bin/bat"
+          cp chezmoi/dot_local/bin/executable_rg.fzf "$HOME/.local/bin/rg.fzf"
+          chmod +x "$HOME/.local/bin/rg.fzf"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Record navigation
+        run: |
+          # Record the real repository search command without bootstrapping the runner.
+          cat > /tmp/navigation.tape <<'EOF'
+          Output docs/demos/navigation.gif
+          Set Shell "fish"
+          Set FontSize 18
+          Set Width 1100
+          Set Height 650
+          Type "rg.fzf chezmoi"
+          Enter
+          Sleep 4s
+          Escape
+          Sleep 1s
+          EOF
+          "$(go env GOPATH)/bin/vhs" /tmp/navigation.tape
+      - uses: actions/upload-artifact@v4
+        with:
+          name: terminal-demos
+          path: docs/demos/*.gif
+          if-no-files-found: error
