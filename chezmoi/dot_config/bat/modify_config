@@ -1,0 +1,10 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $config := .chezmoi.stdin -}}
+{{- if regexMatch `(?m)^[ \t]*--theme(?:[= \t])` $config -}}
+{{ regexReplaceAll `(?m)^([ \t]*--theme[ \t]*=?[ \t]*)"?(?:Dracula|base16-256|base16|ansi)"?([ \t]*(?:#.*)?)$` $config `${1}"ansi"${2}` -}}
+{{- else -}}
+{{- $config -}}
+{{- if and $config (not (hasSuffix "\n" $config)) }}
+{{ end -}}
+--theme="ansi"
+{{- end -}}
