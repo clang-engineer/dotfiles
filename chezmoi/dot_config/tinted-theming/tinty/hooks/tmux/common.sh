@@ -7,8 +7,8 @@ ensure_repo() (
   key=$1
   action=${2:-install}
   row=$(jq -ce --arg key "$key" '.repositories[] | select(.path == $key)' "$registry") || exit 1
-  url=$(printf '%s' "$row" | jq -er '.url')
-  revision=$(printf '%s' "$row" | jq -r '.revision // empty')
+  url=$(printf '%s' "$row" | jq -er '.url') || exit 1
+  revision=$(printf '%s' "$row" | jq -r '.revision // empty') || exit 1
   dest="$plugins/$key"
   if [ -d "$dest/.git" ]; then
     [ "$(git -C "$dest" remote get-url origin)" = "$url" ] || exit 1
@@ -18,7 +18,8 @@ ensure_repo() (
       fi
       exit 0
     fi
-    [ -z "$(git -C "$dest" status --porcelain)" ] || exit 1
+    dirty=$(git -C "$dest" status --porcelain) || exit 1
+    [ -z "$dirty" ] || exit 1
     if [ -n "$revision" ]; then
       git -C "$dest" fetch --tags origin && git -C "$dest" checkout --detach "$revision"
     else
@@ -27,9 +28,12 @@ ensure_repo() (
     exit $?
   fi
   [ ! -e "$dest" ] || exit 1
-  mkdir -p "$(dirname "$dest")"
-  tmp=$(mktemp -d "$dest.XXXXXX")
-  trap 'rm -rf "$tmp"' EXIT
+  mkdir -p "$(dirname "$dest")" || exit 1
+  lock="$dest.lock"
+  mkdir "$lock" || exit 1
+  tmp=
+  trap '[ -z "$tmp" ] || rm -rf "$tmp"; rmdir "$lock"' EXIT
+  tmp=$(mktemp -d "$dest.XXXXXX") || exit 1
   trap 'exit 1' HUP INT TERM
   if [ -n "$revision" ]; then
     git clone --quiet --branch "$revision" -- "$url" "$tmp" || exit 1
