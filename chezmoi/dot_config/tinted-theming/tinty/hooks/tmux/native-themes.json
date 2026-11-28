@@ -9,7 +9,19 @@
       ],
       "entrypoint": "catppuccin/tmux/catppuccin.tmux",
       "option": "@catppuccin_flavor",
-      "variant": "suffix"
+      "variants": {
+        "catppuccin-latte": "latte",
+        "catppuccin-frappe": "frappe",
+        "catppuccin-macchiato": "macchiato",
+        "catppuccin-mocha": "mocha"
+      },
+      "before": [
+        "set -g @catppuccin_reset true"
+      ],
+      "after": [
+        "set -g status-left \"#{E:@catppuccin_status_session}\"",
+        "set -g status-right \"#{E:@catppuccin_status_application}\""
+      ]
     },
     {
       "schemes": [
@@ -19,7 +31,11 @@
       ],
       "entrypoint": "rose-pine/tmux/rose-pine.tmux",
       "option": "@rose_pine_variant",
-      "variant": "rose-pine"
+      "variants": {
+        "rose-pine": "main",
+        "rose-pine-moon": "moon",
+        "rose-pine-dawn": "dawn"
+      }
     },
     {
       "schemes": [
@@ -41,7 +57,10 @@
       ],
       "entrypoint": "egel/tmux-gruvbox/gruvbox-tpm.tmux",
       "option": "@tmux-gruvbox",
-      "variant": "gruvbox"
+      "variants": {
+        "gruvbox-dark": "dark256",
+        "gruvbox-light": "light256"
+      }
     },
     {
       "schemes": [
@@ -55,7 +74,15 @@
       ],
       "entrypoint": "TanglingTreats/tmux-everforest/everforest-theme.tmux",
       "option": "@tmux-everforest",
-      "variant": "everforest"
+      "variants": {
+        "everforest": "dark-medium",
+        "everforest-dark-hard": "dark-hard",
+        "everforest-dark-medium": "dark-medium",
+        "everforest-dark-soft": "dark-soft",
+        "everforest-light-hard": "light-hard",
+        "everforest-light-medium": "light-medium",
+        "everforest-light-soft": "light-soft"
+      }
     },
     {
       "schemes": [
@@ -65,7 +92,11 @@
       ],
       "entrypoint": "jondavidjohn/tmux-tomorrow-theme/tomorrow.tmux",
       "option": "@tomorrow_flavour",
-      "variant": "scheme"
+      "variants": {
+        "tomorrow": "tomorrow",
+        "tomorrow-night": "tomorrow-night",
+        "tomorrow-night-eighties": "tomorrow-night-eighties"
+      }
     },
     {
       "schemes": [
@@ -87,7 +118,11 @@
       ],
       "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
       "option": "@tokyo-night-tmux_theme",
-      "variant": "night"
+      "variants": {
+        "tokyo-night-dark": "night",
+        "tokyo-night-terminal-dark": "night"
+      },
+      "requiresBash": "4.2"
     },
     {
       "schemes": [
@@ -96,7 +131,11 @@
       ],
       "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
       "option": "@tokyo-night-tmux_theme",
-      "variant": "day"
+      "variants": {
+        "tokyo-night-light": "day",
+        "tokyo-night-terminal-light": "day"
+      },
+      "requiresBash": "4.2"
     },
     {
       "schemes": [
@@ -104,7 +143,10 @@
       ],
       "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
       "option": "@tokyo-night-tmux_theme",
-      "variant": "moon"
+      "variants": {
+        "tokyo-night-moon": "moon"
+      },
+      "requiresBash": "4.2"
     },
     {
       "schemes": [
@@ -113,7 +155,11 @@
       ],
       "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
       "option": "@tokyo-night-tmux_theme",
-      "variant": "storm"
+      "variants": {
+        "tokyo-night-storm": "storm",
+        "tokyo-night-terminal-storm": "storm"
+      },
+      "requiresBash": "4.2"
     },
     {
       "schemes": [
@@ -121,7 +167,9 @@
       ],
       "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
       "option": "@ukiyo-theme",
-      "variant": "kanagawa/wave"
+      "variants": {
+        "kanagawa": "kanagawa/wave"
+      }
     },
     {
       "schemes": [
@@ -129,7 +177,9 @@
       ],
       "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
       "option": "@ukiyo-theme",
-      "variant": "kanagawa/dragon"
+      "variants": {
+        "kanagawa-dragon": "kanagawa/dragon"
+      }
     },
     {
       "schemes": [
@@ -137,7 +187,9 @@
       ],
       "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
       "option": "@ukiyo-theme",
-      "variant": "solarized/dark"
+      "variants": {
+        "solarized-dark": "solarized/dark"
+      }
     },
     {
       "schemes": [
@@ -145,7 +197,9 @@
       ],
       "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
       "option": "@ukiyo-theme",
-      "variant": "solarized/light"
+      "variants": {
+        "solarized-light": "solarized/light"
+      }
     },
     {
       "schemes": [
@@ -154,7 +208,10 @@
       ],
       "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
       "option": "@ukiyo-theme",
-      "variant": "onedark/dark"
+      "variants": {
+        "onedark": "onedark/dark",
+        "one-dark": "onedark/dark"
+      }
     }
   ]
 }
