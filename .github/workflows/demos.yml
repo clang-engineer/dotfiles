@@ -16,6 +16,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y fish jq fzf ripgrep fd-find bat ffmpeg ttyd
           go install github.com/charmbracelet/vhs@latest
+          # The repository search script uses modern fzf actions.
+          go install github.com/junegunn/fzf@latest
       - name: Prepare navigation demo
         run: |
           mkdir -p "$HOME/.local/bin" "$HOME/.config/fish"
@@ -24,22 +26,11 @@ jobs:
           cp chezmoi/dot_local/bin/executable_rg.fzf "$HOME/.local/bin/rg.fzf"
           chmod +x "$HOME/.local/bin/rg.fzf"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Record navigation
         run: |
-          # Record the real repository search command without bootstrapping the runner.
-          cat > /tmp/navigation.tape <<'EOF'
-          Output docs/demos/navigation.gif
-          Set Shell "fish"
-          Set FontSize 18
-          Set Width 1100
-          Set Height 650
-          Type "rg.fzf chezmoi"
-          Enter
-          Sleep 4s
-          Escape
-          Sleep 1s
-          EOF
-          "$(go env GOPATH)/bin/vhs" /tmp/navigation.tape
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          vhs docs/demos/navigation.tape
       - uses: actions/upload-artifact@v4
         with:
           name: terminal-demos
