@@ -79,9 +79,16 @@
         "set -agF status-right \"#{E:@catppuccin_status_ram}\"",
         "set -ag status-right \"#{E:@catppuccin_status_session}\"",
         "set -ag status-right \"#{E:@catppuccin_status_uptime}\"",
-        "set -agF status-right \"#{E:@catppuccin_status_battery}\"",
-        "run-shell ' \"$HOME\"/.config/tmux/plugins/tmux-plugins/tmux-cpu/cpu.tmux '",
-        "run-shell ' \"$HOME\"/.config/tmux/plugins/tmux-plugins/tmux-battery/battery.tmux '"
+        "set -agF status-right \"#{E:@catppuccin_status_battery}\""
+      ],
+      "repository": "catppuccin/tmux",
+      "dependencies": [
+        "tmux-plugins/tmux-cpu",
+        "tmux-plugins/tmux-battery"
+      ],
+      "modules": [
+        "tmux-plugins/tmux-cpu/cpu.tmux",
+        "tmux-plugins/tmux-battery/battery.tmux"
       ]
     },
     {
@@ -96,20 +103,23 @@
         "rose-pine": "main",
         "rose-pine-moon": "moon",
         "rose-pine-dawn": "dawn"
-      }
+      },
+      "repository": "rose-pine/tmux"
     },
     {
       "schemes": [
         "dracula"
       ],
-      "entrypoint": "dracula/tmux/dracula.tmux"
+      "entrypoint": "dracula/tmux/dracula.tmux",
+      "repository": "dracula/tmux"
     },
     {
       "schemes": [
         "nord"
       ],
       "entrypoint": "nordtheme/tmux/nord.tmux",
-      "launcher": "bash"
+      "launcher": "bash",
+      "repository": "nordtheme/tmux"
     },
     {
       "schemes": [
@@ -121,7 +131,8 @@
       "variants": {
         "gruvbox-dark": "dark256",
         "gruvbox-light": "light256"
-      }
+      },
+      "repository": "egel/tmux-gruvbox"
     },
     {
       "schemes": [
@@ -143,7 +154,8 @@
         "everforest-light-hard": "light-hard",
         "everforest-light-medium": "light-medium",
         "everforest-light-soft": "light-soft"
-      }
+      },
+      "repository": "TanglingTreats/tmux-everforest"
     },
     {
       "schemes": [
@@ -157,7 +169,8 @@
         "tomorrow": "tomorrow",
         "tomorrow-night": "tomorrow-night",
         "tomorrow-night-eighties": "tomorrow-night-eighties"
-      }
+      },
+      "repository": "jondavidjohn/tmux-tomorrow-theme"
     },
     {
       "schemes": [
@@ -170,7 +183,8 @@
         "terafox"
       ],
       "entrypoint": "EdenEast/nightfox.nvim/extra/%s/%s.tmux",
-      "mode": "source"
+      "mode": "source",
+      "repository": "EdenEast/nightfox.nvim"
     },
     {
       "schemes": [
@@ -183,7 +197,8 @@
         "tokyo-night-dark": "night",
         "tokyo-night-terminal-dark": "night"
       },
-      "requiresBash": "4.2"
+      "requiresBash": "4.2",
+      "repository": "janoamaral/tokyo-night-tmux"
     },
     {
       "schemes": [
@@ -196,7 +211,8 @@
         "tokyo-night-light": "day",
         "tokyo-night-terminal-light": "day"
       },
-      "requiresBash": "4.2"
+      "requiresBash": "4.2",
+      "repository": "janoamaral/tokyo-night-tmux"
     },
     {
       "schemes": [
@@ -207,7 +223,8 @@
       "variants": {
         "tokyo-night-moon": "moon"
       },
-      "requiresBash": "4.2"
+      "requiresBash": "4.2",
+      "repository": "janoamaral/tokyo-night-tmux"
     },
     {
       "schemes": [
@@ -220,7 +237,8 @@
         "tokyo-night-storm": "storm",
         "tokyo-night-terminal-storm": "storm"
       },
-      "requiresBash": "4.2"
+      "requiresBash": "4.2",
+      "repository": "janoamaral/tokyo-night-tmux"
     },
     {
       "schemes": [
@@ -230,7 +248,8 @@
       "option": "@ukiyo-theme",
       "variants": {
         "kanagawa": "kanagawa/wave"
-      }
+      },
+      "repository": "Nybkox/tmux-ukiyo"
     },
     {
       "schemes": [
@@ -240,7 +259,8 @@
       "option": "@ukiyo-theme",
       "variants": {
         "kanagawa-dragon": "kanagawa/dragon"
-      }
+      },
+      "repository": "Nybkox/tmux-ukiyo"
     },
     {
       "schemes": [
@@ -250,7 +270,8 @@
       "option": "@ukiyo-theme",
       "variants": {
         "solarized-dark": "solarized/dark"
-      }
+      },
+      "repository": "Nybkox/tmux-ukiyo"
     },
     {
       "schemes": [
@@ -260,7 +281,8 @@
       "option": "@ukiyo-theme",
       "variants": {
         "solarized-light": "solarized/light"
-      }
+      },
+      "repository": "Nybkox/tmux-ukiyo"
     },
     {
       "schemes": [
@@ -272,7 +294,8 @@
       "variants": {
         "onedark": "onedark/dark",
         "one-dark": "onedark/dark"
-      }
+      },
+      "repository": "Nybkox/tmux-ukiyo"
     }
   ]
 }
