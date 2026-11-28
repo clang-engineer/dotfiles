@@ -170,6 +170,15 @@ benefit from a keyboard-driven terminal UI similar to lazygit.
 - `hyperfine` is available for reproducible command and build benchmarks, but is
   not a daily necessity.
 
+### Other workflow-dependent candidates
+
+- lazyjournal: server and container log browsing.
+- k9s: Kubernetes operations when they become a regular workflow.
+- rainfrog: interactive SQL browsing, only if it fills a gap in Harlequin.
+- btop: interactive system monitoring.
+- gh-dash: GitHub dashboard if the native gh workflow becomes cumbersome.
+- Posting or ATAC: choose one if terminal HTTP API testing becomes frequent.
+
 ## AI agent and MCP usage
 
 Keep the MCP set deliberately small. MCP tools add their tool definitions and
