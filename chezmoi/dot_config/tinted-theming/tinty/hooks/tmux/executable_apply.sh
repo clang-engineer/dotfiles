@@ -7,9 +7,10 @@ hook_dir=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
 dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
 mkdir -p "$dir"
 palette=$(mktemp "$dir/tmux.conf.XXXXXX")
-native=$(mktemp "$dir/tmux-native.conf.XXXXXX")
+native=
 trap 'rm -f "$palette" "$native"' EXIT
 trap 'exit 1' HUP INT TERM
+native=$(mktemp "$dir/tmux-native.conf.XXXXXX")
 cp "$TINTY_THEME_FILE_PATH" "$palette"
 
 # Escape a path for a tmux double-quoted argument.
@@ -33,13 +34,15 @@ render_native() (
   case "$entry" in *%s*) entry=$(printf "$entry" "$scheme" "$scheme") ;; esac
   plugin="$plugins/$entry"
   [ -f "$plugin" ] || exit 1
-  option=$(field '.option // empty')
-  variant=$(printf '%s' "$row" | jq -r --arg scheme "$scheme" '.variants[$scheme] // empty')
+  option=$(field '.option // empty') || exit 1
+  variant=$(printf '%s' "$row" | jq -r --arg scheme "$scheme" '.variants[$scheme] // empty') || exit 1
   if [ -n "$option" ]; then printf 'set -g %s %s\n' "$option" "$variant"; fi
   field '.before[]?' || exit 1
-  case "$(field '.mode // "run"')" in
+  mode=$(field '.mode // "run"') || exit 1
+  launcher=$(field '.launcher // empty') || exit 1
+  case "$mode" in
     source) printf 'source-file "%s"\n' "$(tmux_quote "$plugin")" ;;
-    run) emit_run "$(field '.launcher // empty')" "$plugin" ;;
+    run) emit_run "$launcher" "$plugin" || exit 1 ;;
     *) exit 1 ;;
   esac
   field '.after[]?' || exit 1
