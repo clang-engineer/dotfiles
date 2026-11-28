@@ -534,3 +534,122 @@ OS별 별도 설치/분기 필요      -> 이 문서에 추가
 
 일반적인 명령어와 사용법은 devkit cheatsheet에, 이 저장소에서 실제로 적용한
 integration은 이 문서에 남긴다.
+
+## Shared shell configuration and repository sync
+
+Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
+installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
+for the current font stack, Korean glyph mapping, alternatives, and switching.
+Ghostty extends the bottom tmux status-row colors into leftover window pixels;
+vertical padding is disabled. Open a new Ghostty tab after changing padding
+settings, since existing terminals retain their prior padding.
+
+Zsh is the reference for the Bash, Zsh, and Fish interactive environment.
+`chezmoi/.chezmoidata/shell.yaml` contains only shared values: command aliases
+(`cat`/`ls`), the C++ standard, environment variables, local/SSH editors, and the
+Harlequin/Vertica config paths. Bash, Zsh, Fish, and the Windows PowerShell profile
+render these values directly in their own startup templates. Edit the YAML, then
+run `chezmoi apply`; do not edit generated home files to change shared values.
+
+### Repository sync
+
+`repos` is installed by `chezmoi apply`. Configure the default repository list in
+`${XDG_CONFIG_HOME:-$HOME/.config}/repos/config`, a **trusted Bash file** sourced
+by the command:
+
+```bash
+repo "$HOME/projects/site" "git@github.com:you/site.git"
+repo "$HOME/projects/docs" "https://github.com/you/docs.git"
+```
+
+Each `repo` entry supplies a local path and its clone URL. No account, host, or
+repository paths are built into the executable. The private `secrets` repository
+provides this machine's list via its `setup.sh`; other users can create their own
+config file. Only source a config file you trust.
+
+```bash
+repos clone                      # clone missing configured repositories
+repos pull                       # fast-forward configured repositories
+repos push                       # push configured repositories ahead of upstream
+repos pull --workspace           # configured list plus $WORKSPACE_DIR's direct children
+repos pull .                     # repositories immediately under the current directory
+repos push "$HOME/projects"      # repositories immediately under this path
+```
+
+The path form needs no config. `clone`, the default pull/push, and `--workspace`
+require at least one configured entry; `--workspace` additionally needs
+`WORKSPACE_DIR`. A missing config is an error, not a silent no-op.
+
+Failed pulls include a Git diagnostic in the summary (or the exit status if Git
+prints nothing). Local-only repositories without a remote cannot be pulled; add
+a remote and upstream branch when they are ready to sync.
+
+## Verify tmux local changes against upstream
+
+- Use this when you want to check whether the rendered `dot_tmux.conf.local.tmpl`
+  has drifted from upstream OMT defaults.
+
+```zsh
+git diff --no-index --color=always \
+  <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
+  <(chezmoi cat ~/.tmux.conf.local)
+```
+
+- If you only want to compare the currently applied file with upstream:
+
+```zsh
+git diff --no-index --color=always \
+  <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
+  ~/.tmux.conf.local
+```
+
+- No output means the files match.
+- `git diff --no-index` exits with status `1` when differences are found, which is
+  expected and does not indicate command failure.
+
+- If you want to force `delta` even when your shell decides to suppress pager
+  output (eg. inside pipes), use:
+
+```zsh
+git diff --no-index --color=always \
+  <(curl -fsSL 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local') \
+  <(chezmoi cat ~/.tmux.conf.local) \
+  | delta
+```
+
+- If you want a plain change summary only:
+
+```python
+import urllib.request
+import difflib
+import subprocess
+from pathlib import Path
+
+upstream_url = 'https://raw.githubusercontent.com/gpakosz/.tmux/master/.tmux.conf.local'
+up = urllib.request.urlopen(upstream_url).read().decode().splitlines()
+local = subprocess.check_output(
+    ['chezmoi', 'cat', str(Path.home() / '.tmux.conf.local')],
+    text=True,
+).splitlines()
+
+diff_lines = list(difflib.unified_diff(up, local, lineterm=''))
+print('added', sum(1 for l in diff_lines if l.startswith('+') and not l.startswith('+++')))
+print('removed', sum(1 for l in diff_lines if l.startswith('-') and not l.startswith('---')))
+```
+
+## Agent configuration
+
+OMP's `~/.omp/agent/config.yml` is partially managed by
+`chezmoi/private_dot_omp/private_agent/modify_private_config.yml`: apply enforces
+`defaultThinkingLevel: auto`, text thinking-level labels, the built-in
+`dark-catppuccin` dark theme, and role-specific effort (`smol: "@default:low"`,
+`slow`/`plan: "@default:high"`) while preserving the machine-local default model
+and light theme. Role aliases follow the default model without
+pinning another provider or model. Authentication databases, sessions, and caches
+stay unmanaged. See the official [model-role docs](https://omp.sh/docs/roles) and
+[alias/effort rules](https://github.com/can1357/oh-my-pi/blob/main/docs/models.md).
+Thinking-level meanings and controls are documented in the
+[OMP cheatsheet](https://github.com/clang-engineer/devkit/blob/main/reference/cheatsheets/omp.md#추론-강도).
+After applying, restart OMP; an existing session may retain its saved thinking level.
+The `modify_` source is a chezmoi Go template, not raw YAML; the repository's
+YAML syntax hook excludes chezmoi modify scripts.
