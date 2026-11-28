@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build harlequin-config; reruns when the Go source changes.
+# Build harlequin-config; reruns when Go source or runtime configuration changes.
+# mise-config {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "chezmoi/dot_config/mise/config.toml.tmpl" | trim }}
 # harlequin-config-go-mod {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/harlequin-config/go.mod" | trim }}
 # harlequin-config-go-sum {{ output "git" "-C" (.chezmoi.sourceDir | dir) "hash-object" "tools/harlequin-config/go.sum" | trim }}
 {{ range $file := (output "find" (joinPath (.chezmoi.sourceDir | dir) "tools/harlequin-config") "-type" "f" "-name" "*.go" | trim | splitList "\n" | sortAlpha) -}}

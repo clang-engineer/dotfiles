@@ -26,7 +26,9 @@ themes-dir = "themes/ghostty"
 supported-systems = ["base16", "base24"]
 hook = '''
 dir="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/themes"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/tinted-theming" || exit
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.tinted-theming.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/tinted-theming" || { rm -f "$tmp"; exit 1; }
 # Ghostty reloads its live surfaces on SIGUSR2 (official Tinted integration).
 if pgrep -u "$(id -u)" -x ghostty >/dev/null; then
     pkill -USR2 -u "$(id -u)" -x ghostty
@@ -53,7 +55,8 @@ mkdir -p "$dir" || exit
 # Evaluate the official POSIX template here, not in an interactive shell.
 FZF_DEFAULT_OPTS=
 . "$TINTY_THEME_FILE_PATH"
-printf "%s\n" "$FZF_DEFAULT_OPTS" > "$dir/fzf.opts"
+tmp=$(mktemp "$dir/.fzf.opts.XXXXXX") || exit 1
+printf "%s\n" "$FZF_DEFAULT_OPTS" > "$tmp" && mv -f "$tmp" "$dir/fzf.opts" || { rm -f "$tmp"; exit 1; }
 '''
 
 [[items]]
@@ -62,7 +65,9 @@ path = "https://github.com/tinted-theming/tinted-yazi"
 themes-dir = "flavors"
 hook = '''
 dir="${YAZI_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/yazi}/flavors/tinted-scheme.yazi"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/flavor.toml" || exit
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.flavor.toml.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/flavor.toml" || { rm -f "$tmp"; exit 1; }
 '''
 
 [[items]]
@@ -72,7 +77,9 @@ themes-dir = "configs"
 supported-systems = ["base16", "base24"]
 hook = '''
 dir="${XDG_CONFIG_HOME:-$HOME/.config}/delta"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/theme.gitconfig"
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.theme.gitconfig.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/theme.gitconfig" || { rm -f "$tmp"; exit 1; }
 '''
 
 [[items]]
@@ -81,5 +88,7 @@ path = "https://github.com/tinted-theming/tinted-lazygit"
 themes-dir = "themes"
 hook = '''
 dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
-mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/lazygit.yml"
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.lazygit.yml.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/lazygit.yml" || { rm -f "$tmp"; exit 1; }
 '''

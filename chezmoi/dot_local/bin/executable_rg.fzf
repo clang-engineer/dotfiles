@@ -34,7 +34,10 @@ fi
 RG_FZF_PREV=$(mktemp) || exit
 export RG_FZF_PREV
 RG_FZF_OUTPUT=
-trap 'rm -f "$RG_FZF_PREV" "$RG_FZF_OUTPUT"' EXIT INT TERM
+trap 'rm -f "$RG_FZF_PREV" "$RG_FZF_OUTPUT"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
 RG_FZF_OUTPUT=$(mktemp) || exit
 printf ' ' >"$RG_FZF_PREV" # sentinel: leading space is impossible after trim, forces initial reload
 
