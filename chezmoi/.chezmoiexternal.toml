@@ -16,12 +16,3 @@
     clone.args = ["--branch", {{ .revision | quote }}]
 {{ end }}
 {{ end }}
-
-# Official standalone binary avoids the Crystal/LLVM build dependency on macOS.
-{{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}
-[".local/bin/tmux-fingers"]
-    type = "file"
-    url = "https://github.com/Morantron/tmux-fingers/releases/download/2.7.1/tmux-fingers-2.7.1-macos-arm64"
-    executable = true
-    checksum.sha256 = "32b94499f3569d548a6dffd0d89d88e1d6a600c7a8aa891d2b0ee6cc068a720c"
-{{ end }}
