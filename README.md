@@ -1,6 +1,8 @@
 # Dotfiles
 
-A reproducible, keyboard-driven development environment managed with [chezmoi](https://chezmoi.io).
+One command to set up a reproducible, keyboard-driven development environment with [chezmoi](https://chezmoi.io).
+
+`chezmoi apply` installs packages and runtimes, deploys configuration, and sets up integrations.
 
 **Native tools first. Minimal customization. One coherent terminal workflow.**
 
@@ -26,7 +28,7 @@ A reproducible, keyboard-driven development environment managed with [chezmoi](h
 | Desktop (macOS) | AeroSpace, Hammerspoon, JankyBorders |
 | Setup | chezmoi, Homebrew, Scoop, mise |
 
-## Quick start
+## One-command setup
 
 With Git, Homebrew and chezmoi installed on macOS/Linux:
 
@@ -34,7 +36,7 @@ With Git, Homebrew and chezmoi installed on macOS/Linux:
 git clone https://github.com/clang-engineer/dotfiles.git ~/dotfiles
 chezmoi init --source ~/dotfiles
 chezmoi diff
-chezmoi apply
+chezmoi apply  # packages, runtimes, configs, and integrations
 ```
 
 ```sh
