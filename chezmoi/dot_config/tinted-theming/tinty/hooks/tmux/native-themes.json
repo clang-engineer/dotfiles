@@ -79,6 +79,82 @@
       ],
       "entrypoint": "EdenEast/nightfox.nvim/extra/%s/%s.tmux",
       "mode": "source"
+    },
+    {
+      "schemes": [
+        "tokyo-night-dark",
+        "tokyo-night-terminal-dark"
+      ],
+      "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
+      "option": "@tokyo-night-tmux_theme",
+      "variant": "night"
+    },
+    {
+      "schemes": [
+        "tokyo-night-light",
+        "tokyo-night-terminal-light"
+      ],
+      "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
+      "option": "@tokyo-night-tmux_theme",
+      "variant": "day"
+    },
+    {
+      "schemes": [
+        "tokyo-night-moon"
+      ],
+      "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
+      "option": "@tokyo-night-tmux_theme",
+      "variant": "moon"
+    },
+    {
+      "schemes": [
+        "tokyo-night-storm",
+        "tokyo-night-terminal-storm"
+      ],
+      "entrypoint": "janoamaral/tokyo-night-tmux/tokyo-night.tmux",
+      "option": "@tokyo-night-tmux_theme",
+      "variant": "storm"
+    },
+    {
+      "schemes": [
+        "kanagawa"
+      ],
+      "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
+      "option": "@ukiyo-theme",
+      "variant": "kanagawa/wave"
+    },
+    {
+      "schemes": [
+        "kanagawa-dragon"
+      ],
+      "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
+      "option": "@ukiyo-theme",
+      "variant": "kanagawa/dragon"
+    },
+    {
+      "schemes": [
+        "solarized-dark"
+      ],
+      "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
+      "option": "@ukiyo-theme",
+      "variant": "solarized/dark"
+    },
+    {
+      "schemes": [
+        "solarized-light"
+      ],
+      "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
+      "option": "@ukiyo-theme",
+      "variant": "solarized/light"
+    },
+    {
+      "schemes": [
+        "onedark",
+        "one-dark"
+      ],
+      "entrypoint": "Nybkox/tmux-ukiyo/ukiyo.tmux",
+      "option": "@ukiyo-theme",
+      "variant": "onedark/dark"
     }
   ]
 }
