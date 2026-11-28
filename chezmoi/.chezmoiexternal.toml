@@ -8,6 +8,14 @@
     refreshPeriod = "168h"
 
 # Theme-specific tmux statusbars; kept separate from TPM's shared "tmux" directory.
+[".config/tmux/plugins/tmux-plugins/tmux-cpu"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-cpu.git"
+
+[".config/tmux/plugins/tmux-plugins/tmux-battery"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-battery.git"
+
 [".config/tmux/plugins/catppuccin/tmux"]
     type = "git-repo"
     url = "https://github.com/catppuccin/tmux.git"
