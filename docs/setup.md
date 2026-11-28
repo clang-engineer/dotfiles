@@ -16,13 +16,22 @@
 - `brew install chezmoi`
 - Windows: enable Developer Mode for symlink creation, then run
   `winget install Git.Git twpayne.chezmoi`
-- Clone this repo: `git clone <repo> ~/dotfiles`
 
-## 1. Link chezmoi (machine-local, once)
 
-Generate `~/.config/chezmoi/chezmoi.toml` so chezmoi uses this repo as its source:
+## 1. Initialize chezmoi (machine-local, once)
+
+For a fresh machine, clone, initialize and apply in one command:
 
 ```sh
+chezmoi init --apply https://github.com/clang-engineer/dotfiles.git
+```
+
+To preview before applying, omit `--apply` and continue to step 2. The default checkout is under `~/.local/share/chezmoi` on Unix.
+
+For a custom checkout location, use the manual alternative:
+
+```sh
+git clone https://github.com/clang-engineer/dotfiles.git ~/dotfiles
 chezmoi init --source ~/dotfiles
 ```
 
@@ -36,6 +45,8 @@ chezmoi init --source ~/dotfiles
 > and scripts are automatically excluded from chezmoi's targets.
 
 ## 2. Apply
+
+Skip this step if you already used `init --apply` successfully.
 
 ```sh
 chezmoi diff     # preview what will change
