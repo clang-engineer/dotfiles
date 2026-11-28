@@ -28,7 +28,7 @@ return {
 }
 LUA
   result=$?
-  if test "$result" -ne 0 || ! mv -f "$tmp" "$plugins/colorscheme.lua"; then
+  if test "$result" -ne 0 || ! mv -f "$tmp" "$plugins/zz-colorscheme-local.lua"; then
     rm -f "$tmp"
     exit 1
   fi
