@@ -48,7 +48,6 @@ printf "%s\n" "$FZF_DEFAULT_OPTS" > "$dir/fzf.opts"
 name = "tinted-yazi"
 path = "https://github.com/tinted-theming/tinted-yazi"
 themes-dir = "flavors"
-supported-systems = ["base16"]
 hook = '''
 dir="${YAZI_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/yazi}/flavors/tinted-scheme.yazi"
 mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/flavor.toml" || exit
@@ -80,7 +79,6 @@ mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/theme.gitconfig"
 name = "tinted-lazygit"
 path = "https://github.com/tinted-theming/tinted-lazygit"
 themes-dir = "themes"
-supported-systems = ["base16"]
 hook = '''
 dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated"
 mkdir -p "$dir" && cp -f "$TINTY_THEME_FILE_PATH" "$dir/lazygit.yml"
