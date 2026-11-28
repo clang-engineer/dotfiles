@@ -34,6 +34,14 @@
     type = "git-repo"
     url = "https://github.com/jondavidjohn/tmux-tomorrow-theme.git"
 
+[".config/tmux/plugins/janoamaral/tokyo-night-tmux"]
+    type = "git-repo"
+    url = "https://github.com/janoamaral/tokyo-night-tmux.git"
+
+[".config/tmux/plugins/Nybkox/tmux-ukiyo"]
+    type = "git-repo"
+    url = "https://github.com/Nybkox/tmux-ukiyo.git"
+
 # Official standalone binary avoids the Crystal/LLVM build dependency on macOS.
 {{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}
 [".local/bin/tmux-fingers"]
