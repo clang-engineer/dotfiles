@@ -6,6 +6,13 @@ name = "tinted-vim"
 path = "https://github.com/tinted-theming/tinted-vim"
 themes-dir = "colors"
 supported-systems = ["base16", "base24"]
+hook = '''
+# Keep generated files outside the symlinked Neovim configuration.
+dir="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-theming/tinty/generated/nvim/colors"
+mkdir -p "$dir" || exit 1
+tmp=$(mktemp "$dir/.tinted-theming.XXXXXX") || exit 1
+cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/tinted-theming.vim" || { rm -f "$tmp"; exit 1; }
+'''
 
 [[items]]
 name = "tinted-terminal"
