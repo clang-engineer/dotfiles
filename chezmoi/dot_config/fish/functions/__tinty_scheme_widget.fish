@@ -7,7 +7,7 @@ function __tinty_scheme_widget
 
     set -l row (__tinty_ranked_schemes | fzf --no-multi --no-sort --layout=reverse \
         --border --height=85% --prompt='Scheme> ' --delimiter '\t' --with-nth 2 \
-        --header='Base16 · GitHub Stars ↓ (Radar) | Enter: insert | Esc: cancel' \
+        --header='Base16/24 · Stars ↓ (Radar) · TMUX: native layout | Enter: insert' \
         --preview='CLICOLOR_FORCE=1 tinty info {1}' \
         --preview-window='right,60%,wrap')
     if test $status -eq 0; and test -n "$row"
