@@ -18,20 +18,21 @@ case "$TINTY_SCHEME_ID" in
   base16-*|base24-*) scheme=${TINTY_SCHEME_ID#base??-} ;;
   *) scheme= ;;
 esac
-registry="$config_home/tinted-theming/tinty/tmux-native-themes.conf"
+registry="$config_home/tinted-theming/tinty/tmux-native-themes.json"
 if [ -r "$registry" ]; then
-  while IFS='|' read -r patterns entry opt rule entry_mode shell; do
-    case "$patterns" in ''|\#*) continue ;; esac
-    case ",$patterns," in
-      *,"$scheme",*) ;;
-      *) continue ;;
-    esac
+  row=$(jq -r --arg scheme "$scheme" '
+    first(.themes[] | select(.schemes | index($scheme))) |
+    [.entrypoint, (.option // ""), (.variant // ""), (.mode // "run"), (.launcher // "")] |
+    join("|")
+  ' "$registry") || exit 1
+  if [ -n "$row" ]; then
+    IFS='|' read -r entry option rule mode shell <<EOF
+$row
+EOF
     case "$entry" in
       *%s*) plugin="$plugins/$(printf "$entry" "$scheme" "$scheme")" ;;
       *) plugin="$plugins/$entry" ;;
     esac
-    option=$opt
-    mode=$entry_mode
     launcher=${shell:+$shell }
     case "$rule" in
       suffix) variant=${scheme##*-} ;;
@@ -45,8 +46,7 @@ if [ -r "$registry" ]; then
         [ "$variant" = "$scheme" ] && variant=dark-medium ;;
       scheme) variant=$scheme ;;
     esac
-    break
-  done < "$registry"
+  fi
 fi
 
 if [ -n "$plugin" ] && [ ! -f "$plugin" ]; then
