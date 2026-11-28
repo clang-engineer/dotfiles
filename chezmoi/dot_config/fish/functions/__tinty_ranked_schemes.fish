@@ -6,13 +6,16 @@ function __tinty_ranked_schemes
     set -l cache "$cache_home/tinted-theming/tinty/radar-ranks.json"
 
     if not test -f "$cache"; or not test -n (find "$cache" -mtime -1 -print 2>/dev/null)
-        mkdir -p (dirname "$cache")
-        set -l download (mktemp "$cache.XXXXXX")
-        if curl -fsSL --connect-timeout 2 --max-time 3 https://clang-engineer.github.io/data/rankings.json \
-                | jq -e '.categories[] | select(.id == "developer-color-themes" and (.items | type == "array"))' > "$download"
-            mv -f -- "$download" "$cache"
-        else
-            rm -f -- "$download"
+        if mkdir -p (dirname "$cache")
+            set -l download (mktemp "$cache.XXXXXX")
+            if test -n "$download"
+                if curl -fsSL --connect-timeout 2 --max-time 3 https://clang-engineer.github.io/data/rankings.json \
+                        | jq -e '.categories[] | select(.id == "developer-color-themes" and (.items | type == "array"))' > "$download"
+                    mv -f -- "$download" "$cache"; or rm -f -- "$download"
+                else
+                    rm -f -- "$download"
+                end
+            end
         end
     end
 
@@ -32,13 +35,16 @@ function __tinty_ranked_schemes
     # Prefer centrally generated family matches; retain legacy ranks when unavailable.
     set -l family_cache "$cache_home/tinted-theming/tinty/theme-families.json"
     if not test -f "$family_cache"; or not test -n (find "$family_cache" -mtime -1 -print 2>/dev/null)
-        mkdir -p (dirname "$family_cache")
-        set -l download (mktemp "$family_cache.XXXXXX")
-        if curl -fsSL --connect-timeout 2 --max-time 3 https://clang-engineer.github.io/data/theme-families.json \
-                | jq -e 'select(.version == 1 and (.families | type == "object") and (.schemes | type == "object"))' > "$download"
-            mv -f -- "$download" "$family_cache"
-        else
-            rm -f -- "$download"
+        if mkdir -p (dirname "$family_cache")
+            set -l download (mktemp "$family_cache.XXXXXX")
+            if test -n "$download"
+                if curl -fsSL --connect-timeout 2 --max-time 3 https://clang-engineer.github.io/data/theme-families.json \
+                        | jq -e 'select(.version == 1 and (.families | type == "object") and (.schemes | type == "object"))' > "$download"
+                    mv -f -- "$download" "$family_cache"; or rm -f -- "$download"
+                else
+                    rm -f -- "$download"
+                end
+            end
         end
     end
     set -l families '{}'
