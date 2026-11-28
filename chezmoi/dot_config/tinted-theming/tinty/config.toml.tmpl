@@ -7,10 +7,32 @@ path = "https://github.com/tinted-theming/tinted-vim"
 themes-dir = "colors"
 supported-systems = ["base16", "base24"]
 hook = '''
-dir="${XDG_CONFIG_HOME:-$HOME/.config}/${NVIM_APPNAME:-nvim}/colors"
+root="${XDG_CONFIG_HOME:-$HOME/.config}/${NVIM_APPNAME:-nvim}"
+dir="$root/colors"
 mkdir -p "$dir" || exit 1
 tmp=$(mktemp "$dir/.tinted-theming.XXXXXX") || exit 1
 cp "$TINTY_THEME_FILE_PATH" "$tmp" && mv -f "$tmp" "$dir/tinted-theming.vim" || { rm -f "$tmp"; exit 1; }
+
+# Generate the LazyVim selection only when a LazyVim config is present.
+plugins="$root/lua/plugins"
+if test -d "$plugins"; then
+  tmp=$(mktemp "$plugins/.colorscheme.XXXXXX") || exit 1
+  cat > "$tmp" <<'LUA'
+return {
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "tinted-theming",
+    },
+  },
+}
+LUA
+  result=$?
+  if test "$result" -ne 0 || ! mv -f "$tmp" "$plugins/colorscheme.lua"; then
+    rm -f "$tmp"
+    exit 1
+  fi
+fi
 '''
 
 [[items]]
