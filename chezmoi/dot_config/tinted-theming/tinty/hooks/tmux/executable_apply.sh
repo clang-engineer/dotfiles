@@ -20,33 +20,24 @@ case "$TINTY_SCHEME_ID" in
 esac
 registry="$(dirname "$0")/native-themes.json"
 if [ -r "$registry" ]; then
-  row=$(jq -r --arg scheme "$scheme" '
-    first(.themes[] | select(.schemes | index($scheme))) |
-    [.entrypoint, (.option // ""), (.variant // ""), (.mode // "run"), (.launcher // "")] |
-    join("|")
-  ' "$registry") || exit 1
+  row=$(jq -c --arg scheme "$scheme" 'first(.themes[] | select(.schemes | index($scheme))) // empty' "$registry") || exit 1
   if [ -n "$row" ]; then
-    IFS='|' read -r entry option rule mode shell <<EOF
-$row
-EOF
+    entry=$(printf '%s' "$row" | jq -r '.entrypoint')
+    option=$(printf '%s' "$row" | jq -r '.option // ""')
+    variant=$(printf '%s' "$row" | jq -r --arg scheme "$scheme" '.variants[$scheme] // ""')
+    mode=$(printf '%s' "$row" | jq -r '.mode // "run"')
+    shell=$(printf '%s' "$row" | jq -r '.launcher // ""')
+    launcher=${shell:+$shell }
     case "$entry" in
       *%s*) plugin="$plugins/$(printf "$entry" "$scheme" "$scheme")" ;;
       *) plugin="$plugins/$entry" ;;
     esac
-    launcher=${shell:+$shell }
-    case "$rule" in
-      suffix) variant=${scheme##*-} ;;
-      rose-pine)
-        variant=${scheme#rose-pine}
-        variant=${variant#-}
-        variant=${variant:-main} ;;
-      gruvbox) variant=${scheme#gruvbox-}256 ;;
-      everforest)
-        variant=${scheme#everforest-}
-        [ "$variant" = "$scheme" ] && variant=dark-medium ;;
-      scheme) variant=$scheme ;;
-      *) variant=$rule ;;
-    esac
+    if [ "$(printf '%s' "$row" | jq -r '.requiresBash // ""')" = 4.2 ]; then
+      if ! bash -c '(( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) ))' 2>/dev/null; then
+        printf '%s\n' 'Tinty tmux: Bash 4.2+ required; using fallback.' >&2
+        plugin=
+      fi
+    fi
   fi
 fi
 
@@ -61,9 +52,7 @@ if [ -n "$plugin" ]; then
   if [ -n "$option" ]; then
     printf 'set -g %s %s\n' "$option" "$variant" > "$tmp"
   fi
-  if [ "$option" = @catppuccin_flavor ]; then
-    printf '%s\n' 'set -g @catppuccin_reset true' >> "$tmp"
-  fi
+  printf '%s' "$row" | jq -r '.before[]?' >> "$tmp"
   if [ "$mode" = source ]; then
     # The Nightfox project ships tmux config files, not executable entrypoints.
     quoted=$(printf '%s' "$plugin" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\$/\\$/g; s/`/\\`/g')
@@ -73,10 +62,7 @@ if [ -n "$plugin" ]; then
     quoted=$(printf '%s' "$plugin" | sed "s/'/'\\\\''/g")
     printf "run-shell \"%s'%s'\"\n" "$launcher" "$quoted" >> "$tmp"
   fi
-  if [ "$option" = @catppuccin_flavor ]; then
-    printf '%s\n' 'set -g status-left "#{E:@catppuccin_status_session}"' \
-      'set -g status-right "#{E:@catppuccin_status_application}"' >> "$tmp"
-  fi
+  printf '%s' "$row" | jq -r '.after[]?' >> "$tmp"
 fi
 mv -f "$tmp" "$dir/tmux-native.conf"
 
