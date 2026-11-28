@@ -29,9 +29,27 @@ function __tinty_ranked_schemes
         or set stars '{}'
     end
 
+    # Prefer centrally generated family matches; retain legacy ranks when unavailable.
+    set -l family_cache "$cache_home/tinted-theming/tinty/theme-families.json"
+    if not test -f "$family_cache"; or not test -n (find "$family_cache" -mtime -1 -print 2>/dev/null)
+        mkdir -p (dirname "$family_cache")
+        set -l download (mktemp "$family_cache.XXXXXX")
+        if curl -fsSL --connect-timeout 2 --max-time 3 https://clang-engineer.github.io/data/theme-families.json \
+                | jq -e 'select(.version == 1 and (.families | type == "object") and (.schemes | type == "object"))' > "$download"
+            mv -f -- "$download" "$family_cache"
+        else
+            rm -f -- "$download"
+        end
+    end
+    set -l families '{}'
+    if test -f "$family_cache"
+        set families (jq -c '. as $data | .schemes | with_entries(.value = $data.families[.value].stars)' "$family_cache" 2>/dev/null)
+        or set families '{}'
+    end
+
     # The JSON ID can omit a variant suffix present in the applyable plain list.
     set -l ids (command tinty list | jq -Rsc 'split("\n") | map(select(length > 0))')
-    command tinty list --json | jq -r --argjson ids "$ids" --argjson stars "$stars" '
+    command tinty list --json | jq -r --argjson ids "$ids" --argjson stars "$stars" --argjson families "$families" '
         def leftpad($width): (" " * ([$width - length, 0] | max)) + .;
         def commas:
             tostring | split("") as $digits
@@ -54,7 +72,7 @@ function __tinty_ranked_schemes
                   elif ($ids | index($id + "-" + $scheme.variant)) != null
                     then $id + "-" + $scheme.variant
                   else empty end) as $valid_id
-            | . + {id: $valid_id, stars: rank($valid_id)}]
+            | . + {id: $valid_id, stars: ($families[$valid_id] // rank($valid_id))}]
         | sort_by(-.stars, .id)[]
         | "\(.id)\t\(if .stars > 0 then " " else "  " end)\((if .stars > 0 then (.stars | commas) else "-" end) | leftpad(7))  \(.id | sub("^base16-"; ""))\(if .variant == "light" then "  [light]" else "" end)"
     '
