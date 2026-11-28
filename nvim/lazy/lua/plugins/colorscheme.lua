@@ -1,6 +1,6 @@
 return {
   {
     "LazyVim/LazyVim",
-    opts = { colorscheme = "tokyonight" },
+    opts = { colorscheme = "tinted-theming" },
   },
 }
