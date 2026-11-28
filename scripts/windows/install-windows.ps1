@@ -21,28 +21,24 @@ function Resolve-RequiredTool([string]$Name) {
 }
 
 $Mise = Resolve-RequiredTool "mise"
-& {
-    $MiseDataDir = (Join-Path $env:LOCALAPPDATA "mise") -replace '\\', '/'
-    $MiseShims = "$MiseDataDir/shims"
-    $env:MISE_DATA_DIR = $MiseDataDir
-    [Environment]::SetEnvironmentVariable("MISE_DATA_DIR", $MiseDataDir, "User")
-    $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $NormalizedShims = $MiseShims -replace '\\', '/'
-    $NormalizedPath = @($UserPath -split ';' | ForEach-Object { ($_ -replace '\\', '/').TrimEnd('/') })
-    if ($NormalizedPath -notcontains $NormalizedShims) {
-        $NewUserPath = if ($UserPath) { "$MiseShims;$UserPath" } else { $MiseShims }
-        [Environment]::SetEnvironmentVariable("Path", $NewUserPath, "User")
-    }
-    $env:PATH = "$MiseShims;$env:PATH"
-    & $Mise install
-    if ($LASTEXITCODE -ne 0) { throw "mise runtime installation failed" }
+$MiseDataDir = (Join-Path $env:LOCALAPPDATA "mise") -replace '\\', '/'
+$MiseShims = "$MiseDataDir/shims"
+$env:MISE_DATA_DIR = $MiseDataDir
+[Environment]::SetEnvironmentVariable("MISE_DATA_DIR", $MiseDataDir, "User")
+$UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$NormalizedShims = $MiseShims -replace '\\', '/'
+$NormalizedPath = @($UserPath -split ';' | ForEach-Object { ($_ -replace '\\', '/').TrimEnd('/') })
+if ($NormalizedPath -notcontains $NormalizedShims) {
+    $NewUserPath = if ($UserPath) { "$MiseShims;$UserPath" } else { $MiseShims }
+    [Environment]::SetEnvironmentVariable("Path", $NewUserPath, "User")
 }
+$env:PATH = "$MiseShims;$env:PATH"
+& $Mise install
+if ($LASTEXITCODE -ne 0) { throw "mise runtime installation failed" }
 
 $Pwsh = Resolve-RequiredTool "pwsh"
-& {
-    & $Pwsh -NoProfile -Command "if (-not (Get-Module -ListAvailable PSFzf)) { Install-Module -Name PSFzf -Scope CurrentUser -Force -ErrorAction Stop }"
-    if ($LASTEXITCODE -ne 0) { throw "PSFzf installation failed" }
-}
+& $Pwsh -NoProfile -Command "if (-not (Get-Module -ListAvailable PSFzf)) { Install-Module -Name PSFzf -Scope CurrentUser -Force -ErrorAction Stop }"
+if ($LASTEXITCODE -ne 0) { throw "PSFzf installation failed" }
 
 Write-Host ""
 Write-Host "==> Done. Open a new terminal and run: nvim" -ForegroundColor Green
