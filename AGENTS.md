@@ -2,7 +2,7 @@
 
 A collection of macOS/Windows development environment configs, managed with
 [chezmoi](https://chezmoi.io). **`README.md` is the source of truth for structure,
-placement rules (managed vs symlink), and secrets principles**; `SETUP.md` is the
+placement rules (managed vs symlink), and secrets principles**; `docs/setup.md` is the
 setup walkthrough. Do not restate them here.
 
 ## Build And Verification Commands
@@ -31,4 +31,4 @@ nvim --headless "+Lazy sync" +qa            # sync plugins
 - Never commit `.env`, `.secrets`, credentials, or real keys. Private values live in
   `~/.secrets` and the private `secrets` repository.
 - Never hardcode tokens in code. In Hammerspoon, use `hs.settings.get()` or `os.getenv()`.
-- Follow the pre-publish checklist in `SETUP.md` section 8 before every commit.
+- Follow the pre-publish checklist in `docs/setup.md` section 8 before every commit.

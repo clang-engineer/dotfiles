@@ -3,7 +3,7 @@
 Status refreshed on 2026-10-11. This distinguishes adopted tools from useful
 future additions, not an installation plan. Adopt new tools only when the
 corresponding workflow is needed. Actual integrations are documented in
-[TOOLING.md](TOOLING.md).
+[tooling.md](tooling.md).
 
 ## Current pattern
 

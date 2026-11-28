@@ -511,7 +511,7 @@ Compiler wrappers preserve piped source input as well as ordinary file arguments
 `scripts/windows/test-shell-profile.ps1` checks both paths and compiler failure
 status; it requires PowerShell 7, chezmoi, and `g++.exe` or `clang++.exe` on PATH.
 
-See [shell setup](SETUP.md#fish-interactive-shell) for trying Fish and selecting a
+See [shell setup](setup.md#fish-interactive-shell) for trying Fish and selecting a
 login shell; chezmoi does not change the account shell.
 
 Tmux explicitly starts new windows and panes with `/opt/homebrew/bin/fish`,
@@ -538,7 +538,7 @@ integration은 이 문서에 남긴다.
 ## Shared shell configuration and repository sync
 
 Ghostty is managed in `chezmoi/dot_config/ghostty/config`; available fonts are
-installed via `packages/Brewfile.cask`. See [Terminal fonts](TERMINAL-FONTS.md)
+installed via `packages/Brewfile.cask`. See [Terminal fonts](terminal-fonts.md)
 for the current font stack, Korean glyph mapping, alternatives, and switching.
 Ghostty extends the bottom tmux status-row colors into leftover window pixels;
 vertical padding is disabled. Open a new Ghostty tab after changing padding

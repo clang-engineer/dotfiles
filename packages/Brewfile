@@ -56,4 +56,4 @@ brew "libpq"             # Includes the psql CLI. Not needed if you don't use Po
 brew "uv"                # Fast Python package/venv manager — owns Python (mise handles node/ruby/java)
 brew "wget"              # File downloader. curl is built in by default
 
-# Future tooling candidates: see RECOMMENDATIONS.md.
+# Future tooling candidates: see ../docs/recommendations.md.

@@ -1,10 +1,10 @@
 # Terminal fonts
 
-Ghostty font settings live in [`chezmoi/dot_config/ghostty/config`](chezmoi/dot_config/ghostty/config),
+Ghostty font settings live in [`chezmoi/dot_config/ghostty/config`](../chezmoi/dot_config/ghostty/config),
 which chezmoi manages as `~/.config/ghostty/config`. macOS also loads
 `~/Library/Application Support/com.mitchellh.ghostty/config` **after** the XDG
 file; keep font settings in the XDG file so the macOS file does not override
-them. Homebrew fonts are listed in [`packages/Brewfile.cask`](packages/Brewfile.cask).
+them. Homebrew fonts are listed in [`packages/Brewfile.cask`](../packages/Brewfile.cask).
 No `font-size` override is set; Ghostty uses its default size.
 
 ## Current combination

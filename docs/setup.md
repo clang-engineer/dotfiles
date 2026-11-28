@@ -366,7 +366,7 @@ else is a managed file; edit with `chezmoi edit --apply ~/.zshrc`.
 | `hammerspoon/` | macOS automation — symlinked to `~/.hammerspoon` |
 | `packages/` | package manifests — Brewfile (macOS/Linux), casks (macOS), Scoop (Windows) |
 | `scripts/` | tooling: key generation, workspace identity, and Windows installers |
-| `tools/harlequin-config/` | [Go Harlequin configuration generator](tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
+| `tools/harlequin-config/` | [Go Harlequin configuration generator](../tools/harlequin-config/README.md) — use native `harlequin -P` profile completion |
 | `vim/` | legacy Vim config snapshots (not linked; kept for reference) |
 
 ### SOPS public recipient
@@ -408,11 +408,11 @@ Nothing private lives in this repo. `chezmoi apply` installs only the public con
 Personal agent instructions and skills belong to the private companion; its
 `setup.sh` links shared instructions and supplemental docs into Pi's agent directory.
 Pi settings and package declarations remain managed here.
-See [agent configuration](TOOLING.md#agent-configuration) for OMP details.
+See [agent configuration](tooling.md#agent-configuration) for OMP details.
 
 The private `secrets` companion (real SSH hosts and Harlequin connection sources) owns
 its own bootstrap — clone it and run its `./setup.sh`; see that repo's README for the
-command. Public clones simply skip it. See [SETUP.md](SETUP.md#9-security).
+command. Public clones simply skip it. See [setup.md](setup.md#9-security).
 
 > Comments inside the config files are in Korean, but the configs themselves are
 > language-agnostic — the setup works the same regardless.

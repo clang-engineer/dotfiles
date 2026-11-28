@@ -44,7 +44,7 @@ tinty sync
 tinty apply base16-dracula
 ```
 
-Windows support is scaffolded but not yet verified on a real machine. See [SETUP.md](SETUP.md) for prerequisites and platform-specific instructions.
+Windows support is scaffolded but not yet verified on a real machine. See [docs/setup.md](docs/setup.md) for prerequisites and platform-specific instructions.
 
 ## Design
 
@@ -52,11 +52,11 @@ Prefer built-in behavior, then official or widely adopted integrations, then min
 
 ## Documentation
 
-- [Setup and security](SETUP.md) — installation, layout, identity, secrets, and recovery.
-- [Tool integrations](TOOLING.md) — themes, shell bindings, tmux, and upstream comparison.
+- [Setup and security](docs/setup.md) — installation, layout, identity, secrets, and recovery.
+- [Tool integrations](docs/tooling.md) — themes, shell bindings, tmux, and upstream comparison.
 - [Neovim configuration](nvim/README.md)
-- [Terminal fonts](TERMINAL-FONTS.md)
-- [Tool recommendations](RECOMMENDATIONS.md)
+- [Terminal fonts](docs/terminal-fonts.md)
+- [Tool recommendations](docs/recommendations.md)
 - [Devkit](https://github.com/clang-engineer/devkit) — general tool reference.
 
 The previous symlink-based bootstrap is preserved at the `pre-chezmoi` tag.
