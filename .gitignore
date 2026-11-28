@@ -31,3 +31,7 @@ claude/*
 # local tool settings
 .claude/settings.local.json
 .serena/
+
+# Theme generated locally by Tinty (Neovim config is symlinked).
+/nvim/lazy/colors/tinted-theming.vim
+/nvim/lazy/colors/.tinted-theming.*
