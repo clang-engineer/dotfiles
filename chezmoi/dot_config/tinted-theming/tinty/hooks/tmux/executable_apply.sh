@@ -45,6 +45,7 @@ EOF
         variant=${scheme#everforest-}
         [ "$variant" = "$scheme" ] && variant=dark-medium ;;
       scheme) variant=$scheme ;;
+      *) variant=$rule ;;
     esac
   fi
 fi
